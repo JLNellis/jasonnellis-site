@@ -177,7 +177,8 @@
 
     <div class="contact-grid">
       <!-- LEFT: Form -->
-      <form class="card form-card" id="contactForm" onsubmit="event.preventDefault(); document.getElementById('toast').classList.add('shown'); this.reset();">
+      <form class="card form-card" id="contactForm" name="contact" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact">
         <div class="head">
           <div>
             <h2>Send a message</h2>
@@ -342,7 +343,25 @@
 </footer>
 
 <script>
-  // Live clock — Berlin and viewer
+  // Netlify Forms submission — posts data, then shows toast in place
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    })
+    .then(() => {
+      document.getElementById('toast').classList.add('shown');
+      form.reset();
+    })
+    .catch(() => {
+      // Network error — still acknowledge and reset
+      document.getElementById('toast').classList.add('shown');
+      form.reset();
+    });
+  });
   function pad(n) { return String(n).padStart(2, '0'); }
   function tick() {
     const now = new Date();
