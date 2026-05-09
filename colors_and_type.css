@@ -1,0 +1,206 @@
+/* =====================================================================
+   Bolt OS — Colors & Type Foundations
+   "Precision Engine" — controlled, dark-foundation design system for
+   data-dense, performance-focused interfaces.
+   ===================================================================== */
+
+/* ---------- Webfont (Google Fonts substitute for Suisse Intl) ----------
+   Suisse Intl is a licensed Swiss Typefaces face. As a near-match
+   fallback we load DM Sans (similar geometric grotesque proportions).
+   Replace with local Suisse Intl @font-face declarations when license
+   is in hand. ---------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* --- Color: Primary (Foundation, ~70%) -------------------------- */
+  --color-primary-navy:        #0A2540;   /* dominant surface */
+  --color-primary-dark:        #0F172A;   /* deep / nested surface */
+
+  /* --- Color: Neutral (~20%) -------------------------------------- */
+  --color-neutral-white:       #FFFFFF;   /* high-contrast text on dark */
+  --color-neutral-cool-gray:   #94A3B8;   /* secondary text, labels */
+  --color-neutral-subtle-gray: #1E293B;   /* borders, dividers, cards */
+  --color-neutral-deep-gray:   #334155;   /* hover borders, dim chrome */
+
+  /* --- Color: Accent — Signal Green (~10%) ------------------------ */
+  --color-accent-vivid:        #00E676;   /* primary accent / live */
+  --color-accent-signal:       #22C55E;   /* hover / supporting */
+  --color-accent-glow:         rgba(0, 230, 118, 0.16);
+  --color-accent-soft:         rgba(0, 230, 118, 0.08);
+
+  /* --- Color: Status ---------------------------------------------- */
+  --color-status-success:      #00E676;
+  --color-status-warning:      #F59E0B;
+  --color-status-error:        #EF4444;
+  --color-status-info:         #3B82F6;
+
+  /* --- Semantic foreground / background --------------------------- */
+  --bg-base:        var(--color-primary-navy);
+  --bg-deep:        var(--color-primary-dark);
+  --bg-card:        var(--color-neutral-subtle-gray);
+  --bg-card-soft:   rgba(30, 41, 59, 0.6);
+
+  --fg-1:           var(--color-neutral-white);          /* primary text */
+  --fg-2:           var(--color-neutral-cool-gray);      /* secondary text */
+  --fg-3:           #64748B;                             /* tertiary / metadata */
+  --fg-accent:      var(--color-accent-vivid);
+
+  --border-subtle:  rgba(148, 163, 184, 0.12);           /* 0.5–1px structural */
+  --border-default: var(--color-neutral-subtle-gray);
+  --border-strong:  var(--color-neutral-deep-gray);
+  --border-accent:  var(--color-accent-vivid);
+
+  /* --- Typography ------------------------------------------------- */
+  --font-sans: "Suisse Intl", "DM Sans", "Inter", system-ui, -apple-system,
+               "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Roboto Mono", ui-monospace, monospace;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-bold:    700;
+
+  /* Type scale (from Bolt OS spec) */
+  --fs-display: 48px;
+  --fs-h1:      28px;
+  --fs-h2:      20px;
+  --fs-body:    16px;
+  --fs-label:   13px;
+  --fs-caption: 11px;
+
+  --lh-tight:   1.1;       /* Display, H1 */
+  --lh-snug:    1.4;       /* H2 */
+  --lh-relaxed: 1.7;       /* Body */
+
+  --tracking-label: 0.08em;
+  --tracking-tight: -0.01em;
+
+  /* --- Spacing (4-pt grid) ---------------------------------------- */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* --- Radii ------------------------------------------------------- */
+  --radius-xs:    2px;
+  --radius-sm:    4px;
+  --radius-md:    6px;
+  --radius-lg:    10px;
+  --radius-xl:    14px;
+  --radius-pill:  999px;
+
+  /* --- Elevation (used sparingly — mostly inner glows) ------------ */
+  --shadow-card:    0 1px 0 0 rgba(255,255,255,0.02) inset, 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-pop:     0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(148,163,184,0.08);
+  --shadow-glow:    0 0 0 1px rgba(0,230,118,0.4), 0 0 32px rgba(0,230,118,0.25);
+  --shadow-glow-sm: 0 0 0 1px rgba(0,230,118,0.3), 0 0 12px rgba(0,230,118,0.18);
+
+  /* --- Motion (restrained) ---------------------------------------- */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasis: cubic-bezier(0.3, 0, 0, 1);
+  --dur-fast:   120ms;
+  --dur-base:   180ms;
+  --dur-slow:   320ms;
+}
+
+/* =====================================================================
+   Base / semantic element styling
+   Apply by adding class .bolt-os to any container, or use globally.
+   ===================================================================== */
+
+.bolt-os,
+body.bolt-os {
+  background: var(--bg-base);
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.bolt-os .display,
+.display {
+  font-family: var(--font-sans);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+}
+
+.bolt-os h1, h1.bolt {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+.bolt-os h2, h2.bolt {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+.bolt-os p, p.bolt, .body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-2);
+}
+
+.label, .bolt-os .label {
+  font-family: var(--font-sans);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+
+.caption, .bolt-os .caption {
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-regular);
+  color: var(--fg-3);
+}
+
+.metric, .bolt-os .metric {
+  font-family: var(--font-sans);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  line-height: 1;
+}
+
+code, .mono, .bolt-os code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--fg-1);
+}
+
+a.bolt {
+  color: var(--fg-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-fast) var(--ease-standard);
+}
+a.bolt:hover { border-bottom-color: var(--fg-accent); }

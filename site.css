@@ -1,0 +1,178 @@
+/* =====================================================================
+   site.css — Jason Nellis personal site
+   Layered on top of /colors_and_type.css
+   ===================================================================== */
+@import url("colors_and_type.css");
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg-base); color: var(--fg-1); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Layout primitives ---------- */
+.page-wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+.page-wrap--narrow { max-width: 820px; }
+
+/* ---------- Background atmosphere (used on hero / page-tops) ---------- */
+.atmos {
+  position: relative;
+  isolation: isolate;
+}
+.atmos::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 40% at 18% 8%, rgba(0,230,118,0.07), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 30%, rgba(15,77,140,0.45), transparent 60%);
+}
+.atmos::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  background-image: radial-gradient(circle, rgba(148,163,184,0.10) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, black 0%, black 60%, transparent 100%);
+  opacity: 0.5;
+}
+
+/* ---------- Header / nav ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 37, 64, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.site-header__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 32px;
+  max-width: 1180px; margin: 0 auto;
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 700; letter-spacing: -0.01em; font-size: 17px;
+}
+.brand .mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: #0F172A; border: 1px solid rgba(0,230,118,0.5);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #00E676;
+}
+.brand .name small {
+  display: block; font-size: 10px; font-weight: 500;
+  color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.12em;
+  margin-top: 2px;
+}
+.site-nav { display: flex; gap: 6px; align-items: center; }
+.site-nav a {
+  font-size: 13px; font-weight: 500; color: var(--fg-2);
+  padding: 8px 14px; border-radius: 6px;
+  transition: color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard);
+}
+.site-nav a:hover { color: var(--fg-1); background: rgba(30,41,59,0.5); }
+.site-nav a[aria-current="page"] { color: var(--color-accent-vivid); background: rgba(0,230,118,0.08); }
+
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(0,230,118,0.3); background: rgba(0,230,118,0.06);
+  color: var(--color-accent-vivid);
+  font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.live-dot {
+  width: 6px; height: 6px; background: var(--color-accent-vivid); border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-accent-vivid);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ---------- Common UI bits ---------- */
+.btn {
+  font-family: var(--font-sans); font-weight: 600; font-size: 14px;
+  padding: 11px 20px; border-radius: 6px; cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+}
+.btn.primary { background: var(--color-accent-vivid); color: #0F172A; border-color: var(--color-accent-vivid); }
+.btn.primary:hover { background: var(--color-accent-signal); }
+.btn.ghost { background: transparent; color: var(--fg-1); border-color: var(--border-strong); }
+.btn.ghost:hover { color: var(--color-accent-vivid); border-color: var(--color-accent-vivid); }
+
+.label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); }
+.label--accent { color: var(--color-accent-vivid); }
+
+.section-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg-2);
+  margin-bottom: 18px;
+}
+.section-eyebrow .num { color: var(--color-accent-vivid); }
+.section-eyebrow::before {
+  content: ""; width: 28px; height: 1px; background: var(--color-accent-vivid);
+}
+
+.divider { height: 1px; background: var(--border-default); border: 0; }
+.dot-divider { color: var(--fg-3); margin: 0 8px; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--bg-card); border: 1px solid rgba(148,163,184,0.08);
+  border-radius: 10px; padding: 22px;
+  transition: border-color var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard);
+}
+.card.is-link { cursor: pointer; }
+.card.is-link:hover { border-color: rgba(0,230,118,0.4); background: rgba(30,41,59,0.85); }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: 56px 32px 32px;
+  margin-top: 96px;
+  background: var(--bg-deep);
+}
+.site-footer__inner {
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+}
+.site-footer h4 {
+  font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--fg-2); margin: 0 0 14px;
+}
+.site-footer a {
+  display: block; color: var(--fg-1); font-size: 14px; padding: 5px 0;
+  transition: color var(--dur-fast);
+}
+.site-footer a:hover { color: var(--color-accent-vivid); }
+.site-footer__bottom {
+  max-width: 1180px; margin: 32px auto 0; padding-top: 22px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--fg-2);
+}
+.site-footer__bottom .meta { font-family: var(--font-mono); }
+
+/* ---------- Page hero (used on cv/blog/contact) ---------- */
+.page-hero {
+  padding: 88px 0 56px;
+}
+.page-hero h1 {
+  font-size: 56px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+.page-hero .lede {
+  font-size: 18px; line-height: 1.6; color: var(--fg-2); max-width: 620px; margin: 0;
+}
+
+/* ---------- Utility ---------- */
+.row { display: flex; }
+.col { display: flex; flex-direction: column; }
+.gap-12 { gap: 12px; } .gap-16 { gap: 16px; } .gap-24 { gap: 24px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 760px) {
+  .page-hero h1 { font-size: 38px; }
+  .site-header__inner { padding: 14px 18px; }
+  .site-nav a { padding: 7px 10px; font-size: 12px; }
+  .page-wrap { padding: 0 18px; }
+  .site-footer__inner { grid-template-columns: 1fr 1fr; }
+}

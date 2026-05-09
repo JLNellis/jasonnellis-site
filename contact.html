@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Jason Nellis</title>
+<link rel="stylesheet" href="site.css">
+<style>
+  .contact-hero { padding: 88px 0 32px; }
+  .contact-hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 16px; }
+  .contact-hero .lede { font-size: 18px; line-height: 1.6; color: var(--fg-2); max-width: 580px; margin: 0; }
+
+  .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; padding-bottom: 80px; align-items: start; }
+
+  /* Form card */
+  .form-card { padding: 36px; }
+  .form-card .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .form-card .head h2 { font-size: 22px; font-weight: 500; margin: 0; }
+  .form-card .head .sub { font-size: 12px; color: var(--fg-2); margin-top: 4px; }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin-bottom: 8px; font-weight: 500; }
+  .field label .req { color: var(--color-accent-vivid); margin-left: 4px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--bg-deep); border: 1px solid var(--border-strong);
+    color: #FFF; padding: 12px 14px; border-radius: 6px;
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.5;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--color-accent-vivid);
+    box-shadow: 0 0 0 3px rgba(0,230,118,0.16);
+  }
+  .field textarea { min-height: 132px; resize: vertical; font-family: var(--font-sans); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Topic radios */
+  .topic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .topic-grid label {
+    display: flex; gap: 10px; align-items: center;
+    background: var(--bg-deep); border: 1px solid var(--border-strong);
+    border-radius: 6px; padding: 12px 14px; cursor: pointer;
+    transition: border-color var(--dur-fast), background var(--dur-fast);
+    font-size: 13px; color: var(--fg-1); margin: 0;
+    text-transform: none; letter-spacing: 0;
+  }
+  .topic-grid label:hover { border-color: var(--fg-2); }
+  .topic-grid input[type=radio] { display: none; }
+  .topic-grid input[type=radio]:checked + .swatch + .lbl { color: var(--color-accent-vivid); }
+  .topic-grid label:has(input:checked) { border-color: var(--color-accent-vivid); background: rgba(0,230,118,0.06); }
+  .topic-grid .swatch {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1px solid var(--border-strong); background: transparent; flex-shrink: 0;
+    position: relative;
+  }
+  .topic-grid label:has(input:checked) .swatch { border-color: var(--color-accent-vivid); }
+  .topic-grid label:has(input:checked) .swatch::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%;
+    background: var(--color-accent-vivid); box-shadow: 0 0 8px var(--color-accent-vivid);
+  }
+
+  .form-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 20px; border-top: 1px solid var(--border-subtle); margin-top: 8px;
+  }
+  .form-meta .left { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  .form-meta .left .live-dot { width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; }
+
+  .toast {
+    margin-top: 18px;
+    padding: 14px 16px; border-radius: 6px;
+    background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.4); border-left: 3px solid var(--color-accent-vivid);
+    color: var(--color-accent-vivid); font-size: 13px;
+    display: none;
+  }
+  .toast.shown { display: flex; gap: 10px; align-items: center; }
+  .toast strong { color: #FFF; font-weight: 500; }
+
+  /* Right column */
+  .info-stack { display: flex; flex-direction: column; gap: 16px; }
+  .info-card { padding: 22px; }
+  .info-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin: 0 0 14px; font-weight: 500; }
+  .info-card .channel { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; padding: 10px 0; align-items: center; border-top: 1px solid var(--border-subtle); }
+  .info-card .channel:first-of-type { border-top: none; }
+  .info-card .channel .ico {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: rgba(0,230,118,0.10); color: var(--color-accent-vivid);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .info-card .channel .t { font-size: 14px; color: #FFF; font-weight: 500; }
+  .info-card .channel .s { font-size: 12px; color: var(--fg-2); margin-top: 2px; font-family: var(--font-mono); }
+  .info-card .channel .meta { font-size: 11px; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); }
+
+  .availability {
+    background: linear-gradient(180deg, rgba(0,230,118,0.06), transparent);
+    border: 1px solid rgba(0,230,118,0.25);
+    padding: 22px;
+  }
+  .availability .head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .availability .head .live-dot { width: 8px; height: 8px; }
+  .availability .head .t { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-accent-vivid); font-weight: 500; }
+  .availability h2 { font-size: 22px; font-weight: 500; line-height: 1.3; margin: 0 0 14px; color: #FFF; }
+  .availability p { color: var(--fg-2); font-size: 14px; line-height: 1.65; margin: 0 0 18px; }
+  .availability .row { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--border-subtle); font-size: 13px; }
+  .availability .row:first-of-type { border-top: 1px solid var(--border-default); padding-top: 14px; margin-top: 6px; }
+  .availability .row .k { color: var(--fg-2); }
+  .availability .row .v { color: #FFF; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .availability .row .v.ok { color: var(--color-accent-vivid); }
+
+  /* Local clock */
+  .clock {
+    display: grid; grid-template-columns: 1fr 1px 1fr; gap: 18px;
+    padding: 18px 22px; background: var(--bg-deep); border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+  }
+  .clock .div { background: var(--border-default); }
+  .clock .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin-bottom: 4px; }
+  .clock .v { font-size: 22px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: #FFF; letter-spacing: -0.01em; }
+  .clock .v.accent { color: var(--color-accent-vivid); }
+  .clock .place { font-size: 11px; color: var(--fg-2); margin-top: 4px; font-family: var(--font-mono); }
+
+  /* FAQ */
+  .faq-section { padding: 64px 0 96px; border-top: 1px solid var(--border-subtle); }
+  .faq-list { display: flex; flex-direction: column; }
+  details.faq {
+    border-bottom: 1px solid var(--border-subtle); padding: 20px 0;
+  }
+  details.faq summary {
+    list-style: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    font-size: 17px; font-weight: 500; color: #FFF;
+    transition: color var(--dur-fast);
+  }
+  details.faq summary:hover { color: var(--color-accent-vivid); }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary .chev {
+    color: var(--fg-2); font-family: var(--font-mono); font-size: 14px;
+    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard);
+  }
+  details.faq[open] summary .chev { transform: rotate(45deg); color: var(--color-accent-vivid); }
+  details.faq .body { padding: 14px 0 4px; max-width: 720px; color: var(--fg-2); font-size: 15px; line-height: 1.7; }
+  details.faq .body p { margin: 0 0 12px; }
+  details.faq .body p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 880px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .form-card { padding: 22px; }
+    .field-row, .topic-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="bolt-os">
+
+<header class="site-header" data-screen-label="header">
+  <div class="site-header__inner">
+    <a href="index.html" class="brand">
+      <span class="mark">JN</span>
+      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Writing</a>
+      <a href="cv.html">CV</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
+    </nav>
+  </div>
+</header>
+
+<main class="atmos" data-screen-label="01 contact">
+  <div class="page-wrap">
+    <div class="contact-hero">
+      <div class="section-eyebrow"><span class="num">01</span> Contact · responds within 48h</div>
+      <h1>Tell me what<br>you're working on.</h1>
+      <p class="lede">I read everything that comes through. Most replies go out within two working days. If you have a real problem and think I can help, say so plainly — that's what gets a response.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- LEFT: Form -->
+      <form class="card form-card" id="contactForm" onsubmit="event.preventDefault(); document.getElementById('toast').classList.add('shown'); this.reset();">
+        <div class="head">
+          <div>
+            <h2>Send a message</h2>
+            <div class="sub">Plain text · no auto-reply · I read it personally.</div>
+          </div>
+          <span class="live-pill"><span class="live-dot"></span>Open</span>
+        </div>
+
+        <div class="field">
+          <label>What is this about<span class="req">*</span></label>
+          <div class="topic-grid">
+            <label><input type="radio" name="topic" value="advisory" checked><span class="swatch"></span><span class="lbl">Advisory / consulting</span></label>
+            <label><input type="radio" name="topic" value="speaking"><span class="swatch"></span><span class="lbl">Speaking or workshop</span></label>
+            <label><input type="radio" name="topic" value="writing"><span class="swatch"></span><span class="lbl">Writing or content</span></label>
+            <label><input type="radio" name="topic" value="coaching"><span class="swatch"></span><span class="lbl">Coaching</span></label>
+            <label><input type="radio" name="topic" value="press"><span class="swatch"></span><span class="lbl">Press / podcast</span></label>
+            <label><input type="radio" name="topic" value="other"><span class="swatch"></span><span class="lbl">Something else</span></label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Your name<span class="req">*</span></label>
+            <input id="name" name="name" type="text" placeholder="Ada Lovelace" required>
+          </div>
+          <div class="field">
+            <label for="email">Email<span class="req">*</span></label>
+            <input id="email" name="email" type="email" placeholder="ada@analytical.engine" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="org">Company / org</label>
+            <input id="org" name="org" type="text" placeholder="Optional, but useful">
+          </div>
+          <div class="field">
+            <label for="budget">Budget / scope</label>
+            <select id="budget" name="budget">
+              <option>—</option>
+              <option>Speaking engagement</option>
+              <option>Advisory · short-term</option>
+              <option>Advisory · ongoing</option>
+              <option>Writing project</option>
+              <option>Coaching</option>
+              <option>Not yet sure</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Message<span class="req">*</span></label>
+          <textarea id="message" name="message" placeholder="A few sentences on what you're working on, what you'd want me to do, and any deadline I should know about. Links are very welcome." required></textarea>
+        </div>
+
+        <div class="form-meta">
+          <span class="left"><span class="live-dot"></span>End-to-end encrypted via TLS · no analytics</span>
+          <button type="submit" class="btn primary">
+            Send message
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <div class="toast" id="toast">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>Message queued.</strong> I usually reply within 48 hours. Talk soon.</div>
+        </div>
+      </form>
+
+      <!-- RIGHT: Channels & availability -->
+      <aside class="info-stack">
+        <div class="card availability">
+          <div class="head">
+            <span class="live-dot"></span>
+            <span class="t">Availability · 2026</span>
+          </div>
+          <h2>Open to the right conversations.</h2>
+          <p>Based in the South of France, working globally. If the problem is real and the fit is right, I'm interested.</p>
+          <div class="row"><span class="k">Speaking</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Advisory</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Writing</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Coaching</span><span class="v ok">Open</span></div>
+        </div>
+
+        <div class="card info-card">
+          <h3>Direct channels</h3>
+          <a href="mailto:hello@jasonnellis.com" class="channel">
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            <div><div class="t">hello@jasonnellis.com</div><div class="s">Plain email · responds in &lt; 48h</div></div>
+            <span class="meta">↗</span>
+          </a>
+          
+          <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="channel">
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
+            <div><div class="t">LinkedIn</div><div class="s">Slowest, but always answered</div></div>
+            <span class="meta">↗</span>
+          </a>
+          
+        </div>
+
+        <div class="clock">
+          <div>
+            <div class="lbl">My local time</div>
+            <div class="v accent" id="time-local">14:32</div>
+            <div class="place">South of France · UTC+1/+2</div>
+          </div>
+          <div class="div"></div>
+          <div>
+            <div class="lbl">Yours</div>
+            <div class="v" id="time-you">—</div>
+            <div class="place" id="tz-you">detecting…</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="section-eyebrow"><span class="num">02</span> A few common questions</div>
+      <div class="faq-list">
+        <details class="faq" open>
+          <summary>What does working together actually look like?<span class="chev">+</span></summary>
+          <div class="body">
+            <p>It depends on what you need. Advisory usually starts with a scoping conversation — I want to understand the problem before suggesting a format or commitment. Speaking and workshops are scoped individually. Writing engagements vary by project. The best first step is a message with enough context for me to know whether I can actually help.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>Will you sign an NDA before we talk?<span class="chev">+</span></summary>
+          <div class="body">
+            <p>For the first conversation, no — a one-page NDA is more friction than the conversation is worth, and I keep introductions confidential by default. For project work, yes, gladly. I have a standard mutual NDA I can send you in &lt; 24h.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>Speaking — do you charge?<span class="chev">+</span></summary>
+          <div class="body">
+            <p>For corporate events: yes, with a sliding scale that goes to zero for genuinely independent meetups, university talks, and conferences whose tickets cap below $300. Travel is always covered.</p>
+          </div>
+        </details>
+        <details class="faq">
+          <summary>I sent something a week ago and haven't heard back.<span class="chev">+</span></summary>
+          <div class="body">
+            <p>Apologies — please send it again with <code>nudge</code> in the subject. The most common cause is an over-eager spam filter; the second most common is me being on a flight without working wifi.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer" data-screen-label="footer">
+  <div class="site-footer__inner">
+    <div>
+      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Strategist · Writer</small></span></a>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
+      <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
+    </div>
+    <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="contact.html">Contact</a></div>
+    <div><h4>Elsewhere</h4><a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
+    <div><h4>Subscribe</h4><a href="blog.html#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
+  </div>
+  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span></div>
+</footer>
+
+<script>
+  // Live clock — Berlin and viewer
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    const now = new Date();
+    // Local viewer
+    const hh = pad(now.getHours()), mm = pad(now.getMinutes());
+    const tEl = document.getElementById('time-you'); if (tEl) tEl.textContent = hh + ':' + mm;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
+    const off = -now.getTimezoneOffset() / 60;
+    const offS = (off >= 0 ? '+' : '') + off;
+    const tzEl = document.getElementById('tz-you'); if (tzEl) tzEl.textContent = tz.replace('_', ' ') + ' · UTC' + offS;
+    // Berlin
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false });
+    const lEl = document.getElementById('time-local'); if (lEl) lEl.textContent = fmt.format(now);
+  }
+  tick(); setInterval(tick, 1000 * 30);
+</script>
+
+</body>
+</html>
