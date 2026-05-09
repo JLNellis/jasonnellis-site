@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CV — Jason Nellis</title>
-<meta name="description" content="Career history for Jason Nellis — product and GTM strategist in media, technology, and the creator economy.">
 <link rel="stylesheet" href="site.css">
 <style>
   /* Two-column CV layout */
@@ -52,6 +51,7 @@
   .skill { font-size: 13px; }
   .skill .top { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .skill .top .lbl { color: var(--fg-1); }
+  .skill .top .yrs { font-family: var(--font-mono); color: var(--fg-3); font-size: 11px; }
   .skill .bar { height: 4px; background: var(--bg-card); border-radius: 999px; overflow: hidden; position: relative; }
   .skill .bar::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; background: var(--color-accent-vivid); border-radius: 999px; width: var(--w, 50%); }
 
@@ -88,21 +88,20 @@
   .xp-head .at { color: var(--color-accent-vivid); font-size: 14px; }
   .xp-head .role { color: var(--fg-2); font-size: 13px; }
   .xp-summary { color: var(--fg-2); font-size: 14px; line-height: 1.7; margin: 6px 0 16px; max-width: 640px; }
-  .xp-bullets { list-style: none; padding: 0 0 0 20px; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .xp-bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .xp-bullets li {
-    position: relative;
+    display: flex; gap: 12px; align-items: flex-start;
     font-size: 14px; line-height: 1.6; color: var(--fg-1);
   }
   .xp-bullets li::before {
-    content: ""; position: absolute; left: -16px; top: 9px;
-    width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-vivid);
-    box-shadow: 0 0 8px var(--color-accent-vivid);
+    content: ""; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-vivid);
+    margin-top: 9px; box-shadow: 0 0 8px var(--color-accent-vivid);
   }
-  .xp-bullets li strong { color: #FFF; font-weight: 500; }
+  .xp-bullets li strong { color: #FFF; font-weight: 500; font-variant-numeric: tabular-nums; }
   .xp-meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
   .xp-meta-row .item { font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); }
 
-  /* Media / publications grid */
+  /* Talks / publications grid */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .mini-card { padding: 18px; }
   .mini-card .where { font-size: 11px; color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -116,6 +115,7 @@
   .edu-row .what { font-size: 14px; color: #FFF; }
   .edu-row .where { font-size: 13px; color: var(--fg-2); text-align: right; }
 
+  /* print styles */
   @media print {
     body { background: #FFF; color: #0F172A; }
     .site-header, .site-footer, .cv-actions { display: none; }
@@ -142,14 +142,15 @@
   <div class="site-header__inner">
     <a href="index.html" class="brand">
       <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
+      <span class="name">Jason Nellis<small>Precision Engine</small></span>
     </a>
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="blog.html">Writing</a>
       <a href="cv.html" aria-current="page">CV</a>
+      <a href="bio.html">About</a>
       <a href="contact.html">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Available for work</span>
     </nav>
   </div>
 </header>
@@ -160,29 +161,34 @@
 
       <!-- LEFT META COLUMN -->
       <aside class="cv-side">
-        <div class="cv-portrait">
-          <img src="jason-headshot.jpg" alt="Jason Nellis" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;border-radius:12px;">
+        <div class="cv-portrait" aria-label="Portrait placeholder">
+          <div class="ring ring3"></div>
+          <div class="ring ring2"></div>
+          <div class="ring"></div>
+          <div class="initials">JN</div>
+          <div class="corner tl">JN-2026</div>
+          <div class="corner br">● ACTIVE</div>
         </div>
 
         <div class="group">
           <h3>Profile</h3>
           <div class="meta-list">
-            <div class="row"><span class="k">Based in</span><span class="v">France</span></div>
+            <div class="row"><span class="k">Based in</span><span class="v">Berlin, DE</span></div>
             <div class="row"><span class="k">Pronouns</span><span class="v">he/him</span></div>
             <div class="row"><span class="k">Time zone</span><span class="v">UTC+1 / +2</span></div>
-            <div class="row"><span class="k">Available</span><span class="v" style="color: var(--color-accent-vivid)">Worldwide</span></div>
+            <div class="row"><span class="k">Status</span><span class="v" style="color: var(--color-accent-vivid)">Open</span></div>
           </div>
         </div>
 
         <div class="group">
-          <h3>Strengths</h3>
+          <h3>Top stack</h3>
           <div class="skill-list">
-            <div class="skill"><div class="top"><span class="lbl">Product strategy</span></div><div class="bar" style="--w: 96%"></div></div>
-            <div class="skill"><div class="top"><span class="lbl">Go-to-market</span></div><div class="bar" style="--w: 90%"></div></div>
-            <div class="skill"><div class="top"><span class="lbl">Storytelling</span></div><div class="bar" style="--w: 94%"></div></div>
-            <div class="skill"><div class="top"><span class="lbl">Business development</span></div><div class="bar" style="--w: 86%"></div></div>
-            <div class="skill"><div class="top"><span class="lbl">Creator economy</span></div><div class="bar" style="--w: 92%"></div></div>
-            <div class="skill"><div class="top"><span class="lbl">Team leadership</span></div><div class="bar" style="--w: 84%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Go · Rust</span><span class="yrs">9 yrs</span></div><div class="bar" style="--w: 92%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Distributed systems</span><span class="yrs">10 yrs</span></div><div class="bar" style="--w: 96%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Postgres / SQL</span><span class="yrs">12 yrs</span></div><div class="bar" style="--w: 88%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Observability</span><span class="yrs">7 yrs</span></div><div class="bar" style="--w: 84%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Team leadership</span><span class="yrs">6 yrs</span></div><div class="bar" style="--w: 76%"></div></div>
+            <div class="skill"><div class="top"><span class="lbl">Kubernetes / infra</span><span class="yrs">5 yrs</span></div><div class="bar" style="--w: 68%"></div></div>
           </div>
         </div>
 
@@ -190,19 +196,17 @@
           <h3>Languages</h3>
           <div class="tag-list">
             <span class="t">English · native</span>
-            <span class="t">Spanish · working</span>
+            <span class="t">German · C1</span>
+            <span class="t">Spanish · B1</span>
           </div>
         </div>
 
         <div class="group">
-          <h3>Focus areas</h3>
+          <h3>Tools</h3>
           <div class="tag-list">
-            <span class="t">Creator Economy</span>
-            <span class="t">Media &amp; Tech</span>
-            <span class="t">Monetization</span>
-            <span class="t">Early-Stage Product</span>
-            <span class="t">Narrative Strategy</span>
-            <span class="t">GTM Systems</span>
+            <span class="t">Postgres</span><span class="t">Kafka</span><span class="t">ClickHouse</span>
+            <span class="t">OpenTelemetry</span><span class="t">Kubernetes</span><span class="t">Terraform</span>
+            <span class="t">React</span><span class="t">Linear</span>
           </div>
         </div>
       </aside>
@@ -211,8 +215,8 @@
       <div class="cv-main">
         <div class="section-eyebrow"><span class="num">CV</span> Updated May 2026</div>
         <h1>Jason Nellis</h1>
-        <p class="role">Chief Product Officer · Product &amp; GTM Strategist · Writer</p>
-        <p class="summary"><strong>I tend to show up when something should be working, but isn't.</strong> The strategy looks right. The team is strong. There's momentum on paper. But underneath, something's off — and no one can quite name it. I work across product strategy and monetization, mostly in the creator and media ecosystem, where there's still a wide gap between attention and actual value. The throughline is simple: take something ambiguous but promising, and turn it into a system that generates value.</p>
+        <p class="role">Staff Platform Engineer · Systems thinker · Writer</p>
+        <p class="summary"><strong>Twelve years of building infrastructure that quietly does its job.</strong> I work on the hard middle layer — ledgers, telemetry, ingest pipelines — where reliability is a contract and latency is a number. I lead small teams (4–6) by preference, write extensively about the craft, and treat on-call as a design constraint, not a duty.</p>
 
         <div class="cv-actions">
           <a href="#" class="btn primary" onclick="event.preventDefault(); window.print()">
@@ -228,201 +232,147 @@
         <section class="cv-section">
           <h2><span class="num">01</span> Experience</h2>
 
-          <!-- BoltOS placeholder -->
           <div class="xp-entry">
             <div class="xp-when">
-              2026 — Present
+              2024 — Present
               <div class="now"><span class="live-dot"></span>Current</div>
             </div>
             <div>
               <div class="xp-head">
-                <h3>BoltOS</h3>
+                <h3>Bolt OS</h3>
                 <span class="at">·</span>
-                <span class="role">Head of Innovation &amp; Strategy</span>
+                <span class="role">Founding Staff Platform Engineer</span>
               </div>
-              <p class="xp-summary">Leading innovation and product strategy. Details to follow.</p>
-              <div class="xp-meta-row">
-                <span class="item">Strategy · Product · Innovation</span>
-                <span class="item">France · Remote-first</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- SuperBam -->
-          <div class="xp-entry">
-            <div class="xp-when">2024 — 2026</div>
-            <div>
-              <div class="xp-head">
-                <h3>SuperBam</h3>
-                <span class="at">·</span>
-                <span class="role">Interim CEO · Chief Product Officer</span>
-              </div>
-              <p class="xp-summary">Joined as CPO to build the product organization from the ground up, then stepped in as Interim CEO in Q1 2026. SuperBam operates in creator IP protection and monetization — an environment where the roadmap doesn't exist yet, and the job is deciding what's worth building in the first place.</p>
+              <p class="xp-summary">Co-founded the platform that became Bolt OS — real-time observability and incident workflow for distributed systems. Owner of ingest, storage, and the alerting plane.</p>
               <ul class="xp-bullets">
-                <li>Built and shipped <strong>Shield</strong> (content protection and monetization) and <strong>Amplify</strong> (content production and distribution) from early concept to product.</li>
-                <li>Developed and launched an <strong>AI deepfake takedown system</strong> for creator IP protection.</li>
-                <li>Designed and implemented the company's core <strong>Payment Engine</strong> and ingestion platform.</li>
-                <li>Corrected operational burn rate and restructured product vs. services cost allocation to bring the business to a sustainable footing.</li>
-                <li>Stepped in as Interim CEO to stabilize leadership and direction during a critical transition period.</li>
+                <li>Designed and shipped a streaming ingest pipeline reaching <strong>8 PB / month</strong> at p99 <strong>42 ms</strong>, on a 5-engineer team.</li>
+                <li>Took the platform from clean sheet to <strong>17 paying design partners</strong> in 14 months.</li>
+                <li>Built the on-call rotation, the runbook discipline, and the postmortem template that the rest of the company now uses.</li>
+                <li>Hired and mentored 4 engineers; two now run their own surfaces.</li>
               </ul>
               <div class="xp-meta-row">
-                <span class="item">Creator Economy · IP</span>
-                <span class="item">CPO → CEO</span>
-                <span class="item">Los Angeles</span>
+                <span class="item">Go · Rust · ClickHouse</span>
+                <span class="item">Kafka · OpenTelemetry</span>
+                <span class="item">Berlin · Remote-first</span>
               </div>
             </div>
           </div>
 
-          <!-- Jogg -->
           <div class="xp-entry">
-            <div class="xp-when">2023 — 2024</div>
+            <div class="xp-when">2021 — 2024</div>
             <div>
               <div class="xp-head">
-                <h3>Jogg, Inc.</h3>
+                <h3>Northwind Pay</h3>
                 <span class="at">·</span>
-                <span class="role">Chief Product Officer</span>
+                <span class="role">Principal Engineer · Risk &amp; Ledger</span>
               </div>
-              <p class="xp-summary">Served as CPO at an early-stage AI video company in the creator and media space, responsible for defining what was worth building before a roadmap existed.</p>
+              <p class="xp-summary">Owner of the double-entry ledger and fraud pipeline at a mid-stage payments company processing <strong>$11 B</strong>/yr in volume.</p>
               <ul class="xp-bullets">
-                <li>Shaped product vision and go-to-market strategy in a pre-product-market-fit environment, translating ambiguous opportunity into structured direction.</li>
-                <li>Worked across product, monetization, and narrative to build a coherent offering in a rapidly moving AI video landscape.</li>
+                <li>Rebuilt the ledger from a Postgres-only design to a hybrid log + materialized-view architecture; <strong>p99 1,200 ms → 80 ms</strong>.</li>
+                <li>Led the engineering side of a regulator audit that cleared in <strong>11 days</strong> — the previous one had taken 9 weeks.</li>
+                <li>Reduced fraud false-positive rate by <strong>34%</strong> while cutting infra cost on the pipeline by <strong>2.6×</strong>.</li>
+                <li>Wrote the internal book on idempotency that's now part of new-engineer onboarding.</li>
               </ul>
               <div class="xp-meta-row">
-                <span class="item">Early-Stage Product</span>
-                <span class="item">AI · Video · Creator</span>
-                <span class="item">Los Angeles</span>
+                <span class="item">Postgres · Kafka · Go</span>
+                <span class="item">Compliance · PCI</span>
+                <span class="item">Team of 6</span>
               </div>
             </div>
           </div>
 
-          <!-- Meta -->
           <div class="xp-entry">
-            <div class="xp-when">2019 — 2023</div>
+            <div class="xp-when">2018 — 2021</div>
             <div>
               <div class="xp-head">
-                <h3>Meta</h3>
+                <h3>Lattice Labs</h3>
                 <span class="at">·</span>
-                <span class="role">Founder in Residence · Product Director · Strategic Partner Manager</span>
+                <span class="role">Tech Lead · Data Graph</span>
               </div>
-              <p class="xp-summary">Spent nearly four years across multiple roles as Meta expanded aggressively into creator commerce. Entered through the acquisition of Packagd and grew into increasingly senior product and strategy roles.</p>
+              <p class="xp-summary">Lead engineer on a graph-native query layer that became Lattice's flagship product. <strong>Acquired in 2021</strong> for an undisclosed amount.</p>
               <ul class="xp-bullets">
-                <li>Became <strong>Meta's first Founder in Residence</strong> — a role built around incubating new product concepts with startup velocity inside a large organization.</li>
-                <li>Built <strong>Facebook Live Shopping</strong> from early concept through market launch inside NPE (New Product Experimentation).</li>
-                <li>Served as Product Director on <strong>Super</strong>, Meta's creator monetization product, overseeing product strategy and platform partner relationships.</li>
-                <li>Started as Strategic Partnership Manager for Commerce, building the framework for creator and commerce partner integrations at scale.</li>
+                <li>Designed the storage engine and the cost-based query planner from scratch; the engine still runs in production at the acquirer.</li>
+                <li>Took a 3-engineer prototype to a 9-engineer product org over two years.</li>
+                <li>Negotiated the technical due-diligence portion of the acquisition.</li>
               </ul>
               <div class="xp-meta-row">
-                <span class="item">Creator Commerce · NPE</span>
-                <span class="item">Social Commerce</span>
-                <span class="item">San Francisco · Los Angeles</span>
+                <span class="item">Rust · RocksDB · custom MVCC</span>
+                <span class="item">Acquisition · 2021</span>
               </div>
             </div>
           </div>
 
-          <!-- Packagd -->
           <div class="xp-entry">
-            <div class="xp-when">2017 — 2019</div>
+            <div class="xp-when">2014 — 2018</div>
             <div>
               <div class="xp-head">
-                <h3>Packagd</h3>
+                <h3>Compass Robotics</h3>
                 <span class="at">·</span>
-                <span class="role">Co-Founder · Head of Marketing</span>
+                <span class="role">Senior Engineer · Fleet Software</span>
               </div>
-              <p class="xp-summary">Co-founded a creator monetization startup built around the emerging intersection of video, community, and commerce. <strong>Acquired by Facebook in 2019.</strong></p>
+              <p class="xp-summary">Started as a backend engineer on the warehouse robotics fleet. By the time I left, I owned the dispatch service running across <strong>14 sites</strong>.</p>
               <ul class="xp-bullets">
-                <li>Built and led marketing and growth from zero, establishing the brand and distribution strategy that contributed to the acquisition.</li>
-                <li>Navigated the full lifecycle of an early-stage startup — from initial concept through fundraising, product development, and acquisition.</li>
+                <li>Cut the average task assignment latency by <strong>3.4×</strong> through a rewrite of the dispatcher in Go.</li>
+                <li>Wrote the simulator that's still used to validate new dispatch policies before they hit a real warehouse.</li>
               </ul>
               <div class="xp-meta-row">
-                <span class="item">Co-Founder</span>
-                <span class="item">Acquired · Meta / Facebook · 2019</span>
-                <span class="item">San Francisco</span>
+                <span class="item">Go · Python · ROS</span>
+                <span class="item">First job. Stayed nearly four years.</span>
               </div>
             </div>
           </div>
-
-          <!-- Overachiever Media -->
-          <div class="xp-entry">
-            <div class="xp-when">2013 — 2016</div>
-            <div>
-              <div class="xp-head">
-                <h3>Overachiever Media</h3>
-                <span class="at">·</span>
-                <span class="role">Founder · CEO</span>
-              </div>
-              <p class="xp-summary">Founded a content marketing and media agency in Washington, DC, helping companies tell their story online through social media, video, blogging, and digital strategy. <strong>Acquired by Brllnt in 2016.</strong></p>
-              <ul class="xp-bullets">
-                <li>Built the agency from zero to a client roster that included the <strong>Washington Wizards and Capitals, Vimeo, and Hostelling International USA</strong>.</li>
-                <li>Delivered video creation and distribution, digital marketing strategy, A/B testing, UX/UI, and product development across clients.</li>
-              </ul>
-              <div class="xp-meta-row">
-                <span class="item">Founder</span>
-                <span class="item">Acquired · Brllnt · 2016</span>
-                <span class="item">Washington, DC</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hulu -->
-          <div class="xp-entry">
-            <div class="xp-when">2008 — 2012</div>
-            <div>
-              <div class="xp-head">
-                <h3>Hulu</h3>
-                <span class="at">·</span>
-                <span class="role">Content Partner Manager · Associate CPM · Technology Coordinator</span>
-              </div>
-              <p class="xp-summary">Joined Hulu in its earliest years and grew with the company across nearly five years and three roles. Learned what platform scale actually demands — and the real distance between a good idea and an executable product.</p>
-              <ul class="xp-bullets">
-                <li>Managed content partner relationships as the platform's catalog and distribution strategy matured through the formative years of streaming.</li>
-                <li>Bridged technical and business teams at a pivotal moment in media — when it was still unclear whether streaming would win.</li>
-              </ul>
-              <div class="xp-meta-row">
-                <span class="item">Media · Streaming</span>
-                <span class="item">Early-Stage to Scale</span>
-                <span class="item">Los Angeles</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Earlier -->
-          <div class="xp-entry">
-            <div class="xp-when">Earlier</div>
-            <div>
-              <div class="xp-head">
-                <h3>Earlier roles</h3>
-              </div>
-              <p class="xp-summary">PBS Distribution (Senior Associate, Digital Distribution), VIZIO (Senior Product Marketing Manager), Dick Clark Productions (Production Assistant). Available on request.</p>
-            </div>
-          </div>
-
         </section>
 
-        <!-- MEDIA & PUBLICATIONS -->
+        <!-- TALKS / PUBLICATIONS -->
         <section class="cv-section">
-          <h2><span class="num">02</span> Media &amp; publications</h2>
+          <h2><span class="num">02</span> Talks &amp; publications</h2>
           <div class="grid-2">
             <div class="card mini-card">
-              <div class="where">Podcast · Host</div>
-              <div class="t">Building Value with Jason Nellis</div>
-              <div class="when">2023 – 2025 · linktr.ee/jasonnellis</div>
+              <div class="where">SREcon · Dublin</div>
+              <div class="t">"Designing for the postmortem you haven't written yet"</div>
+              <div class="when">Mar 2026 · Keynote · 38 min</div>
             </div>
             <div class="card mini-card">
-              <div class="where">LinkedIn · Article</div>
-              <div class="t">What's It Like to Work at Hulu</div>
-              <div class="when">linkedin.com/in/jasonnellis</div>
+              <div class="where">Strange Loop · Online</div>
+              <div class="t">"A small history of consistency"</div>
+              <div class="when">Sep 2025 · Talk · 42 min</div>
+            </div>
+            <div class="card mini-card">
+              <div class="where">ACM Queue · Article</div>
+              <div class="t">"On the cost of optionality in stream APIs"</div>
+              <div class="when">Jun 2025 · Co-author</div>
+            </div>
+            <div class="card mini-card">
+              <div class="where">QCon · London</div>
+              <div class="t">"The on-call rotation as a feature spec"</div>
+              <div class="when">Apr 2024 · Talk · 30 min</div>
             </div>
           </div>
         </section>
 
-        <!-- EDUCATION -->
+        <!-- EDUCATION & RECOGNITION -->
         <section class="cv-section">
-          <h2><span class="num">03</span> Education</h2>
+          <h2><span class="num">03</span> Education &amp; recognition</h2>
           <div class="edu-list">
             <div class="edu-row">
-              <span class="when">2002 – 2006</span>
-              <span class="what">B.S. Communication · Theatre</span>
-              <span class="where">Northwestern University</span>
+              <span class="when">2010 — 2014</span>
+              <span class="what">B.Sc. Computer Science · honours</span>
+              <span class="where">University of Edinburgh</span>
+            </div>
+            <div class="edu-row">
+              <span class="when">2013</span>
+              <span class="what">CMU exchange semester · distributed systems concentration</span>
+              <span class="where">Carnegie Mellon</span>
+            </div>
+            <div class="edu-row">
+              <span class="when">2022</span>
+              <span class="what">"Builder of the year" — internal · Northwind Pay</span>
+              <span class="where">Recognition</span>
+            </div>
+            <div class="edu-row">
+              <span class="when">2019</span>
+              <span class="what">Open-source maintainer · <code>graph-iter</code> (5.2k stars)</span>
+              <span class="where">Public</span>
             </div>
           </div>
         </section>
@@ -430,9 +380,8 @@
         <!-- REFERENCES -->
         <section class="cv-section">
           <h2><span class="num">04</span> References</h2>
-          <p class="xp-summary" style="max-width: 600px">Available on request. Reach out via the <a class="bolt" href="contact.html">contact page</a>.</p>
+          <p class="xp-summary" style="max-width: 600px">Available on request. Three former managers, two former reports, and a regulator who'd rather I gave them my number first. Reach out via the <a class="bolt" href="contact.html">contact page</a>.</p>
         </section>
-
       </div>
     </div>
   </div>
@@ -441,15 +390,15 @@
 <footer class="site-footer" data-screen-label="footer">
   <div class="site-footer__inner">
     <div>
-      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Strategist · Writer</small></span></a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
+      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Precision Engine</small></span></a>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Personal site — built with restraint, kept honest by tabular numerals.</p>
       <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
     </div>
-    <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="contact.html">Contact</a></div>
-    <div><h4>Elsewhere</h4><a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
+    <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="bio.html">About</a><a href="contact.html">Contact</a></div>
+    <div><h4>Elsewhere</h4><a href="https://github.com/jnellis" target="_blank" rel="noopener">GitHub ↗</a><a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
     <div><h4>Subscribe</h4><a href="blog.html#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
   </div>
-  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span></div>
+  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span><span class="meta">Bolt OS design system · v 2.6</span></div>
 </footer>
 
 </body>

@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Jason Nellis</title>
+<meta name="description" content="Jason Nellis — performer who writes, builder who thinks, father who shows up. The longer story, in his own words.">
+<link rel="stylesheet" href="site.css">
+<style>
+
+  /* ---- Hero: split layout ---- */
+  .bio-hero {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 0;
+    min-height: 88vh;
+    align-items: stretch;
+  }
+
+  /* Left: portrait */
+  .bio-portrait-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+  .bio-portrait-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 12%;
+    display: block;
+    filter: contrast(1.04) saturate(0.92);
+  }
+  /* Gradient vignette toward the right edge to blend into text column */
+  .bio-portrait-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, transparent 55%, var(--bg-base) 100%),
+      linear-gradient(to bottom, transparent 60%, rgba(10,37,64,0.55) 100%);
+  }
+  /* Coordinate readout — top-left corner label */
+  .bio-portrait-wrap .coords {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.7);
+    line-height: 1.8;
+  }
+  /* Scan line — purely decorative */
+  .bio-portrait-wrap .scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
+    animation: scandown 7s linear infinite;
+    z-index: 3;
+    pointer-events: none;
+  }
+  @keyframes scandown {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  /* Right: intro text */
+  .bio-intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 64px 80px 56px;
+  }
+  .bio-intro .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-vivid);
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .bio-intro .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--color-accent-vivid);
+  }
+  .bio-intro h1 {
+    font-size: clamp(36px, 4.5vw, 60px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    margin: 0 0 28px;
+    max-width: 14ch;
+  }
+  .bio-intro h1 em {
+    font-style: normal;
+    color: var(--fg-2);
+    font-weight: 400;
+  }
+  .bio-intro .tagline {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--fg-2);
+    max-width: 480px;
+    margin: 0 0 36px;
+  }
+  .bio-intro .tagline strong {
+    color: var(--fg-1);
+    font-weight: 500;
+  }
+  /* Quick-facts pill row */
+  .bio-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .bio-facts .fact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    letter-spacing: 0.04em;
+  }
+  .bio-facts .fact .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-accent-vivid);
+    box-shadow: 0 0 8px rgba(0,230,118,0.6);
+    flex-shrink: 0;
+  }
+
+  /* CTA row */
+  .bio-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ---- Divider strip ---- */
+  .bio-divider {
+    border-top: 1px solid var(--border-subtle);
+    margin: 0;
+  }
+
+  /* ---- Narrative section ---- */
+  .bio-narrative {
+    padding: 96px 0;
+  }
+  .bio-narrative-inner {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .bio-narrative-label {
+    position: sticky;
+    top: 96px;
+  }
+  .bio-narrative-label .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-accent-vivid);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .bio-narrative-label h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg-2);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .bio-narrative-body {
+    max-width: 640px;
+  }
+  .bio-narrative-body p {
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--fg-2);
+    margin: 0 0 28px;
+  }
+  .bio-narrative-body p:last-child { margin-bottom: 0; }
+  .bio-narrative-body p strong {
+    color: var(--fg-1);
+    font-weight: 500;
+  }
+  /* Pull quote treatment */
+  .bio-pull {
+    border-left: 2px solid var(--color-accent-vivid);
+    padding: 4px 0 4px 24px;
+    margin: 40px 0;
+  }
+  .bio-pull p {
+    font-size: 22px !important;
+    line-height: 1.5 !important;
+    color: var(--fg-1) !important;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---- Timeline section ---- */
+  .bio-timeline {
+    padding: 0 0 96px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .bio-timeline-inner {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    padding-top: 64px;
+    align-items: start;
+  }
+  .bio-timeline-label {
+    position: sticky;
+    top: 96px;
+  }
+  .bio-timeline-label .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-accent-vivid);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .bio-timeline-label h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg-2);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .timeline-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .tl-entry {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    align-items: baseline;
+  }
+  .tl-entry:first-child { padding-top: 0; }
+  .tl-entry .tl-year {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+    padding-top: 2px;
+  }
+  .tl-entry .tl-year .tl-now {
+    color: var(--color-accent-vivid);
+  }
+  .tl-entry .tl-body {}
+  .tl-entry .tl-role {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg-1);
+    margin-bottom: 3px;
+  }
+  .tl-entry .tl-org {
+    font-size: 12px;
+    color: var(--fg-3);
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+  .tl-entry .tl-note {
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+
+  /* ---- Now strip ---- */
+  .bio-now {
+    background: var(--bg-deep);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 64px 0;
+  }
+  .bio-now-inner {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .bio-now-label .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-accent-vivid);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .bio-now-label h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg-2);
+    margin: 0;
+  }
+  .bio-now-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .now-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 22px 20px;
+  }
+  .now-card .nc-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-3);
+    margin-bottom: 10px;
+  }
+  .now-card .nc-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg-1);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .now-card .nc-body {
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.6;
+  }
+  .now-card .nc-accent {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent-vivid);
+  }
+  .now-card .nc-accent::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-vivid);
+    box-shadow: 0 0 8px rgba(0,230,118,0.5);
+    display: inline-block;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .bio-hero { grid-template-columns: 1fr; min-height: auto; }
+    .bio-portrait-wrap { height: 65vw; max-height: 420px; }
+    .bio-portrait-wrap::after {
+      background: linear-gradient(to bottom, transparent 55%, var(--bg-base) 100%);
+    }
+    .bio-intro { padding: 48px 24px; }
+    .bio-narrative-inner,
+    .bio-timeline-inner,
+    .bio-now-inner { grid-template-columns: 1fr; gap: 32px; }
+    .bio-narrative-label,
+    .bio-timeline-label,
+    .bio-now-label { position: static; }
+    .bio-now-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .bio-intro h1 { font-size: 34px; }
+    .bio-now-grid { grid-template-columns: 1fr; }
+  }
+
+</style>
+</head>
+<body class="bolt-os">
+
+<!-- ===================== HEADER ===================== -->
+<header class="site-header" data-screen-label="header">
+  <div class="site-header__inner">
+    <a href="index.html" class="brand">
+      <span class="mark">JN</span>
+      <span class="name">Jason Nellis<small>Precision Engine</small></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Writing</a>
+      <a href="cv.html">CV</a>
+      <a href="bio.html" aria-current="page">About</a>
+      <a href="contact.html">Contact</a>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Available for work</span>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<main class="atmos" data-screen-label="01 bio-hero">
+
+  <div class="bio-hero">
+
+    <!-- Portrait column -->
+    <div class="bio-portrait-wrap">
+      <div class="coords">
+        43°33'N 7°01'E<br>
+        Cannes, FR · 2025
+      </div>
+      <div class="scan"></div>
+      <img src="IMG_0205.jpg" alt="Jason Nellis, smiling on a street in the south of France">
+    </div>
+
+    <!-- Text column -->
+    <div class="bio-intro">
+      <p class="eyebrow">About Jason Nellis</p>
+      <h1>Performer who writes.<br><em>Builder who thinks.</em></h1>
+      <p class="tagline">
+        The career came after the diagnosis. The diagnosis came at 19.
+        Everything between then and now has been <strong>an argument against deferring the interesting life.</strong>
+      </p>
+
+      <div class="bio-facts">
+        <span class="fact"><span class="dot"></span>Near Cannes, France</span>
+        <span class="fact"><span class="dot"></span>Father of Kit &amp; Ace</span>
+        <span class="fact"><span class="dot"></span>Northwestern '06</span>
+        <span class="fact"><span class="dot"></span>Builder since Hulu</span>
+      </div>
+
+      <div class="bio-ctas">
+        <a href="cv.html" class="btn primary">View CV</a>
+        <a href="contact.html" class="btn ghost">Get in touch</a>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ===================== NARRATIVE ===================== -->
+<section class="bio-narrative" data-screen-label="02 narrative">
+  <div class="page-wrap">
+    <div class="bio-narrative-inner">
+
+      <div class="bio-narrative-label">
+        <span class="num">01 · The longer story</span>
+        <h2>Why behind<br>the career.</h2>
+      </div>
+
+      <div class="bio-narrative-body">
+
+        <p>
+          When Jason was 19, doctors told him he had <strong>Stage 2B Hodgkin's lymphoma.</strong>
+          He was in college — Northwestern, Theatre major, the kind of kid who was more comfortable
+          onstage than in a doctor's office. He went through chemo and radiation and still finished
+          school. Then moved to Los Angeles instead of back to the East Coast, because the
+          alternative was playing it safe, and playing it safe now had a specific cost he could
+          actually feel.
+        </p>
+
+        <div class="bio-pull">
+          <p>"Someday" stopped being a safe assumption that year. It never really came back.</p>
+        </div>
+
+        <p>
+          That urgency turned out to be a useful professional trait. He joined <strong>Hulu during its
+          formative years</strong> — not with a plan, but with a pattern: find something worth building,
+          figure out where the real leverage is, and make the thing nobody else is paying attention
+          to yet. He co-founded Packagd, which <strong>Facebook acquired.</strong> He built Facebook Live
+          Shopping inside Meta's NPE team, and became the company's first Founder in Residence.
+          He signed on as Chief Product Officer at SuperBam and eventually ran the company as
+          Interim CEO while it navigated a genuine crisis.
+        </p>
+
+        <p>
+          None of those moves followed a strategy document. They followed a gut sense for
+          systems — which ones were ready to break open, which ones needed someone to care
+          more carefully than the people already in charge. <strong>He's a high-context thinker
+          who leads with narrative first</strong>, which occasionally confuses people who want a
+          slide deck before they want to understand the problem, and works extraordinarily
+          well with everyone else.
+        </p>
+
+        <p>
+          In April 2025, he moved his family to the south of France. Not a sabbatical.
+          Not a midlife gesture. A deliberate restructuring of what a life looks like when
+          you stop optimizing for someone else's definition of success — and start building
+          something that doesn't require a negotiated exit to actually enjoy.
+          He writes, advises, and builds from there. His two sons, Kit and Ace,
+          are his best proof of concept.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bio-divider"></div>
+
+<!-- ===================== TIMELINE ===================== -->
+<section class="bio-timeline" data-screen-label="03 timeline">
+  <div class="page-wrap">
+    <div class="bio-timeline-inner">
+
+      <div class="bio-timeline-label">
+        <span class="num">02 · Career arc</span>
+        <h2>The condensed<br>version.</h2>
+      </div>
+
+      <div class="timeline-entries">
+
+        <div class="tl-entry">
+          <div class="tl-year">2007 – 2012</div>
+          <div class="tl-body">
+            <div class="tl-role">Early Product & Growth</div>
+            <div class="tl-org">Hulu</div>
+            <div class="tl-note">Joined during the formative years. Learned the difference between good ideas and executable products — and developed a permanent taste for building at scale.</div>
+          </div>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-year">2012 – 2016</div>
+          <div class="tl-body">
+            <div class="tl-role">Operator, founder, cautionary tale</div>
+            <div class="tl-org">PBS · Marketing agency · Vizio</div>
+            <div class="tl-note">Ran editorial product at PBS. Founded a marketing agency. Sold it in a deal so spectacularly bad it became its own syllabus. Learned execution risk the hard way.</div>
+          </div>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-year">2016 – 2020</div>
+          <div class="tl-body">
+            <div class="tl-role">Co-founder → Founder in Residence</div>
+            <div class="tl-org">Packagd → Meta (Facebook)</div>
+            <div class="tl-note">Co-founded Packagd; acquired by Facebook in 2016. Built Facebook Live Shopping inside NPE. Became Meta's first-ever Founder in Residence — startup operator inside a very large machine.</div>
+          </div>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-year">2020 – 2025</div>
+          <div class="tl-body">
+            <div class="tl-role">CPO → Interim CEO</div>
+            <div class="tl-org">SuperBam</div>
+            <div class="tl-note">Led product across creator IP protection, content monetization, and AI deepfake enforcement. Stepped into the Interim CEO seat during Q1 2026 to steer the company through a significant restructuring.</div>
+          </div>
+        </div>
+
+        <div class="tl-entry">
+          <div class="tl-year"><span class="tl-now">Now →</span></div>
+          <div class="tl-body">
+            <div class="tl-role">Head of Innovation & Strategy · Co-founder</div>
+            <div class="tl-org">BoltOS · Akaeon Corp</div>
+            <div class="tl-note">Building at the intersection of AI strategy and product leadership. Co-founded Akaeon Corp with Jenn. Writing, advising, and designing a life worth living — from France.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NOW ===================== -->
+<section class="bio-now" data-screen-label="04 now">
+  <div class="page-wrap">
+    <div class="bio-now-inner">
+
+      <div class="bio-now-label">
+        <span class="num">03 · Right now</span>
+        <h2>What's live<br>this quarter.</h2>
+      </div>
+
+      <div class="bio-now-grid">
+
+        <div class="now-card">
+          <div class="nc-eyebrow">Work</div>
+          <div class="nc-title">BoltOS — Head of Innovation & Strategy</div>
+          <div class="nc-body">Shaping the product and go-to-market strategy for the next iteration of AI-native operating infrastructure.</div>
+          <div class="nc-accent">Active</div>
+        </div>
+
+        <div class="now-card">
+          <div class="nc-eyebrow">Venture</div>
+          <div class="nc-title">Akaeon Corp</div>
+          <div class="nc-body">Co-founded with Jenn. Early stage — building at the edges of where AI meets human systems work.</div>
+          <div class="nc-accent">Building</div>
+        </div>
+
+        <div class="now-card">
+          <div class="nc-eyebrow">Writing</div>
+          <div class="nc-title">Notes on things that don't fall over</div>
+          <div class="nc-body">Sporadic essays on leadership, product, and what a deliberate life actually looks like in practice.</div>
+          <div class="nc-accent">Publishing</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer" data-screen-label="footer">
+  <div class="site-footer__inner">
+    <div>
+      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Precision Engine</small></span></a>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Personal site — built with restraint, kept honest by tabular numerals.</p>
+      <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
+    </div>
+    <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="bio.html">About</a><a href="contact.html">Contact</a></div>
+    <div><h4>Elsewhere</h4><a href="https://github.com/jnellis" target="_blank" rel="noopener">GitHub ↗</a><a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
+    <div><h4>Subscribe</h4><a href="blog.html#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
+  </div>
+  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span><span class="meta">Bolt OS design system · v 2.6</span></div>
+</footer>
+
+</body>
+</html>
