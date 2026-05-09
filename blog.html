@@ -43,30 +43,13 @@
   .featured-art {
     background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 10px;
     position: relative; overflow: hidden; min-height: 240px;
+    display: flex; align-items: center; justify-content: center;
   }
+  .featured-art svg { opacity: 0.15; }
 
   /* Post list */
   .posts { display: flex; flex-direction: column; }
-  .post-item {
-    display: grid; grid-template-columns: 96px 1fr 140px 110px 28px;
-    gap: 24px; padding: 22px 0;
-    border-bottom: 1px solid var(--border-subtle);
-    align-items: center; cursor: pointer;
-    transition: padding-left var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard);
-  }
-  .post-item:hover { padding-left: 12px; }
-  .post-item .date { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; text-transform: uppercase; }
-  .post-item .title { font-size: 17px; font-weight: 500; color: #FFF; line-height: 1.4; }
-  .post-item .title .desc { display: block; font-size: 13px; color: var(--fg-2); font-weight: 400; margin-top: 4px; line-height: 1.55; }
-  .post-item .tag { font-size: 11px; color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; }
-  .post-item .read { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-align: right; }
-  .post-item .arrow { color: var(--fg-3); transition: color var(--dur-fast); text-align: right; font-size: 18px; }
-  .post-item:hover .arrow { color: var(--color-accent-vivid); }
-
-  /* Inline-expanded post */
-  details.post-full {
-    border-bottom: 1px solid var(--border-subtle);
-  }
+  details.post-full { border-bottom: 1px solid var(--border-subtle); }
   details.post-full summary {
     list-style: none; cursor: pointer;
     display: grid; grid-template-columns: 96px 1fr 140px 110px 28px;
@@ -74,8 +57,13 @@
   }
   details.post-full summary::-webkit-details-marker { display: none; }
   details.post-full[open] summary { border-bottom: 1px solid var(--border-subtle); }
-  details.post-full summary .arrow { transition: transform var(--dur-base) var(--ease-standard); }
+  details.post-full summary .arrow { transition: transform var(--dur-base) var(--ease-standard); color: var(--fg-3); font-size: 18px; text-align: right; }
   details.post-full[open] summary .arrow { transform: rotate(90deg); color: var(--color-accent-vivid); }
+  details.post-full summary .date { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  details.post-full summary .title { font-size: 17px; font-weight: 500; color: #FFF; line-height: 1.4; }
+  details.post-full summary .title .desc { display: block; font-size: 13px; color: var(--fg-2); font-weight: 400; margin-top: 4px; line-height: 1.55; }
+  details.post-full summary .tag { font-size: 11px; color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; }
+  details.post-full summary .read { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-align: right; }
 
   .post-body { padding: 32px 0 48px; max-width: 720px; }
   .post-body h3 { font-size: 24px; font-weight: 500; margin: 36px 0 12px; color: #FFF; }
@@ -83,28 +71,16 @@
   .post-body p:first-child { color: var(--fg-1); font-size: 18px; }
   .post-body strong { color: #FFF; font-weight: 500; }
   .post-body em { color: var(--color-accent-vivid); font-style: normal; }
-  .post-body code { background: var(--bg-deep); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-subtle); }
-  .post-body blockquote {
-    border-left: 2px solid var(--color-accent-vivid);
-    padding: 4px 0 4px 20px;
-    margin: 24px 0;
-    font-size: 17px; line-height: 1.7; color: var(--fg-1);
-  }
+  .post-body blockquote { border-left: 2px solid var(--color-accent-vivid); padding: 4px 0 4px 20px; margin: 24px 0; font-size: 17px; line-height: 1.7; color: var(--fg-1); }
   .post-body ul li { padding-left: 4px; }
   .post-body ul li::marker { color: var(--color-accent-vivid); }
-  .post-body .footnote {
-    margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-subtle);
-    font-size: 12px; color: var(--fg-3); display: flex; gap: 12px; flex-wrap: wrap;
-  }
+  .post-body .footnote { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--fg-3); display: flex; gap: 12px; flex-wrap: wrap; }
   .post-body .footnote span::before { content: "▸ "; color: var(--color-accent-vivid); }
 
   /* Subscribe block */
   .subscribe {
-    margin-top: 64px;
-    padding: 36px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 14px;
+    margin-top: 64px; padding: 36px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px;
     display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center;
   }
   .subscribe h3 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 6px 0 10px; }
@@ -115,15 +91,11 @@
     padding: 12px 14px; border-radius: 6px; font-family: var(--font-sans); font-size: 14px;
     transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
   }
-  .subscribe input[type=email]:focus {
-    outline: none; border-color: var(--color-accent-vivid);
-    box-shadow: 0 0 0 3px rgba(0,230,118,0.16);
-  }
+  .subscribe input[type=email]:focus { outline: none; border-color: var(--color-accent-vivid); box-shadow: 0 0 0 3px rgba(0,230,118,0.16); }
 
   @media (max-width: 880px) {
     .featured { grid-template-columns: 1fr; }
-    .post-item, details.post-full summary { grid-template-columns: 80px 1fr 28px; }
-    .post-item .tag, .post-item .read,
+    details.post-full summary { grid-template-columns: 80px 1fr 28px; }
     details.post-full summary .tag, details.post-full summary .read { display: none; }
     .subscribe { grid-template-columns: 1fr; padding: 24px; }
   }
@@ -135,7 +107,7 @@
   <div class="site-header__inner">
     <a href="index.html" class="brand">
       <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Precision Engine</small></span>
+      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
     </a>
     <nav class="site-nav">
       <a href="index.html">Home</a>
@@ -143,207 +115,185 @@
       <a href="cv.html">CV</a>
       <a href="bio.html">About</a>
       <a href="contact.html">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Available for work</span>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
     </nav>
   </div>
 </header>
 
-<main>
-  <section class="atmos" data-screen-label="01 writing index">
+<main class="atmos" data-screen-label="01 blog">
+  <section>
     <div class="page-wrap">
       <div class="blog-hero">
-        <div class="section-eyebrow"><span class="num">01</span> Writing · 38 essays</div>
-        <h1>Notes on building<br>things that don't fall over.</h1>
-        <p class="lede">Long-form essays on systems engineering, on-call practice, and the unglamorous decisions that make or break a platform. Roughly one a month, no newsletters disguised as articles.</p>
+        <div class="section-eyebrow"><span class="num">Writing</span> Essays &amp; observations</div>
+        <h1>Thinking out loud.</h1>
+        <p class="lede">Strategy, story, and the creator economy — written from the south of France. Occasionally urgent, rarely short.</p>
       </div>
 
       <!-- Filter bar -->
       <div class="filter-bar">
-        <span class="l">Topic</span>
-        <button class="chip active">All</button>
-        <button class="chip">Systems</button>
-        <button class="chip">Engineering</button>
-        <button class="chip">Observability</button>
-        <button class="chip">Leadership</button>
-        <button class="chip">Reading notes</button>
-        <span class="count">38 essays · since 2017</span>
+        <span class="l">Filter</span>
+        <button class="chip active" data-cat="all" onclick="filterPosts(this)">All</button>
+        <button class="chip" data-cat="Creator Economy" onclick="filterPosts(this)">Creator Economy</button>
+        <button class="chip" data-cat="Strategy" onclick="filterPosts(this)">Strategy</button>
+        <button class="chip" data-cat="Product" onclick="filterPosts(this)">Product</button>
+        <button class="chip" data-cat="Leadership" onclick="filterPosts(this)">Leadership</button>
+        <button class="chip" data-cat="Reflection" onclick="filterPosts(this)">Reflection</button>
+        <button class="chip" data-cat="Life" onclick="filterPosts(this)">Life</button>
+        <span class="count" id="post-count">6 essays</span>
       </div>
 
-      <!-- Featured -->
-      <article class="card featured">
+      <!-- Featured post -->
+      <div class="featured" data-cat="Creator Economy">
         <div>
-          <div class="section-eyebrow" style="margin-bottom: 8px"><span class="num">latest</span> April 22, 2026</div>
-          <h2>The cost of a graceful degradation</h2>
-          <p>Every team I've worked with eventually ships a "graceful" fallback path — and within twelve months, it has quietly become the only path anyone trusts. Here's the pattern, why it happens, and the small architectural choices that keep your "happy path" from withering.</p>
-          <div class="meta">
-            <span class="tag">Systems</span>
-            <span class="dot-divider">·</span>
-            <span>9 min read</span>
-            <span class="dot-divider">·</span>
-            <span>2,840 words</span>
-          </div>
-          <a href="#the-cost-of-a-graceful-degradation" class="btn primary" style="margin-top: 22px">Read the essay
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
+          <div class="meta"><span class="tag">Creator Economy</span><span>Feb 2025</span><span>5 min</span></div>
+          <h2>Every generation blames the next medium.</h2>
+          <p>I flew to London for the BAFTAs and ended up in a conversation about moral panic. The pattern hasn't changed in 100 years — only the villain has.</p>
+          <a href="#post-bafta" class="btn primary" onclick="document.getElementById('post-bafta').open=true">Read essay →</a>
         </div>
-        <!-- Featured art: a stylized degradation curve -->
-        <div class="featured-art" aria-hidden="true">
-          <svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">
-            <defs>
-              <linearGradient id="fgrad" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#00E676" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#00E676" stop-opacity="0"/>
-              </linearGradient>
-              <pattern id="dot" width="14" height="14" patternUnits="userSpaceOnUse">
-                <circle cx="7" cy="7" r="0.7" fill="#94A3B8" opacity="0.25"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dot)"/>
-            <g stroke="#1E293B" stroke-width="1" stroke-dasharray="3,4">
-              <line x1="0" y1="60"  x2="320" y2="60"/>
-              <line x1="0" y1="120" x2="320" y2="120"/>
-              <line x1="0" y1="180" x2="320" y2="180"/>
-            </g>
-            <path d="M0,40 L60,42 L120,48 L180,80 L220,128 L260,168 L300,196 L320,210 L320,240 L0,240 Z" fill="url(#fgrad)"/>
-            <path d="M0,40 L60,42 L120,48 L180,80 L220,128 L260,168 L300,196 L320,210" stroke="#00E676" stroke-width="2" fill="none"/>
-            <circle cx="180" cy="80" r="4" fill="#00E676"/>
-            <circle cx="180" cy="80" r="10" fill="#00E676" opacity="0.25"/>
-            <text x="186" y="74" fill="#00E676" font-family="DM Sans" font-size="11" font-weight="500">degradation begins</text>
-            <text x="20" y="226" fill="#94A3B8" font-family="DM Sans" font-size="9" letter-spacing="1.5">T+0</text>
-            <text x="280" y="226" fill="#94A3B8" font-family="DM Sans" font-size="9" letter-spacing="1.5">T+12mo</text>
-          </svg>
+        <div class="featured-art">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
         </div>
-      </article>
+      </div>
 
-      <!-- POSTS -->
+      <!-- Posts -->
       <div class="posts">
-        <details class="post-full" id="the-cost-of-a-graceful-degradation">
+
+        <details class="post-full" id="post-bafta" data-cat="Creator Economy">
           <summary>
-            <span class="date">2026 · 04 · 22</span>
-            <span class="title">
-              The cost of a graceful degradation
-              <span class="desc">When the fallback quietly becomes the only path anyone trusts.</span>
-            </span>
-            <span class="tag">Systems</span>
-            <span class="read">9 min · 2,840 words</span>
+            <span class="date">2025 · 02 · 10</span>
+            <span class="title">Every generation blames the next medium<span class="desc">Why moral panic about new media is as old as the printing press — and what the BAFTAs had to do with it.</span></span>
+            <span class="tag">Creator Economy</span>
+            <span class="read">5 min</span>
             <span class="arrow">›</span>
           </summary>
           <div class="post-body">
-            <p>Every team I've worked with eventually ships a "graceful" fallback path. The intent is honest: when the primary path is unhealthy, route around it, return a cached value, drop a feature, anything to keep the user from seeing a blank page. The implementation is usually small — a few hundred lines, an extra timeout, a circuit breaker.</p>
-            <p>And then, twelve months later, the fallback is the only path anyone trusts.</p>
-            <h3>The pattern</h3>
-            <p>The slide is always the same. A sharp, easy-to-spot incident in month one — the fallback fires, the team praises itself, the postmortem ships. Then the fallback fires again, this time for a reason no one can immediately explain. It works, so the on-call moves on. Six weeks later it's firing daily. Eight weeks later it's firing during deploys. By month nine the team has built tooling to <em>monitor the fallback</em>, not the primary.</p>
-            <p>You've now built a second system, with second-class observability, that runs in production more often than the one you intended to ship. <strong>Your happy path has withered.</strong></p>
-            <h3>Why it happens</h3>
-            <p>Three forces, all rational:</p>
-            <ul>
-              <li><strong>The fallback is cheap to extend.</strong> It already returns "something". Adding a small caveat is one PR.</li>
-              <li><strong>The fallback owns the incident.</strong> When it fires, the on-call sees it. The primary path silently doing fine doesn't get a Slack ping.</li>
-              <li><strong>The fallback is forgiving.</strong> Latency budgets, freshness, consistency — all a notch lower. Engineers naturally prefer the codepath that doesn't punish them.</li>
-            </ul>
-            <h3>What I do now</h3>
-            <p>Two architectural choices, made early, that have stopped this for me:</p>
-            <ol>
-              <li><strong>Treat the fallback as a separate product.</strong> Different SLO, different dashboards, different on-call rotation if you can afford it. If it's worth shipping, it's worth owning.</li>
-              <li><strong>Alert when the fallback ratio creeps up.</strong> Not when it fires — that's noisy. When the rolling 7-day ratio of fallback-served requests exceeds, say, 1%. That's the early warning that the primary is rotting.</li>
-            </ol>
-            <blockquote>"A graceful degradation is a contract with your future self. Read the contract."</blockquote>
-            <p>None of this is novel. It's just hard to do when the fallback is winning every postmortem.</p>
+            <p>Yesterday I flew to London for the Children's BAFTAs. I wasn't there to pick up an award. I was there because SuperBam works with creators who were nominated, and because the conversation backstage at events like this is always more interesting than the stage itself.</p>
+            <p>Somewhere between the pre-show reception and the third time someone asked me what I did, I ended up in a debate about YouTube kids content with a producer who has been in children's television for thirty years. Her position: the algorithm is destroying children's ability to focus. My position: every generation says this about the new medium, and every generation is wrong about the mechanism while being vaguely right about the anxiety.</p>
+            <p>The printing press was going to make people lazy readers. Radio was going to make people forget how to think for themselves. Television was going to rot children's brains. The internet was going to destroy attention spans. Social media was going to make everyone narcissistic and depressed. And now the algorithm is doing all of the above, apparently simultaneously.</p>
+            <blockquote>The pattern isn't that the new medium is dangerous. The pattern is that the new medium changes the distribution of power, and that the people who held power under the old distribution are very good at framing that change as a moral crisis.</blockquote>
+            <p>None of this means the algorithm is benign. It isn't. But the thing that's actually happening — the real shift that will matter in twenty years — isn't attention spans. It's who gets to be a creator, and who gets paid for it, and how the economics of that flow through to the actual work being made.</p>
+            <p>That's the conversation worth having. The moral panic is a distraction from it.</p>
             <div class="footnote">
-              <span>Originally drafted on a flight to Berlin</span>
-              <span>Comments welcome at <a class="bolt" href="contact.html">contact</a></span>
-              <span>Cite as: Nellis, J. (2026). <em style="color:var(--fg-2);font-style:normal">The cost of a graceful degradation</em></span>
+              <span>Originally published on LinkedIn · Feb 2025</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_yesterday-i-flew-to-london-for-the-children-activity-7429494553046388736-0c1k" target="_blank" rel="noopener">View original ↗</a></span>
             </div>
           </div>
         </details>
 
-        <a class="post-item" id="why-i-stopped-paginating-streams" href="#why-i-stopped-paginating-streams">
-          <span class="date">2026 · 03 · 11</span>
-          <span class="title">
-            Why I stopped paginating streams
-            <span class="desc">Cursor pagination is a beautiful hack — until your stream becomes the source of truth.</span>
-          </span>
-          <span class="tag">Engineering</span>
-          <span class="read">6 min · 1,720 words</span>
-          <span class="arrow">›</span>
-        </a>
+        <details class="post-full" id="post-algorithm" data-cat="Strategy">
+          <summary>
+            <span class="date">2025 · 01 · 14</span>
+            <span class="title">Dump your algorithm. Follow people instead.<span class="desc">The Discover tab is optimized for engagement, not for you. There's a better way.</span></span>
+            <span class="tag">Strategy</span>
+            <span class="read">4 min</span>
+            <span class="arrow">›</span>
+          </summary>
+          <div class="post-body">
+            <p>Radical idea: dump your Discover / For You / Explore feed and replace it with a deliberately curated list of people whose judgment you trust. Not influencers. Not brands. People.</p>
+            <p>The algorithm is not your friend. It is optimized for engagement, which is a proxy for the thing you actually want — which is to learn, think better, and find things that are useful or beautiful. The proxy and the thing are not the same. The algorithm doesn't know that.</p>
+            <p>What does "follow people instead" look like in practice? It looks like: making a list of 40–60 people whose recommendations you have historically found valuable. Not people you agree with on everything — that's an echo chamber. People whose judgment on a specific domain you trust. Someone who curates good long reads. Someone who knows the creator economy better than the press covering it. Someone who is actually building something and writes about what they're learning.</p>
+            <p>Then muting everything else. Not unfollowing — that's a lot of work and creates social friction. Just muting. The Discover tab goes dark. What's left is the people.</p>
+            <blockquote>The algorithm gives you what you clicked on last week. People give you what they thought was worth sharing this morning.</blockquote>
+            <p>This isn't a new idea. It's how smart people have always navigated information overload — by building trusted networks rather than outsourcing curation to a machine with different incentives than theirs. The current moment just makes it feel urgent because the machine got very good very fast.</p>
+            <div class="footnote">
+              <span>Originally published on LinkedIn · Jan 2025</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_radical-idea-dump-your-discover-for-you-activity-7426589817569861632-BCri" target="_blank" rel="noopener">View original ↗</a></span>
+            </div>
+          </div>
+        </details>
 
-        <a class="post-item" id="small-teams-and-the-100-rule" href="#small-teams-and-the-100-rule">
-          <span class="date">2026 · 02 · 04</span>
-          <span class="title">
-            Small teams and the 100-rule
-            <span class="desc">Why a 5-person team beats a 12-person team at almost everything that matters in year one.</span>
-          </span>
-          <span class="tag">Leadership</span>
-          <span class="read">5 min · 1,420 words</span>
-          <span class="arrow">›</span>
-        </a>
+        <details class="post-full" id="post-livevideo" data-cat="Product">
+          <summary>
+            <span class="date">2024 · 10 · 15</span>
+            <span class="title">Live video still can't figure out the money<span class="desc">Ten years of trying to make live commerce work — and why the economics keep breaking the same way.</span></span>
+            <span class="tag">Product</span>
+            <span class="read">6 min</span>
+            <span class="arrow">›</span>
+          </summary>
+          <div class="post-body">
+            <p>If you missed the Made on YouTube event, you missed a subtle but important signal: YouTube is still trying to figure out what live means for their creator economy, and the answer is still "maybe shopping?"</p>
+            <p>I've been in this conversation in various forms since 2019, when I was building Facebook Live Shopping inside Meta's NPE team. The fundamental tension hasn't changed: live video is a great product for building connection and urgency, but it's a terrible product for completing commerce transactions. The two things want to happen at the same time, and they keep interrupting each other.</p>
+            <p>The shopping experience breaks the viewing experience. The viewing experience breaks the shopping experience. The creator has to choose which one they're doing every thirty seconds. The viewer has to do the same. And the platform is in the middle trying to capture both moments with one interface.</p>
+            <h3>Why it keeps breaking</h3>
+            <p>The platforms keep reaching for the TikTok Shop comparison, but TikTok Shop works (to the degree it works) because the content is short, the purchase intent is high, and the friction from "video" to "buy" is minimal. Live video is different. The attention and the transaction are fighting over the same window.</p>
+            <p>The category that actually works is entertainment-first live with commerce as an add-on — not commerce-first live with entertainment as the hook. The QVC model works because it's always been transparent about what it is. When you're watching a YouTube creator you follow for their personality and they suddenly pivot to selling you something, there's a small but real trust tax.</p>
+            <blockquote>Live commerce will eventually work. But it'll work as its own genre, not as a feature bolted onto existing creator formats.</blockquote>
+            <div class="footnote">
+              <span>Originally published on LinkedIn · Oct 2024</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_if-you-missed-made-on-youtube-event-you-activity-7374789383050371072-ph8W" target="_blank" rel="noopener">View original ↗</a></span>
+            </div>
+          </div>
+        </details>
 
-        <a class="post-item" id="tracing-as-a-design-tool" href="#tracing-as-a-design-tool">
-          <span class="date">2026 · 01 · 19</span>
-          <span class="title">
-            Tracing as a design tool
-            <span class="desc">Distributed tracing isn't only for incidents — it's the cheapest way to interview your own architecture.</span>
-          </span>
-          <span class="tag">Observability</span>
-          <span class="read">11 min · 3,420 words</span>
-          <span class="arrow">›</span>
-        </a>
+        <details class="post-full" id="post-timezones" data-cat="Leadership">
+          <summary>
+            <span class="date">2024 · 09 · 12</span>
+            <span class="title">Time zones aren't chaos. They're structure.<span class="desc">What working across eight time zones taught me about async communication and the myth of synchrony.</span></span>
+            <span class="tag">Leadership</span>
+            <span class="read">5 min</span>
+            <span class="arrow">›</span>
+          </summary>
+          <div class="post-body">
+            <p>If you have ever worked across multiple time zones, you have heard some version of the same complaint: "It's so hard to find time to get everyone together." This is the wrong problem to solve.</p>
+            <p>The myth of synchrony — the belief that real work requires people to be present at the same time — is one of the most expensive cultural defaults in knowledge work. It produces meeting-heavy calendars, decisions that wait for quorum, and a baseline assumption that the workday is a shared object that everyone holds at the same time.</p>
+            <p>Time zones break this assumption by force. And that, it turns out, is a feature.</p>
+            <h3>What distributed time actually gives you</h3>
+            <p>When you can't be in the same room (or the same Zoom), you have to write things down. Decisions get documented because they have to be communicated, not just announced. Context gets written because it can't be absorbed by osmosis. The work becomes legible in a way that co-located work often isn't.</p>
+            <p>The teams I've worked with that were most distributed were also — not coincidentally — the teams with the best documentation, the clearest decision logs, and the most reliable handoffs. Not because they were better people. Because the time zone gap made legibility a survival requirement.</p>
+            <blockquote>Synchrony is overrated. What you actually need is alignment — and alignment doesn't require a shared calendar block.</blockquote>
+            <div class="footnote">
+              <span>Originally published on LinkedIn · Sep 2024</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_if-you-have-ever-worked-across-multiple-time-activity-7366052688460963840-b4la" target="_blank" rel="noopener">View original ↗</a></span>
+            </div>
+          </div>
+        </details>
 
-        <a class="post-item" href="#post-5">
-          <span class="date">2025 · 12 · 02</span>
-          <span class="title">
-            On being legible to your CFO
-            <span class="desc">A short field guide to translating engineering trade-offs into financial ones, without losing either.</span>
-          </span>
-          <span class="tag">Leadership</span>
-          <span class="read">7 min · 2,040 words</span>
-          <span class="arrow">›</span>
-        </a>
+        <details class="post-full" id="post-hulu" data-cat="Reflection">
+          <summary>
+            <span class="date">2024 · 08 · 22</span>
+            <span class="title">Hulu made my career. Now it's really gone.<span class="desc">What it meant to be there in the beginning — and what it means to watch it end.</span></span>
+            <span class="tag">Reflection</span>
+            <span class="read">6 min</span>
+            <span class="arrow">›</span>
+          </summary>
+          <div class="post-body">
+            <p>I knew this moment was coming, and yet I wasn't ready for it. Hulu — as a standalone brand, as a specific kind of company, as the place that made me — is effectively gone now, absorbed into Disney's content machinery in a way that makes it unrecognizable from what it was when I joined in 2007.</p>
+            <p>I joined Hulu when it was genuinely weird. Not weird in a startup-cool way — weird in a "we're not sure if this is legal" way. The television industry had not yet decided whether streaming was an opportunity or an existential threat, and Hulu existed in the gap between those two positions. It was funded by the networks that were most afraid of it and built by people who thought those networks were wrong.</p>
+            <p>What I learned there — and this is the thing I've carried into every job since — is that there's a difference between a good idea and a product people will actually use. The early streaming wars were full of good ideas that nobody used. Hulu survived because it built something with a real wedge: the back catalog, the next-day episodes, the experience that was just good enough to make you stop torrenting.</p>
+            <h3>What being early actually means</h3>
+            <p>Being early to a platform shift is not the same as being smart. A lot of people were early to streaming. What being early at Hulu gave me was a front-row seat to what happens when an industry has to reinvent itself faster than it wants to — and a set of instincts about where the real leverage is in those moments that I've used ever since.</p>
+            <blockquote>The thing about formative experiences is that you don't know they're formative until much later. I knew Hulu was interesting. I didn't know it was the education.</blockquote>
+            <div class="footnote">
+              <span>Originally published on LinkedIn · Aug 2024</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_i-knew-this-moment-was-coming-and-yet-i-activity-7361389662264832000-Zl2Z" target="_blank" rel="noopener">View original ↗</a></span>
+            </div>
+          </div>
+        </details>
 
-        <a class="post-item" href="#post-6">
-          <span class="date">2025 · 10 · 28</span>
-          <span class="title">
-            The cheapest queue is no queue
-            <span class="desc">Six anti-patterns I keep seeing in event-driven architectures. Most start as cleverness.</span>
-          </span>
-          <span class="tag">Systems</span>
-          <span class="read">8 min · 2,360 words</span>
-          <span class="arrow">›</span>
-        </a>
+        <details class="post-full" id="post-europe" data-cat="Life">
+          <summary>
+            <span class="date">2024 · 06 · 05</span>
+            <span class="title">We moved to Europe to change our lives<span class="desc">Not for a vacation. Not for an adventure. For a different answer to what a life is for.</span></span>
+            <span class="tag">Life</span>
+            <span class="read">7 min</span>
+            <span class="arrow">›</span>
+          </summary>
+          <div class="post-body">
+            <p>We moved to Europe. Not for a vacation. Not for a sabbatical. Not for an adventure, though it is certainly that. We moved because we looked at the life we were building in Los Angeles and decided that the architecture was wrong — that the version of success we were optimizing for wasn't the version we actually wanted when we said it out loud.</p>
+            <p>The decision took about two years to fully form and about forty-eight hours to execute once it was made. That's usually how the big decisions work. The thinking is slow. The action is fast.</p>
+            <p>We chose France for reasons that sound romantic and are also practical: the quality of life is genuinely high in ways that matter to us — food, pace, outdoor space, proximity to places we want to take our kids. The tax situation for Americans abroad is complicated and not particularly favorable, and we did that math. We did it anyway.</p>
+            <h3>What we gave up</h3>
+            <p>A network that took twenty years to build. The ability to grab coffee with people who are building interesting things. The casual density of information that comes from being in the right rooms. These are real costs. I'm not pretending they aren't.</p>
+            <p>What we gained: mornings that belong to us. A pace that makes space for the kids to be bored, which is the precondition for being creative. A default assumption that the day has room in it, rather than that the room has to be fought for. A version of presence that I had been trying to manufacture in the margins of a schedule that didn't actually have margins.</p>
+            <blockquote>The question wasn't "can we afford to move?" The question was "can we afford not to?" Those are different calculations.</blockquote>
+            <p>We've been here just over a year. The kids are learning French. We are learning French, more slowly. The light in the south is different than I expected — more varied, more directional. I've started noticing things I didn't have the bandwidth to notice before. I think that's what we came for.</p>
+            <div class="footnote">
+              <span>Originally published on LinkedIn · Jun 2024</span>
+              <span><a class="bolt" href="https://www.linkedin.com/posts/jasonnellis_we-moved-to-europe-not-for-a-vacation-activity-7350508484901158913-IPJo" target="_blank" rel="noopener">View original ↗</a></span>
+            </div>
+          </div>
+        </details>
 
-        <a class="post-item" href="#post-7">
-          <span class="date">2025 · 09 · 15</span>
-          <span class="title">
-            Reading notes — <em style="font-style:normal;color:var(--color-accent-vivid)">Designing Data-Intensive Applications</em>, again
-            <span class="desc">Fourth re-read in eight years. The chapters that aged the best, and the one I now skip.</span>
-          </span>
-          <span class="tag">Reading notes</span>
-          <span class="read">12 min · 3,800 words</span>
-          <span class="arrow">›</span>
-        </a>
-
-        <a class="post-item" href="#post-8">
-          <span class="date">2025 · 08 · 04</span>
-          <span class="title">
-            Why I keep a paper runbook
-            <span class="desc">A heretical practice that's saved the day twice in three years. Yes, paper. Yes, in 2025.</span>
-          </span>
-          <span class="tag">Engineering</span>
-          <span class="read">4 min · 1,180 words</span>
-          <span class="arrow">›</span>
-        </a>
-
-        <a class="post-item" href="#post-9">
-          <span class="date">2025 · 07 · 11</span>
-          <span class="title">
-            What "production" means
-            <span class="desc">Working through a definition that's actually load-bearing, not just a slack-channel name.</span>
-          </span>
-          <span class="tag">Systems</span>
-          <span class="read">6 min · 1,860 words</span>
-          <span class="arrow">›</span>
-        </a>
       </div>
 
       <!-- Subscribe -->
@@ -351,9 +301,9 @@
         <div>
           <div class="section-eyebrow" style="margin-bottom: 4px"><span class="num">subscribe</span> Low volume</div>
           <h3>One essay a month, in your inbox.</h3>
-          <p>No tracking, no drip campaign, no "you might also like". Unsubscribe in one click. Or just <a class="bolt" href="#">grab the RSS</a>.</p>
+          <p>No tracking, no drip campaign, no "you might also like". Unsubscribe in one click.</p>
         </div>
-        <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').classList.add('subscribed')">
+        <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').disabled=true;">
           <input type="email" placeholder="you@domain.com" required>
           <button type="submit" class="btn primary">Subscribe</button>
         </form>
@@ -367,17 +317,33 @@
     <div>
       <a href="index.html" class="brand">
         <span class="mark">JN</span>
-        <span class="name">Jason Nellis<small>Precision Engine</small></span>
+        <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
       </a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Personal site — built with restraint, kept honest by tabular numerals.</p>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
       <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
     </div>
     <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="bio.html">About</a><a href="contact.html">Contact</a></div>
-    <div><h4>Elsewhere</h4><a href="https://github.com/jnellis" target="_blank" rel="noopener">GitHub ↗</a><a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
+    <div><h4>Elsewhere</h4><a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
     <div><h4>Subscribe</h4><a href="#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
   </div>
-  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span><span class="meta">Bolt OS design system · v 2.6</span></div>
+  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span></div>
 </footer>
+
+<script>
+function filterPosts(btn) {
+  document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const cat = btn.dataset.cat;
+  const items = document.querySelectorAll('.posts .post-full, .featured');
+  let count = 0;
+  items.forEach(el => {
+    const match = cat === 'all' || el.dataset.cat === cat;
+    el.style.display = match ? '' : 'none';
+    if (match) count++;
+  });
+  document.getElementById('post-count').textContent = count + (count === 1 ? ' essay' : ' essays');
+}
+</script>
 
 </body>
 </html>

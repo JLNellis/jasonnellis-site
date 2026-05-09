@@ -12,7 +12,6 @@
 
   .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; padding-bottom: 80px; align-items: start; }
 
-  /* Form card */
   .form-card { padding: 36px; }
   .form-card .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
   .form-card .head h2 { font-size: 22px; font-weight: 500; margin: 0; }
@@ -34,7 +33,6 @@
   .field textarea { min-height: 132px; resize: vertical; font-family: var(--font-sans); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  /* Topic radios */
   .topic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .topic-grid label {
     display: flex; gap: 10px; align-items: center;
@@ -48,54 +46,29 @@
   .topic-grid input[type=radio] { display: none; }
   .topic-grid input[type=radio]:checked + .swatch + .lbl { color: var(--color-accent-vivid); }
   .topic-grid label:has(input:checked) { border-color: var(--color-accent-vivid); background: rgba(0,230,118,0.06); }
-  .topic-grid .swatch {
-    width: 14px; height: 14px; border-radius: 50%;
-    border: 1px solid var(--border-strong); background: transparent; flex-shrink: 0;
-    position: relative;
-  }
+  .topic-grid .swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; flex-shrink: 0; position: relative; }
   .topic-grid label:has(input:checked) .swatch { border-color: var(--color-accent-vivid); }
-  .topic-grid label:has(input:checked) .swatch::after {
-    content: ""; position: absolute; inset: 3px; border-radius: 50%;
-    background: var(--color-accent-vivid); box-shadow: 0 0 8px var(--color-accent-vivid);
-  }
+  .topic-grid label:has(input:checked) .swatch::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--color-accent-vivid); box-shadow: 0 0 8px var(--color-accent-vivid); }
 
-  .form-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    padding-top: 20px; border-top: 1px solid var(--border-subtle); margin-top: 8px;
-  }
+  .form-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border-subtle); margin-top: 8px; }
   .form-meta .left { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
   .form-meta .left .live-dot { width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; }
 
-  .toast {
-    margin-top: 18px;
-    padding: 14px 16px; border-radius: 6px;
-    background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.4); border-left: 3px solid var(--color-accent-vivid);
-    color: var(--color-accent-vivid); font-size: 13px;
-    display: none;
-  }
+  .toast { margin-top: 18px; padding: 14px 16px; border-radius: 6px; background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.4); border-left: 3px solid var(--color-accent-vivid); color: var(--color-accent-vivid); font-size: 13px; display: none; }
   .toast.shown { display: flex; gap: 10px; align-items: center; }
   .toast strong { color: #FFF; font-weight: 500; }
 
-  /* Right column */
   .info-stack { display: flex; flex-direction: column; gap: 16px; }
   .info-card { padding: 22px; }
   .info-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin: 0 0 14px; font-weight: 500; }
-  .info-card .channel { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; padding: 10px 0; align-items: center; border-top: 1px solid var(--border-subtle); }
+  .info-card .channel { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; padding: 10px 0; align-items: center; border-top: 1px solid var(--border-subtle); text-decoration: none; }
   .info-card .channel:first-of-type { border-top: none; }
-  .info-card .channel .ico {
-    width: 28px; height: 28px; border-radius: 6px;
-    background: rgba(0,230,118,0.10); color: var(--color-accent-vivid);
-    display: inline-flex; align-items: center; justify-content: center;
-  }
+  .info-card .channel .ico { width: 28px; height: 28px; border-radius: 6px; background: rgba(0,230,118,0.10); color: var(--color-accent-vivid); display: inline-flex; align-items: center; justify-content: center; }
   .info-card .channel .t { font-size: 14px; color: #FFF; font-weight: 500; }
   .info-card .channel .s { font-size: 12px; color: var(--fg-2); margin-top: 2px; font-family: var(--font-mono); }
   .info-card .channel .meta { font-size: 11px; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); }
 
-  .availability {
-    background: linear-gradient(180deg, rgba(0,230,118,0.06), transparent);
-    border: 1px solid rgba(0,230,118,0.25);
-    padding: 22px;
-  }
+  .availability { background: linear-gradient(180deg, rgba(0,230,118,0.06), transparent); border: 1px solid rgba(0,230,118,0.25); padding: 22px; }
   .availability .head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .availability .head .live-dot { width: 8px; height: 8px; }
   .availability .head .t { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-accent-vivid); font-weight: 500; }
@@ -104,39 +77,23 @@
   .availability .row { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--border-subtle); font-size: 13px; }
   .availability .row:first-of-type { border-top: 1px solid var(--border-default); padding-top: 14px; margin-top: 6px; }
   .availability .row .k { color: var(--fg-2); }
-  .availability .row .v { color: #FFF; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .availability .row .v { color: #FFF; font-family: var(--font-mono); }
   .availability .row .v.ok { color: var(--color-accent-vivid); }
 
-  /* Local clock */
-  .clock {
-    display: grid; grid-template-columns: 1fr 1px 1fr; gap: 18px;
-    padding: 18px 22px; background: var(--bg-deep); border: 1px solid var(--border-subtle);
-    border-radius: 10px;
-  }
+  .clock { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 18px; padding: 18px 22px; background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 10px; }
   .clock .div { background: var(--border-default); }
   .clock .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin-bottom: 4px; }
   .clock .v { font-size: 22px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: #FFF; letter-spacing: -0.01em; }
   .clock .v.accent { color: var(--color-accent-vivid); }
   .clock .place { font-size: 11px; color: var(--fg-2); margin-top: 4px; font-family: var(--font-mono); }
 
-  /* FAQ */
   .faq-section { padding: 64px 0 96px; border-top: 1px solid var(--border-subtle); }
   .faq-list { display: flex; flex-direction: column; }
-  details.faq {
-    border-bottom: 1px solid var(--border-subtle); padding: 20px 0;
-  }
-  details.faq summary {
-    list-style: none; cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    font-size: 17px; font-weight: 500; color: #FFF;
-    transition: color var(--dur-fast);
-  }
+  details.faq { border-bottom: 1px solid var(--border-subtle); padding: 20px 0; }
+  details.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 17px; font-weight: 500; color: #FFF; transition: color var(--dur-fast); }
   details.faq summary:hover { color: var(--color-accent-vivid); }
   details.faq summary::-webkit-details-marker { display: none; }
-  details.faq summary .chev {
-    color: var(--fg-2); font-family: var(--font-mono); font-size: 14px;
-    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard);
-  }
+  details.faq summary .chev { color: var(--fg-2); font-family: var(--font-mono); font-size: 14px; transition: transform var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard); }
   details.faq[open] summary .chev { transform: rotate(45deg); color: var(--color-accent-vivid); }
   details.faq .body { padding: 14px 0 4px; max-width: 720px; color: var(--fg-2); font-size: 15px; line-height: 1.7; }
   details.faq .body p { margin: 0 0 12px; }
@@ -155,7 +112,7 @@
   <div class="site-header__inner">
     <a href="index.html" class="brand">
       <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Precision Engine</small></span>
+      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
     </a>
     <nav class="site-nav">
       <a href="index.html">Home</a>
@@ -163,7 +120,7 @@
       <a href="cv.html">CV</a>
       <a href="bio.html">About</a>
       <a href="contact.html" aria-current="page">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Available for work</span>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
     </nav>
   </div>
 </header>
@@ -173,12 +130,13 @@
     <div class="contact-hero">
       <div class="section-eyebrow"><span class="num">01</span> Contact · responds within 48h</div>
       <h1>Tell me what<br>you're working on.</h1>
-      <p class="lede">I read everything that comes through. Most replies go out within two working days; if you're a recruiter, the form below is the fastest way through. If it's an emergency, the channels on the right will reach me sooner.</p>
+      <p class="lede">I read everything that comes through. Most replies go out within two working days. If you have a real problem and think I can help, say so plainly — that's what gets a response.</p>
     </div>
 
     <div class="contact-grid">
-      <!-- LEFT: Form -->
-      <form class="card form-card" id="contactForm" onsubmit="event.preventDefault(); document.getElementById('toast').classList.add('shown'); this.reset();">
+      <!-- LEFT: Form (Netlify Forms wired) -->
+      <form class="card form-card" name="contact" method="POST" data-netlify="true" id="contactForm" onsubmit="handleSubmit(event)">
+        <input type="hidden" name="form-name" value="contact">
         <div class="head">
           <div>
             <h2>Send a message</h2>
@@ -190,11 +148,11 @@
         <div class="field">
           <label>What is this about<span class="req">*</span></label>
           <div class="topic-grid">
-            <label><input type="radio" name="topic" value="role" checked><span class="swatch"></span><span class="lbl">A role or contract</span></label>
-            <label><input type="radio" name="topic" value="advisory"><span class="swatch"></span><span class="lbl">Advisory / consulting</span></label>
-            <label><input type="radio" name="topic" value="speaking"><span class="swatch"></span><span class="lbl">Speaking or workshop</span></label>
+            <label><input type="radio" name="topic" value="speaking" checked><span class="swatch"></span><span class="lbl">Speaking</span></label>
+            <label><input type="radio" name="topic" value="advisory"><span class="swatch"></span><span class="lbl">Advisory</span></label>
+            <label><input type="radio" name="topic" value="writing"><span class="swatch"></span><span class="lbl">Writing</span></label>
+            <label><input type="radio" name="topic" value="coaching"><span class="swatch"></span><span class="lbl">Coaching</span></label>
             <label><input type="radio" name="topic" value="press"><span class="swatch"></span><span class="lbl">Press / podcast</span></label>
-            <label><input type="radio" name="topic" value="writing"><span class="swatch"></span><span class="lbl">Comments on an essay</span></label>
             <label><input type="radio" name="topic" value="other"><span class="swatch"></span><span class="lbl">Something else</span></label>
           </div>
         </div>
@@ -202,11 +160,11 @@
         <div class="field-row">
           <div class="field">
             <label for="name">Your name<span class="req">*</span></label>
-            <input id="name" name="name" type="text" placeholder="Ada Lovelace" required>
+            <input id="name" name="name" type="text" placeholder="Your name" required>
           </div>
           <div class="field">
             <label for="email">Email<span class="req">*</span></label>
-            <input id="email" name="email" type="email" placeholder="ada@analytical.engine" required>
+            <input id="email" name="email" type="email" placeholder="you@domain.com" required>
           </div>
         </div>
 
@@ -219,11 +177,9 @@
             <label for="budget">Budget / scope</label>
             <select id="budget" name="budget">
               <option>—</option>
-              <option>Hourly advisory · &lt;$5k</option>
-              <option>Short engagement · $5–25k</option>
-              <option>Project · $25–100k</option>
-              <option>Retained · $100k+</option>
-              <option>Full-time · base + equity</option>
+              <option>Short engagement · &lt;$10k</option>
+              <option>Project · $10–50k</option>
+              <option>Retained · $50k+</option>
               <option>Speaking honorarium</option>
               <option>Not yet sure</option>
             </select>
@@ -232,11 +188,11 @@
 
         <div class="field">
           <label for="message">Message<span class="req">*</span></label>
-          <textarea id="message" name="message" placeholder="A few sentences on what you're working on, what you'd want me to do, and any deadline I should know about. Links are very welcome." required></textarea>
+          <textarea id="message" name="message" placeholder="A few sentences on what you're working on, what you'd want me to do, and any deadline I should know about." required></textarea>
         </div>
 
         <div class="form-meta">
-          <span class="left"><span class="live-dot"></span>End-to-end encrypted via TLS · no analytics</span>
+          <span class="left"><span class="live-dot"></span>End-to-end encrypted via TLS</span>
           <button type="submit" class="btn primary">
             Send message
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -251,40 +207,35 @@
 
       <!-- RIGHT: Channels & availability -->
       <aside class="info-stack">
+
         <div class="card availability">
           <div class="head">
             <span class="live-dot"></span>
-            <span class="t">Availability · Q3 2026</span>
+            <span class="t">Availability · 2026</span>
           </div>
-          <h2>One advisory slot, two speaking slots open.</h2>
-          <p>Not actively interviewing for full-time roles, but happy to listen if the team is small and the problem is real. Advisory is fixed-fee, monthly, two clients max.</p>
-          <div class="row"><span class="k">Full-time roles</span><span class="v">Selective</span></div>
-          <div class="row"><span class="k">Advisory · monthly</span><span class="v ok">1 slot · open</span></div>
-          <div class="row"><span class="k">Speaking · paid</span><span class="v ok">2 slots · open</span></div>
-          <div class="row"><span class="k">Workshops · 2-day</span><span class="v">Booked through Sep</span></div>
-          <div class="row"><span class="k">Pro-bono mentoring</span><span class="v ok">1 slot · open</span></div>
+          <h2>Open to the right conversations.</h2>
+          <p>Based in the South of France, working globally. I don't take inbound from generalist recruiters — if you have a real problem, say so plainly.</p>
+          <div class="row"><span class="k">Speaking</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Advisory</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Writing / ghostwriting</span><span class="v ok">Open</span></div>
+          <div class="row"><span class="k">Coaching</span><span class="v ok">Open</span></div>
         </div>
 
         <div class="card info-card">
           <h3>Direct channels</h3>
           <a href="mailto:hello@jasonnellis.com" class="channel">
             <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
-            <div><div class="t">hello@jasonnellis.com</div><div class="s">Plain email · responds in &lt; 48h</div></div>
+            <div><div class="t">hello@jasonnellis.com</div><div class="s">Plain email · responds in &lt;48h</div></div>
             <span class="meta">↗</span>
           </a>
-          <a href="https://signal.me/jnellis" target="_blank" rel="noopener" class="channel">
-            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
-            <div><div class="t">Signal</div><div class="s">For sensitive topics</div></div>
-            <span class="meta">↗</span>
-          </a>
-          <a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener" class="channel">
+          <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="channel">
             <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
             <div><div class="t">LinkedIn</div><div class="s">Slowest, but always answered</div></div>
             <span class="meta">↗</span>
           </a>
-          <a href="https://github.com/jnellis" target="_blank" rel="noopener" class="channel">
-            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span>
-            <div><div class="t">github.com/jnellis</div><div class="s">Issues &amp; PRs · open-source only</div></div>
+          <a href="https://x.com/jasonnellis" target="_blank" rel="noopener" class="channel">
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l16 16M4 20L20 4"/></svg></span>
+            <div><div class="t">X / Twitter</div><div class="s">@jasonnellis · DMs open</div></div>
             <span class="meta">↗</span>
           </a>
         </div>
@@ -292,8 +243,8 @@
         <div class="clock">
           <div>
             <div class="lbl">My local time</div>
-            <div class="v accent" id="time-local">14:32</div>
-            <div class="place">Berlin · UTC+2</div>
+            <div class="v accent" id="time-local">—</div>
+            <div class="place">Cannes · UTC+2</div>
           </div>
           <div class="div"></div>
           <div>
@@ -310,34 +261,29 @@
       <div class="section-eyebrow"><span class="num">02</span> A few common questions</div>
       <div class="faq-list">
         <details class="faq" open>
-          <summary>Are you actively interviewing?<span class="chev">+</span></summary>
+          <summary>What does "advisory" actually look like?<span class="chev">+</span></summary>
           <div class="body">
-            <p>Not actively, but I'll always read a thoughtful note about a real problem. The pattern that gets a "yes": a small (3–6) engineering team, a hard middle-layer system, a founder or staff peer who's already tried two simpler approaches.</p>
-            <p>I don't take inbound from generalist recruiters — your client probably gets a faster reply if they message me directly.</p>
+            <p>It depends on what you need. I work on a project basis or a monthly retainer — fixed-fee, scoped at the start, with clear deliverables. The work is usually strategy, narrative, or product framing: helping you figure out what to build, how to position it, and how to communicate it to the people who need to understand it.</p>
+            <p>If you're not sure what you need, tell me what the problem is. We'll figure out the format together.</p>
           </div>
         </details>
         <details class="faq">
-          <summary>What does "advisory" actually look like?<span class="chev">+</span></summary>
+          <summary>What topics do you speak on?<span class="chev">+</span></summary>
           <div class="body">
-            <p>Two formats. <strong>Monthly</strong>: a fixed retainer, a 90-minute sync every two weeks, and Slack access in between. <strong>Project</strong>: 2–6 weeks, scoped at the start, with a written deliverable at the end. Both are billed flat-fee, never hourly.</p>
+            <p>The creator economy, the future of media, product strategy, and the intersection of AI with the above. I've spoken at industry events and on podcasts — if you're looking for a keynote, a panel contribution, or a fireside chat, I'm open to the conversation.</p>
+            <p>For corporate events: yes, I charge. For genuinely independent meetups, university talks, and conferences where tickets cap below $300, there's a sliding scale to zero. Travel is always covered.</p>
           </div>
         </details>
         <details class="faq">
           <summary>Will you sign an NDA before we talk?<span class="chev">+</span></summary>
           <div class="body">
-            <p>For the first conversation, no — a one-page NDA is more friction than the conversation is worth, and I keep introductions confidential by default. For project work, yes, gladly. I have a standard mutual NDA I can send you in &lt; 24h.</p>
-          </div>
-        </details>
-        <details class="faq">
-          <summary>Speaking — do you charge?<span class="chev">+</span></summary>
-          <div class="body">
-            <p>For corporate events: yes, with a sliding scale that goes to zero for genuinely independent meetups, university talks, and conferences whose tickets cap below $300. Travel is always covered.</p>
+            <p>For the first conversation, no — a one-page NDA is more friction than the conversation is worth, and I keep introductions confidential by default. For project work, yes, gladly. I have a standard mutual NDA I can send you in &lt;24h.</p>
           </div>
         </details>
         <details class="faq">
           <summary>I sent something a week ago and haven't heard back.<span class="chev">+</span></summary>
           <div class="body">
-            <p>Apologies — please send it again with <code>nudge</code> in the subject. The most common cause is an over-eager spam filter; the second most common is me being on a flight without working wifi.</p>
+            <p>Apologies — please send it again with <code>nudge</code> in the subject. The most common cause is an over-eager spam filter; the second is me being on a flight without working wifi.</p>
           </div>
         </details>
       </div>
@@ -348,34 +294,42 @@
 <footer class="site-footer" data-screen-label="footer">
   <div class="site-footer__inner">
     <div>
-      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Precision Engine</small></span></a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Personal site — built with restraint, kept honest by tabular numerals.</p>
+      <a href="index.html" class="brand"><span class="mark">JN</span><span class="name">Jason Nellis<small>Strategist · Writer</small></span></a>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
       <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
     </div>
     <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="bio.html">About</a><a href="contact.html">Contact</a></div>
-    <div><h4>Elsewhere</h4><a href="https://github.com/jnellis" target="_blank" rel="noopener">GitHub ↗</a><a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
+    <div><h4>Elsewhere</h4><a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
     <div><h4>Subscribe</h4><a href="blog.html#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
   </div>
-  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span><span class="meta">Bolt OS design system · v 2.6</span></div>
+  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span></div>
 </footer>
 
 <script>
-  // Live clock — Berlin and viewer
   function pad(n) { return String(n).padStart(2, '0'); }
   function tick() {
     const now = new Date();
-    // Local viewer
     const hh = pad(now.getHours()), mm = pad(now.getMinutes());
     const tEl = document.getElementById('time-you'); if (tEl) tEl.textContent = hh + ':' + mm;
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
     const off = -now.getTimezoneOffset() / 60;
     const offS = (off >= 0 ? '+' : '') + off;
     const tzEl = document.getElementById('tz-you'); if (tzEl) tzEl.textContent = tz.replace('_', ' ') + ' · UTC' + offS;
-    // Berlin
-    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', hour12: false });
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false });
     const lEl = document.getElementById('time-local'); if (lEl) lEl.textContent = fmt.format(now);
   }
   tick(); setInterval(tick, 1000 * 30);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    try {
+      await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
+    } catch(_) {}
+    document.getElementById('toast').classList.add('shown');
+    form.reset();
+  }
 </script>
 
 </body>

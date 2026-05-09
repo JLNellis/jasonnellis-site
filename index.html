@@ -3,11 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jason Nellis — Precision Engine</title>
-<meta name="description" content="Jason Nellis — staff engineer, systems thinker, and writer. Personal site, writing, CV, and contact.">
+<title>Jason Nellis — Strategist · Writer</title>
+<meta name="description" content="Jason Nellis — product and GTM strategist with twenty years at the intersection of media, technology, and the creator economy.">
 <link rel="stylesheet" href="site.css">
 <style>
-  /* ----- Home-only ----- */
   .home-hero { padding: 96px 0 80px; }
   .home-hero h1 {
     font-size: clamp(48px, 7vw, 96px);
@@ -15,73 +14,35 @@
     margin: 24px 0 24px; max-width: 14ch;
   }
   .home-hero h1 .accent { color: var(--color-accent-vivid); }
-  .home-hero h1 .accent::after {
-    content: ""; display: inline-block; width: 14px; height: 14px; background: var(--color-accent-vivid);
-    border-radius: 50%; margin-left: 12px; transform: translateY(-12px);
-    box-shadow: 0 0 24px rgba(0,230,118,0.6);
-    animation: pulse 1.6s ease-in-out infinite;
-  }
   .home-hero .lede {
     font-size: 19px; line-height: 1.6; color: var(--fg-2);
     max-width: 580px; margin: 0 0 32px;
   }
   .home-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 
-  /* HUD frame on the right */
-  .hud {
-    position: relative; aspect-ratio: 1.05/1;
+  /* Headshot placeholder */
+  .headshot-frame {
+    position: relative; aspect-ratio: 3/4;
     border-radius: 14px;
-    background:
-      linear-gradient(135deg, #0F172A 0%, #0A2540 60%, #050B17 100%);
+    background: linear-gradient(135deg, #0F172A 0%, #0A2540 60%, #050B17 100%);
     border: 1px solid var(--border-subtle);
     overflow: hidden;
     box-shadow: 0 40px 80px -30px rgba(0,230,118,0.08);
   }
-  .hud .ring {
-    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-    border: 1px solid rgba(0,230,118,0.35); border-radius: 50%;
+  .headshot-frame img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
   }
-  .hud .ring-2 { border-color: rgba(0,230,118,0.18); }
-  .hud .ring-3 { border-color: rgba(0,230,118,0.10); }
-  .hud .ring-4 { border-color: rgba(0,230,118,0.05); }
-  .hud .axis {
-    position: absolute; background: rgba(148,163,184,0.06);
+  .headshot-frame .initials {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 96px; font-weight: 700; color: var(--color-accent-vivid); letter-spacing: -0.04em;
   }
-  .hud .axis.h { left: 0; right: 0; top: 50%; height: 1px; }
-  .hud .axis.v { top: 0; bottom: 0; left: 50%; width: 1px; }
-  .hud .grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(0deg, rgba(148,163,184,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148,163,184,0.05) 1px, transparent 1px);
-    background-size: 36px 36px;
-    mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+  .headshot-frame .corner {
+    position: absolute; padding: 10px 12px; font-family: var(--font-mono);
+    font-size: 9px; color: rgba(148,163,184,0.7); letter-spacing: 0.1em; text-transform: uppercase;
   }
-  .hud .data {
-    position: absolute; left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-  }
-  .hud .corner {
-    position: absolute; padding: 14px 16px;
-    font-family: var(--font-mono); font-size: 10px;
-    color: var(--fg-2); letter-spacing: 0.1em; text-transform: uppercase;
-  }
-  .hud .corner .v { color: var(--color-accent-vivid); font-size: 12px; margin-top: 2px; }
-  .hud .corner.tl { top: 0; left: 0; border-bottom: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); border-radius: 0 0 8px 0; background: rgba(15,23,42,0.5); }
-  .hud .corner.tr { top: 0; right: 0; text-align: right; border-bottom: 1px solid var(--border-subtle); border-left: 1px solid var(--border-subtle); border-radius: 0 0 0 8px; background: rgba(15,23,42,0.5); }
-  .hud .corner.bl { bottom: 0; left: 0; border-top: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); border-radius: 0 8px 0 0; background: rgba(15,23,42,0.5); }
-  .hud .corner.br { bottom: 0; right: 0; text-align: right; border-top: 1px solid var(--border-subtle); border-left: 1px solid var(--border-subtle); border-radius: 8px 0 0 0; background: rgba(15,23,42,0.5); }
-  .hud-focus {
-    position: absolute; width: 8px; height: 8px; background: var(--color-accent-vivid);
-    border-radius: 50%; box-shadow: 0 0 24px var(--color-accent-vivid);
-  }
-  .hud-focus::before {
-    content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 22px; height: 22px; border-radius: 50%; background: var(--color-accent-vivid); opacity: 0.25;
-  }
+  .headshot-frame .corner.tl { top: 0; left: 0; }
+  .headshot-frame .corner.br { bottom: 0; right: 0; color: var(--color-accent-vivid); text-align: right; }
 
-  /* Grid */
   .home-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
 
   /* Stats strip */
@@ -109,17 +70,12 @@
 
   .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .work-card { padding: 24px; }
-  .work-card .ix {
-    font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
-    letter-spacing: 0.08em; margin-bottom: 16px;
-  }
+  .work-card .ix { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; margin-bottom: 10px; }
+  .work-card .era { display: inline-block; font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent-vivid); border: 1px solid rgba(0,230,118,0.35); border-radius: 999px; padding: 3px 9px; margin-bottom: 14px; }
   .work-card h3 { font-size: 18px; font-weight: 500; line-height: 1.3; margin: 0 0 8px; color: #FFF; }
   .work-card p { font-size: 13px; color: var(--fg-2); margin: 0 0 18px; line-height: 1.6; }
   .work-card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--fg-3); padding-top: 14px; border-top: 1px solid var(--border-subtle); }
   .work-card .meta .role { color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; }
-
-  /* Mini sparkline strip on cards */
-  .work-card svg.spark { width: 100%; height: 44px; margin-bottom: 18px; display: block; opacity: 0.85; }
 
   /* Writing teaser */
   .post-list { display: flex; flex-direction: column; }
@@ -127,7 +83,7 @@
     display: grid; grid-template-columns: 88px 1fr 140px 28px;
     gap: 24px; padding: 20px 0;
     border-bottom: 1px solid var(--border-subtle);
-    align-items: center; cursor: pointer;
+    align-items: center; cursor: pointer; text-decoration: none;
     transition: padding-left var(--dur-base) var(--ease-standard);
   }
   .post-row:hover { padding-left: 12px; }
@@ -138,13 +94,12 @@
   .post-row .arrow { color: var(--fg-3); transition: color var(--dur-fast); }
   .post-row:hover .arrow { color: var(--color-accent-vivid); }
 
-  /* Now playing strip */
+  /* Now strip */
   .now {
     display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
     padding: 48px;
     background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-deep) 100%);
-    border: 1px solid var(--border-subtle);
-    border-radius: 14px;
+    border: 1px solid var(--border-subtle); border-radius: 14px;
     position: relative; overflow: hidden;
   }
   .now::before {
@@ -159,20 +114,20 @@
   .now-item:first-child { border-top: none; padding-top: 0; }
   .now-item .ico {
     width: 24px; height: 24px; border-radius: 6px;
+    background: rgba(0,230,118,0.1); color: var(--color-accent-vivid);
     display: inline-flex; align-items: center; justify-content: center;
-    background: rgba(0,230,118,0.10); color: var(--color-accent-vivid);
   }
-  .now-item .t { font-size: 14px; color: #FFF; }
-  .now-item .s { font-size: 12px; color: var(--fg-2); margin-top: 2px; }
-  .now-item .meta { font-size: 11px; color: var(--fg-2); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  .now-item .t { font-size: 14px; font-weight: 500; color: #FFF; line-height: 1.3; }
+  .now-item .s { font-size: 12px; color: var(--fg-2); margin-top: 3px; }
+  .now-item .meta { font-size: 11px; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); white-space: nowrap; }
 
-  @media (max-width: 880px) {
+  @media (max-width: 900px) {
     .home-grid { grid-template-columns: 1fr; }
-    .hud { aspect-ratio: 1.4/1; }
-    .stats { grid-template-columns: 1fr 1fr; }
+    .headshot-frame { max-width: 320px; aspect-ratio: 3/4; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
     .work-grid { grid-template-columns: 1fr; }
-    .now { grid-template-columns: 1fr; padding: 28px; }
-    .post-row { grid-template-columns: 80px 1fr 24px; }
+    .now { grid-template-columns: 1fr; padding: 32px; }
+    .post-row { grid-template-columns: 80px 1fr 28px; }
     .post-row .tag { display: none; }
   }
 </style>
@@ -183,7 +138,7 @@
   <div class="site-header__inner">
     <a href="index.html" class="brand">
       <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Precision Engine</small></span>
+      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
     </a>
     <nav class="site-nav">
       <a href="index.html" aria-current="page">Home</a>
@@ -191,69 +146,51 @@
       <a href="cv.html">CV</a>
       <a href="bio.html">About</a>
       <a href="contact.html">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Available for work</span>
+      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
     </nav>
   </div>
 </header>
 
-<main>
-  <!-- HERO -->
-  <section class="atmos" data-screen-label="01 hero">
-    <div class="page-wrap">
-      <div class="home-hero">
-        <div class="home-grid">
-          <div>
-            <div class="section-eyebrow"><span class="num">01</span> Currently · Staff Platform Engineer</div>
-            <h1>Building systems with <span class="accent">precision</span></h1>
-            <p class="lede">I'm Jason Nellis — a staff engineer, systems thinker, and writer. I design the infrastructure that quiet, reliable products run on, and write about the decisions behind them.</p>
-            <div class="ctas">
-              <a href="cv.html" class="btn primary">
-                Read the CV
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </a>
-              <a href="contact.html" class="btn ghost">Start a conversation</a>
-            </div>
-          </div>
-
-          <!-- HUD visual -->
-          <div class="hud" aria-hidden="true">
-            <div class="grid"></div>
-            <div class="axis h"></div>
-            <div class="axis v"></div>
-            <div class="ring ring-1" style="width:30%; height:30%"></div>
-            <div class="ring ring-2" style="width:55%; height:55%"></div>
-            <div class="ring ring-3" style="width:80%; height:80%"></div>
-            <div class="ring ring-4" style="width:108%; height:108%"></div>
-            <div class="hud-focus" style="left:62%; top:38%"></div>
-
-            <svg class="data" viewBox="0 0 600 200" preserveAspectRatio="none" style="height:80%">
-              <defs>
-                <linearGradient id="hgrad" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#00E676" stop-opacity="0.4"/>
-                  <stop offset="100%" stop-color="#00E676" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0,150 L40,140 L80,150 L120,128 L160,138 L200,118 L240,124 L280,98 L320,108 L360,80 L400,90 L440,62 L480,72 L520,46 L560,56 L600,30 L600,200 L0,200 Z" fill="url(#hgrad)"/>
-              <path d="M0,150 L40,140 L80,150 L120,128 L160,138 L200,118 L240,124 L280,98 L320,108 L360,80 L400,90 L440,62 L480,72 L520,46 L560,56 L600,30" stroke="#00E676" stroke-width="2" fill="none"/>
-            </svg>
-
-            <div class="corner tl"><div>Status</div><div class="v">● OPERATIONAL</div></div>
-            <div class="corner tr"><div>Lat. p99</div><div class="v">42 ms</div></div>
-            <div class="corner bl"><div>Uptime</div><div class="v">99.99%</div></div>
-            <div class="corner br"><div>Build</div><div class="v">v 2.6 · main</div></div>
+<main class="atmos" data-screen-label="01 home">
+  <div class="page-wrap">
+    <div class="home-hero">
+      <div class="home-grid">
+        <div>
+          <div class="section-eyebrow"><span class="num">01</span> Product Strategy &amp; Go-to-Market</div>
+          <h1>Where strategy, story, and <span class="accent">systems</span> meet.</h1>
+          <p class="lede">I'm Jason Nellis — a product and GTM strategist with twenty years at the intersection of media, technology, and the creator economy. I translate ambiguity into direction, and direction into things that actually ship.</p>
+          <div class="ctas">
+            <a href="blog.html" class="btn primary">Read my writing</a>
+            <a href="contact.html" class="btn ghost">Get in touch</a>
           </div>
         </div>
+        <div class="headshot-frame">
+          <div class="corner tl">JN · 2026</div>
+          <div class="initials">JN</div>
+          <div class="corner br">● Cannes, FR</div>
+        </div>
+      </div>
 
-        <!-- stats -->
-        <div class="stats">
-          <div class="stat"><div class="v">12<small>yrs</small></div><div class="l">Shipping software</div></div>
-          <div class="stat"><div class="v">4</div><div class="l">Companies, 2 acquired</div></div>
-          <div class="stat"><div class="v">38</div><div class="l">Essays · approx</div></div>
-          <div class="stat"><div class="v">99.99<small>%</small></div><div class="l">Median uptime, 4 yrs</div></div>
+      <div class="stats">
+        <div class="stat">
+          <div class="v">20<small>+ yrs</small></div>
+          <div class="l">Media &amp; technology</div>
+        </div>
+        <div class="stat">
+          <div class="v">3</div>
+          <div class="l">Companies built</div>
+        </div>
+        <div class="stat">
+          <div class="v">2</div>
+          <div class="l">Acquisitions</div>
+        </div>
+        <div class="stat">
+          <div class="v">2</div>
+          <div class="l">Active ventures</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- SELECTED WORK -->
   <section class="block">
@@ -261,48 +198,45 @@
       <div class="block-head">
         <div>
           <div class="section-eyebrow"><span class="num">02</span> Selected work</div>
-          <h2>A few of the systems I've shipped, scaled, or rescued.</h2>
+          <h2>The career, in three acts.</h2>
+          <p class="block-sub">Twenty years of building at the intersection of media, technology, and the creator economy — from early streaming to social commerce to AI-driven IP protection.</p>
         </div>
-        <p class="block-sub">Each one taught me something I now refuse to compromise on. Some are public, some I can talk about over a call.</p>
+        <a href="cv.html" class="btn ghost">Full CV
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
       </div>
 
       <div class="work-grid">
-        <article class="card work-card is-link">
-          <div class="ix">001 / 2024 — present</div>
-          <svg class="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
-            <path d="M0,30 L20,28 L40,32 L60,22 L80,26 L100,16 L120,20 L140,10 L160,16 L180,8 L200,12 L220,4 L240,8" stroke="#00E676" stroke-width="1.5" fill="none"/>
-          </svg>
-          <h3>Bolt OS — observability platform</h3>
-          <p>Real-time telemetry, alerting, and incident workflow for distributed systems. From a clean sheet to 8&nbsp;PB ingest and a 5-engineer team.</p>
+        <article class="card work-card">
+          <div class="ix">001 / 2007 – 2012</div>
+          <div class="era">Early Streaming</div>
+          <h3>Hulu — product &amp; growth</h3>
+          <p>Joined during the formative years of streaming. Learned the real distance between a good idea and an executable product — and developed a permanent taste for building at scale.</p>
           <div class="meta">
-            <span class="role">Staff · Founding</span>
-            <span>Platform · Go · Rust</span>
+            <span class="role">Product</span>
+            <span>Media · Streaming</span>
           </div>
         </article>
 
-        <article class="card work-card is-link">
-          <div class="ix">002 / 2021 – 2024</div>
-          <svg class="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
-            <path d="M0,38 L20,36 L40,32 L60,30 L80,24 L100,28 L120,20 L140,16 L160,18 L180,10 L200,14 L220,6 L240,10" stroke="#00E676" stroke-width="1.5" fill="none"/>
-          </svg>
-          <h3>Northwind Pay — risk &amp; ledger</h3>
-          <p>Rebuilt the double-entry ledger and fraud pipeline. p99 from 1.2s to 80ms, regulatory audit cleared in 11 days.</p>
+        <article class="card work-card">
+          <div class="ix">002 / 2016 – 2020</div>
+          <div class="era">Acquired → Meta</div>
+          <h3>Packagd — co-founder</h3>
+          <p>Co-founded an influencer monetization startup, acquired by Facebook. Built Facebook Live Shopping inside NPE. Became Meta's first Founder in Residence.</p>
           <div class="meta">
-            <span class="role">Principal</span>
-            <span>Payments · Postgres</span>
+            <span class="role">Co-Founder</span>
+            <span>Social Commerce · Meta</span>
           </div>
         </article>
 
-        <article class="card work-card is-link">
-          <div class="ix">003 / 2018 – 2021</div>
-          <svg class="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
-            <path d="M0,32 L20,28 L40,30 L60,24 L80,18 L100,22 L120,12 L140,16 L160,14 L180,18 L200,10 L220,12 L240,4" stroke="#00E676" stroke-width="1.5" fill="none"/>
-          </svg>
-          <h3>Lattice Labs — data graph</h3>
-          <p>A graph-native query layer that became Lattice's core product. Acquired in 2021; the underlying engine still runs there today.</p>
+        <article class="card work-card">
+          <div class="ix">003 / 2020 – 2026</div>
+          <div class="era">CPO → CEO</div>
+          <h3>SuperBam — chief product officer</h3>
+          <p>Built the product org from the ground up — creator IP protection, monetization infrastructure, an AI deepfake takedown system. Stepped in as Interim CEO in Q1 2026.</p>
           <div class="meta">
-            <span class="role">Tech Lead</span>
-            <span>Acquired · Graph DB</span>
+            <span class="role">CPO / CEO</span>
+            <span>Creator Economy · IP</span>
           </div>
         </article>
       </div>
@@ -315,7 +249,7 @@
       <div class="block-head">
         <div>
           <div class="section-eyebrow"><span class="num">03</span> Recent writing</div>
-          <h2>Notes on building things that don't fall over.</h2>
+          <h2>Thinking out loud on strategy, story, and the creator economy.</h2>
         </div>
         <a href="blog.html" class="btn ghost">All essays
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -323,28 +257,28 @@
       </div>
 
       <div class="post-list">
-        <a class="post-row" href="blog.html#the-cost-of-a-graceful-degradation">
-          <span class="date">2026 · 04 · 22</span>
-          <span class="title">The cost of a graceful degradation<span class="read">9 min</span></span>
-          <span class="tag">Systems</span>
+        <a class="post-row" href="blog.html#post-bafta">
+          <span class="date">2025 · 02 · 10</span>
+          <span class="title">Every generation blames the next medium<span class="read">5 min</span></span>
+          <span class="tag">Creator Economy</span>
           <span class="arrow">→</span>
         </a>
-        <a class="post-row" href="blog.html#why-i-stopped-paginating-streams">
-          <span class="date">2026 · 03 · 11</span>
-          <span class="title">Why I stopped paginating streams<span class="read">6 min</span></span>
-          <span class="tag">Engineering</span>
+        <a class="post-row" href="blog.html#post-algorithm">
+          <span class="date">2025 · 01 · 14</span>
+          <span class="title">Dump your algorithm. Follow people instead.<span class="read">4 min</span></span>
+          <span class="tag">Strategy</span>
           <span class="arrow">→</span>
         </a>
-        <a class="post-row" href="blog.html#small-teams-and-the-100-rule">
-          <span class="date">2026 · 02 · 04</span>
-          <span class="title">Small teams and the 100-rule<span class="read">5 min</span></span>
-          <span class="tag">Leadership</span>
+        <a class="post-row" href="blog.html#post-hulu">
+          <span class="date">2024 · 08 · 22</span>
+          <span class="title">Hulu made my career. Now it's really gone.<span class="read">6 min</span></span>
+          <span class="tag">Reflection</span>
           <span class="arrow">→</span>
         </a>
-        <a class="post-row" href="blog.html#tracing-as-a-design-tool">
-          <span class="date">2026 · 01 · 19</span>
-          <span class="title">Tracing as a design tool<span class="read">11 min</span></span>
-          <span class="tag">Observability</span>
+        <a class="post-row" href="blog.html#post-europe">
+          <span class="date">2024 · 06 · 05</span>
+          <span class="title">We moved to Europe to change our lives<span class="read">7 min</span></span>
+          <span class="tag">Life</span>
           <span class="arrow">→</span>
         </a>
       </div>
@@ -358,41 +292,41 @@
         <div>
           <div class="section-eyebrow"><span class="num">04</span> Now</div>
           <h3>What I'm working on this quarter.</h3>
-          <p>A live snapshot, updated when something changes. The opposite of a /now page that quietly went stale in 2021.</p>
+          <p>A live snapshot, updated when something changes. Based in the south of France, working globally.</p>
           <a href="contact.html" class="btn primary" style="margin-top: 8px">Get in touch</a>
         </div>
         <div class="now-list">
           <div class="now-item">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div>
-              <div class="t">Shipping Bolt OS v2.6</div>
-              <div class="s">Live alerting + on-call workflow</div>
+              <div class="t">BoltOS — Head of Innovation &amp; Strategy</div>
+              <div class="s">AI strategy, product direction</div>
             </div>
             <div class="meta">In flight</div>
           </div>
           <div class="now-item">
+            <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+            <div>
+              <div class="t">Akaeon Corp — Co-founder</div>
+              <div class="s">Building with Jenn · early stage</div>
+            </div>
+            <div class="meta">Building</div>
+          </div>
+          <div class="now-item">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div>
-              <div class="t">Writing "The cost of a graceful degradation"</div>
-              <div class="s">Essay · final pass</div>
+              <div class="t">Writing — strategy + creator economy</div>
+              <div class="s">Short &amp; long form · ongoing</div>
             </div>
-            <div class="meta">90% done</div>
+            <div class="meta">Ongoing</div>
           </div>
           <div class="now-item">
-            <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
             <div>
-              <div class="t">Reading: <em style="color:var(--fg-1);font-style:normal">The Practice of System and Network Administration</em></div>
-              <div class="s">Limoncelli, Hogan, Chalup</div>
+              <div class="t">France — living the actual plan</div>
+              <div class="s">Near Cannes · family-first</div>
             </div>
-            <div class="meta">Ch. 14</div>
-          </div>
-          <div class="now-item">
-            <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg></div>
-            <div>
-              <div class="t">Mentoring 2 staff-track engineers</div>
-              <div class="s">Free / paid; 1 slot left</div>
-            </div>
-            <div class="meta">Open</div>
+            <div class="meta">Active</div>
           </div>
         </div>
       </div>
@@ -405,9 +339,9 @@
     <div>
       <a href="index.html" class="brand" style="margin-bottom: 14px">
         <span class="mark">JN</span>
-        <span class="name">Jason Nellis<small>Precision Engine</small></span>
+        <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
       </a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Personal site — built with restraint, kept honest by tabular numerals.</p>
+      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
       <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
     </div>
     <div>
@@ -420,9 +354,8 @@
     </div>
     <div>
       <h4>Elsewhere</h4>
-      <a href="https://github.com/jnellis" target="_blank" rel="noopener">GitHub ↗</a>
-      <a href="https://linkedin.com/in/jnellis" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="https://x.com/jnellis" target="_blank" rel="noopener">X / Twitter ↗</a>
+      <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a>
       <a href="mailto:hello@jasonnellis.com">Email ↗</a>
     </div>
     <div>
@@ -433,7 +366,6 @@
   </div>
   <div class="site-footer__bottom">
     <span>© 2026 Jason Nellis</span>
-    <span class="meta">Bolt OS design system · v 2.6</span>
   </div>
 </footer>
 
