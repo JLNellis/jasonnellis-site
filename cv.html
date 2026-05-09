@@ -88,14 +88,15 @@
   .xp-head .at { color: var(--color-accent-vivid); font-size: 14px; }
   .xp-head .role { color: var(--fg-2); font-size: 13px; }
   .xp-summary { color: var(--fg-2); font-size: 14px; line-height: 1.7; margin: 6px 0 16px; max-width: 640px; }
-  .xp-bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .xp-bullets { list-style: none; padding: 0 0 0 20px; margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .xp-bullets li {
-    display: grid; grid-template-columns: 18px 1fr;
+    position: relative;
     font-size: 14px; line-height: 1.6; color: var(--fg-1);
   }
   .xp-bullets li::before {
-    content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-vivid);
-    margin-top: 8px; box-shadow: 0 0 8px var(--color-accent-vivid); align-self: start;
+    content: ""; position: absolute; left: -16px; top: 9px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent-vivid);
+    box-shadow: 0 0 8px var(--color-accent-vivid);
   }
   .xp-bullets li strong { color: #FFF; font-weight: 500; }
   .xp-meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
