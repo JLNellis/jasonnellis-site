@@ -99,26 +99,48 @@
     details.post-full summary .tag, details.post-full summary .read { display: none; }
     .subscribe { grid-template-columns: 1fr; padding: 24px; }
   }
+
+  /* Substack subscribe banner */
+  .subscribe-banner {
+    margin: 40px 0 56px;
+    padding: 36px 40px;
+    background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, var(--bg-card) 70%);
+    border: 1px solid rgba(0,230,118,0.18);
+    border-radius: 14px;
+    position: relative; overflow: hidden;
+  }
+  .subscribe-banner::before {
+    content: ""; position: absolute; right: -60px; top: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.07), transparent 70%);
+    pointer-events: none;
+  }
+  .sub-content { position: relative; }
+  .sub-eyebrow {
+    font-family: var(--font-mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-accent-vivid);
+    display: block; margin-bottom: 10px;
+  }
+  .sub-headline { font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub-body { font-size: 14px; color: var(--fg-2); line-height: 1.6; margin: 0 0 22px; max-width: 480px; }
+  .sub-form { display: flex; gap: 10px; max-width: 440px; flex-wrap: wrap; }
+  .sub-input {
+    flex: 1; min-width: 200px;
+    background: var(--bg-deep); border: 1px solid var(--border-strong);
+    border-radius: 6px; padding: 11px 16px;
+    font-family: var(--font-sans); font-size: 14px; color: var(--fg-1);
+    outline: none; transition: border-color var(--dur-fast);
+  }
+  .sub-input::placeholder { color: var(--fg-3); }
+  .sub-input:focus { border-color: var(--color-accent-vivid); }
+  .sub-btn { flex-shrink: 0; }
+  .sub-note { font-size: 11px; color: var(--fg-3); margin: 10px 0 0; font-family: var(--font-mono); }
 </style>
+<script src="nav.js"></script>
 </head>
 <body class="bolt-os">
 
-<header class="site-header" data-screen-label="header">
-  <div class="site-header__inner">
-    <a href="index.html" class="brand">
-      <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
-    </a>
-    <nav class="site-nav">
-      <a href="index.html">Home</a>
-      <a href="blog.html" aria-current="page">Writing</a>
-      <a href="cv.html">CV</a>
-      <a href="bio.html">About</a>
-      <a href="contact.html">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
-    </nav>
-  </div>
-</header>
+<site-header></site-header>
 
 <main class="atmos" data-screen-label="01 blog">
   <section>
@@ -130,7 +152,22 @@
       </div>
 
       <!-- Filter bar -->
-      <div class="filter-bar">
+    
+    <!-- SUBSTACK SUBSCRIBE BANNER -->
+    <!-- SETUP: Replace YOUR-SUBSTACK-HANDLE with your actual Substack handle once live -->
+    <div class="subscribe-banner">
+      <div class="sub-content">
+        <span class="sub-eyebrow">Newsletter</span>
+        <p class="sub-headline">Get the writing in your inbox.</p>
+        <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
+        <form class="sub-form" action="https://YOUR-SUBSTACK-HANDLE.substack.com/api/v1/free" method="get" target="_blank">
+          <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
+          <button type="submit" class="btn primary sub-btn">Subscribe</button>
+        </form>
+        <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+      </div>
+    </div>
+  <div class="filter-bar">
         <span class="l">Filter</span>
         <button class="chip active" data-cat="all" onclick="filterPosts(this)">All</button>
         <button class="chip" data-cat="Creator Economy" onclick="filterPosts(this)">Creator Economy</button>
@@ -312,22 +349,7 @@
   </section>
 </main>
 
-<footer class="site-footer" data-screen-label="footer">
-  <div class="site-footer__inner">
-    <div>
-      <a href="index.html" class="brand">
-        <span class="mark">JN</span>
-        <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
-      </a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
-      <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
-    </div>
-    <div><h4>Site</h4><a href="index.html">Home</a><a href="blog.html">Writing</a><a href="cv.html">CV</a><a href="bio.html">About</a><a href="contact.html">Contact</a></div>
-    <div><h4>Elsewhere</h4><a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a><a href="mailto:hello@jasonnellis.com">Email ↗</a></div>
-    <div><h4>Subscribe</h4><a href="#feed">RSS feed</a><a href="contact.html">Mailing list</a></div>
-  </div>
-  <div class="site-footer__bottom"><span>© 2026 Jason Nellis</span></div>
-</footer>
+<site-footer></site-footer>
 
 <script>
 function filterPosts(btn) {

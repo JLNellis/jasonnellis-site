@@ -131,25 +131,11 @@
     .post-row .tag { display: none; }
   }
 </style>
+<script src="nav.js"></script>
 </head>
 <body class="bolt-os">
 
-<header class="site-header" data-screen-label="header">
-  <div class="site-header__inner">
-    <a href="index.html" class="brand">
-      <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
-    </a>
-    <nav class="site-nav">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="blog.html">Writing</a>
-      <a href="cv.html">CV</a>
-      <a href="bio.html">About</a>
-      <a href="contact.html">Contact</a>
-      <span class="live-pill" style="margin-left: 12px"><span class="live-dot"></span>Located in France · Available Worldwide</span>
-    </nav>
-  </div>
-</header>
+<site-header></site-header>
 
 <main class="atmos" data-screen-label="01 home">
   <div class="page-wrap">
@@ -201,7 +187,7 @@
           <h2>The career, in three acts.</h2>
           <p class="block-sub">Twenty years of building at the intersection of media, technology, and the creator economy — from early streaming to social commerce to AI-driven IP protection.</p>
         </div>
-        <a href="cv.html" class="btn ghost">Full CV
+        <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
@@ -334,40 +320,7 @@
   </section>
 </main>
 
-<footer class="site-footer" data-screen-label="footer">
-  <div class="site-footer__inner">
-    <div>
-      <a href="index.html" class="brand" style="margin-bottom: 14px">
-        <span class="mark">JN</span>
-        <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
-      </a>
-      <p style="color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 14px 0 18px; max-width: 320px">Strategy, writing, and the occasional strong opinion.</p>
-      <span class="live-pill"><span class="live-dot"></span>Last updated · May 2026</span>
-    </div>
-    <div>
-      <h4>Site</h4>
-      <a href="index.html">Home</a>
-      <a href="blog.html">Writing</a>
-      <a href="cv.html">CV</a>
-      <a href="bio.html">About</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div>
-      <h4>Elsewhere</h4>
-      <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="https://x.com/jasonnellis" target="_blank" rel="noopener">X / Twitter ↗</a>
-      <a href="mailto:hello@jasonnellis.com">Email ↗</a>
-    </div>
-    <div>
-      <h4>Subscribe</h4>
-      <a href="blog.html#feed">RSS feed</a>
-      <a href="contact.html">Mailing list</a>
-    </div>
-  </div>
-  <div class="site-footer__bottom">
-    <span>© 2026 Jason Nellis</span>
-  </div>
-</footer>
+<site-footer></site-footer>
 
 </body>
 </html>

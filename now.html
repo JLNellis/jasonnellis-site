@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Now — Jason Nellis</title>
+<meta name="description" content="What Jason Nellis is working on, thinking about, and building right now.">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* ---- Now page ---- */
+  .now-hero { padding: 88px 0 64px; }
+  .now-hero h1 {
+    font-size: clamp(42px, 6vw, 68px);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.025em;
+    margin: 16px 0 20px;
+  }
+  .now-hero h1 .accent { color: var(--color-accent-vivid); }
+  .now-hero .lede {
+    font-size: 17px; line-height: 1.65; color: var(--fg-2);
+    max-width: 560px; margin: 0 0 20px;
+  }
+  .update-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-3);
+  }
+  .update-badge .dot { width: 6px; height: 6px; background: var(--fg-3); border-radius: 50%; }
+
+  /* ---- Content layout ---- */
+  .now-body { padding: 0 0 96px; }
+  .now-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 64px; align-items: start;
+  }
+
+  /* ---- Sections ---- */
+  .now-section { padding: 48px 0; border-top: 1px solid var(--border-subtle); }
+  .now-section:first-child { padding-top: 0; border-top: none; }
+  .now-section .eyebrow {
+    font-family: var(--font-mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-accent-vivid);
+    margin-bottom: 16px; display: block;
+  }
+  .now-section h2 {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.01em;
+    margin: 0 0 18px; line-height: 1.3;
+  }
+  .now-section p {
+    font-size: 15px; color: var(--fg-2); line-height: 1.75; margin: 0 0 14px;
+  }
+  .now-section p:last-child { margin-bottom: 0; }
+  .now-section strong { color: var(--fg-1); font-weight: 500; }
+
+  /* Venture rows */
+  .venture-list { display: flex; flex-direction: column; gap: 20px; margin-top: 4px; }
+  .venture {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 22px;
+    background: var(--bg-card); border: 1px solid rgba(148,163,184,0.08);
+    border-radius: 10px;
+    transition: border-color var(--dur-base);
+  }
+  .venture:hover { border-color: rgba(0,230,118,0.25); }
+  .venture .v-mark {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    color: var(--color-accent-vivid); letter-spacing: -0.01em;
+  }
+  .venture .v-body { flex: 1; }
+  .venture .v-name {
+    font-size: 14px; font-weight: 600; color: #FFF; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .venture .v-name .live-pip {
+    width: 6px; height: 6px; background: var(--color-accent-vivid); border-radius: 50%;
+    box-shadow: 0 0 6px var(--color-accent-vivid);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .venture .v-role { font-size: 12px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .venture .v-desc { font-size: 13px; color: var(--fg-2); line-height: 1.55; }
+
+  /* Sidebar */
+  .now-sidebar { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 0; }
+  .side-card {
+    padding: 24px;
+    border: 1px solid rgba(148,163,184,0.08);
+    border-radius: 10px; background: var(--bg-card);
+    margin-bottom: 16px;
+  }
+  .side-card h4 {
+    font-size: 10px; font-family: var(--font-mono); text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--fg-2); margin: 0 0 14px;
+  }
+  .side-card .loc-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--fg-1); margin-bottom: 10px;
+  }
+  .side-card .loc-row .dot { color: var(--color-accent-vivid); font-size: 18px; line-height: 1; }
+  .side-card p { font-size: 13px; color: var(--fg-2); line-height: 1.6; margin: 0; }
+  .side-card .link-list { display: flex; flex-direction: column; gap: 4px; }
+  .side-card .link-list a {
+    font-size: 13px; color: var(--fg-2); padding: 5px 0;
+    transition: color var(--dur-fast);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .side-card .link-list a:hover { color: var(--color-accent-vivid); }
+  .side-card .link-list a .arr { color: var(--fg-3); font-size: 11px; }
+
+  .now-note {
+    margin-top: 8px; padding: 16px 20px;
+    border: 1px dashed rgba(148,163,184,0.2); border-radius: 8px;
+    font-size: 12px; color: var(--fg-3); font-family: var(--font-mono); line-height: 1.6;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .now-grid { grid-template-columns: 1fr; gap: 0; }
+    .now-sidebar { position: static; flex-direction: row; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+    .side-card { flex: 1 1 240px; margin-bottom: 0; }
+  }
+  @media (max-width: 640px) {
+    .now-hero { padding: 64px 0 48px; }
+    .now-sidebar { flex-direction: column; }
+  }
+</style>
+<script src="nav.js"></script>
+</head>
+<body>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="now">
+  <div class="page-wrap">
+
+    <!-- HERO -->
+    <div class="now-hero">
+      <div class="section-eyebrow"><span class="num">Now</span> What I'm doing</div>
+      <h1>Right <span class="accent">now.</span></h1>
+      <p class="lede">A living snapshot of what I'm building, publishing, and thinking about. Inspired by Derek Sivers' <a href="https://nownownow.com/about" target="_blank" rel="noopener" style="color: var(--color-accent-vivid); text-decoration: underline; text-underline-offset: 3px;">Now page</a> movement.</p>
+      <!-- UPDATE THIS DATE WHEN YOU EDIT THE PAGE -->
+      <div class="update-badge"><span class="dot"></span> Last updated: June 2026</div>
+    </div>
+
+    <div class="now-body">
+      <div class="now-grid">
+
+        <!-- MAIN CONTENT -->
+        <div>
+
+          <!-- Building -->
+          <div class="now-section">
+            <span class="eyebrow">Building</span>
+            <h2>What I'm working on.</h2>
+            <div class="venture-list">
+
+              <div class="venture">
+                <div class="v-mark">BO</div>
+                <div class="v-body">
+                  <div class="v-name">BoltOS <span class="live-pip"></span></div>
+                  <div class="v-role">Head of Innovation &amp; Strategy</div>
+                  <div class="v-desc">Shaping product vision, go-to-market, and innovation direction. Focused on where AI creates real leverage inside enterprise systems — and where it mostly doesn't.</div>
+                </div>
+              </div>
+
+              <div class="venture">
+                <div class="v-mark">AK</div>
+                <div class="v-body">
+                  <div class="v-name">Akaeon Corp <span class="live-pip"></span></div>
+                  <div class="v-role">Co-Founder</div>
+                  <div class="v-desc">Building out Akaeon as a media and events company. Early days — the kind of work that's mostly invisible until it suddenly isn't.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Publishing -->
+          <div class="now-section">
+            <span class="eyebrow">Publishing</span>
+            <h2>What I'm putting out.</h2>
+            <p><strong>Building Value</strong> — the podcast is ongoing. I record conversations with people who've actually built things — in media, technology, and the creator economy — and try to extract what's actually true from what sounds good in retrospect. Find it at <a href="https://linktr.ee/jasonnellis" target="_blank" rel="noopener" style="color: var(--color-accent-vivid)">linktr.ee/jasonnellis ↗</a>.</p>
+            <p>I write occasionally on LinkedIn and here. Longer essays when something's worth saying. Not on a schedule — on a threshold.</p>
+          </div>
+
+          <!-- Thinking -->
+          <div class="now-section">
+            <span class="eyebrow">Thinking About</span>
+            <h2>What's holding my attention.</h2>
+            <!-- UPDATE THIS SECTION QUARTERLY — a paragraph or two about what's genuinely on your mind -->
+            <p>The gap between what AI companies say about their products and what operators actually experience building with them. There's a lot of distance there right now, and it's getting wider before it gets narrower.</p>
+            <p>Also: what it means to build an audience in a moment when distribution channels are consolidating and differentiating simultaneously. The creator economy premise — that individual voice has durable value — is being tested in interesting ways.</p>
+          </div>
+
+          <!-- Living -->
+          <div class="now-section">
+            <span class="eyebrow">Living</span>
+            <h2>Where I am.</h2>
+            <p>Based in <strong>Cannes, France</strong> with my family. We moved to Europe in 2025 to redesign how we spend our time — the kind of choice that makes complete sense in retrospect and mostly terrifying in the moment. It's been both.</p>
+            <p>Available for remote work and travel as needed. I get to North America a few times a year and move around Europe regularly.</p>
+          </div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="now-sidebar">
+
+          <div class="side-card">
+            <h4>Location</h4>
+            <div class="loc-row"><span class="dot">●</span> Cannes, France</div>
+            <p>GMT+2 · Available worldwide for remote or travel</p>
+          </div>
+
+          <div class="side-card">
+            <h4>Active ventures</h4>
+            <div class="link-list">
+              <a href="https://boltos.com" target="_blank" rel="noopener">BoltOS <span class="arr">↗</span></a>
+              <a href="https://akaeon.com" target="_blank" rel="noopener">Akaeon Corp <span class="arr">↗</span></a>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <h4>Find me</h4>
+            <div class="link-list">
+              <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+              <a href="https://linktr.ee/jasonnellis" target="_blank" rel="noopener">Building Value <span class="arr">↗</span></a>
+              <a href="contact.html">Get in touch <span class="arr">→</span></a>
+            </div>
+          </div>
+
+          <div class="now-note">
+            This page is updated quarterly.<br>
+            Roughly what it says it is.
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>
