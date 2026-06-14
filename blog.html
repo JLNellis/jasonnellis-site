@@ -77,27 +77,10 @@
   .post-body .footnote { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--fg-3); display: flex; gap: 12px; flex-wrap: wrap; }
   .post-body .footnote span::before { content: "▸ "; color: var(--color-accent-vivid); }
 
-  /* Subscribe block */
-  .subscribe {
-    margin-top: 64px; padding: 36px;
-    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px;
-    display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center;
-  }
-  .subscribe h3 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 6px 0 10px; }
-  .subscribe p { color: var(--fg-2); margin: 0; line-height: 1.6; }
-  .subscribe form { display: flex; gap: 8px; }
-  .subscribe input[type=email] {
-    flex: 1; background: var(--bg-deep); border: 1px solid var(--border-strong); color: #FFF;
-    padding: 12px 14px; border-radius: 6px; font-family: var(--font-sans); font-size: 14px;
-    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
-  }
-  .subscribe input[type=email]:focus { outline: none; border-color: var(--color-accent-vivid); box-shadow: 0 0 0 3px rgba(0,230,118,0.16); }
-
   @media (max-width: 880px) {
     .featured { grid-template-columns: 1fr; }
     details.post-full summary { grid-template-columns: 80px 1fr 28px; }
     details.post-full summary .tag, details.post-full summary .read { display: none; }
-    .subscribe { grid-template-columns: 1fr; padding: 24px; }
   }
 
   /* Substack subscribe banner */
@@ -151,23 +134,23 @@
         <p class="lede">Strategy, story, and the creator economy — written from the south of France. Occasionally urgent, rarely short.</p>
       </div>
 
-      <!-- Filter bar -->
-    
-    <!-- SUBSTACK SUBSCRIBE BANNER -->
-    <!-- SETUP: Replace YOUR-SUBSTACK-HANDLE with your actual Substack handle once live -->
-    <div class="subscribe-banner">
-      <div class="sub-content">
-        <span class="sub-eyebrow">Newsletter</span>
-        <p class="sub-headline">Get the writing in your inbox.</p>
-        <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
-        <form class="sub-form" action="https://YOUR-SUBSTACK-HANDLE.substack.com/api/v1/free" method="get" target="_blank">
-          <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
-          <button type="submit" class="btn primary sub-btn">Subscribe</button>
-        </form>
-        <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+      <!-- SUBSTACK SUBSCRIBE BANNER -->
+      <!-- SETUP: Replace YOUR-SUBSTACK-HANDLE with your actual Substack handle once live -->
+      <div class="subscribe-banner">
+        <div class="sub-content">
+          <span class="sub-eyebrow">Newsletter</span>
+          <p class="sub-headline">Get the writing in your inbox.</p>
+          <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
+          <form class="sub-form" action="https://YOUR-SUBSTACK-HANDLE.substack.com/api/v1/free" method="get" target="_blank">
+            <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
+            <button type="submit" class="btn primary sub-btn">Subscribe</button>
+          </form>
+          <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
       </div>
-    </div>
-  <div class="filter-bar">
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
         <span class="l">Filter</span>
         <button class="chip active" data-cat="all" onclick="filterPosts(this)">All</button>
         <button class="chip" data-cat="Creator Economy" onclick="filterPosts(this)">Creator Economy</button>
@@ -332,19 +315,6 @@
         </details>
 
       </div>
-
-      <!-- Subscribe -->
-      <aside class="subscribe" id="feed">
-        <div>
-          <div class="section-eyebrow" style="margin-bottom: 4px"><span class="num">subscribe</span> Low volume</div>
-          <h3>One essay a month, in your inbox.</h3>
-          <p>No tracking, no drip campaign, no "you might also like". Unsubscribe in one click.</p>
-        </div>
-        <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').disabled=true;">
-          <input type="email" placeholder="you@domain.com" required>
-          <button type="submit" class="btn primary">Subscribe</button>
-        </form>
-      </aside>
     </div>
   </section>
 </main>
@@ -356,12 +326,11 @@ function filterPosts(btn) {
   document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
   const cat = btn.dataset.cat;
-  const items = document.querySelectorAll('.posts .post-full, .featured');
   let count = 0;
-  items.forEach(el => {
+  document.querySelectorAll('.posts .post-full, .featured').forEach(el => {
     const match = cat === 'all' || el.dataset.cat === cat;
     el.style.display = match ? '' : 'none';
-    if (match) count++;
+    if (match && el.classList.contains('post-full')) count++;
   });
   document.getElementById('post-count').textContent = count + (count === 1 ? ' essay' : ' essays');
 }
