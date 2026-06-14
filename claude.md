@@ -48,6 +48,29 @@ entry in `NAV_LINKS`. Never hand-roll header/footer HTML again.
 
 ---
 
+## Analytics — REQUIRED ON EVERY PAGE
+
+Every page's `<head>`, immediately after the opening `<head>` tag and before
+`<meta charset="utf-8">`, must include the Google Analytics (gtag.js)
+snippet:
+
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+```
+
+Any new page must include this snippet. Don't change the tracking ID
+(`G-PP4FTXFZRX`) without explicit instruction from Jason.
+
+---
+
 ## Pages
 
 | File | Purpose | Notes |
