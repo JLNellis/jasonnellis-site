@@ -265,48 +265,129 @@
     margin: 0;
     line-height: 1.4;
   }
-  .timeline-entries {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+  .bio-timeline-label .log-hint {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--fg-3); margin: 18px 0 0;
   }
-  .tl-entry {
+  .bio-timeline-label .log-hint::before { content: "→"; color: var(--color-accent-vivid); }
+
+  /* ---- Process log ---- */
+  .log-trace { position: relative; display: flex; flex-direction: column; }
+  .log-trace::before {
+    content: ""; position: absolute;
+    left: 12px; top: 26px; bottom: 26px; width: 1px;
+    background: var(--border-subtle);
+  }
+
+  .log-entry { position: relative; border-bottom: 1px solid var(--border-subtle); }
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-head {
     display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 24px;
-    padding: 22px 0;
-    border-bottom: 1px solid var(--border-subtle);
-    align-items: baseline;
+    grid-template-columns: 24px auto 1fr 20px;
+    align-items: center; gap: 16px;
+    width: 100%; padding: 22px 0;
+    background: none; border: none; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tl-entry:first-child { padding-top: 0; }
-  .tl-entry .tl-year {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--fg-3);
-    letter-spacing: 0.08em;
-    padding-top: 2px;
+  .log-entry:first-child .log-head { padding-top: 0; }
+
+  .log-node {
+    position: relative;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--bg-base); border: 2px solid var(--fg-3);
+    justify-self: center;
   }
-  .tl-entry .tl-year .tl-now {
-    color: var(--color-accent-vivid);
+  .log-entry[data-status="acquired"]     .log-node { border-color: var(--color-status-info); }
+  .log-entry[data-status="sunset"]       .log-node { border-color: var(--color-status-error); }
+  .log-entry[data-status="restructured"] .log-node { border-color: var(--color-status-warning); }
+  .log-entry[data-status="shipped"]      .log-node,
+  .log-entry[data-status="in-flight"]    .log-node { border-color: var(--color-accent-vivid); }
+  .log-entry[data-status="in-flight"]    .log-node {
+    background: var(--color-accent-vivid);
+    box-shadow: 0 0 0 4px rgba(0,230,118,0.16);
+    animation: pulse 1.6s ease-in-out infinite;
   }
-  .tl-entry .tl-body {}
-  .tl-entry .tl-role {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--fg-1);
-    margin-bottom: 3px;
+
+  .log-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .log-time {
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
+    letter-spacing: 0.06em; white-space: nowrap;
   }
-  .tl-entry .tl-org {
-    font-size: 12px;
-    color: var(--fg-3);
-    margin-bottom: 6px;
-    font-family: var(--font-mono);
-    letter-spacing: 0.04em;
+  .log-time.is-live { color: var(--color-accent-vivid); }
+  .log-status {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+    padding: 4px 10px; border-radius: 999px; border: 1px solid currentColor;
   }
-  .tl-entry .tl-note {
-    font-size: 13px;
-    color: var(--fg-2);
-    line-height: 1.55;
+  .log-entry[data-status="shipped"]      .log-status { color: var(--color-accent-vivid);   background: rgba(0,230,118,0.08); }
+  .log-entry[data-status="acquired"]     .log-status { color: var(--color-status-info);    background: rgba(59,130,246,0.08); }
+  .log-entry[data-status="sunset"]       .log-status { color: var(--color-status-error);   background: rgba(239,68,68,0.08); }
+  .log-entry[data-status="restructured"] .log-status { color: var(--color-status-warning); background: rgba(245,158,11,0.08); }
+  .log-entry[data-status="in-flight"]    .log-status { color: var(--color-accent-vivid);   background: rgba(0,230,118,0.08); }
+
+  .log-title { min-width: 0; }
+  .log-title strong {
+    display: block; font-size: 15px; font-weight: 500; color: var(--fg-1);
+    transition: color var(--dur-fast);
+  }
+  .log-head:hover .log-title strong { color: var(--color-accent-vivid); }
+  .log-org {
+    display: block; margin-top: 3px;
+    font-size: 12px; color: var(--fg-3);
+    font-family: var(--font-mono); letter-spacing: 0.04em;
+  }
+  .log-cursor {
+    display: inline-block; width: 7px; height: 13px; margin-left: 6px;
+    background: var(--color-accent-vivid); vertical-align: -2px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .log-chev {
+    font-family: var(--font-mono); font-size: 16px; line-height: 1;
+    color: var(--fg-3); justify-self: end;
+    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
+  }
+  .log-entry.open .log-chev { transform: rotate(90deg); color: var(--color-accent-vivid); }
+
+  .log-body {
+    display: grid; grid-template-rows: 0fr; overflow: hidden;
+    transition: grid-template-rows 360ms var(--ease-standard);
+  }
+  .log-entry.open .log-body { grid-template-rows: 1fr; }
+  .log-body-inner {
+    min-height: 0; overflow: hidden;
+    margin-left: 12px; padding: 0 0 26px 28px;
+    border-left: 1px solid var(--border-subtle);
+  }
+  .log-body-inner p {
+    font-size: 14px; line-height: 1.7; color: var(--fg-2);
+    max-width: 620px; margin: 0 0 16px;
+  }
+  .log-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .log-tags span {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--fg-3);
+    border: 1px solid var(--border-subtle); border-radius: 999px; padding: 4px 10px;
+  }
+
+  @media (max-width: 720px) {
+    .log-trace::before { left: 10px; }
+    .log-head {
+      grid-template-columns: 20px 1fr 20px;
+      grid-template-rows: auto auto;
+      row-gap: 8px; padding: 18px 0;
+    }
+    .log-entry:first-child .log-head { padding-top: 0; }
+    .log-node { grid-column: 1; grid-row: 1 / 3; align-self: start; margin-top: 4px; }
+    .log-meta { grid-column: 2; grid-row: 1; }
+    .log-title { grid-column: 2; grid-row: 2; }
+    .log-chev { grid-column: 3; grid-row: 1 / 3; }
+    .log-body-inner { margin-left: 10px; padding-left: 22px; }
   }
 
   /* ---- Now strip ---- */
@@ -525,55 +606,116 @@
 
       <div class="bio-timeline-label">
         <span class="num">02 · Career arc</span>
-        <h2>The condensed<br>version.</h2>
+        <h2>Process<br>log.</h2>
+        <p class="log-hint">Click an entry to expand</p>
       </div>
 
-      <div class="timeline-entries">
+      <div class="log-trace">
 
-        <div class="tl-entry">
-          <div class="tl-year">2007 – 2012</div>
-          <div class="tl-body">
-            <div class="tl-role">Early Product & Growth</div>
-            <div class="tl-org">Hulu</div>
-            <div class="tl-note">Joined during the formative years. Learned the difference between good ideas and executable products — and developed a permanent taste for building at scale.</div>
+        <article class="log-entry" data-status="shipped">
+          <button class="log-head" aria-expanded="false" aria-controls="log-body-hulu">
+            <span class="log-node" aria-hidden="true"></span>
+            <span class="log-meta">
+              <span class="log-time">2007 → 2012</span>
+              <span class="log-status">Shipped</span>
+            </span>
+            <span class="log-title">
+              <strong>Early Product &amp; Growth</strong>
+              <span class="log-org">Hulu</span>
+            </span>
+            <span class="log-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="log-body" id="log-body-hulu">
+            <div class="log-body-inner">
+              <p>Joined during Hulu's formative years — not with a plan, but with a pattern: find something worth building, figure out where the real leverage is, and go after the thing nobody else is paying attention to yet. Learned the difference between a good idea and a shippable product, and came away with a permanent taste for building at scale.</p>
+              <div class="log-tags"><span>Streaming</span><span>Product</span><span>Scale</span></div>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div class="tl-entry">
-          <div class="tl-year">2012 – 2016</div>
-          <div class="tl-body">
-            <div class="tl-role">Operator, founder, cautionary tale</div>
-            <div class="tl-org">PBS · Marketing agency · Vizio</div>
-            <div class="tl-note">Ran editorial product at PBS. Founded a marketing agency. Sold it in a deal so spectacularly bad it became its own syllabus. Learned execution risk the hard way.</div>
+        <article class="log-entry" data-status="sunset">
+          <button class="log-head" aria-expanded="false" aria-controls="log-body-pbs">
+            <span class="log-node" aria-hidden="true"></span>
+            <span class="log-meta">
+              <span class="log-time">2012 → 2016</span>
+              <span class="log-status">Sunset</span>
+            </span>
+            <span class="log-title">
+              <strong>Operator, founder, cautionary tale</strong>
+              <span class="log-org">PBS · Marketing agency · Vizio</span>
+            </span>
+            <span class="log-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="log-body" id="log-body-pbs">
+            <div class="log-body-inner">
+              <p>Ran editorial product at PBS, then left to found a marketing agency. Sold it — in a deal so spectacularly bad it became its own syllabus. The lesson stuck: strategy is cheap, and execution risk is where companies actually die.</p>
+              <div class="log-tags"><span>Editorial</span><span>Founder</span><span>Lessons learned</span></div>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div class="tl-entry">
-          <div class="tl-year">2016 – 2020</div>
-          <div class="tl-body">
-            <div class="tl-role">Co-founder → Founder in Residence</div>
-            <div class="tl-org">Packagd → Meta (Facebook)</div>
-            <div class="tl-note">Co-founded Packagd; acquired by Facebook in 2016. Built Facebook Live Shopping inside NPE. Became Meta's first-ever Founder in Residence — startup operator inside a very large machine.</div>
+        <article class="log-entry" data-status="acquired">
+          <button class="log-head" aria-expanded="false" aria-controls="log-body-packagd">
+            <span class="log-node" aria-hidden="true"></span>
+            <span class="log-meta">
+              <span class="log-time">2016 → 2020</span>
+              <span class="log-status">Acquired</span>
+            </span>
+            <span class="log-title">
+              <strong>Co-founder → Founder in Residence</strong>
+              <span class="log-org">Packagd → Meta (Facebook)</span>
+            </span>
+            <span class="log-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="log-body" id="log-body-packagd">
+            <div class="log-body-inner">
+              <p>Co-founded Packagd. Facebook acquired it in 2016, and the team moved inside Meta's New Product Experimentation group, where Jason built Facebook Live Shopping. He went on to become Meta's first-ever Founder in Residence — a startup operator's seat inside a very large machine.</p>
+              <div class="log-tags"><span>Acquisition</span><span>Live commerce</span><span>NPE</span></div>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div class="tl-entry">
-          <div class="tl-year">2020 – 2025</div>
-          <div class="tl-body">
-            <div class="tl-role">CPO → Interim CEO</div>
-            <div class="tl-org">SuperBam</div>
-            <div class="tl-note">Led product across creator IP protection, content monetization, and AI deepfake enforcement. Stepped into the Interim CEO seat during Q1 2026 to steer the company through a significant restructuring.</div>
+        <article class="log-entry" data-status="restructured">
+          <button class="log-head" aria-expanded="false" aria-controls="log-body-superbam">
+            <span class="log-node" aria-hidden="true"></span>
+            <span class="log-meta">
+              <span class="log-time">2020 → 2025</span>
+              <span class="log-status">Restructured</span>
+            </span>
+            <span class="log-title">
+              <strong>CPO → Interim CEO</strong>
+              <span class="log-org">SuperBam</span>
+            </span>
+            <span class="log-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="log-body" id="log-body-superbam">
+            <div class="log-body-inner">
+              <p>Signed on as Chief Product Officer, leading product across creator IP protection, content monetization, and AI deepfake enforcement. Stepped into the Interim CEO seat in Q1 2026 to steer the company through a significant restructuring — the kind of role that tests a high-context, narrative-first operator.</p>
+              <div class="log-tags"><span>Creator economy</span><span>IP protection</span><span>Leadership</span></div>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div class="tl-entry">
-          <div class="tl-year"><span class="tl-now">Now →</span></div>
-          <div class="tl-body">
-            <div class="tl-role">Head of Innovation & Strategy · Co-founder</div>
-            <div class="tl-org">BoltOS · Akaeon Corp</div>
-            <div class="tl-note">Building at the intersection of AI strategy and product leadership. Co-founded Akaeon Corp with Jenn. Writing, advising, and designing a life worth living — from France.</div>
+        <article class="log-entry" data-status="in-flight">
+          <button class="log-head" aria-expanded="false" aria-controls="log-body-now">
+            <span class="log-node" aria-hidden="true"></span>
+            <span class="log-meta">
+              <span class="log-time is-live">Now →</span>
+              <span class="log-status">In flight</span>
+            </span>
+            <span class="log-title">
+              <strong>Head of Innovation &amp; Strategy · Co-founder<span class="log-cursor" aria-hidden="true"></span></strong>
+              <span class="log-org">BoltOS · Akaeon Corp</span>
+            </span>
+            <span class="log-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="log-body" id="log-body-now">
+            <div class="log-body-inner">
+              <p>Head of Innovation &amp; Strategy at BoltOS, working at the intersection of AI strategy and product leadership. Co-founded Akaeon Corp with Jenn. Writing, advising, and designing a life worth living — from the south of France.</p>
+              <div class="log-tags"><span>AI strategy</span><span>Venture building</span><span>Live</span></div>
+            </div>
           </div>
-        </div>
+        </article>
 
       </div>
     </div>
@@ -620,6 +762,16 @@
 
 <!-- ===================== FOOTER ===================== -->
 <site-footer></site-footer>
+
+<script>
+  document.querySelectorAll('.log-head').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const entry = btn.closest('.log-entry');
+      const expanded = entry.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(expanded));
+    });
+  });
+</script>
 
 </body>
 </html>
