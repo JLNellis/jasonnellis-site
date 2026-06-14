@@ -113,6 +113,32 @@
     border: 1px solid rgba(0,230,118,0.18);
     border-radius: 14px;
     position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 32px;
+  }
+  .sub-photo {
+    position: relative; flex-shrink: 0;
+    width: 160px; aspect-ratio: 3/4;
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border-subtle);
+  }
+  .sub-photo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+  }
+  .sub-photo .scan {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
+    animation: scandown 7s linear infinite;
+    z-index: 1; pointer-events: none;
+  }
+  @keyframes scandown {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
+  @media (max-width: 720px) {
+    .subscribe-banner { flex-direction: column; align-items: flex-start; }
+    .sub-photo { width: 110px; }
   }
   .subscribe-banner::before {
     content: ""; position: absolute; right: -60px; top: -60px;
@@ -157,17 +183,21 @@
       </div>
 
       <!-- SUBSTACK SUBSCRIBE BANNER -->
-      <!-- SETUP: Replace YOUR-SUBSTACK-HANDLE with your actual Substack handle once live -->
       <div class="subscribe-banner">
         <div class="sub-content">
           <span class="sub-eyebrow">Newsletter</span>
-          <p class="sub-headline">Get the writing in your inbox.</p>
+          <p class="sub-headline">Get <em>The Long Yes</em> in your inbox.</p>
           <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
-          <form class="sub-form" action="https://YOUR-SUBSTACK-HANDLE.substack.com/api/v1/free" method="get" target="_blank">
+          <form class="sub-form" action="https://jasonnellis.substack.com/api/v1/free" method="get" target="_blank">
             <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
             <button type="submit" class="btn primary sub-btn">Subscribe</button>
           </form>
           <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
+        <!-- PLACEHOLDER: swap for a writing-centric photo when available -->
+        <div class="sub-photo">
+          <img src="casualheadshot.JPG" alt="Jason Nellis">
+          <div class="scan"></div>
         </div>
       </div>
 

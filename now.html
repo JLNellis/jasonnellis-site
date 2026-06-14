@@ -136,6 +136,32 @@
   .side-card .link-list a:hover { color: var(--color-accent-vivid); }
   .side-card .link-list a .arr { color: var(--fg-3); font-size: 11px; }
 
+  /* Photo card */
+  .photo-card { padding: 0; overflow: hidden; }
+  .photo-frame { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+  .photo-frame img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+  }
+  .photo-frame .corner {
+    position: absolute; padding: 10px 12px; font-family: var(--font-mono);
+    font-size: 9px; color: rgba(148,163,184,0.7); letter-spacing: 0.1em; text-transform: uppercase;
+    z-index: 2;
+  }
+  .photo-frame .corner.tl { top: 0; left: 0; }
+  .photo-frame .corner.br { bottom: 0; right: 0; color: var(--color-accent-vivid); text-align: right; }
+  .photo-frame .scan {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
+    animation: scandown 7s linear infinite;
+    z-index: 1; pointer-events: none;
+  }
+  @keyframes scandown {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
+
   .now-note {
     margin-top: 8px; padding: 16px 20px;
     border: 1px dashed rgba(148,163,184,0.2); border-radius: 8px;
@@ -245,6 +271,15 @@
 
         <!-- SIDEBAR -->
         <div class="now-sidebar">
+
+          <div class="side-card photo-card">
+            <div class="photo-frame">
+              <img src="officeheadshot.jpg" alt="Jason Nellis at his desk">
+              <div class="corner tl">JN · 2026</div>
+              <div class="corner br">● At work</div>
+              <div class="scan"></div>
+            </div>
+          </div>
 
           <div class="side-card">
             <h4>Location</h4>

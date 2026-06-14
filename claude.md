@@ -89,11 +89,6 @@ LinkedIn (`https://linkedin.com/in/jasonnellis`). Don't recreate it.
 
 ## Pending / known placeholders
 
-- **Substack**: not yet launched. `SITE_CONFIG.substackHandle` in `nav.js`
-  is set to `'YOUR-SUBSTACK-HANDLE'`. The blog page subscribe form also
-  references this placeholder in its form `action` URL
-  (`https://YOUR-SUBSTACK-HANDLE.substack.com/api/v1/free`). Once Jason has
-  a real handle, update both.
 - **`now.html` "Thinking About" section**: written for June 2026 — Jason
   should refresh this content periodically; it's explicitly meant to go
   stale and be rewritten, not maintained indefinitely.

@@ -9,7 +9,7 @@
 // ============================================================
 
 const SITE_CONFIG = {
-  substackHandle: 'YOUR-SUBSTACK-HANDLE', // ← replace once your Substack is live
+  substackHandle: 'jasonnellis', // "The Long Yes" — https://jasonnellis.substack.com/
   lastUpdated:    'June 2026',            // ← update when you make site changes
   linkedIn:       'https://linkedin.com/in/jasonnellis',
   twitter:        'https://x.com/jasonnellis',
@@ -103,7 +103,7 @@ class SiteFooter extends HTMLElement {
     </div>
     <div>
       <h4>Subscribe</h4>
-      <a href="${subUrl}" target="_blank" rel="noopener">Newsletter ↗</a>
+      <a href="${subUrl}" target="_blank" rel="noopener">The Long Yes ↗</a>
       <a href="contact.html">Get in touch</a>
     </div>
   </div>
