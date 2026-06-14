@@ -28,9 +28,44 @@
 <link rel="apple-touch-icon" href="favicon.png">
 <link rel="stylesheet" href="site.css">
 <style>
-  .blog-hero { padding: 80px 0 32px; }
+  .blog-hero {
+    padding: 80px 0 32px;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: center;
+  }
   .blog-hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 16px; }
   .blog-hero .lede { font-size: 18px; line-height: 1.6; color: var(--fg-2); max-width: 560px; margin: 0 0 24px; }
+
+  /* Hero photo */
+  .hero-photo {
+    position: relative; aspect-ratio: 3/4; max-width: 300px;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    background: linear-gradient(135deg, #0F172A 0%, #0A2540 60%, #050B17 100%);
+    box-shadow: 0 40px 80px -30px rgba(0,230,118,0.08);
+    justify-self: end;
+  }
+  .hero-photo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+  }
+  .hero-photo .corner {
+    position: absolute; padding: 10px 12px; font-family: var(--font-mono);
+    font-size: 9px; color: rgba(148,163,184,0.7); letter-spacing: 0.1em; text-transform: uppercase;
+    z-index: 2;
+  }
+  .hero-photo .corner.tl { top: 0; left: 0; }
+  .hero-photo .corner.br { bottom: 0; right: 0; color: var(--color-accent-vivid); text-align: right; }
+  .hero-photo .scan {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
+    animation: scandown 7s linear infinite;
+    z-index: 1; pointer-events: none;
+  }
+  @keyframes scandown {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
 
   .filter-bar {
     display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
@@ -100,6 +135,8 @@
   .post-body .footnote span::before { content: "▸ "; color: var(--color-accent-vivid); }
 
   @media (max-width: 880px) {
+    .blog-hero { grid-template-columns: 1fr; gap: 24px; }
+    .hero-photo { max-width: 240px; justify-self: start; order: -1; }
     .featured { grid-template-columns: 1fr; }
     details.post-full summary { grid-template-columns: 80px 1fr 28px; }
     details.post-full summary .tag, details.post-full summary .read { display: none; }
@@ -113,32 +150,6 @@
     border: 1px solid rgba(0,230,118,0.18);
     border-radius: 14px;
     position: relative; overflow: hidden;
-    display: flex; align-items: center; gap: 32px;
-  }
-  .sub-photo {
-    position: relative; flex-shrink: 0;
-    width: 160px; aspect-ratio: 3/4;
-    border-radius: 10px; overflow: hidden;
-    border: 1px solid var(--border-subtle);
-  }
-  .sub-photo img {
-    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
-  }
-  .sub-photo .scan {
-    position: absolute; left: 0; right: 0; height: 1px;
-    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
-    animation: scandown 7s linear infinite;
-    z-index: 1; pointer-events: none;
-  }
-  @keyframes scandown {
-    0%   { top: 0%; opacity: 0; }
-    5%   { opacity: 1; }
-    95%  { opacity: 0.6; }
-    100% { top: 100%; opacity: 0; }
-  }
-  @media (max-width: 720px) {
-    .subscribe-banner { flex-direction: column; align-items: flex-start; }
-    .sub-photo { width: 110px; }
   }
   .subscribe-banner::before {
     content: ""; position: absolute; right: -60px; top: -60px;
@@ -177,9 +188,17 @@
   <section>
     <div class="page-wrap">
       <div class="blog-hero">
-        <div class="section-eyebrow"><span class="num">Writing</span> Essays &amp; observations</div>
-        <h1>Thinking out loud.</h1>
-        <p class="lede">Strategy, story, and the creator economy — written from the south of France. Occasionally urgent, rarely short.</p>
+        <div>
+          <div class="section-eyebrow"><span class="num">Writing</span> Essays &amp; observations</div>
+          <h1>Thinking out loud.</h1>
+          <p class="lede">Strategy, story, and the creator economy — written from the south of France. Occasionally urgent, rarely short.</p>
+        </div>
+        <div class="hero-photo">
+          <img src="casualheadshot.JPG" alt="Jason Nellis">
+          <div class="corner tl">JN · 2026</div>
+          <div class="corner br">● Writing</div>
+          <div class="scan"></div>
+        </div>
       </div>
 
       <!-- SUBSTACK SUBSCRIBE BANNER -->
@@ -193,11 +212,6 @@
             <button type="submit" class="btn primary sub-btn">Subscribe</button>
           </form>
           <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
-        </div>
-        <!-- PLACEHOLDER: swap for a writing-centric photo when available -->
-        <div class="sub-photo">
-          <img src="casualheadshot.JPG" alt="Jason Nellis">
-          <div class="scan"></div>
         </div>
       </div>
 
