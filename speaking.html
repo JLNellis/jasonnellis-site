@@ -67,24 +67,6 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%; border: 0;
   }
-  /* Placeholder state — remove when adding real iframe */
-  .media-slot .video-placeholder {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 14px; background: var(--bg-deep);
-  }
-  .media-slot .video-placeholder .play-ring {
-    width: 56px; height: 56px; border-radius: 50%;
-    border: 1.5px solid rgba(0,230,118,0.4);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--color-accent-vivid);
-  }
-  .media-slot .video-placeholder .ph-label {
-    font-family: var(--font-mono); font-size: 9px;
-    text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg-3);
-    text-align: center; padding: 0 20px;
-  }
   .media-slot .media-info { padding: 20px 22px; }
   .media-slot .media-info .badge {
     display: inline-block; font-size: 9px; font-family: var(--font-mono);
@@ -256,72 +238,47 @@
 
       <div class="media-grid">
 
-        <!-- SLOT 1 — Replace video-placeholder with <iframe> when you have a YouTube clip URL -->
-        <!-- To embed: <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="..." allowfullscreen></iframe> -->
         <div class="media-slot">
           <div class="video-wrap">
-            <div class="video-placeholder">
-              <div class="play-ring">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <span class="ph-label">Replace with YouTube embed</span>
-            </div>
+            <iframe src="https://www.youtube.com/embed/qDVd_kNMwXY" title="The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Building Value · Ep. —</span>
-            <h3>Episode title goes here</h3>
-            <p>Short description of what this episode covers and why it's worth the listen.</p>
+            <span class="badge">Building Value Podcast</span>
+            <h3>The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]</h3>
+            <p>A former McDonald's corporate chef on building a following on TikTok from scratch — what brands get wrong about authenticity, and how a personal voice can outperform a marketing budget.</p>
           </div>
         </div>
 
-        <!-- SLOT 2 -->
         <div class="media-slot">
           <div class="video-wrap">
-            <div class="video-placeholder">
-              <div class="play-ring">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <span class="ph-label">Replace with YouTube embed</span>
-            </div>
+            <iframe src="https://www.youtube.com/embed/L0AFy_TM6Cs" title="Hulu's First PM [Betina Chan-Martin]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Building Value · Ep. —</span>
-            <h3>Episode title goes here</h3>
-            <p>Short description of what this episode covers and why it's worth the listen.</p>
+            <span class="badge">Building Value Podcast</span>
+            <h3>Hulu's First PM [Betina Chan-Martin]</h3>
+            <p>Hulu's first product manager on what it took to build a streaming product from zero — and the lessons from an early-stage team that don't survive the transition to scale.</p>
           </div>
         </div>
 
-        <!-- SLOT 3 -->
         <div class="media-slot">
           <div class="video-wrap">
-            <div class="video-placeholder">
-              <div class="play-ring">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <span class="ph-label">Replace with YouTube embed</span>
-            </div>
+            <iframe src="https://www.youtube.com/embed/KTBs8YRbAjk" title="100K Subs Can't Be Wrong [Ken Bolido]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Building Value · Ep. —</span>
-            <h3>Episode title goes here</h3>
-            <p>Short description of what this episode covers and why it's worth the listen.</p>
+            <span class="badge">Building Value Podcast</span>
+            <h3>100K Subs Can't Be Wrong [Ken Bolido]</h3>
+            <p>Ken Bolido on the long climb to 100,000 YouTube subscribers — the strategy behind consistent growth, and why most creators quit right before it compounds.</p>
           </div>
         </div>
 
-        <!-- SLOT 4 -->
         <div class="media-slot">
           <div class="video-wrap">
-            <div class="video-placeholder">
-              <div class="play-ring">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <span class="ph-label">Replace with YouTube embed</span>
-            </div>
+            <iframe src="https://www.youtube.com/embed/RorA7O1WT6s" title="The Value of Hard Work [Jacklyn Dallas]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Panel · Conference</span>
-            <h3>Speaking engagement title goes here</h3>
-            <p>Short description of the event, the topic discussed, and the audience it was for.</p>
+            <span class="badge">Building Value Podcast</span>
+            <h3>The Value of Hard Work [Jacklyn Dallas]</h3>
+            <p>Jacklyn Dallas on what "hard work" actually means when you're building a career and a brand at the same time — and why grit alone isn't the whole story.</p>
           </div>
         </div>
 
