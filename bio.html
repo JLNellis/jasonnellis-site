@@ -422,12 +422,25 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 24px;
+    align-items: start;
   }
   .now-card {
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: 10px;
     padding: 22px 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--dur-base) var(--ease-standard),
+                border-color var(--dur-base) var(--ease-standard),
+                box-shadow var(--dur-base) var(--ease-standard);
+  }
+  .now-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,230,118,0.4);
+    box-shadow: var(--shadow-glow-sm);
   }
   .now-card .nc-eyebrow {
     font-family: var(--font-mono);
@@ -449,11 +462,30 @@
     color: var(--fg-2);
     line-height: 1.6;
   }
+
+  /* Status footer: accent dot + "since" caption, with either an
+     expand toggle (.nc-toggle) or a link arrow (.nc-foot) */
+  .now-card .nc-foot,
+  .now-card .nc-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .now-card .nc-toggle {
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
   .now-card .nc-accent {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 12px;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.08em;
@@ -464,9 +496,48 @@
     content: "";
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--color-accent-vivid);
-    box-shadow: 0 0 8px rgba(0,230,118,0.5);
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    opacity: 0.7;
     display: inline-block;
+  }
+  .now-card .nc-since { color: var(--fg-3); margin-left: 2px; }
+  .now-card[data-status="building"] .nc-accent { color: var(--color-status-info); }
+  .now-card[data-status="paused"]   .nc-accent { color: var(--color-status-warning); }
+
+  .now-card .nc-chev {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--fg-3);
+    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
+  }
+  .now-card.open .nc-chev { transform: rotate(90deg); color: var(--color-accent-vivid); }
+
+  .now-card .nc-arrow {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--fg-3);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
+  }
+  .now-card.is-link:hover .nc-arrow { opacity: 1; transform: translateX(0); color: var(--color-accent-vivid); }
+
+  .now-card .nc-detail {
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows var(--dur-base) var(--ease-standard);
+  }
+  .now-card.open .nc-detail { grid-template-rows: 1fr; }
+  .now-card .nc-detail-inner { min-height: 0; overflow: hidden; }
+  .now-card .nc-detail-inner p {
+    font-size: 12px;
+    color: var(--fg-2);
+    line-height: 1.6;
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
   }
 
   /* ---- Responsive ---- */
@@ -729,31 +800,50 @@
 
       <div class="bio-now-label">
         <span class="num">03 · Right now</span>
-        <h2>What's live<br>this quarter.</h2>
+        <h2>What's live<br>this quarter.<span class="term-cursor" aria-hidden="true">|</span></h2>
       </div>
 
       <div class="bio-now-grid">
 
-        <div class="now-card">
+        <div class="now-card" data-status="active" data-since="2026-01">
           <div class="nc-eyebrow">Work</div>
           <div class="nc-title">BoltOS — Director of Innovation</div>
           <div class="nc-body">Shaping the product and go-to-market strategy for the next iteration of AI-native operating infrastructure.</div>
-          <div class="nc-accent">Active</div>
+          <button class="nc-toggle" aria-expanded="false" aria-controls="nc-detail-boltos">
+            <span class="nc-accent">Active <span class="nc-since"></span></span>
+            <span class="nc-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="nc-detail" id="nc-detail-boltos">
+            <div class="nc-detail-inner">
+              <p>Focused on where AI creates real leverage inside enterprise systems — and where it mostly doesn't.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="now-card">
+        <div class="now-card" data-status="building" data-since="2026-02">
           <div class="nc-eyebrow">Venture</div>
           <div class="nc-title">Akaeon Corp</div>
           <div class="nc-body">Co-founded with Jenn. Early stage — building at the edges of where AI meets human systems work.</div>
-          <div class="nc-accent">Building</div>
+          <button class="nc-toggle" aria-expanded="false" aria-controls="nc-detail-akaeon">
+            <span class="nc-accent">Building <span class="nc-since"></span></span>
+            <span class="nc-chev" aria-hidden="true">›</span>
+          </button>
+          <div class="nc-detail" id="nc-detail-akaeon">
+            <div class="nc-detail-inner">
+              <p>Early days — the kind of work that's mostly invisible until it suddenly isn't.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="now-card">
+        <a href="blog.html" class="now-card is-link" data-status="active" data-since="2025-04">
           <div class="nc-eyebrow">Writing</div>
           <div class="nc-title">Notes on things that don't fall over</div>
           <div class="nc-body">Sporadic essays on leadership, product, and what a deliberate life actually looks like in practice.</div>
-          <div class="nc-accent">Publishing</div>
-        </div>
+          <span class="nc-foot">
+            <span class="nc-accent">Active <span class="nc-since"></span></span>
+            <span class="nc-arrow" aria-hidden="true">›</span>
+          </span>
+        </a>
 
       </div>
     </div>
@@ -770,6 +860,26 @@
       const expanded = entry.classList.toggle('open');
       btn.setAttribute('aria-expanded', String(expanded));
     });
+  });
+
+  document.querySelectorAll('.nc-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.now-card');
+      const expanded = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(expanded));
+    });
+  });
+
+  document.querySelectorAll('[data-since]').forEach((el) => {
+    const target = el.querySelector('.nc-since, .since');
+    if (!target) return;
+    const [year, month] = el.dataset.since.split('-').map(Number);
+    const start = new Date(year, month - 1, 1);
+    const now = new Date();
+    const months = Math.max(0, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()));
+    target.textContent = months < 1 ? '· new'
+      : months < 12 ? `· ${months} mo`
+      : `· ${Math.floor(months / 12)}y${months % 12 ? ` ${months % 12}mo` : ''}`;
   });
 </script>
 

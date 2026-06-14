@@ -147,8 +147,25 @@
   .now h3 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; margin: 14px 0 14px; }
   .now p { color: var(--fg-2); line-height: 1.6; margin: 0 0 20px; }
   .now-list { display: flex; flex-direction: column; gap: 14px; }
-  .now-item { display: grid; grid-template-columns: 24px 1fr auto; gap: 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--border-subtle); }
-  .now-item:first-child { border-top: none; padding-top: 0; }
+  .now-item {
+    display: grid; grid-template-columns: 24px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 12px; margin: 0 -12px;
+    border: 1px solid transparent; border-top-color: var(--border-subtle);
+    border-radius: 10px;
+    text-decoration: none; color: inherit;
+    transition: transform var(--dur-base) var(--ease-standard),
+                border-color var(--dur-base) var(--ease-standard),
+                box-shadow var(--dur-base) var(--ease-standard),
+                background var(--dur-base) var(--ease-standard);
+  }
+  .now-item:first-child { border-top-color: transparent; }
+  .now-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,230,118,0.4);
+    box-shadow: var(--shadow-glow-sm);
+    background: rgba(30,41,59,0.5);
+  }
   .now-item .ico {
     width: 24px; height: 24px; border-radius: 6px;
     background: rgba(148,163,184,0.08); color: var(--fg-2);
@@ -156,7 +173,40 @@
   }
   .now-item .t { font-size: 14px; font-weight: 500; color: #FFF; line-height: 1.3; }
   .now-item .s { font-size: 12px; color: var(--fg-2); margin-top: 3px; }
-  .now-item .meta { font-size: 11px; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); white-space: nowrap; }
+
+  .now-item .now-meta { display: flex; align-items: center; gap: 10px; }
+  .now-item .meta-stack { text-align: right; }
+  .now-item .meta { font-size: 11px; color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); white-space: nowrap; }
+  .now-item .since { font-size: 10px; color: var(--fg-3); font-family: var(--font-mono); margin-top: 2px; white-space: nowrap; }
+  .now-item[data-status="building"] .meta { color: var(--color-status-info); }
+  .now-item[data-status="paused"]   .meta { color: var(--color-status-warning); }
+
+  .now-item .now-chev {
+    background: none; border: none; padding: 4px; cursor: pointer; line-height: 1;
+    color: var(--fg-3); font-family: var(--font-mono); font-size: 14px;
+    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
+  }
+  .now-item.open .now-chev { transform: rotate(90deg); color: var(--color-accent-vivid); }
+
+  .now-item .now-arrow {
+    font-family: var(--font-mono); font-size: 14px; color: var(--fg-3);
+    opacity: 0; transform: translateX(-4px);
+    transition: opacity var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
+  }
+  .now-item.is-link:hover .now-arrow { opacity: 1; transform: translateX(0); color: var(--color-accent-vivid); }
+
+  .now-item .now-detail {
+    grid-column: 2 / -1;
+    display: grid; grid-template-rows: 0fr; overflow: hidden;
+    transition: grid-template-rows var(--dur-base) var(--ease-standard);
+  }
+  .now-item.open .now-detail { grid-template-rows: 1fr; }
+  .now-item .now-detail-inner { min-height: 0; overflow: hidden; }
+  .now-item .now-detail-inner p {
+    font-size: 12px; color: var(--fg-2); line-height: 1.6;
+    margin: 10px 0 0; padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+  }
 
   @media (max-width: 900px) {
     .home-grid { grid-template-columns: 1fr; }
@@ -318,42 +368,81 @@
       <div class="now">
         <div>
           <div class="section-eyebrow"><span class="num">04</span> Now</div>
-          <h3>What I'm working on this quarter.</h3>
+          <h3>What I'm working on this quarter.<span class="term-cursor" aria-hidden="true">|</span></h3>
           <p>A live snapshot, updated when something changes. Based in the south of France, working globally.</p>
           <a href="contact.html" class="btn primary" style="margin-top: 8px">Get in touch</a>
         </div>
         <div class="now-list">
-          <div class="now-item">
+          <div class="now-item" data-status="active" data-since="2026-01">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div>
               <div class="t">BoltOS — Director of Innovation</div>
               <div class="s">AI strategy, product direction</div>
             </div>
-            <div class="meta">In flight</div>
+            <div class="now-meta">
+              <div class="meta-stack">
+                <div class="meta">In flight</div>
+                <div class="since"></div>
+              </div>
+              <button class="now-chev" aria-expanded="false" aria-controls="now-detail-boltos" aria-label="More about BoltOS"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="now-detail" id="now-detail-boltos">
+              <div class="now-detail-inner">
+                <p>Focused on where AI creates real leverage inside enterprise systems — and where it mostly doesn't.</p>
+              </div>
+            </div>
           </div>
-          <div class="now-item">
+          <div class="now-item" data-status="building" data-since="2026-02">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
             <div>
               <div class="t">Akaeon Corp — Co-founder</div>
               <div class="s">Building with Jenn · early stage</div>
             </div>
-            <div class="meta">Building</div>
+            <div class="now-meta">
+              <div class="meta-stack">
+                <div class="meta">Building</div>
+                <div class="since"></div>
+              </div>
+              <button class="now-chev" aria-expanded="false" aria-controls="now-detail-akaeon" aria-label="More about Akaeon Corp"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="now-detail" id="now-detail-akaeon">
+              <div class="now-detail-inner">
+                <p>Early days — the kind of work that's mostly invisible until it suddenly isn't.</p>
+              </div>
+            </div>
           </div>
-          <div class="now-item">
+          <a href="blog.html" class="now-item is-link" data-status="active" data-since="2025-04">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div>
               <div class="t">Writing — strategy + creator economy</div>
               <div class="s">Short &amp; long form · ongoing</div>
             </div>
-            <div class="meta">Ongoing</div>
-          </div>
-          <div class="now-item">
+            <div class="now-meta">
+              <div class="meta-stack">
+                <div class="meta">Ongoing</div>
+                <div class="since"></div>
+              </div>
+              <span class="now-arrow" aria-hidden="true">›</span>
+            </div>
+          </a>
+          <div class="now-item" data-status="active" data-since="2025-04">
             <div class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
             <div>
               <div class="t">France — living the actual plan</div>
               <div class="s">Near Cannes · family-first</div>
             </div>
-            <div class="meta">Active</div>
+            <div class="now-meta">
+              <div class="meta-stack">
+                <div class="meta">Active</div>
+                <div class="since"></div>
+              </div>
+              <button class="now-chev" aria-expanded="false" aria-controls="now-detail-france" aria-label="More about France"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="now-detail" id="now-detail-france">
+              <div class="now-detail-inner">
+                <p>His sons Kit and Ace are, by his own account, the best proof of concept for the whole move.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -362,6 +451,28 @@
 </main>
 
 <site-footer></site-footer>
+
+<script>
+  document.querySelectorAll('.now-chev').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.now-item');
+      const expanded = item.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(expanded));
+    });
+  });
+
+  document.querySelectorAll('[data-since]').forEach((el) => {
+    const target = el.querySelector('.nc-since, .since');
+    if (!target) return;
+    const [year, month] = el.dataset.since.split('-').map(Number);
+    const start = new Date(year, month - 1, 1);
+    const now = new Date();
+    const months = Math.max(0, (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()));
+    target.textContent = months < 1 ? '· new'
+      : months < 12 ? `· ${months} mo`
+      : `· ${Math.floor(months / 12)}y${months % 12 ? ` ${months % 12}mo` : ''}`;
+  });
+</script>
 
 </body>
 </html>
