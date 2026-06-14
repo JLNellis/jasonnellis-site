@@ -8,7 +8,7 @@ Context file for Claude Code sessions on this repo. Read this first.
 
 Jason Nellis's personal site. Purpose: thought leadership and audience
 building — **not** job seeking. Jason is a strategist, writer, and media
-executive (Head of Innovation & Strategy at BoltOS; co-founder Akaeon Corp;
+executive (Director of Innovation at BoltOS; co-founder Akaeon Corp;
 hosts the *Building Value* podcast). Based near Cannes, France.
 
 The site positions him as "Strategist · Writer." Tone is direct, confident,
