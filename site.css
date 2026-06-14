@@ -106,7 +106,7 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg-2);
   margin-bottom: 18px;
 }
-.section-eyebrow .num { color: var(--color-accent-vivid); }
+.section-eyebrow .num { color: var(--fg-2); }
 .section-eyebrow::before {
   content: ""; width: 28px; height: 1px; background: var(--color-accent-vivid);
 }
