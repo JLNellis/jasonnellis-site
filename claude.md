@@ -44,7 +44,32 @@ single file: **`nav.js`**, using Web Components (`<site-header>` and
   from the URL — no per-page configuration needed.
 
 If a future page needs nav, just add the two tags + script include and an
-entry in `NAV_LINKS`. Never hand-roll header/footer HTML again.
+entry in `NAV_LINKS`. Never hand-roll header/footer HTML again. For the
+page's clean URL, see "URL structure" below.
+
+---
+
+## URL structure — clean URLs (no `.html`)
+
+All pages are served at clean paths without file extensions (e.g.
+`https://jasonnellis.com/blog`, not `/blog.html`). This is handled by the
+**`_redirects`** file at the repo root (Netlify reads this automatically):
+
+- **200 rewrites** serve each clean path from its underlying `.html` file
+  (e.g. `/blog` → `blog.html`) while keeping the clean URL in the browser.
+- **301 redirects** send old `/*.html` URLs to the clean path, so any
+  existing links/bookmarks/search results still resolve.
+
+`bio.html` is the one exception to "slug matches filename" — it's served at
+`/about` (matching the nav label), not `/bio`. The filename stays `bio.html`.
+
+**Internal links must always use the clean path** (`/blog`, `/about`,
+`/contact`, etc.), never `*.html`. `nav.js` (`NAV_LINKS` hrefs and
+`activePage()`) is already built around clean paths.
+
+**Adding a new page:** add an entry to `NAV_LINKS` in `nav.js` (if it needs
+nav) *and* add a rewrite + redirect pair to `_redirects` following the
+existing pattern.
 
 ---
 
@@ -73,14 +98,15 @@ Any new page must include this snippet. Don't change the tracking ID
 
 ## Pages
 
-| File | Purpose | Notes |
-|---|---|---|
-| `index.html` | Homepage | |
-| `blog.html` | Writing archive | Has Substack subscribe banner (email capture form). Old LinkedIn reposts + essays live here as archive. |
-| `speaking.html` | Speaking/media page | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). |
-| `now.html` | "Now" page | What Jason's working on / thinking about / where he is. **Update quarterly** — there's a literal "last updated" badge and a dashed note saying so. Sections: Building, Publishing, Thinking About, Living. |
-| `bio.html` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. |
-| `contact.html` | Contact page | |
+| File | URL | Purpose | Notes |
+|---|---|---|---|
+| `index.html` | `/` | Homepage | |
+| `blog.html` | `/blog` | Writing archive | Has Substack subscribe banner (email capture form). Old LinkedIn reposts + essays live here as archive. |
+| `speaking.html` | `/speaking` | Speaking/media page | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). |
+| `now.html` | `/now` | "Now" page | What Jason's working on / thinking about / where he is. **Update quarterly** — there's a literal "last updated" badge and a dashed note saying so. Sections: Building, Publishing, Thinking About, Living. |
+| `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". |
+| `contact.html` | `/contact` | Contact page | |
+| `ascii.html` | `/ascii` | Hidden ASCII art easter egg | Linked via a near-invisible `.` link on the homepage. |
 
 `cv.html` was **removed** — all "see my background" / CV links now point to
 LinkedIn (`https://linkedin.com/in/jasonnellis`). Don't recreate it.

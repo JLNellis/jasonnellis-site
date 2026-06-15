@@ -1,0 +1,16 @@
+# Redirect legacy .html URLs to clean paths
+/index.html      /          301
+/bio.html        /about     301
+/blog.html       /blog      301
+/speaking.html   /speaking  301
+/now.html        /now       301
+/contact.html    /contact   301
+/ascii.html      /ascii     301
+
+# Serve clean paths from their underlying files
+/about      /bio.html       200
+/blog       /blog.html      200
+/speaking   /speaking.html  200
+/now        /now.html       200
+/contact    /contact.html   200
+/ascii      /ascii.html     200

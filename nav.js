@@ -18,18 +18,18 @@ const SITE_CONFIG = {
 };
 
 const NAV_LINKS = [
-  { href: 'index.html',    label: 'Home'     },
-  { href: 'blog.html',     label: 'Writing'  },
-  { href: 'speaking.html', label: 'Speaking' },
-  { href: 'now.html',      label: 'Now'      },
-  { href: 'bio.html',      label: 'About'    },
-  { href: 'contact.html',  label: 'Contact'  },
+  { href: '/',         label: 'Home'     },
+  { href: '/about',    label: 'About'    },
+  { href: '/blog',     label: 'Writing'  },
+  { href: '/speaking', label: 'Speaking' },
+  { href: '/now',      label: 'Now'      },
+  { href: '/contact',  label: 'Contact'  },
 ];
 
-// Resolve current filename from path (handles trailing slash → index.html)
+// Resolve current path (handles trailing slash → "/")
 function activePage() {
-  const file = window.location.pathname.split('/').pop();
-  return file || 'index.html';
+  const path = window.location.pathname.replace(/\/+$/, '');
+  return path || '/';
 }
 
 // ---- <site-header> ----------------------------------------
@@ -44,7 +44,7 @@ class SiteHeader extends HTMLElement {
     this.outerHTML = `
 <header class="site-header">
   <div class="site-header__inner">
-    <a href="index.html" class="brand">
+    <a href="/" class="brand">
       <span class="mark">JN</span>
       <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
     </a>
@@ -83,7 +83,7 @@ class SiteFooter extends HTMLElement {
 <footer class="site-footer" data-screen-label="footer">
   <div class="site-footer__inner">
     <div>
-      <a href="index.html" class="brand" style="margin-bottom:14px">
+      <a href="/" class="brand" style="margin-bottom:14px">
         <span class="mark">JN</span>
         <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
       </a>
@@ -104,7 +104,7 @@ class SiteFooter extends HTMLElement {
     <div>
       <h4>Subscribe</h4>
       <a href="${subUrl}" target="_blank" rel="noopener">The Long Yes ↗</a>
-      <a href="contact.html">Get in touch</a>
+      <a href="/contact">Get in touch</a>
     </div>
   </div>
   <div class="site-footer__bottom">
