@@ -48,11 +48,11 @@ class SiteHeader extends HTMLElement {
       <span class="mark">JN</span>
       <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
     </a>
-    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
       <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       <svg class="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <nav class="site-nav">
+    <nav class="site-nav" id="site-nav">
       ${links}
       <span class="live-pill"><span class="live-dot"></span>Located in France · Available Worldwide</span>
     </nav>
