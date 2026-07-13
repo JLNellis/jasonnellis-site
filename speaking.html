@@ -71,6 +71,36 @@
     color: var(--fg-3); letter-spacing: 0.1em;
   }
 
+  .topics-subhead {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--fg-3);
+    margin: 0 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle);
+  }
+  .flagship-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 56px; }
+  .topic-card.flagship { display: flex; flex-direction: column; }
+  .topic-card.flagship .hook { font-size: 13px; color: var(--fg-2); line-height: 1.65; margin: 0 0 18px; }
+  .topic-card .field-label {
+    display: block; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px;
+  }
+  .topic-card .best-for { margin: 0 0 16px; }
+  .topic-card .field-value { font-size: 13px; color: var(--fg-2); line-height: 1.5; }
+  .topic-card .takeaways { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-direction: column; gap: 8px; }
+  .topic-card .takeaways li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--fg-2); line-height: 1.5; }
+  .topic-card .takeaways li::before {
+    content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono);
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .topic-card .talk-footer {
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .talk-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border-strong); color: var(--fg-2); white-space: nowrap;
+  }
+  .topics-grid-compact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
   /* ---- Media ---- */
   .media-section { padding: 72px 0 64px; border-top: 1px solid var(--border-subtle); }
   .media-section h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
@@ -153,7 +183,7 @@
 
   /* ---- Responsive ---- */
   @media (max-width: 900px) {
-    .topics-grid { grid-template-columns: 1fr 1fr; }
+    .flagship-grid, .topics-grid-compact { grid-template-columns: 1fr 1fr; }
     .media-grid { grid-template-columns: 1fr; }
     .book-inner { grid-template-columns: 1fr; padding: 40px 32px; }
     .book-inner::before { display: none; }
@@ -161,7 +191,7 @@
     .format-row .pill { display: none; }
   }
   @media (max-width: 640px) {
-    .topics-grid { grid-template-columns: 1fr; }
+    .flagship-grid, .topics-grid-compact { grid-template-columns: 1fr; }
     .speak-hero { padding: 64px 0 48px; }
   }
 </style>
@@ -195,28 +225,82 @@
       <h2>Pick a talk. I'll bring the rest.</h2>
       <p class="sub">Each of these is a complete talk — ready to adapt to your format, audience, and time slot. Built from things I've actually done, not slides I'd need to write from scratch.</p>
 
-      <div class="topics-grid">
+      <div class="topics-subhead">Flagship talks</div>
+      <div class="flagship-grid">
 
-        <div class="topic-card">
+        <div class="topic-card flagship">
           <span class="num">01</span>
           <div class="icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <h3>Fandoms Are Infrastructure, Not Marketing</h3>
-          <p>Audiences don't become fans by accident — they become fans through infrastructure most companies never think to build. How creator-platform relationships are being rebuilt from the ground up, and what comes after the influencer era.</p>
+          <p class="hook">Audiences don't become fans by accident — they become fans through infrastructure most companies never think to build.</p>
+          <div class="best-for">
+            <span class="field-label">Best for</span>
+            <span class="field-value">Marketing &amp; brand leaders · creator-economy platforms · community-focused conferences</span>
+          </div>
+          <ul class="takeaways">
+            <li>A framework for telling real fan infrastructure from marketing spend</li>
+            <li>Why creator-platform relationships are being rebuilt from the ground up</li>
+            <li>What actually replaces the influencer-era playbook</li>
+          </ul>
+          <div class="talk-footer">
+            <span class="talk-pill">Keynote · 45–60 min</span>
+            <a href="/contact" class="bolt">Ask about this talk →</a>
+          </div>
         </div>
 
-        <div class="topic-card">
+        <div class="topic-card flagship">
           <span class="num">02</span>
           <div class="icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
           <h3>Your AI Strategy Is Probably Theater</h3>
-          <p>Most organizations have an AI strategy that's really a press release. A practical breakdown of where AI creates real product leverage today, where it's still noise, and how to build a defensible point of view before the next cycle makes yours obsolete.</p>
+          <p class="hook">Most organizations have an AI strategy that's really a press release.</p>
+          <div class="best-for">
+            <span class="field-label">Best for</span>
+            <span class="field-value">Executive teams · product leaders · innovation &amp; AI-focused conferences</span>
+          </div>
+          <ul class="takeaways">
+            <li>A practical test for separating real AI leverage from costly performance</li>
+            <li>Where AI creates defensible advantage today, and where it's still noise</li>
+            <li>How to build a point of view that survives the next hype cycle</li>
+          </ul>
+          <div class="talk-footer">
+            <span class="talk-pill">Keynote · 45–60 min</span>
+            <a href="/contact" class="bolt">Ask about this talk →</a>
+          </div>
         </div>
 
-        <div class="topic-card">
+        <div class="topic-card flagship">
           <span class="num">03</span>
+          <div class="icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <h3>The Media Cycle No One Believes Is a Cycle</h3>
+          <p class="hook">Every wave looks like a revolution from the inside — until you've lived through three of them.</p>
+          <div class="best-for">
+            <span class="field-label">Best for</span>
+            <span class="field-value">Media &amp; technology executives · strategy teams · industry conferences</span>
+          </div>
+          <ul class="takeaways">
+            <li>A long-arc model for how media waves actually repeat</li>
+            <li>How to tell where the current cycle really sits</li>
+            <li>What twenty years inside three waves says about the next one</li>
+          </ul>
+          <div class="talk-footer">
+            <span class="talk-pill">Keynote · 45–60 min</span>
+            <a href="/contact" class="bolt">Ask about this talk →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="topics-subhead">Additional topics — available on request</div>
+      <div class="topics-grid-compact">
+
+        <div class="topic-card">
+          <span class="num">04</span>
           <div class="icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           </div>
@@ -225,21 +309,12 @@
         </div>
 
         <div class="topic-card">
-          <span class="num">04</span>
+          <span class="num">05</span>
           <div class="icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
           </div>
           <h3>What It's Actually Like to Sell What You Built</h3>
           <p>An operator's view of building a product org from zero, navigating an acquisition from the acquired side, and the strange experience of handing your work to someone else — and what that teaches you about building the next thing.</p>
-        </div>
-
-        <div class="topic-card">
-          <span class="num">05</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          </div>
-          <h3>The Media Cycle No One Believes Is a Cycle</h3>
-          <p>From early streaming to social commerce to AI-driven content — every wave looks like a revolution from the inside. A long-arc view of how media actually evolves, drawn from two decades of building through three of those waves.</p>
         </div>
 
         <div class="topic-card">
