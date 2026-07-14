@@ -81,10 +81,12 @@
     </div>
     <article class="post-body">
       {{ content | safe }}
+      {%- if originalUrl %}
       <div class="footnote">
         <span>Originally published on LinkedIn · {{ originalDate }}</span>
         <span><a class="bolt" href="{{ originalUrl }}" target="_blank" rel="noopener">View original ↗</a></span>
       </div>
+      {%- endif %}
     </article>
   </div>
 </main>
