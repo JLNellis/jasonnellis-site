@@ -1,0 +1,19 @@
+{
+  "name": "jasonnellis-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "jasonnellis.com — static site, Eleventy builds the essay archive only",
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JLNellis/jasonnellis-site.git"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6"
+  }
+}

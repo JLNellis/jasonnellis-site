@@ -1,0 +1,5 @@
+{
+  "layout": "essay-layout.njk",
+  "permalink": "/blog/{{ page.fileSlug }}/index.html",
+  "tags": ["essay"]
+}

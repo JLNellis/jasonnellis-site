@@ -1,0 +1,273 @@
+---
+permalink: /blog/index.html
+eleventyExcludeFromCollections: true
+---
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing — Jason Nellis</title>
+<meta name="description" content="Essays and reflections from Jason Nellis on strategy, media, technology, and the creator economy.">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jasonnellis.com/blog">
+<meta property="og:title" content="Writing — Jason Nellis">
+<meta property="og:description" content="Essays and reflections from Jason Nellis on strategy, media, technology, and the creator economy.">
+<meta property="og:image" content="https://jasonnellis.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Writing — Jason Nellis">
+<meta name="twitter:description" content="Essays and reflections from Jason Nellis on strategy, media, technology, and the creator economy.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
+<link rel="canonical" href="https://jasonnellis.com/blog">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+<style>
+  .blog-hero {
+    padding: 80px 0 32px;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: center;
+  }
+  .blog-hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 16px; }
+  .blog-hero .lede { font-size: 18px; line-height: 1.6; color: var(--fg-2); max-width: 560px; margin: 0 0 24px; }
+
+  /* Hero photo */
+  .hero-photo {
+    position: relative; aspect-ratio: 3/4; max-width: 300px;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    background: linear-gradient(135deg, #0F172A 0%, #0A2540 60%, #050B17 100%);
+    box-shadow: 0 40px 80px -30px rgba(0,230,118,0.08);
+    justify-self: end;
+  }
+  .hero-photo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+  }
+  .hero-photo .corner {
+    position: absolute; padding: 10px 12px; font-family: var(--font-mono);
+    font-size: 9px; color: rgba(148,163,184,0.7); letter-spacing: 0.1em; text-transform: uppercase;
+    z-index: 2;
+  }
+  .hero-photo .corner.tl { top: 0; left: 0; }
+  .hero-photo .corner.br { bottom: 0; right: 0; color: var(--color-accent-vivid); text-align: right; }
+  .hero-photo .scan {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
+    animation: scandown 7s linear infinite;
+    z-index: 1; pointer-events: none;
+  }
+  @keyframes scandown {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .filter-bar {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 14px 16px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px;
+    margin-bottom: 32px;
+  }
+  .filter-bar .l { font-size: 11px; color: var(--fg-2); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 8px; }
+  .filter-bar .chip {
+    font-size: 12px; padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--border-strong); color: var(--fg-2); cursor: pointer; background: transparent;
+    transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+    font-family: var(--font-sans); font-weight: 500;
+  }
+  .filter-bar .chip:hover { color: var(--fg-1); border-color: var(--fg-2); }
+  .filter-bar .chip.active { color: var(--color-accent-vivid); border-color: var(--color-accent-vivid); background: rgba(0,230,118,0.08); }
+  .filter-bar .count { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* Featured post */
+  .featured {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px;
+    padding: 36px;
+    background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, var(--bg-card) 60%);
+    border: 1px solid var(--border-subtle); border-radius: 14px;
+    margin-bottom: 48px; position: relative; overflow: hidden;
+  }
+  .featured::after { content: ""; position: absolute; top: 0; right: 0; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(0,230,118,0.4), transparent); }
+  .featured h2 { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin: 14px 0 14px; }
+  .featured p { color: var(--fg-2); font-size: 15px; line-height: 1.65; margin: 0 0 22px; }
+  .featured .meta { display: flex; gap: 16px; align-items: center; font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+  .featured .meta .tag { color: var(--color-accent-vivid); }
+  .featured-art {
+    background: var(--bg-deep); border: 1px solid var(--border-subtle); border-radius: 10px;
+    position: relative; overflow: hidden; min-height: 240px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .featured-art svg { opacity: 0.15; }
+
+  /* Post list */
+  .posts { display: flex; flex-direction: column; }
+  .post-row {
+    display: grid; grid-template-columns: 96px 1fr 140px 110px 28px;
+    gap: 24px; padding: 22px 0; align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: opacity var(--dur-fast);
+  }
+  .post-row:hover .arrow { color: var(--color-accent-vivid); transform: translateX(2px); }
+  .post-row .arrow { transition: transform var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard); color: var(--fg-3); font-size: 18px; text-align: right; }
+  .post-row .date { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .post-row .title { font-size: 17px; font-weight: 500; color: #FFF; line-height: 1.4; }
+  .post-row .title .desc { display: block; font-size: 13px; color: var(--fg-2); font-weight: 400; margin-top: 4px; line-height: 1.55; }
+  .post-row .tag { font-size: 11px; color: var(--color-accent-vivid); text-transform: uppercase; letter-spacing: 0.08em; }
+  .post-row .read { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-align: right; }
+
+  @media (max-width: 880px) {
+    .blog-hero { grid-template-columns: 1fr; gap: 24px; }
+    .hero-photo { max-width: 240px; justify-self: start; order: -1; }
+    .featured { grid-template-columns: 1fr; }
+    .post-row { grid-template-columns: 80px 1fr 28px; }
+    .post-row .tag, .post-row .read { display: none; }
+  }
+
+  /* Substack subscribe banner */
+  .subscribe-banner {
+    margin: 40px 0 56px;
+    padding: 36px 40px;
+    background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, var(--bg-card) 70%);
+    border: 1px solid rgba(0,230,118,0.18);
+    border-radius: 14px;
+    position: relative; overflow: hidden;
+  }
+  .subscribe-banner::before {
+    content: ""; position: absolute; right: -60px; top: -60px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.07), transparent 70%);
+    pointer-events: none;
+  }
+  .sub-content { position: relative; }
+  .sub-eyebrow {
+    font-family: var(--font-mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-accent-vivid);
+    display: block; margin-bottom: 10px;
+  }
+  .sub-headline { font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub-body { font-size: 14px; color: var(--fg-2); line-height: 1.6; margin: 0 0 22px; max-width: 480px; }
+  .sub-form { display: flex; gap: 10px; max-width: 440px; flex-wrap: wrap; }
+  .sub-input {
+    flex: 1; min-width: 200px;
+    background: var(--bg-deep); border: 1px solid var(--border-strong);
+    border-radius: 6px; padding: 11px 16px;
+    font-family: var(--font-sans); font-size: 14px; color: var(--fg-1);
+    outline: none; transition: border-color var(--dur-fast);
+  }
+  .sub-input::placeholder { color: var(--fg-3); }
+  .sub-input:focus { border-color: var(--color-accent-vivid); }
+  .sub-btn { flex-shrink: 0; }
+  .sub-note { font-size: 11px; color: var(--fg-3); margin: 10px 0 0; font-family: var(--font-mono); }
+</style>
+<script src="/nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="01 blog" id="main">
+  <section>
+    <div class="page-wrap">
+      <div class="blog-hero">
+        <div>
+          <div class="section-eyebrow"><span class="num">Writing</span> Essays &amp; observations</div>
+          <h1>Ideas with receipts.</h1>
+          <p class="lede">Strategy, story, and the creator economy — written from the south of France. Occasionally urgent, rarely short.</p>
+        </div>
+        <div class="hero-photo">
+          <img src="/casualheadshot.JPG" alt="Jason Nellis">
+          <div class="corner tl">JN · 2026</div>
+          <div class="corner br">● Writing</div>
+          <div class="scan"></div>
+        </div>
+      </div>
+
+      <!-- SUBSTACK SUBSCRIBE BANNER -->
+      <div class="subscribe-banner">
+        <div class="sub-content">
+          <span class="sub-eyebrow">Newsletter</span>
+          <p class="sub-headline">Get <em>The Long Yes</em> in your inbox.</p>
+          <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
+          <form class="sub-form" action="https://jasonnellis.substack.com/api/v1/free" method="get" target="_blank">
+            <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
+            <button type="submit" class="btn primary sub-btn">Subscribe</button>
+          </form>
+          <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
+      </div>
+
+      {%- set featured = collections.essays[0] %}
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="l">Filter</span>
+        <button class="chip active" data-cat="all" onclick="filterPosts(this)">All</button>
+        <button class="chip" data-cat="Creator Economy" onclick="filterPosts(this)">Creator Economy</button>
+        <button class="chip" data-cat="Strategy" onclick="filterPosts(this)">Strategy</button>
+        <button class="chip" data-cat="Product" onclick="filterPosts(this)">Product</button>
+        <button class="chip" data-cat="Leadership" onclick="filterPosts(this)">Leadership</button>
+        <button class="chip" data-cat="Reflection" onclick="filterPosts(this)">Reflection</button>
+        <button class="chip" data-cat="Life" onclick="filterPosts(this)">Life</button>
+        <span class="count" id="post-count">{{ collections.essays.length }} essays</span>
+      </div>
+
+      <!-- Featured post -->
+      <div class="featured" data-cat="{{ featured.data.category }}">
+        <div>
+          <div class="meta"><span class="tag">{{ featured.data.category }}</span><span>{{ featured.data.date | monthYear }}</span><span>{{ featured.data.readTime }}</span></div>
+          <h2>{{ featured.data.title }}</h2>
+          <p>{{ featured.data.description }}</p>
+          <a href="{{ featured.url }}" class="btn primary">Read essay →</a>
+        </div>
+        <div class="featured-art">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+        </div>
+      </div>
+
+      <!-- Posts -->
+      <div class="posts">
+        {%- for essay in collections.essays %}
+        <a class="post-row" href="{{ essay.url }}" data-cat="{{ essay.data.category }}">
+          <span class="date">{{ essay.data.date | monthYear }}</span>
+          <span class="title">{{ essay.data.title }}<span class="desc">{{ essay.data.description }}</span></span>
+          <span class="tag">{{ essay.data.category }}</span>
+          <span class="read">{{ essay.data.readTime }}</span>
+          <span class="arrow">→</span>
+        </a>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+</main>
+
+<site-footer></site-footer>
+
+<script>
+function filterPosts(btn) {
+  document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const cat = btn.dataset.cat;
+  let count = 0;
+  document.querySelectorAll('.posts .post-row, .featured').forEach(el => {
+    const match = cat === 'all' || el.dataset.cat === cat;
+    el.style.display = match ? '' : 'none';
+    if (match && el.classList.contains('post-row')) count++;
+  });
+  document.getElementById('post-count').textContent = count + (count === 1 ? ' essay' : ' essays');
+}
+</script>
+
+</body>
+</html>

@@ -18,9 +18,21 @@ no filler.
 
 ## Stack & deployment
 
-- Static HTML/CSS/JS — no build step, no framework, no package.json.
+- Mostly static HTML/CSS/JS, hand-authored, no templating — **except** the
+  essay archive (`/blog` + individual essays), which is built by **Eleventy**
+  (11ty). See "Writing archive (Eleventy)" below before touching anything
+  under `essays/`, `blog.njk`, `sitemap.njk`, or `_includes/`.
 - Hosted on **Netlify**, connected to this **GitHub** repo.
-- Pushing to the main branch triggers an automatic Netlify deploy.
+- Netlify build command is `npm install && npx @11ty/eleventy` (see
+  `netlify.toml`), publishing the generated `_site/` directory. Pushing to
+  main triggers this build automatically. A broken Eleventy build (bad
+  front matter, template syntax error, etc.) will fail the deploy — check
+  the Netlify deploy log if a push doesn't go live.
+- The six main pages (`index.html`, `bio.html`, `contact.html`,
+  `speaking.html`, `now.html`, `ascii.html`) plus `404.html` are still
+  plain hand-authored HTML — Eleventy copies them through byte-for-byte
+  (`addPassthroughCopy` in `.eleventy.js`), no templating applied. Edit
+  them exactly as before.
 - Email: `hello@jasonnellis.com` → forwards to Jason's Gmail via ImprovMX
   (DNS configured in GoDaddy — not part of this repo).
 
@@ -71,6 +83,52 @@ All pages are served at clean paths without file extensions (e.g.
 nav) *and* add a rewrite + redirect pair to `_redirects` following the
 existing pattern.
 
+`/blog` is the one exception to the rewrite pattern above — it's generated
+directly at `_site/blog/index.html` by Eleventy, so it needs no `_redirects`
+entry (Netlify serves a directory's `index.html` natively). Same for every
+essay under `/blog/<slug>/`.
+
+---
+
+## Writing archive (Eleventy)
+
+Essays live as individual Markdown files in `essays/*.md`, one file per
+essay, each with front matter:
+
+```markdown
+---
+title: "Essay title"
+description: "One-sentence description, used for meta/OG/JSON-LD."
+date: 2025-02-10
+category: "Creator Economy"
+readTime: "5 min"
+originalDate: "Feb 2025"
+originalUrl: "https://www.linkedin.com/posts/..."
+---
+Body content in Markdown — plain paragraphs, `> blockquote`, `### h3`.
+```
+
+**To publish a new essay:** add a new `.md` file to `essays/`. That's it —
+`essays/essays.json` supplies the shared layout and permalink pattern
+(`/blog/<filename-without-extension>/`), so the file name becomes the URL
+slug. The `/blog` index, `sitemap.xml`, and the featured-post slot on the
+index all update automatically from the same collection — nothing else
+needs to be touched by hand.
+
+- `_includes/essay-layout.njk` is the shared per-essay template (head
+  boilerplate, GA snippet, OG/Twitter tags, canonical, `Article` JSON-LD,
+  the `.post-body` styling). Edit this once to change how every essay page
+  looks — don't hand-edit individual essay output.
+- `blog.njk` is the `/blog` index template — hero, Substack subscribe
+  banner, category filter bar, featured post, and the full post list. Loops
+  over `collections.essays` (defined in `.eleventy.js`, sorted newest
+  first).
+- `sitemap.njk` generates `sitemap.xml` from the same essay collection plus
+  the six static pages — don't hand-maintain a separate sitemap file.
+- Local preview: `npm run build` writes `_site/`; there's an `eleventy-site`
+  entry in `.claude/launch.json` that serves it on port 8124. `npm run
+  serve` also works for a live-reloading dev server.
+
 ---
 
 ## Analytics — REQUIRED ON EVERY PAGE
@@ -101,7 +159,7 @@ Any new page must include this snippet. Don't change the tracking ID
 | File | URL | Purpose | Notes |
 |---|---|---|---|
 | `index.html` | `/` | Homepage | |
-| `blog.html` | `/blog` | Writing archive | Has Substack subscribe banner (email capture form). Old LinkedIn reposts + essays live here as archive. |
+| `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has Substack subscribe banner (email capture form). Essays are LinkedIn reposts turned into permanent pages. |
 | `speaking.html` | `/speaking` | Speaking/media page | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). |
 | `now.html` | `/now` | "Now" page | What Jason's working on / thinking about / where he is. **Update quarterly** — there's a literal "last updated" badge and a dashed note saying so. Sections: Building, Publishing, Thinking About, Living. |
 | `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". |
@@ -135,7 +193,8 @@ hardcode hex values.
   color. Used for active states, CTAs, live indicators. Never as a
   background. Used sparingly — roughly 10% of any surface.
 - Fonts: `--font-sans` (DM Sans, standing in for licensed Suisse Intl),
-  `--font-mono` (JetBrains Mono) for labels/eyebrows/badges/timestamps.
+  `--font-mono` (DM Mono, same foundry as DM Sans) for labels/eyebrows/
+  badges/timestamps.
 - Borders are subtle (`--border-subtle`, 1px, low contrast) — structural,
   not decorative.
 

@@ -8,8 +8,8 @@
 /ascii.html      /ascii     301
 
 # Serve clean paths from their underlying files
+# (/blog is generated directly at /blog/index.html by Eleventy — no rewrite needed)
 /about      /bio.html       200
-/blog       /blog.html      200
 /speaking   /speaking.html  200
 /now        /now.html       200
 /contact    /contact.html   200
