@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Not Found — Jason Nellis</title>
+<meta name="description" content="This page doesn't exist. Find Jason Nellis's writing, speaking, and contact info from here.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="stylesheet" href="site.css">
+<style>
+  .notfound-hero {
+    padding: 120px 0; text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .notfound-hero .section-eyebrow { justify-content: center; }
+  .notfound-hero h1 {
+    font-size: clamp(40px, 6vw, 64px); font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em; margin: 16px 0 20px;
+  }
+  .notfound-hero h1 .accent { color: var(--color-accent-vivid); }
+  .notfound-hero .lede {
+    font-size: 17px; line-height: 1.65; color: var(--fg-2);
+    max-width: 480px; margin: 0 0 36px;
+  }
+  .notfound-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 28px; }
+  .notfound-hero .more-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .notfound-hero .more-links a { font-size: 13px; color: var(--fg-3); }
+  .notfound-hero .more-links a:hover { color: var(--fg-2); }
+</style>
+<script src="nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="404" id="main">
+  <div class="page-wrap">
+    <div class="notfound-hero">
+      <div class="section-eyebrow"><span class="num">404</span> Lost signal</div>
+      <h1>This page <span class="accent">doesn't exist.</span></h1>
+      <p class="lede">The link's broken, the page moved, or you took a wrong turn. Here's where you probably meant to go.</p>
+      <div class="ctas">
+        <a href="/" class="btn primary">Back to home</a>
+        <a href="/speaking" class="btn ghost">Explore speaking</a>
+      </div>
+      <div class="more-links">
+        <a href="/about">About</a>
+        <a href="/blog">Writing</a>
+        <a href="/now">Now</a>
+        <a href="/contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>
