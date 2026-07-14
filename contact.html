@@ -73,6 +73,10 @@
   .topic-grid label:has(input:checked) .swatch { border-color: var(--color-accent-vivid); }
   .topic-grid label:has(input:checked) .swatch::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--color-accent-vivid); box-shadow: 0 0 8px var(--color-accent-vivid); }
 
+  .speaking-fields { display: flex; flex-direction: column; gap: 14px; }
+  .speaking-fields.hidden { display: none; }
+  .speaking-fields .section-note { font-size: 12px; color: var(--fg-3); margin: 0 0 -2px; }
+
   .form-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border-subtle); margin-top: 8px; }
   .form-meta .left { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
   .form-meta .left .live-dot { width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; }
@@ -169,6 +173,35 @@
             <label><input type="radio" name="topic" value="coaching"><span class="swatch"></span><span class="lbl">Coaching</span></label>
             <label><input type="radio" name="topic" value="press"><span class="swatch"></span><span class="lbl">Press / podcast</span></label>
             <label><input type="radio" name="topic" value="other"><span class="swatch"></span><span class="lbl">Something else</span></label>
+          </div>
+        </div>
+
+        <div class="speaking-fields" id="speakingFields">
+          <p class="section-note">Tell me about the event — this helps me answer honestly and fast.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="event_name">Event / organizer</label>
+              <input id="event_name" name="event_name" type="text" placeholder="e.g. SaaStr Annual" autocomplete="organization">
+            </div>
+            <div class="field">
+              <label for="event_date">Event date</label>
+              <input id="event_date" name="event_date" type="text" placeholder="e.g. March 2027, or TBD">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="event_format">Format</label>
+              <select id="event_format" name="event_format">
+                <option>—</option>
+                <option>In-person</option>
+                <option>Remote</option>
+                <option>Either works</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="audience_size">Expected audience size</label>
+              <input id="audience_size" name="audience_size" type="text" placeholder="e.g. ~200">
+            </div>
           </div>
         </div>
 
@@ -310,6 +343,14 @@
 <site-footer></site-footer>
 
 <script>
+  function updateSpeakingFields() {
+    const checked = document.querySelector('input[name="topic"]:checked');
+    const fields = document.getElementById('speakingFields');
+    fields.classList.toggle('hidden', !checked || checked.value !== 'speaking');
+  }
+  document.querySelectorAll('input[name="topic"]').forEach(r => r.addEventListener('change', updateSpeakingFields));
+  updateSpeakingFields();
+
   function pad(n) { return String(n).padStart(2, '0'); }
   function tick() {
     const now = new Date();
