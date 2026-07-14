@@ -1,0 +1,5 @@
+{
+  "layout": "talk-layout.njk",
+  "permalink": "/speaking/{{ page.fileSlug }}/index.html",
+  "tags": ["talk"]
+}

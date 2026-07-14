@@ -44,6 +44,12 @@ module.exports = function (eleventyConfig) {
     );
   });
 
+  eleventyConfig.addCollection("talks", (collectionApi) => {
+    return collectionApi.getFilteredByGlob("talks/*.md").sort(
+      (a, b) => a.data.order - b.data.order
+    );
+  });
+
   return {
     dir: {
       input: ".",

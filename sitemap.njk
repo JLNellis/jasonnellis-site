@@ -13,4 +13,7 @@ eleventyExcludeFromCollections: true
 {%- for essay in collections.essays %}
   <url><loc>https://jasonnellis.com{{ essay.url }}</loc></url>
 {%- endfor %}
+{%- for talk in collections.talks %}
+  <url><loc>https://jasonnellis.com{{ talk.url }}</loc></url>
+{%- endfor %}
 </urlset>

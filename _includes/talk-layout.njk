@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} — Jason Nellis</title>
+<meta name="description" content="{{ hook }}">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jasonnellis.com{{ page.url }}">
+<meta property="og:title" content="{{ title }} — Jason Nellis">
+<meta property="og:description" content="{{ hook }}">
+<meta property="og:image" content="https://jasonnellis.com/og-image-speaking.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title }} — Jason Nellis">
+<meta name="twitter:description" content="{{ hook }}">
+<meta name="twitter:image" content="https://jasonnellis.com/og-image-speaking.png">
+<link rel="canonical" href="https://jasonnellis.com{{ page.url }}">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="stylesheet" href="/site.css">
+<style>
+  .talk-header { padding: 72px 0 8px; max-width: 720px; }
+  .talk-header .back-link { font-size: 13px; }
+  .talk-header .section-eyebrow { margin-top: 22px; }
+  .talk-header h1 {
+    font-size: clamp(32px, 5vw, 48px); font-weight: 700;
+    line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px;
+  }
+  .talk-header .hook { font-size: 18px; line-height: 1.6; color: var(--fg-1); margin: 0; }
+
+  .talk-body { max-width: 720px; padding: 24px 0 8px; }
+  .talk-body p { font-size: 16px; line-height: 1.75; color: var(--fg-2); margin: 0 0 18px; }
+
+  .talk-meta-block {
+    max-width: 720px; margin: 24px 0 0; padding: 24px 26px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px;
+  }
+  .talk-meta-block .field-label {
+    display: block; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px;
+  }
+  .talk-meta-block .field-value { display: block; font-size: 14px; color: var(--fg-1); margin-bottom: 20px; }
+  .talk-meta-block .takeaways { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .talk-meta-block .takeaways li { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--fg-2); line-height: 1.5; }
+  .talk-meta-block .takeaways li::before {
+    content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono);
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .talk-related { max-width: 720px; margin: 24px 0 0; font-size: 14px; color: var(--fg-2); }
+
+  .talk-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    max-width: 720px; margin: 32px 0 96px; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+  }
+  .talk-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border-strong); color: var(--fg-2); white-space: nowrap;
+  }
+</style>
+<script src="/nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="talk" id="main">
+  <div class="page-wrap page-wrap--narrow">
+    <div class="talk-header">
+      <a href="/speaking" class="bolt back-link">← All talks</a>
+      <div class="section-eyebrow"><span class="num">Talk</span> {{ length }}</div>
+      <h1>{{ title }}</h1>
+      <p class="hook">{{ hook }}</p>
+    </div>
+
+    <div class="talk-body">
+      {{ content | safe }}
+    </div>
+
+    <div class="talk-meta-block">
+      <span class="field-label">Best for</span>
+      <span class="field-value">{{ bestFor }}</span>
+      <span class="field-label">Audience leaves with</span>
+      <ul class="takeaways">
+        {%- for t in takeaways %}
+        <li>{{ t }}</li>
+        {%- endfor %}
+      </ul>
+    </div>
+
+    {%- if relatedEssaySlug %}
+    <p class="talk-related">Related reading: <a class="bolt" href="/blog/{{ relatedEssaySlug }}/">{{ relatedEssayTitle }}</a></p>
+    {%- endif %}
+
+    <div class="talk-footer">
+      <span class="talk-pill">{{ length }}</span>
+      <a href="/contact" class="btn primary">Book this talk</a>
+    </div>
+  </div>
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>
