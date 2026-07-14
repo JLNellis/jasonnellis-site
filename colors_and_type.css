@@ -42,7 +42,7 @@
 
   --fg-1:           var(--color-neutral-white);          /* primary text */
   --fg-2:           var(--color-neutral-cool-gray);      /* secondary text */
-  --fg-3:           #64748B;                             /* tertiary / metadata */
+  --fg-3:           #8892AA;                             /* tertiary / metadata — WCAG AA vs bg-base & bg-card */
   --fg-accent:      var(--color-accent-vivid);
 
   --border-subtle:  rgba(148, 163, 184, 0.12);           /* 0.5–1px structural */
