@@ -16,7 +16,9 @@ module.exports = function (eleventyConfig) {
   // Hand-authored pages — copied byte-for-byte, same flat filenames, no
   // templating, no pretty-URL folder rewrite (existing _redirects and
   // Netlify's 404.html convention both depend on these exact paths).
-  eleventyConfig.addPassthroughCopy("index.html");
+  // index.njk is the one exception — it's Nunjucks-templated (for the
+  // dynamic "recent writing" teaser) so it goes through the normal build
+  // pipeline instead of passthrough copy.
   eleventyConfig.addPassthroughCopy("bio.html");
   eleventyConfig.addPassthroughCopy("contact.html");
   eleventyConfig.addPassthroughCopy("speaking.html");
@@ -39,11 +41,24 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("isoDate", (dateObj) => {
     return new Date(dateObj).toISOString();
   });
+  eleventyConfig.addFilter("dotDate", (dateObj) => {
+    const d = new Date(dateObj);
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(d.getUTCDate()).padStart(2, "0");
+    return `${yyyy} · ${mm} · ${dd}`;
+  });
 
   eleventyConfig.addCollection("essays", (collectionApi) => {
     return collectionApi.getFilteredByGlob("essays/*.md").sort(
       (a, b) => b.date - a.date
     );
+  });
+
+  eleventyConfig.addCollection("recentEssays", (collectionApi) => {
+    return collectionApi.getFilteredByGlob("essays/*.md")
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 4);
   });
 
   eleventyConfig.addCollection("talks", (collectionApi) => {
