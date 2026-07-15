@@ -6,6 +6,7 @@
 /now.html        /now       301
 /contact.html    /contact   301
 /ascii.html      /ascii     301
+/press-kit.html  /press-kit 301
 
 # Serve clean paths from their underlying files
 # (/blog is generated directly at /blog/index.html by Eleventy — no rewrite needed)
@@ -14,3 +15,4 @@
 /now        /now.html       200
 /contact    /contact.html   200
 /ascii      /ascii.html     200
+/press-kit  /press-kit.html 200

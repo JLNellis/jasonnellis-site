@@ -22,6 +22,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("speaking.html");
   eleventyConfig.addPassthroughCopy("now.html");
   eleventyConfig.addPassthroughCopy("ascii.html");
+  eleventyConfig.addPassthroughCopy("press-kit.html");
+  eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
   eleventyConfig.addPassthroughCopy("404.html");
 
   eleventyConfig.addFilter("readableDate", (dateObj) => {
