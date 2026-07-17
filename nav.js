@@ -45,7 +45,7 @@ class SiteHeader extends HTMLElement {
   <div class="site-header__inner">
     <a href="/" class="brand">
       <span class="mark">JN</span>
-      <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
+      <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
     </a>
     <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
       <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -85,7 +85,7 @@ class SiteFooter extends HTMLElement {
     <div>
       <a href="/" class="brand" style="margin-bottom:14px">
         <span class="mark">JN</span>
-        <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
+        <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
       </a>
       <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Strategy, writing, and the occasional strong opinion.</p>
       <span class="live-pill"><span class="live-dot"></span>Currently active · ${activeMonth}</span>

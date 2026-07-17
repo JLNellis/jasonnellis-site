@@ -57,6 +57,39 @@
     font-size: 11px; flex-shrink: 0; margin-top: 1px;
   }
 
+  .talk-section { max-width: 720px; margin: 40px 0 0; }
+  .talk-section .section-eyebrow { margin: 0 0 14px; }
+  .talk-section p { font-size: 15px; line-height: 1.75; color: var(--fg-2); margin: 0; }
+
+  .talk-argument {
+    max-width: 720px; margin: 40px 0 0; padding: 26px 28px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+    border-left: 2px solid var(--color-accent-vivid);
+  }
+  .talk-argument p { font-size: 17px; line-height: 1.6; color: var(--fg-1); margin: 0; }
+
+  .talk-arc { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+  .talk-arc li { display: flex; gap: 14px; align-items: flex-start; }
+  .talk-arc .arc-num {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid var(--border-strong); color: var(--fg-3);
+    font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; justify-content: center;
+  }
+  .talk-arc .arc-title { color: #FFF; font-weight: 500; font-size: 15px; margin: 0 0 4px; }
+  .talk-arc .arc-body { color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 0; }
+
+  .talk-evidence { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+  .talk-evidence li { padding: 16px 0; border-top: 1px solid var(--border-subtle); }
+  .talk-evidence li:first-child { border-top: none; padding-top: 0; }
+  .talk-evidence .ev-label { color: #FFF; font-weight: 500; font-size: 14px; }
+  .talk-evidence .ev-body { color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 4px 0 0; }
+  .talk-evidence .ev-link { font-size: 13px; margin-top: 6px; display: inline-block; }
+
+  .talk-adaptations { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .talk-adaptations li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--fg-2); line-height: 1.55; }
+  .talk-adaptations li::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+  .talk-adaptations strong { color: #FFF; font-weight: 500; }
+
   .talk-related { max-width: 720px; margin: 24px 0 0; font-size: 14px; color: var(--fg-2); }
 
   .talk-footer {
@@ -89,6 +122,19 @@
       {{ content | safe }}
     </div>
 
+    {%- if whyNow %}
+    <div class="talk-section">
+      <div class="section-eyebrow"><span class="num">Why this talk, now</span></div>
+      <p>{{ whyNow }}</p>
+    </div>
+    {%- endif %}
+
+    {%- if argument %}
+    <div class="talk-argument">
+      <p>{{ argument }}</p>
+    </div>
+    {%- endif %}
+
     <div class="talk-meta-block">
       <span class="field-label">Best for</span>
       <span class="field-value">{{ bestFor }}</span>
@@ -99,6 +145,51 @@
         {%- endfor %}
       </ul>
     </div>
+
+    {%- if narrativeArc %}
+    <div class="talk-section">
+      <div class="section-eyebrow"><span class="num">How the talk unfolds</span></div>
+      <ol class="talk-arc">
+        {%- for section in narrativeArc %}
+        <li>
+          <span class="arc-num">{{ loop.index }}</span>
+          <div>
+            <p class="arc-title">{{ section.title }}</p>
+            <p class="arc-body">{{ section.body }}</p>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    {%- endif %}
+
+    {%- if evidence %}
+    <div class="talk-section">
+      <div class="section-eyebrow"><span class="num">Where this comes from</span></div>
+      <ul class="talk-evidence">
+        {%- for item in evidence %}
+        <li>
+          <div class="ev-label">{{ item.label }}</div>
+          <p class="ev-body">{{ item.body }}</p>
+          {%- if item.url %}
+          <a class="bolt ev-link" href="{{ item.url }}">Read more →</a>
+          {%- endif %}
+        </li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- endif %}
+
+    {%- if adaptations %}
+    <div class="talk-section">
+      <div class="section-eyebrow"><span class="num">Built to adapt</span></div>
+      <ul class="talk-adaptations">
+        {%- for a in adaptations %}
+        <li><strong>{{ a.audience }}</strong> — {{ a.body }}</li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- endif %}
 
     {%- if relatedEssaySlug %}
     <p class="talk-related">Related reading: <a class="bolt" href="/blog/{{ relatedEssaySlug }}/">{{ relatedEssayTitle }}</a></p>

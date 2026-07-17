@@ -11,8 +11,8 @@ building — **not** job seeking. Jason is a strategist, writer, and media
 executive (Director of Innovation at BoltOS; co-founder Akaeon Corp;
 hosts the *Building Value* podcast). Based near Cannes, France.
 
-The site positions him as "Strategist · Writer." Tone is direct, confident,
-no filler.
+The site positions him as "Strategist · Operator · Speaker." Tone is direct,
+confident, no filler.
 
 ---
 
