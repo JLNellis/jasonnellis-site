@@ -11,9 +11,9 @@ eleventyExcludeFromCollections: true
   <url><loc>https://jasonnellis.com/now</loc></url>
   <url><loc>https://jasonnellis.com/contact</loc></url>
 {%- for essay in collections.essays %}
-  <url><loc>https://jasonnellis.com{{ essay.url }}</loc></url>
+  <url><loc>https://jasonnellis.com{{ essay.url }}</loc><lastmod>{{ essay.data.date | w3cDate }}</lastmod></url>
 {%- endfor %}
 {%- for talk in collections.talks %}
-  <url><loc>https://jasonnellis.com{{ talk.url }}</loc></url>
+  <url><loc>https://jasonnellis.com{{ talk.url }}</loc><lastmod>{{ talk.date | w3cDate }}</lastmod></url>
 {%- endfor %}
 </urlset>

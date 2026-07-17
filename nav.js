@@ -10,7 +10,6 @@
 
 const SITE_CONFIG = {
   substackHandle: 'jasonnellis', // "The Long Yes" — https://jasonnellis.substack.com/
-  lastUpdated:    'June 2026',            // ← update when you make site changes
   linkedIn:       'https://linkedin.com/in/jasonnellis',
   twitter:        'https://x.com/jasonnellis',
   podcast:        'https://linktr.ee/jasonnellis',
@@ -72,8 +71,9 @@ class SiteHeader extends HTMLElement {
 // ---- <site-footer> ----------------------------------------
 class SiteFooter extends HTMLElement {
   connectedCallback() {
-    const { substackHandle, lastUpdated, linkedIn, twitter, podcast, email } = SITE_CONFIG;
+    const { substackHandle, linkedIn, twitter, podcast, email } = SITE_CONFIG;
     const subUrl = `https://${substackHandle}.substack.com`;
+    const activeMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     const siteLinks = NAV_LINKS.map(({ href, label }) =>
       `<a href="${href}">${label}</a>`
@@ -88,7 +88,7 @@ class SiteFooter extends HTMLElement {
         <span class="name">Jason Nellis<small>Strategist · Writer</small></span>
       </a>
       <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Strategy, writing, and the occasional strong opinion.</p>
-      <span class="live-pill"><span class="live-dot"></span>Last updated · ${lastUpdated}</span>
+      <span class="live-pill"><span class="live-dot"></span>Currently active · ${activeMonth}</span>
     </div>
     <div>
       <h4>Site</h4>

@@ -64,6 +64,14 @@
   .post-body ul li::marker { color: var(--color-accent-vivid); }
   .post-body .footnote { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--fg-3); display: flex; gap: 12px; flex-wrap: wrap; }
   .post-body .footnote span::before { content: "▸ "; color: var(--color-accent-vivid); }
+
+  .speaking-cta {
+    margin-top: 36px; padding: 24px 26px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  }
+  .speaking-cta h3 { font-size: 16px; font-weight: 500; color: #FFF; margin: 0 0 8px; }
+  .speaking-cta p { font-size: 14px; line-height: 1.65; color: var(--fg-2); margin: 0 0 14px; }
+  .speaking-cta a.bolt { font-size: 14px; }
 </style>
 <script src="/nav.js"></script>
 </head>
@@ -90,6 +98,17 @@
       <div class="footnote">
         <span>Originally published on LinkedIn · {{ originalDate }}</span>
         <span><a class="bolt" href="{{ originalUrl }}" target="_blank" rel="noopener">View original ↗</a></span>
+      </div>
+      {%- endif %}
+      {%- if category == "Case Study" %}
+      <div class="speaking-cta">
+        <h3>Bring this story to your audience</h3>
+        <p>This case study informs how Jason talks about product strategy, media, and building under uncertainty on stage.</p>
+        {%- if relatedTalkSlug %}
+        <a class="bolt" href="/speaking/{{ relatedTalkSlug }}/">{{ relatedTalkTitle }} →</a>
+        {%- else %}
+        <a class="bolt" href="/speaking">Explore speaking topics →</a>
+        {%- endif %}
       </div>
       {%- endif %}
     </article>

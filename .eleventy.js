@@ -44,6 +44,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("isoDate", (dateObj) => {
     return new Date(dateObj).toISOString();
   });
+  eleventyConfig.addFilter("w3cDate", (dateObj) => {
+    return new Date(dateObj).toISOString().slice(0, 10);
+  });
   eleventyConfig.addFilter("dotDate", (dateObj) => {
     const d = new Date(dateObj);
     const yyyy = d.getUTCFullYear();
