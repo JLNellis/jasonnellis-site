@@ -10,6 +10,7 @@ length: "Keynote · 45–60 min"
 relatedEssaySlug: "what-you-learn-when-you-stop-building-and-start-listening"
 relatedEssayTitle: "What you learn when you stop building and start listening"
 order: 3
+ogImage: "/og-talk-creators.jpg"
 whyNow: "The creator economy has matured past 'just make good content' advice, but most platforms and brands still evaluate creators on volume and follower count instead of the patterns that actually predict who's still building in five years."
 argument: "This isn't another creator-economy trends talk. It's built from the inside, from both directions: a company that built for creators and got it wrong before it got right, a podcast with 100+ creator conversations, and a company that now protects creator IP. The same handful of patterns keep separating who breaks through from who doesn't — and none of them are about production value."
 narrativeArc:

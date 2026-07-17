@@ -14,16 +14,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ title }} — Jason Nellis</title>
 <meta name="description" content="{{ description }}">
+{%- set shareImage = ogImage or "/og-image.png" %}
 <!-- Open Graph / Twitter -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://jasonnellis.com{{ page.url }}">
 <meta property="og:title" content="{{ title }} — Jason Nellis">
 <meta property="og:description" content="{{ description }}">
-<meta property="og:image" content="https://jasonnellis.com/og-image.png">
+<meta property="og:image" content="https://jasonnellis.com{{ shareImage }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ title }} — Jason Nellis">
 <meta name="twitter:description" content="{{ description }}">
-<meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
+<meta name="twitter:image" content="https://jasonnellis.com{{ shareImage }}">
 <link rel="canonical" href="https://jasonnellis.com{{ page.url }}">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
@@ -37,7 +38,7 @@
   "datePublished": "{{ date | isoDate }}",
   "author": { "@type": "Person", "name": "Jason Nellis", "url": "https://jasonnellis.com" },
   "publisher": { "@type": "Person", "name": "Jason Nellis" },
-  "image": "https://jasonnellis.com/og-image.png",
+  "image": "https://jasonnellis.com{{ shareImage }}",
   "mainEntityOfPage": "https://jasonnellis.com{{ page.url }}"
 }
 </script>

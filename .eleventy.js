@@ -13,6 +13,12 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("superbam.jpg");
   eleventyConfig.addPassthroughCopy("hulu.jpg");
   eleventyConfig.addPassthroughCopy("packagd.jpeg");
+  eleventyConfig.addPassthroughCopy("og-case-hulu.jpg");
+  eleventyConfig.addPassthroughCopy("og-case-superbam.jpg");
+  eleventyConfig.addPassthroughCopy("og-case-packagd.jpg");
+  eleventyConfig.addPassthroughCopy("og-talk-ai-strategy.jpg");
+  eleventyConfig.addPassthroughCopy("og-talk-media-cycle.jpg");
+  eleventyConfig.addPassthroughCopy("og-talk-creators.jpg");
   eleventyConfig.addPassthroughCopy("robots.txt");
   eleventyConfig.addPassthroughCopy("_redirects");
 

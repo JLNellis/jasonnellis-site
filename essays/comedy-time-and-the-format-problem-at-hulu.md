@@ -5,6 +5,7 @@ date: 2026-07-13
 category: "Case Study"
 readTime: "4 min"
 heroImage: "/hulu.jpg"
+ogImage: "/og-case-hulu.jpg"
 ---
 *Content Partner Manager, Hulu · 2009–2012*
 

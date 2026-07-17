@@ -8,6 +8,7 @@ takeaways:
   - "How to build a point of view that survives the next hype cycle"
 length: "Keynote · 45–60 min"
 order: 1
+ogImage: "/og-talk-ai-strategy.jpg"
 whyNow: "Every organization has an AI initiative and a slide deck now; few have a working definition of where AI actually changes the P&L. Saying no to a pilot has started to look riskier than funding one that never ships anything real — which is exactly backwards."
 argument: "This isn't a tools showcase or a hype-versus-skepticism debate. It's an argument about executive judgment: as AI implementation gets cheaper, the cost of weak direction goes up, not down. The organizations getting real leverage aren't the ones running the most pilots — they're the ones with someone senior enough, and specific enough, to say where AI doesn't belong."
 narrativeArc:

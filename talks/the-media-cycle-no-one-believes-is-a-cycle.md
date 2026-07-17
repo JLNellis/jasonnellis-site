@@ -10,6 +10,7 @@ length: "Keynote · 45–60 min"
 relatedEssaySlug: "every-generation-blames-the-next-medium"
 relatedEssayTitle: "Every generation blames the next medium"
 order: 2
+ogImage: "/og-talk-media-cycle.jpg"
 whyNow: "Every wave of media disruption produces the same 'this time it's different' conviction — right up until the next wave arrives and says the same thing about it. The organizations that keep getting blindsided aren't missing information. They're missing the shape of the last cycle."
 argument: "This isn't nostalgia for the streaming wars or a prediction about what's next. It's an argument about pattern recognition: the people who keep getting caught flat-footed by media cycles aren't behind on trends — they're pattern-blind to the one that already happened to them."
 narrativeArc:
