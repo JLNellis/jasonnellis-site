@@ -50,6 +50,8 @@
     line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px;
   }
   .post-header .post-desc { font-size: 17px; line-height: 1.6; color: var(--fg-2); margin: 0 0 40px; }
+  .post-hero { max-width: 720px; margin: 0 0 40px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+  .post-hero img { display: block; width: 100%; height: auto; }
 
   .post-body { padding: 0 0 96px; max-width: 720px; }
   .post-body h3 { font-size: 24px; font-weight: 500; margin: 36px 0 12px; color: #FFF; }
@@ -79,6 +81,9 @@
       <h1>{{ title }}</h1>
       <p class="post-desc">{{ description }}</p>
     </div>
+    {%- if heroImage %}
+    <div class="post-hero"><img src="{{ heroImage }}" alt="{{ title }}" width="1400" height="788"></div>
+    {%- endif %}
     <article class="post-body">
       {{ content | safe }}
       {%- if originalUrl %}

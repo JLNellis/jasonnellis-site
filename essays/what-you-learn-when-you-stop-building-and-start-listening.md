@@ -4,6 +4,7 @@ description: "Packagd built two products creators never asked for. What got the 
 date: 2026-07-15
 category: "Case Study"
 readTime: "6 min"
+heroImage: "/packagd.jpeg"
 ---
 *Co-Founder (Creator Engagement & Product), Packagd, 2017–2019 · Acquired by Meta*
 

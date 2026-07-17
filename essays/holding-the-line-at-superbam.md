@@ -4,6 +4,7 @@ description: "When SuperBam's CEO took an unexpected leave, I stepped into tempo
 date: 2026-07-14
 category: "Case Study"
 readTime: "7 min"
+heroImage: "/superbam.jpg"
 ---
 **Chief Product Officer → Interim CEO, SuperBam, October 2024–April 2026**
 

@@ -108,6 +108,7 @@ eleventyExcludeFromCollections: true
     display: flex; align-items: center; justify-content: center;
   }
   .featured-art svg { opacity: 0.15; }
+  .featured-art img { width: 100%; height: 100%; object-fit: cover; }
 
   /* Post list */
   .posts { display: flex; flex-direction: column; }
@@ -233,7 +234,11 @@ eleventyExcludeFromCollections: true
           <a href="{{ featured.url }}" class="btn primary">Read essay →</a>
         </div>
         <div class="featured-art">
+          {%- if featured.data.heroImage %}
+          <img src="{{ featured.data.heroImage }}" alt="{{ featured.data.title }}">
+          {%- else %}
           <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+          {%- endif %}
         </div>
       </div>
 

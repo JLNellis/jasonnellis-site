@@ -10,6 +10,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("casualheadshot.JPG");
   eleventyConfig.addPassthroughCopy("officeheadshot.jpg");
   eleventyConfig.addPassthroughCopy("IMG_0205.jpg");
+  eleventyConfig.addPassthroughCopy("superbam.jpg");
+  eleventyConfig.addPassthroughCopy("hulu.jpg");
+  eleventyConfig.addPassthroughCopy("packagd.jpeg");
   eleventyConfig.addPassthroughCopy("robots.txt");
   eleventyConfig.addPassthroughCopy("_redirects");
 

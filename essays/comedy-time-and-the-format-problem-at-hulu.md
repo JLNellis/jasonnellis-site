@@ -4,6 +4,7 @@ description: "A stand-up comedy library was stuck at $400 a month in revenue. Th
 date: 2026-07-13
 category: "Case Study"
 readTime: "4 min"
+heroImage: "/hulu.jpg"
 ---
 *Content Partner Manager, Hulu · 2009–2012*
 
