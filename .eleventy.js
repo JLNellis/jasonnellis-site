@@ -7,7 +7,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("og-image.png");
   eleventyConfig.addPassthroughCopy("og-image-speaking.png");
   eleventyConfig.addPassthroughCopy("jason-headshot.jpg");
-  eleventyConfig.addPassthroughCopy("casualheadshot.JPG");
+  eleventyConfig.addPassthroughCopy("jason-headshot-blog.jpg");
   eleventyConfig.addPassthroughCopy("officeheadshot.jpg");
   eleventyConfig.addPassthroughCopy("IMG_0205.jpg");
   eleventyConfig.addPassthroughCopy("superbam.jpg");
