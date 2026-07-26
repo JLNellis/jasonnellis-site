@@ -28,8 +28,8 @@ confident, no filler.
   main triggers this build automatically. A broken Eleventy build (bad
   front matter, template syntax error, etc.) will fail the deploy — check
   the Netlify deploy log if a push doesn't go live.
-- The six main pages (`index.html`, `bio.html`, `contact.html`,
-  `speaking.html`, `now.html`, `ascii.html`) plus `404.html` are still
+- The five main pages (`index.html`, `bio.html`, `contact.html`,
+  `speaking.html`, `ascii.html`) plus `404.html` are still
   plain hand-authored HTML — Eleventy copies them through byte-for-byte
   (`addPassthroughCopy` in `.eleventy.js`), no templating applied. Edit
   them exactly as before.
@@ -161,21 +161,12 @@ Any new page must include this snippet. Don't change the tracking ID
 | `index.html` | `/` | Homepage | |
 | `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has Substack subscribe banner (email capture form). Essays are LinkedIn reposts turned into permanent pages. |
 | `speaking.html` | `/speaking` | Speaking/media page | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). |
-| `now.html` | `/now` | "Now" page | What Jason's working on / thinking about / where he is. **Update quarterly** — there's a literal "last updated" badge and a dashed note saying so. Sections: Building, Publishing, Thinking About, Living. |
-| `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". |
+| `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". Portrait is `officeheadshot.jpg`. |
 | `contact.html` | `/contact` | Contact page | |
 | `ascii.html` | `/ascii` | Hidden ASCII art easter egg | Linked via a near-invisible `.` link on the homepage. |
 
 `cv.html` was **removed** — all "see my background" / CV links now point to
 LinkedIn (`https://linkedin.com/in/jasonnellis`). Don't recreate it.
-
----
-
-## Pending / known placeholders
-
-- **`now.html` "Thinking About" section**: written for June 2026 — Jason
-  should refresh this content periodically; it's explicitly meant to go
-  stale and be rewritten, not maintained indefinitely.
 
 ---
 

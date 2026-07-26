@@ -21,7 +21,6 @@ const NAV_LINKS = [
   { href: '/about',    label: 'About'    },
   { href: '/blog',     label: 'Writing'  },
   { href: '/speaking', label: 'Speaking' },
-  { href: '/now',      label: 'Now'      },
   { href: '/contact',  label: 'Contact'  },
 ];
 

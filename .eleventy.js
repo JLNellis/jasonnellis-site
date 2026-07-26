@@ -31,7 +31,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("bio.html");
   eleventyConfig.addPassthroughCopy("contact.html");
   eleventyConfig.addPassthroughCopy("speaking.html");
-  eleventyConfig.addPassthroughCopy("now.html");
   eleventyConfig.addPassthroughCopy("ascii.html");
   eleventyConfig.addPassthroughCopy("press-kit.html");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
