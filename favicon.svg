@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Jason Nellis">
+  <rect width="1024" height="1024" fill="#0A2540"/>
+  <path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/>
+  <path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/>
+</svg>

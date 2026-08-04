@@ -3,7 +3,13 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("site.css");
   eleventyConfig.addPassthroughCopy("colors_and_type.css");
   eleventyConfig.addPassthroughCopy("nav.js");
-  eleventyConfig.addPassthroughCopy("favicon.png");
+  eleventyConfig.addPassthroughCopy("favicon.ico");
+  eleventyConfig.addPassthroughCopy("favicon.svg");
+  eleventyConfig.addPassthroughCopy("apple-touch-icon.png");
+  eleventyConfig.addPassthroughCopy("android-chrome-192x192.png");
+  eleventyConfig.addPassthroughCopy("android-chrome-512x512.png");
+  eleventyConfig.addPassthroughCopy("maskable-icon-512x512.png");
+  eleventyConfig.addPassthroughCopy("site.webmanifest");
   eleventyConfig.addPassthroughCopy("og-image.png");
   eleventyConfig.addPassthroughCopy("og-image-speaking.png");
   eleventyConfig.addPassthroughCopy("jason-headshot.jpg");

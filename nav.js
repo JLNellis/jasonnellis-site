@@ -16,6 +16,8 @@ const SITE_CONFIG = {
   email:          'hello@jasonnellis.com',
 };
 
+const LOGO_MARK_SVG = `<svg viewBox="0 0 1024 1024" role="img" aria-label="Jason Nellis"><path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/><path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/></svg>`;
+
 const NAV_LINKS = [
   { href: '/',         label: 'Home'     },
   { href: '/about',    label: 'About'    },
@@ -43,7 +45,7 @@ class SiteHeader extends HTMLElement {
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="brand">
-      <span class="mark">JN</span>
+      <span class="mark">${LOGO_MARK_SVG}</span>
       <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
     </a>
     <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
@@ -83,7 +85,7 @@ class SiteFooter extends HTMLElement {
   <div class="site-footer__inner">
     <div>
       <a href="/" class="brand" style="margin-bottom:14px">
-        <span class="mark">JN</span>
+        <span class="mark">${LOGO_MARK_SVG}</span>
         <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
       </a>
       <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Strategy, writing, and the occasional strong opinion.</p>
