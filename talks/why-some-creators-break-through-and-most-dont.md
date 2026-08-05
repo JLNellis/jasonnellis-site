@@ -32,7 +32,6 @@ evidence:
     body: "100+ conversations with creators; the source material for the pattern this talk covers."
   - label: "SuperBam — CPO → Interim CEO"
     body: "Working the IP-protection side of the creator economy — seeing firsthand which creators are building something durable versus renting attention."
-    url: "/blog/holding-the-line-at-superbam/"
 adaptations:
   - audience: "Creator-economy platforms"
     body: "a scoring lens for evaluating creator potential and durability"

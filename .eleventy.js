@@ -67,13 +67,14 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addCollection("essays", (collectionApi) => {
-    return collectionApi.getFilteredByGlob("essays/*.md").sort(
-      (a, b) => b.date - a.date
-    );
+    return collectionApi.getFilteredByGlob("essays/*.md")
+      .filter((essay) => !essay.data.unlisted)
+      .sort((a, b) => b.date - a.date);
   });
 
   eleventyConfig.addCollection("recentEssays", (collectionApi) => {
     return collectionApi.getFilteredByGlob("essays/*.md")
+      .filter((essay) => !essay.data.unlisted)
       .sort((a, b) => b.date - a.date)
       .slice(0, 4);
   });
