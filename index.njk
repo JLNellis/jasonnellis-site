@@ -61,9 +61,14 @@
   .home-hero h1 {
     font-size: clamp(48px, 7vw, 96px);
     font-weight: 700; line-height: 1.0; letter-spacing: -0.025em;
-    margin: 24px 0 24px; max-width: 14ch;
+    margin: 24px 0 16px; max-width: 14ch;
   }
   .home-hero h1 .accent { color: var(--color-accent-vivid); }
+  .home-hero .positioning {
+    font-size: 17px; font-weight: 600; color: var(--fg-1);
+    line-height: 1.45; letter-spacing: -0.01em;
+    max-width: 560px; margin: 0 0 18px;
+  }
   .home-hero .lede {
     font-size: 19px; line-height: 1.6; color: var(--fg-2);
     max-width: 580px; margin: 0 0 32px;
@@ -114,6 +119,8 @@
     margin-top: 64px;
   }
   .stats .stat { background: var(--bg-base); padding: 28px 24px; }
+  .stats .stat.key .v { color: var(--color-accent-vivid); }
+  .stats .stat.key .l { color: var(--fg-1); }
   .stats .v {
     font-size: 38px; font-weight: 700; line-height: 1;
     letter-spacing: -0.01em; color: #FFF; font-variant-numeric: tabular-nums;
@@ -138,15 +145,31 @@
   section.block h2 { font-size: 38px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin: 0; max-width: 600px; }
   section.block .block-sub { color: var(--fg-2); font-size: 15px; max-width: 480px; line-height: 1.6; margin-top: 12px; }
 
-  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  /* Three-acts escalation: a connecting line behind the row + rising accent */
+  .work-arc { position: relative; }
+  .work-connector {
+    position: absolute; top: 34px; left: 0; right: 0; height: 1px; z-index: 0;
+    background: linear-gradient(90deg, var(--border-subtle) 10%, rgba(0,230,118,0.45));
+  }
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; position: relative; z-index: 1; }
   .work-card { position: relative; z-index: 0; overflow: hidden; padding: 24px; }
+  .work-card.act-2 { border-color: rgba(0,230,118,0.28); }
+  .work-card.act-3 {
+    border-color: rgba(0,230,118,0.4);
+    background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,0.05) 170%);
+  }
+  .work-card .node { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; box-sizing: border-box; }
+  .work-card.act-1 .node { border: 1px solid var(--border-strong); }
+  .work-card.act-2 .node { border: 1px solid rgba(0,230,118,0.5); background: rgba(0,230,118,0.15); }
+  .work-card.act-3 .node { border: 1px solid var(--color-accent-vivid); background: var(--color-accent-vivid); }
+  .work-card.act-2 .era, .work-card.act-3 .era { color: var(--color-accent-vivid); border-color: rgba(0,230,118,0.4); }
   .work-card .bg-num {
     position: absolute; top: -16px; right: -4px; z-index: -1;
     font-family: var(--font-mono); font-size: 88px; font-weight: 700;
     line-height: 1; letter-spacing: -0.04em; color: var(--fg-1); opacity: 0.05;
     pointer-events: none; user-select: none;
   }
-  .work-card .ix { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; margin-bottom: 10px; }
+  .work-card .ix { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.08em; margin-bottom: 10px; }
   .work-card .era { display: inline-block; font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2); border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px 9px; margin-bottom: 14px; }
   .work-card h3 { font-size: 18px; font-weight: 500; line-height: 1.3; margin: 0 0 8px; color: #FFF; }
   .work-card p { font-size: 13px; color: var(--fg-2); margin: 0 0 18px; line-height: 1.6; }
@@ -174,6 +197,7 @@
     .home-grid { grid-template-columns: 1fr; }
     .headshot-frame { max-width: 320px; aspect-ratio: 3/4; }
     .stats { grid-template-columns: repeat(2, 1fr); }
+    .work-connector { display: none; }
     .work-grid { grid-template-columns: 1fr; }
     .post-row { grid-template-columns: 80px 1fr 28px; }
     .post-row .tag { display: none; }
@@ -194,6 +218,7 @@
         <div>
           <div class="section-eyebrow"><span class="num">01</span> Product Strategy &amp; Go-to-Market</div>
           <h1>Where strategy, story, and <span class="accent">systems</span> meet.</h1>
+          <p class="positioning">Product &amp; GTM strategy at the intersection of media, technology, and the creator economy.</p>
           <p class="lede">I'm Jason Nellis — a strategist, writer, and speaker who's been inside the creator economy since before it had a name — from early streaming to social commerce to AI-driven IP protection. I translate ambiguity into direction, and direction into things that actually ship.</p>
           <div class="ctas">
             <a href="/speaking" class="btn primary">Explore speaking topics</a>
@@ -217,7 +242,7 @@
           <div class="v">3</div>
           <div class="l">Companies co-founded</div>
         </div>
-        <div class="stat">
+        <div class="stat key">
           <div class="v">1</div>
           <div class="l">Acquired by Meta</div>
         </div>
@@ -245,10 +270,12 @@
         </a>
       </div>
 
+      <div class="work-arc">
+      <div class="work-connector"></div>
       <div class="work-grid">
-        <article class="card work-card">
+        <article class="card work-card act-1">
           <span class="bg-num">01</span>
-          <div class="ix">001 / 2007 – 2012</div>
+          <div class="ix"><span class="node"></span>001 / 2007 – 2012</div>
           <div class="era">Learning on the Go</div>
           <h3>Hulu — content &amp; product</h3>
           <p>Started in content partnerships — strategy for accounts from the White House to NBCUniversal — and moved into product and growth as streaming scaled. Learned the real distance between a good idea and a shippable one, and a permanent taste for building at scale.</p>
@@ -258,9 +285,9 @@
           </div>
         </article>
 
-        <article class="card work-card">
+        <article class="card work-card act-2">
           <span class="bg-num">02</span>
-          <div class="ix">002 / 2016 – 2023</div>
+          <div class="ix"><span class="node"></span>002 / 2016 – 2023</div>
           <div class="era">Acquired → Meta</div>
           <h3>Packagd — co-founder</h3>
           <p>Co-founded an influencer monetization startup, acquired by Facebook. Built Facebook Live Shopping inside NPE. Became Meta's first Founder in Residence.</p>
@@ -270,9 +297,9 @@
           </div>
         </article>
 
-        <article class="card work-card">
+        <article class="card work-card act-3">
           <span class="bg-num">03</span>
-          <div class="ix">003 / 2023 – 2026</div>
+          <div class="ix"><span class="node"></span>003 / 2023 – 2026</div>
           <div class="era">CPO → CEO</div>
           <h3>SuperBam — chief product officer</h3>
           <p>Built the product org from the ground up — creator IP protection, monetization infrastructure, an AI deepfake takedown system. Stepped in as Interim CEO in Q1 2026.</p>
@@ -281,6 +308,7 @@
             <span>Creator Economy · IP</span>
           </div>
         </article>
+      </div>
       </div>
     </div>
   </section>
