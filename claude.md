@@ -19,20 +19,27 @@ confident, no filler.
 ## Stack & deployment
 
 - Mostly static HTML/CSS/JS, hand-authored, no templating — **except** the
-  essay archive (`/blog` + individual essays), which is built by **Eleventy**
-  (11ty). See "Writing archive (Eleventy)" below before touching anything
-  under `essays/`, `blog.njk`, `sitemap.njk`, or `_includes/`.
+  essay archive (`/blog` + individual essays), the individual talk pages
+  (`/speaking/<slug>`), and the generated feeds, which are built by
+  **Eleventy** (11ty). See "Writing archive (Eleventy)" below before
+  touching anything under `essays/`, `talks/`, `blog.njk`, `index.njk`,
+  `sitemap.njk`, `feed.njk`, or `_includes/`.
 - Hosted on **Netlify**, connected to this **GitHub** repo.
 - Netlify build command is `npm install && npx @11ty/eleventy` (see
   `netlify.toml`), publishing the generated `_site/` directory. Pushing to
   main triggers this build automatically. A broken Eleventy build (bad
   front matter, template syntax error, etc.) will fail the deploy — check
   the Netlify deploy log if a push doesn't go live.
-- The five main pages (`index.html`, `bio.html`, `contact.html`,
-  `speaking.html`, `ascii.html`) plus `404.html` are still
-  plain hand-authored HTML — Eleventy copies them through byte-for-byte
+- The hand-authored static pages (`bio.html`, `contact.html`,
+  `speaking.html`, `ascii.html`, `press-kit.html`) plus `404.html` are
+  plain HTML — Eleventy copies them through byte-for-byte
   (`addPassthroughCopy` in `.eleventy.js`), no templating applied. Edit
   them exactly as before.
+- **`index.html` no longer exists** — the homepage is now `index.njk`,
+  Nunjucks-templated so its "recent writing" teaser can pull live from the
+  essay collection. It still emits `/index.html` and is otherwise plain
+  hand-authored HTML; edit it like the others, just mind the `{%- for ... %}`
+  block in the writing teaser.
 - Email: `hello@jasonnellis.com` → forwards to Jason's Gmail via ImprovMX
   (DNS configured in GoDaddy — not part of this repo).
 
@@ -123,8 +130,17 @@ needs to be touched by hand.
   banner, category filter bar, featured post, and the full post list. Loops
   over `collections.essays` (defined in `.eleventy.js`, sorted newest
   first).
-- `sitemap.njk` generates `sitemap.xml` from the same essay collection plus
-  the six static pages — don't hand-maintain a separate sitemap file.
+- `sitemap.njk` generates `sitemap.xml` from the essay and talk collections
+  plus the static pages — don't hand-maintain a separate sitemap file.
+- `feed.njk` generates the Atom feed at `/feed.xml` from the same essay
+  collection (newest first), summary-level using each essay's `description`.
+  It's linked for autodiscovery in the `<head>` of the homepage, `/blog`,
+  and every essay, and from the footer via `nav.js`. Nothing to maintain by
+  hand — new essays appear in the feed automatically.
+- Talks: individual talk pages live as `talks/*.md` (front matter + body),
+  rendered by `_includes/talk-layout.njk` into `/speaking/<slug>/`. The
+  `talks` collection is ordered by an `order` field; `talks/talks.json`
+  supplies the shared layout/permalink, same pattern as essays.
 - Local preview: `npm run build` writes `_site/`; there's an `eleventy-site`
   entry in `.claude/launch.json` that serves it on port 8124. `npm run
   serve` also works for a live-reloading dev server.
@@ -158,9 +174,10 @@ Any new page must include this snippet. Don't change the tracking ID
 
 | File | URL | Purpose | Notes |
 |---|---|---|---|
-| `index.html` | `/` | Homepage | |
+| `index.njk` | `/` | Homepage | Nunjucks-templated (the "recent writing" teaser pulls from the essay collection); still emits `/index.html`. Otherwise plain hand-authored HTML. |
 | `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has Substack subscribe banner (email capture form). Essays are LinkedIn reposts turned into permanent pages. |
-| `speaking.html` | `/speaking` | Speaking/media page | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). |
+| `speaking.html` + `talks/*.md` | `/speaking`, `/speaking/<slug>` | Speaking/media page + per-talk pages | Aspirational — positioning + "book me" CTA, not a list of past gigs. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). Individual talk pages are Eleventy-generated from `talks/*.md` via `_includes/talk-layout.njk`. |
+| `press-kit.html` | `/press-kit` | Speaker press kit | Bios (short/long), MC intro script, AV requirements, one-pager + PDF download. `noindex` (deliberately kept out of the sitemap). Linked from `/speaking`. |
 | `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". Portrait is `officeheadshot.jpg`. |
 | `contact.html` | `/contact` | Contact page | |
 | `ascii.html` | `/ascii` | Hidden ASCII art easter egg | Linked via a near-invisible `.` link on the homepage. |

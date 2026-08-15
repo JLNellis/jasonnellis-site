@@ -105,6 +105,7 @@ class SiteFooter extends HTMLElement {
     <div>
       <h4>Subscribe</h4>
       <a href="${subUrl}" target="_blank" rel="noopener">The Long Yes ↗</a>
+      <a href="/feed.xml">RSS feed ↗</a>
       <a href="/contact">Get in touch</a>
     </div>
   </div>

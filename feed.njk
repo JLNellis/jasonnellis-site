@@ -1,0 +1,27 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Jason Nellis — Writing</title>
+  <subtitle>Essays on strategy, media, and the creator economy.</subtitle>
+  <link href="https://jasonnellis.com/feed.xml" rel="self"/>
+  <link href="https://jasonnellis.com/blog"/>
+  <id>https://jasonnellis.com/</id>
+  <updated>{{ collections.essays[0].data.date | isoDate }}</updated>
+  <author>
+    <name>Jason Nellis</name>
+    <email>hello@jasonnellis.com</email>
+  </author>
+{%- for essay in collections.essays %}
+  <entry>
+    <title>{{ essay.data.title }}</title>
+    <link href="https://jasonnellis.com{{ essay.url }}"/>
+    <id>https://jasonnellis.com{{ essay.url }}</id>
+    <updated>{{ essay.data.date | isoDate }}</updated>
+    <summary>{{ essay.data.description }}</summary>
+    <category term="{{ essay.data.category }}"/>
+  </entry>
+{%- endfor %}
+</feed>
