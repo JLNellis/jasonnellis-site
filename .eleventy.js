@@ -3,6 +3,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("site.css");
   eleventyConfig.addPassthroughCopy("colors_and_type.css");
   eleventyConfig.addPassthroughCopy("nav.js");
+  eleventyConfig.addPassthroughCopy("fonts");
   eleventyConfig.addPassthroughCopy("favicon.ico");
   eleventyConfig.addPassthroughCopy("favicon.svg");
   eleventyConfig.addPassthroughCopy("apple-touch-icon.png");
