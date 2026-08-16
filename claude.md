@@ -196,7 +196,7 @@ hardcode hex values.
 **Key tokens:**
 - `--bg-base` (#0A2540 navy), `--bg-deep` (#0F172A), `--bg-card` (#1E293B)
 - `--fg-1` white, `--fg-2` cool gray (#94A3B8, secondary text), `--fg-3`
-  (#64748B, tertiary/metadata)
+  (#8892AA, tertiary/metadata — lightened from #64748B to hold WCAG AA)
 - `--color-accent-vivid` (#00E676, "Signal Green") — the **only** accent
   color. Used for active states, CTAs, live indicators. Never as a
   background. Used sparingly — roughly 10% of any surface.
