@@ -1,12 +1,12 @@
 # Redirect legacy .html URLs to clean paths
-/index.html      /          301
-/bio.html        /about     301
-/blog.html       /blog      301
-/speaking.html   /speaking  301
-/contact.html    /contact   301
-/ascii.html      /ascii     301
-/press-kit.html  /press-kit 301
-/advisory.html   /advisory  301
+/index.html      /          301!
+/bio.html        /about     301!
+/blog.html       /blog      301!
+/speaking.html   /speaking  301!
+/contact.html    /contact   301!
+/ascii.html      /ascii     301!
+/press-kit.html  /press-kit 301!
+/advisory.html   /advisory  301!
 
 # Now page removed — send old links/bookmarks to About
 /now             /about     301
