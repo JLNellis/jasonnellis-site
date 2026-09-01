@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /ascii
 
 Sitemap: https://jasonnellis.com/sitemap.xml

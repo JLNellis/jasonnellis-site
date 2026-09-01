@@ -169,7 +169,7 @@ eleventyExcludeFromCollections: true
           <span class="sub-eyebrow">Newsletter</span>
           <p class="sub-headline">Get <em>The Long Yes</em> in your inbox.</p>
           <p class="sub-body">Strategy, media, and the creator economy &mdash; when I have something worth saying. Low frequency, no noise.</p>
-          <form class="sub-form" action="https://jasonnellis.substack.com/api/v1/free" method="get" target="_blank">
+          <form class="sub-form" action="https://jasonnellis.substack.com/subscribe" method="get" target="_blank">
             <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
             <button type="submit" class="btn primary sub-btn">Subscribe</button>
           </form>
@@ -203,7 +203,7 @@ eleventyExcludeFromCollections: true
         </div>
         <div class="featured-art">
           {%- if featured.data.heroImage %}
-          <img src="{{ featured.data.heroImage }}" alt="{{ featured.data.title }}">
+          <img src="{{ featured.data.heroImage }}" alt="{{ featured.data.title }}" width="1400" height="788" loading="lazy">
           {%- else %}
           <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
           {%- endif %}
@@ -213,6 +213,7 @@ eleventyExcludeFromCollections: true
       <!-- Posts -->
       <div class="posts">
         {%- for essay in collections.essays %}
+        {%- if essay.url != featured.url %}
         <a class="post-row" href="{{ essay.url }}" data-cat="{{ essay.data.category }}">
           <span class="date">{{ essay.data.date | monthYear }}</span>
           <span class="title">{{ essay.data.title }}<span class="desc">{{ essay.data.description }}</span></span>
@@ -220,6 +221,7 @@ eleventyExcludeFromCollections: true
           <span class="read">{{ essay.data.readTime }}</span>
           <span class="arrow">→</span>
         </a>
+        {%- endif %}
         {%- endfor %}
       </div>
     </div>
@@ -237,7 +239,7 @@ function filterPosts(btn) {
   document.querySelectorAll('.posts .post-row, .featured').forEach(el => {
     const match = cat === 'all' || el.dataset.cat === cat;
     el.style.display = match ? '' : 'none';
-    if (match && el.classList.contains('post-row')) count++;
+    if (match) count++;
   });
   document.getElementById('post-count').textContent = count + (count === 1 ? ' essay' : ' essays');
 }
