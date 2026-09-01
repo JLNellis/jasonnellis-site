@@ -39,7 +39,7 @@
       "sameAs": [
         "https://linkedin.com/in/jasonnellis",
         "https://x.com/jasonnellis",
-        "https://linktr.ee/jasonnellis"
+        "https://www.youtube.com/@JasonNellis"
       ]
     },
     {
@@ -129,8 +129,31 @@
   .stats .v small { font-size: 16px; font-weight: 500; color: var(--fg-2); }
   .stats .l { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-2); margin-top: 12px; }
 
-  /* Selected work */
+  /* Work with me */
   section.block { padding: 96px 0; }
+  .offer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .offer-card {
+    display: flex; flex-direction: column; padding: 28px 26px;
+    text-decoration: none; color: inherit;
+  }
+  .offer-card:hover { border-color: rgba(0,230,118,0.4); background: rgba(30,41,59,0.85); }
+  .offer-card .kind {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--color-accent-vivid); margin-bottom: 14px;
+  }
+  .offer-card h3 { font-size: 19px; font-weight: 600; line-height: 1.3; margin: 0 0 10px; color: #FFF; letter-spacing: -0.01em; }
+  .offer-card p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 22px; }
+  .offer-card .go {
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);
+    font-size: 13px; font-weight: 600; color: var(--fg-1);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .offer-card:hover .go { color: var(--color-accent-vivid); }
+  .offer-note { margin: 28px 0 0; font-size: 14px; color: var(--fg-2); line-height: 1.9; }
+  .offer-note .live-pill { margin-right: 10px; vertical-align: 2px; }
+  .offer-note a { color: var(--fg-1); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--border-strong); }
+  .offer-note a:hover { color: var(--color-accent-vivid); border-bottom-color: var(--color-accent-vivid); }
+
 
   #work .page-wrap { position: relative; }
   #work .egg-link {
@@ -198,7 +221,7 @@
     .headshot-frame { max-width: 320px; aspect-ratio: 3/4; }
     .stats { grid-template-columns: repeat(2, 1fr); }
     .work-connector { display: none; }
-    .work-grid { grid-template-columns: 1fr; }
+    .work-grid, .offer-grid { grid-template-columns: 1fr; }
     .post-row { grid-template-columns: 80px 1fr 28px; }
     .post-row .tag { display: none; }
   }
@@ -218,7 +241,7 @@
         <div>
           <div class="section-eyebrow"><span class="num">01</span> Product Strategy &amp; Go-to-Market</div>
           <h1>I helped creators build careers when content was <span class="accent">still just a hobby.</span></h1>
-          <p class="positioning">Product and go-to-market strategy for media and the creator economy.</p>
+          <p class="positioning">I give keynotes, run leadership workshops, and advise founders in media and the creator economy.</p>
           <p class="lede">I'm Jason Nellis. I was at Hulu when streaming was still a legal gray area, co-founded a company Facebook bought, and ran product where AI meets creator IP. These days I lead innovation at BoltOS and am building Akaeon. The early, unnamed, is-this-even-a-business part is the part I'm good at.</p>
           <div class="ctas">
             <a href="/speaking" class="btn primary">Explore speaking topics</a>
@@ -243,8 +266,8 @@
           <div class="l">Companies co-founded</div>
         </div>
         <div class="stat key">
-          <div class="v">1</div>
-          <div class="l">Acquired by Meta</div>
+          <div class="v">2019</div>
+          <div class="l">Packagd acquired by Meta</div>
         </div>
         <div class="stat">
           <div class="v">2</div>
@@ -254,6 +277,42 @@
     </div>
   </div>
 
+  <!-- WORK WITH ME -->
+  <section class="block" id="work-with-me" style="padding-bottom: 0">
+    <div class="page-wrap">
+      <div class="block-head">
+        <div>
+          <div class="section-eyebrow"><span class="num">02</span> Work with me</div>
+          <h2>Three ways to put this to work.</h2>
+          <p class="block-sub">A keynote, a day with your leadership team, or a longer engagement. Same operator either way.</p>
+        </div>
+      </div>
+
+      <div class="offer-grid">
+        <a class="card offer-card" href="/speaking">
+          <span class="kind">Keynote</span>
+          <h3>One argument, forty-five minutes.</h3>
+          <p>Built from things I built rather than things I read. For conferences, industry summits, and executive offsites that want a point of view instead of a landscape tour.</p>
+          <span class="go">See the talks →</span>
+        </a>
+        <a class="card offer-card" href="/advisory#engagements">
+          <span class="kind">Workshop</span>
+          <h3>Half a day on one strategic question.</h3>
+          <p>Your AI roadmap, your go-to-market, or how you make money from an audience. Your leadership team in the room, a decision on the table by the end of it.</p>
+          <span class="go">Ask about a workshop →</span>
+        </a>
+        <a class="card offer-card" href="/advisory">
+          <span class="kind">Advisory</span>
+          <h3>Ninety days or a monthly retainer.</h3>
+          <p>For founders and exec teams deciding what to build and how to explain it. Fixed fee, scoped up front, narrative first. I do the work myself.</p>
+          <span class="go">How advisory works →</span>
+        </a>
+      </div>
+
+      <p class="offer-note"><span class="live-pill"><span class="live-dot"></span>MIPCOM · Cannes · 12–15 Oct 2026</span> Recording <em>Building Value</em> on the floor at the Palais des Festivals. In town? <a href="/contact">Let's get a conversation on tape.</a></p>
+    </div>
+  </section>
+
   <!-- SELECTED WORK -->
   <!-- ls -a -->
   <section class="block" id="work">
@@ -261,7 +320,7 @@
       <a href="/ascii" class="egg-link" aria-label="hidden">.</a>
       <div class="block-head">
         <div>
-          <div class="section-eyebrow"><span class="num">02</span> Selected work</div>
+          <div class="section-eyebrow"><span class="num">03</span> Selected work</div>
           <h2>The career, in three acts.</h2>
           <p class="block-sub">Nearly twenty years of building from the inside — mostly on things that didn't have a category yet.</p>
         </div>
@@ -319,7 +378,7 @@
     <div class="page-wrap">
       <div class="block-head">
         <div>
-          <div class="section-eyebrow"><span class="num">03</span> Recent writing</div>
+          <div class="section-eyebrow"><span class="num">04</span> Recent writing</div>
           <h2>Thinking out loud about the creator economy — usually because something wasn't sitting right.</h2>
         </div>
         <a href="/blog" class="btn ghost">All essays

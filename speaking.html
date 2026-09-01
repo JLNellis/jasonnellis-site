@@ -178,6 +178,26 @@
     border: 1px solid var(--border-strong); color: var(--fg-2); white-space: nowrap;
   }
 
+  /* ---- Where I'll be ---- */
+  .where-section { padding: 72px 0 8px; border-top: 1px solid var(--border-subtle); }
+  .where-section h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .where-section .sub { font-size: 15px; color: var(--fg-2); max-width: 640px; line-height: 1.7; margin: 0 0 32px; }
+  .where-list { display: flex; flex-direction: column; }
+  .where-row {
+    display: grid; grid-template-columns: 150px 1fr auto; gap: 28px; align-items: center;
+    padding: 22px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+    text-decoration: none; color: inherit;
+    transition: padding-left var(--dur-base) var(--ease-standard);
+  }
+  .where-row:hover { padding-left: 12px; }
+  .where-row .date { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent-vivid); display: flex; align-items: center; gap: 8px; }
+  .where-row .what { font-size: 15px; color: var(--fg-1); line-height: 1.5; }
+  .where-row .what strong { font-weight: 600; color: #FFF; }
+  .where-row .what .note { display: block; font-size: 13px; color: var(--fg-2); margin-top: 4px; }
+  .where-row .pill { font-size: 11px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--fg-2); white-space: nowrap; transition: color var(--dur-fast), border-color var(--dur-fast); }
+  .where-row:hover .pill { color: var(--color-accent-vivid); border-color: var(--color-accent-vivid); }
+  @media (max-width: 760px) { .where-row { grid-template-columns: 1fr; gap: 10px; } }
+
   /* ---- Book me ---- */
   .book-section {
     padding: 72px 0 96px;
@@ -204,6 +224,8 @@
     display: flex; gap: 12px; align-items: flex-start;
     font-size: 14px; color: var(--fg-2); line-height: 1.5;
   }
+  .check-list a.bolt { color: var(--fg-1); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--border-strong); }
+  .check-list a.bolt:hover { color: var(--color-accent-vivid); border-bottom-color: var(--color-accent-vivid); }
   .check-list li::before {
     content: "→"; color: var(--color-accent-vivid);
     font-family: var(--font-mono); font-size: 12px;
@@ -224,6 +246,42 @@
     .speak-hero { padding: 64px 0 48px; }
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Jason Nellis",
+  "url": "https://jasonnellis.com",
+  "image": "https://jasonnellis.com/og-image-speaking.png",
+  "jobTitle": "Strategist, Operator, Speaker",
+  "description": "Keynote speaker on the creator economy, AI strategy, and media cycles. Building in media since 2007, from early Hulu to Packagd (acquired by Meta) to AI and creator IP.",
+  "hasOccupation": {
+    "@type": "Occupation",
+    "name": "Keynote Speaker",
+    "occupationLocation": { "@type": "Place", "name": "Cannes, France" }
+  },
+  "knowsAbout": [
+    "Creator economy",
+    "AI strategy",
+    "Media and streaming",
+    "Product strategy",
+    "Go-to-market strategy",
+    "Social commerce",
+    "Creator IP protection"
+  ],
+  "homeLocation": { "@type": "Place", "name": "Cannes, France" },
+  "subjectOf": {
+    "@type": "WebPage",
+    "name": "Speaker press kit",
+    "url": "https://jasonnellis.com/press-kit"
+  },
+  "sameAs": [
+    "https://linkedin.com/in/jasonnellis",
+    "https://x.com/jasonnellis",
+    "https://www.youtube.com/@JasonNellis"
+  ]
+}
+</script>
 <script src="nav.js"></script>
 </head>
 <body>
@@ -244,7 +302,7 @@
         <a href="/contact" class="btn primary">Book me for your event
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="https://linktr.ee/jasonnellis" target="_blank" rel="noopener" class="btn ghost">Listen to Building Value ↗</a>
+        <a href="https://www.youtube.com/@JasonNellis" target="_blank" rel="noopener" class="btn ghost">Listen to Building Value ↗</a>
       </div>
     </div>
 
@@ -470,6 +528,20 @@
       </div>
     </section>
 
+    <!-- WHERE I'LL BE -->
+    <section class="where-section">
+      <div class="section-eyebrow"><span class="num">05</span> Where I'll be</div>
+      <h2>On the ground, not on a flight.</h2>
+      <p class="sub">I live twenty minutes from the Palais des Festivals. MIPCOM, MIPTV, Cannes Lions, and Monaco are a train ride, not a transatlantic flight. For the rest of Europe I travel. For North America I'm remote-fluent and morning-friendly.</p>
+      <div class="where-list">
+        <a class="where-row" href="/contact">
+          <span class="date"><span class="live-dot"></span>12–15 Oct 2026</span>
+          <span class="what"><strong>MIPCOM 2026</strong> · Palais des Festivals, Cannes<span class="note">Recording Building Value on the floor. If you're in town and have a point of view worth arguing with, let's get it on tape.</span></span>
+          <span class="pill">Meet me there →</span>
+        </a>
+      </div>
+    </section>
+
   </div>
 
   <!-- BOOK ME -->
@@ -477,9 +549,9 @@
     <div class="page-wrap">
       <div class="book-inner">
         <div>
-          <div class="section-eyebrow"><span class="num">05</span> Work with me</div>
+          <div class="section-eyebrow"><span class="num">06</span> Work with me</div>
           <h2>Tell me about your event.</h2>
-          <p>I'm based near Cannes and travel for the right rooms. Tell me who's in the audience and what you want them walking out believing — I'll tell you fast whether I'm the right fit.</p>
+          <p>Tell me who's in the audience and what you want them walking out believing — I'll tell you fast whether I'm the right fit. For European events, travel is a train ticket, not a business-class fare.</p>
           <div class="ctas">
             <a href="/contact" class="btn primary">Get in touch
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -493,9 +565,9 @@
             <li>Conferences and industry summits in media and technology</li>
             <li>Executive off-sites and leadership team sessions</li>
             <li>Podcasts and long-form interview formats</li>
-            <li>Advisory conversations with founders building in this space</li>
+            <li><a href="/advisory" class="bolt">Advisory engagements</a> with founders and exec teams building in this space</li>
             <li>University and professional development programs</li>
-            <li>Remote appearances welcome — based near Cannes, France</li>
+            <li>Based in Cannes — Europe in person, North America remote</li>
           </ul>
         </div>
       </div>

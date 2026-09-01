@@ -40,4 +40,4 @@ adaptations:
   - audience: "Creator-focused conferences"
     body: "told from both sides of the table — building for creators, and protecting them"
 ---
-After 100+ conversations with creators on Building Value — from a corporate chef who found TikTok to a YouTuber's long climb to 100K subscribers — the same handful of patterns keep showing up. This talk covers what they actually are, and why most advice misses them entirely.
+The conversations range from a corporate chef who found TikTok to a YouTuber's long climb to 100K subscribers. This talk covers what those patterns actually are, and why most creator-economy advice misses them entirely.

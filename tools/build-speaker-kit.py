@@ -142,8 +142,8 @@ c.drawRightString(W - M, y(iy_top + img_h + 12), "JN · CANNES, FR", charSpace=1
 text_w = CW - img_w - 26
 top = 116
 c.setFont("DMSans-Medium", 12.5); c.setFillColor(FG1)
-c.drawString(M, y(top), "Product and go-to-market strategy for media")
-c.drawString(M, y(top + 17), "and the creator economy.")
+c.drawString(M, y(top), "Keynotes, leadership workshops, and advisory")
+c.drawString(M, y(top + 17), "for media and the creator economy.")
 
 top += 38
 bio = ("Building at the intersection of media, technology, and the creator economy since 2007. "
@@ -158,7 +158,7 @@ tile_gap = 10
 tile_w = (CW - 3 * tile_gap) / 4
 stats = [("2007", "Building in media since", FG1),
          ("3", "Companies co-founded", FG1),
-         ("1", "Acquired by Meta", GREEN),
+         ("2019", "Packagd acquired by Meta", GREEN),
          ("2", "Active: BoltOS & Akaeon", FG1)]
 for i, (v, l, colr) in enumerate(stats):
     x = M + i * (tile_w + tile_gap)
@@ -254,7 +254,7 @@ c.line(M, fy + 22, W - M, fy + 22)
 c.setFont("DMMono-Medium", 7.5); c.setFillColor(GREEN)
 c.drawString(M, fy + 6, "BOOK A TALK:  JASONNELLIS.COM/SPEAKING", charSpace=1)
 c.setFont("DMMono", 7.5); c.setFillColor(FG3)
-c.drawRightString(W - M, fy + 6, "HELLO@JASONNELLIS.COM  ·  RESPONDS WITHIN 48H", charSpace=1)
+c.drawRightString(W - M, fy + 6, "CANNES, FR  ·  EUROPE BY TRAIN  ·  REMOTE WORLDWIDE", charSpace=1)
 
 c.save()
 print("wrote", OUT, os.path.getsize(OUT), "bytes")

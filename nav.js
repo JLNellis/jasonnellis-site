@@ -12,7 +12,7 @@ const SITE_CONFIG = {
   substackHandle: 'jasonnellis', // "The Long Yes" — https://jasonnellis.substack.com/
   linkedIn:       'https://linkedin.com/in/jasonnellis',
   twitter:        'https://x.com/jasonnellis',
-  podcast:        'https://linktr.ee/jasonnellis',
+  podcast:        'https://www.youtube.com/@JasonNellis', // Building Value on YouTube
   email:          'hello@jasonnellis.com',
 };
 
@@ -23,6 +23,7 @@ const NAV_LINKS = [
   { href: '/about',    label: 'About'    },
   { href: '/blog',     label: 'Writing'  },
   { href: '/speaking', label: 'Speaking' },
+  { href: '/advisory', label: 'Advisory' },
   { href: '/contact',  label: 'Contact'  },
 ];
 
@@ -54,7 +55,7 @@ class SiteHeader extends HTMLElement {
     </button>
     <nav class="site-nav" id="site-nav">
       ${links}
-      <span class="live-pill"><span class="live-dot"></span>Located in France · Available Worldwide</span>
+      <span class="live-pill"><span class="live-dot"></span>Cannes, FR · Europe in person · Worldwide remote</span>
     </nav>
   </div>
 </header>`;

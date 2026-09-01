@@ -6,6 +6,7 @@
 /contact.html    /contact   301
 /ascii.html      /ascii     301
 /press-kit.html  /press-kit 301
+/advisory.html   /advisory  301
 
 # Now page removed — send old links/bookmarks to About
 /now             /about     301
@@ -17,3 +18,5 @@
 /contact    /contact.html   200
 /ascii      /ascii.html     200
 /press-kit  /press-kit.html 200
+
+/advisory   /advisory.html   200

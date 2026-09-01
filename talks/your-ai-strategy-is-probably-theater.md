@@ -35,4 +35,4 @@ adaptations:
   - audience: "General business / association"
     body: "a practical filter for separating AI signal from AI noise, no technical background assumed"
 ---
-Most organizations have an AI strategy that's really a press release. This talk is a practical breakdown of where AI creates real product leverage today, where it's still noise, and how to build a defensible point of view before the next cycle makes yours obsolete.
+A practical breakdown of where AI creates real product leverage today, where it's still noise, and how to build a defensible point of view before the next cycle makes yours obsolete.

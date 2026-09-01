@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advisory — Jason Nellis</title>
+<meta name="description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jasonnellis.com/advisory">
+<meta property="og:title" content="Advisory — Jason Nellis">
+<meta property="og:description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<meta property="og:image" content="https://jasonnellis.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Advisory — Jason Nellis">
+<meta name="twitter:description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
+<link rel="canonical" href="https://jasonnellis.com/advisory">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* ---- Hero ---- */
+  .adv-hero { padding: 88px 0 56px; }
+  .adv-hero h1 {
+    font-size: clamp(42px, 6vw, 68px);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.025em;
+    margin: 16px 0 20px; max-width: 16ch;
+  }
+  .adv-hero h1 .accent { color: var(--color-accent-vivid); }
+  .adv-hero .lede { font-size: 18px; line-height: 1.65; color: var(--fg-2); max-width: 620px; margin: 0 0 32px; }
+  .adv-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .adv-hero .terms {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px;
+  }
+  .adv-hero .terms span {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--fg-2); border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 11px;
+  }
+
+  /* ---- Shared section shell ---- */
+  .adv-section { padding: 72px 0 64px; border-top: 1px solid var(--border-subtle); }
+  .adv-section h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .adv-section .sub { font-size: 15px; color: var(--fg-2); max-width: 560px; line-height: 1.65; margin: 0 0 40px; }
+
+  /* ---- Who it's for ---- */
+  .fit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .fit-card { padding: 26px 24px; }
+  .fit-card .ix { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.1em; margin-bottom: 14px; }
+  .fit-card h3 { font-size: 17px; font-weight: 600; color: #FFF; line-height: 1.3; margin: 0 0 8px; }
+  .fit-card p { font-size: 13.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+
+  /* ---- Engagements ---- */
+  .eng-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .eng-card { display: flex; flex-direction: column; padding: 28px 26px; position: relative; overflow: hidden; }
+  .eng-card.lead { border-color: rgba(0,230,118,0.35); background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,0.05) 170%); }
+  .eng-card .num { position: absolute; top: 20px; right: 20px; font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); letter-spacing: 0.1em; }
+  .eng-card .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-vivid); margin-bottom: 12px; }
+  .eng-card h3 { font-size: 22px; font-weight: 700; color: #FFF; line-height: 1.2; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .eng-card .shape { font-size: 13px; color: var(--fg-2); font-family: var(--font-mono); margin: 0 0 18px; }
+  .eng-card p.desc { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 18px; }
+  .eng-card .field-label { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px; }
+  .eng-card .deliverable { font-size: 13px; color: var(--fg-2); line-height: 1.55; margin: 0 0 22px; }
+  .eng-card .deliverable strong { color: var(--fg-1); font-weight: 500; }
+  .eng-card .foot {
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .eng-card .price { font-size: 15px; font-weight: 600; color: #FFF; font-variant-numeric: tabular-nums; }
+  .eng-card .price small { display: block; font-size: 11px; font-weight: 400; color: var(--fg-3); margin-top: 2px; }
+  .eng-note { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 24px 0 0; max-width: 720px; }
+
+  /* ---- How I work ---- */
+  .how-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  .how-list li { padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
+  .how-list li:nth-child(-n+2) { border-top: 1px solid var(--border-subtle); }
+  .how-list h3 { font-size: 15px; font-weight: 600; color: #FFF; margin: 0 0 6px; display: flex; gap: 10px; align-items: baseline; }
+  .how-list h3::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; }
+  .how-list p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 0 22px; }
+
+  /* ---- Proof ---- */
+  .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .proof-card { display: flex; flex-direction: column; padding: 24px; text-decoration: none; color: inherit; }
+  .proof-card .era { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 12px; }
+  .proof-card h3 { font-size: 16px; font-weight: 600; color: #FFF; line-height: 1.35; margin: 0 0 8px; }
+  .proof-card p { font-size: 13px; color: var(--fg-2); line-height: 1.6; margin: 0 0 18px; }
+  .proof-card .go { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--fg-1); transition: color var(--dur-fast); }
+  .proof-card:hover .go { color: var(--color-accent-vivid); }
+
+  /* ---- CTA ---- */
+  .adv-cta { padding: 72px 0 96px; }
+  .adv-cta-inner {
+    background: linear-gradient(135deg, rgba(0,230,118,0.05) 0%, rgba(15,23,42,0.95) 60%);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 16px; padding: 56px 64px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .adv-cta-inner::before {
+    content: ""; position: absolute; top: -80px; left: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .adv-cta-inner h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 16px; line-height: 1.15; }
+  .adv-cta-inner p { font-size: 15px; color: var(--fg-2); line-height: 1.7; margin: 0 0 28px; }
+  .adv-cta-inner .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .check-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--fg-2); line-height: 1.5; }
+  .check-list li::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ---- Inline links ---- */
+  a.bolt { color: var(--color-accent-vivid); text-decoration: none; font-weight: 600; font-size: 13px; }
+  a.bolt:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .fit-grid, .eng-grid, .proof-grid { grid-template-columns: 1fr; }
+    .how-list { grid-template-columns: 1fr; }
+    .how-list li:nth-child(2) { border-top: 0; }
+    .adv-cta-inner { grid-template-columns: 1fr; padding: 40px 32px; }
+    .adv-cta-inner::before { display: none; }
+  }
+  @media (max-width: 640px) {
+    .adv-hero { padding: 64px 0 40px; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Strategy advisory — Jason Nellis",
+  "serviceType": "Strategy consulting",
+  "url": "https://jasonnellis.com/advisory",
+  "areaServed": "Worldwide",
+  "provider": {
+    "@type": "Person",
+    "name": "Jason Nellis",
+    "url": "https://jasonnellis.com",
+    "sameAs": [
+      "https://linkedin.com/in/jasonnellis",
+      "https://x.com/jasonnellis",
+      "https://www.youtube.com/@JasonNellis"
+    ]
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Advisory engagements",
+    "itemListElement": [
+      { "@type": "Offer", "name": "The Read", "description": "Two-week fixed-fee strategy diagnostic with a written point of view." },
+      { "@type": "Offer", "name": "The 90-Day Sprint", "description": "One strategic question taken to a decision over ninety days." },
+      { "@type": "Offer", "name": "Retainer", "description": "Monthly standing advisory for founders and operators." }
+    ]
+  }
+}
+</script>
+<script src="nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="advisory" id="main">
+  <div class="page-wrap">
+
+    <!-- HERO -->
+    <div class="adv-hero">
+      <div class="section-eyebrow"><span class="num">01</span> Advisory</div>
+      <h1>Strategy from someone who's had to <span class="accent">ship it.</span></h1>
+      <p class="lede">I've been the CPO, the interim CEO, and the founder on the acquired side of the table. When I tell you what to build, I also know what it costs to be wrong, because I've paid it. The work is fixed-fee, scoped up front, and led with the argument rather than the deck.</p>
+      <div class="ctas">
+        <a href="/contact?topic=advisory" class="btn primary">Start a conversation
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#engagements" class="btn ghost">See the engagements</a>
+      </div>
+      <div class="terms">
+        <span>Fixed fee</span>
+        <span>Scoped up front</span>
+        <span>No juniors</span>
+        <span>Remote-first · Cannes, FR</span>
+      </div>
+    </div>
+
+    <!-- WHO IT'S FOR -->
+    <section class="adv-section" id="fit">
+      <div class="section-eyebrow"><span class="num">02</span> Who it's for</div>
+      <h2>Three rooms I'm useful in.</h2>
+      <p class="sub">If you recognize yourself in one of these, we should talk. If you don't, the first conversation is still free and I'll tell you who to call instead.</p>
+      <div class="fit-grid">
+        <article class="card fit-card">
+          <div class="ix">001</div>
+          <h3>Founders before Series B</h3>
+          <p>Media and creator-economy companies with a product and some revenue that need to decide what the company actually is before the next round decides for them.</p>
+        </article>
+        <article class="card fit-card">
+          <div class="ix">002</div>
+          <h3>Exec teams with an AI mandate</h3>
+          <p>Leadership teams that have been told to do something with AI and now have a budget, a pilot, and no thesis. The pilot is not the strategy.</p>
+        </article>
+        <article class="card fit-card">
+          <div class="ix">003</div>
+          <h3>Platforms rebuilding creator relationships</h3>
+          <p>Companies whose business runs on creators, and who are learning the hard way that dashboards aren't relationships and payouts aren't loyalty.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ENGAGEMENTS -->
+    <section class="adv-section" id="engagements">
+      <div class="section-eyebrow"><span class="num">03</span> Engagements</div>
+      <h2>Three shapes. Pick the one that matches the problem.</h2>
+      <p class="sub">Every engagement starts with a written point of view and ends with a decision. The difference is how far I ride along after that.</p>
+      <div class="eng-grid">
+        <article class="card eng-card lead">
+          <span class="num">01</span>
+          <span class="kind">Diagnostic</span>
+          <h3>The Read</h3>
+          <p class="shape">Two weeks · Fixed fee</p>
+          <p class="desc">I talk to your team, read everything you've got, and hand back a written point of view: what to build, what to kill, and what nobody is saying out loud. Most engagements start here.</p>
+          <span class="field-label">You get</span>
+          <p class="deliverable"><strong>A strategy memo</strong> the whole team can read in twenty minutes, and a working session to argue about it.</p>
+          <div class="foot">
+            <span class="price">From $10k<small>Credited toward a sprint or retainer</small></span>
+            <a href="/contact?topic=advisory" class="bolt">Ask about The Read →</a>
+          </div>
+        </article>
+
+        <article class="card eng-card">
+          <span class="num">02</span>
+          <span class="kind">Project</span>
+          <h3>The 90-Day Sprint</h3>
+          <p class="shape">Ninety days · Fixed fee</p>
+          <p class="desc">One strategic question taken all the way to a decision: product direction, go-to-market, or positioning. Weekly working sessions with the people who own the outcome, and a half-day workshop with the full leadership team to lock it.</p>
+          <span class="field-label">You get</span>
+          <p class="deliverable"><strong>A document the board can read</strong> and a plan the team can actually run, with the trade-offs written down instead of argued about later.</p>
+          <div class="foot">
+            <span class="price">$25k – $50k<small>Scoped to the question</small></span>
+            <a href="/contact?topic=advisory" class="bolt">Ask about a sprint →</a>
+          </div>
+        </article>
+
+        <article class="card eng-card">
+          <span class="num">03</span>
+          <span class="kind">Standing</span>
+          <h3>Retainer</h3>
+          <p class="shape">Monthly · Three seats, total</p>
+          <p class="desc">A standing sparring partner for founders and operators who want someone with scar tissue in the room before the decision, not after. Weekly calls, async access between them, and the honest read every time.</p>
+          <span class="field-label">You get</span>
+          <p class="deliverable"><strong>Me, on call.</strong> I hold three of these at a time so the ones I hold get real attention.</p>
+          <div class="foot">
+            <span class="price">From $8k / month<small>Three-month minimum</small></span>
+            <a href="/contact?topic=advisory" class="bolt">Ask about a seat →</a>
+          </div>
+        </article>
+      </div>
+      <p class="eng-note">Need a standalone half-day workshop for your leadership team on AI, go-to-market, or audience monetization? That's a sprint with the middle taken out. <a href="/contact?topic=advisory" class="bolt">Tell me the question</a> and I'll scope it.</p>
+    </section>
+
+    <!-- HOW I WORK -->
+    <section class="adv-section" id="how">
+      <div class="section-eyebrow"><span class="num">04</span> How I work</div>
+      <h2>The terms, before you ask.</h2>
+      <ul class="how-list">
+        <li>
+          <h3>Narrative first.</h3>
+          <p>I think in stories before slides and I lead with the argument. If you need a deck before you'll engage with the problem, we'll frustrate each other.</p>
+        </li>
+        <li>
+          <h3>Fixed fee, scoped at the start.</h3>
+          <p>No hourly billing and no surprise invoices. We agree the question and the deliverable before any money moves.</p>
+        </li>
+        <li>
+          <h3>I do the work.</h3>
+          <p>No associates, no junior team, no one learning on your budget. You get me, and you get me in the room.</p>
+        </li>
+        <li>
+          <h3>Confidential by default.</h3>
+          <p>No NDA for the first conversation. For project work, a standard mutual NDA within 24 hours.</p>
+        </li>
+        <li>
+          <h3>Remote-first, Cannes-based.</h3>
+          <p>Mornings overlap with the US East Coast. I travel in Europe when the work needs a room, and it's a train, not a flight.</p>
+        </li>
+        <li>
+          <h3>I'll say no fast.</h3>
+          <p>If I'm not the right person, you'll hear it in the first conversation, with a name of someone who is.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- PROOF -->
+    <section class="adv-section" id="proof">
+      <div class="section-eyebrow"><span class="num">05</span> Receipts</div>
+      <h2>Read the work before you hire it.</h2>
+      <p class="sub">Three case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
+      <div class="proof-grid">
+        <a class="card proof-card" href="/blog/holding-the-line-at-superbam-archived-7q2m9/">
+          <span class="era">SuperBam · 2023 – 2026</span>
+          <h3>Holding the line at SuperBam</h3>
+          <p>Chief Product Officer to Interim CEO in the middle of a real restructuring. What the seat tests, and what narrative-first leadership looks like when the numbers are bad.</p>
+          <span class="go">Read the case study →</span>
+        </a>
+        <a class="card proof-card" href="/blog/what-you-learn-when-you-stop-building-and-start-listening/">
+          <span class="era">Packagd → Meta · 2016 – 2023</span>
+          <h3>What you learn when you stop building and start listening</h3>
+          <p>Two products nobody asked for, the pivot that came from finally listening to creators, and the acquisition that followed.</p>
+          <span class="go">Read the case study →</span>
+        </a>
+        <a class="card proof-card" href="/blog/comedy-time-and-the-format-problem-at-hulu/">
+          <span class="era">Hulu · 2007 – 2012</span>
+          <h3>Comedy Time and the format problem at Hulu</h3>
+          <p>An early lesson in packaging: why how content is shaped matters as much as the content, and what it taught me about product.</p>
+          <span class="go">Read the case study →</span>
+        </a>
+      </div>
+      <!-- Testimonials: add a quote strip here once the first two client quotes are in. -->
+    </section>
+
+  </div>
+
+  <!-- CTA -->
+  <section class="adv-cta">
+    <div class="page-wrap">
+      <div class="adv-cta-inner">
+        <div>
+          <div class="section-eyebrow"><span class="num">06</span> Start here</div>
+          <h2>Tell me the problem.</h2>
+          <p>If you're not sure which engagement fits, don't pick one. Tell me what's not working and I'll tell you within two working days whether I can help and what it would cost.</p>
+          <div class="ctas">
+            <a href="/contact?topic=advisory" class="btn primary">Start a conversation
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
+          </div>
+        </div>
+        <div>
+          <ul class="check-list">
+            <li>Product direction when the roadmap has become a wish list</li>
+            <li>Go-to-market for something that doesn't have a category yet</li>
+            <li>Positioning and narrative for a round, a board, or a launch</li>
+            <li>An AI strategy that survives contact with the P&amp;L</li>
+            <li>Creator and audience monetization that isn't just a dashboard</li>
+            <li>A second opinion before a decision you can't take back</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>

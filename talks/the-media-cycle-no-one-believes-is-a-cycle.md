@@ -38,4 +38,4 @@ adaptations:
   - audience: "Industry conference / association"
     body: "the pattern told through twenty years of first-hand waves, not slides"
 ---
-From early streaming to social commerce to AI-driven content — every wave looks like a revolution from the inside. This talk is a long-arc view of how media actually evolves, drawn from two decades of building through three of those waves.
+From early streaming to social commerce to AI-driven content, this is a long-arc view of how media actually evolves, drawn from two decades of building through three of those waves.
