@@ -29,7 +29,8 @@ evidence:
     body: "Co-founded a company built for creators — and learned to listen to them the hard way."
     url: "/blog/what-you-learn-when-you-stop-building-and-start-listening/"
   - label: "Building Value — podcast"
-    body: "100+ conversations with creators; the source material for the pattern this talk covers."
+    body: "100+ conversations with creators; the source material for the pattern this talk covers. The three questions at the center of the talk are written up on The Lens."
+    url: "/lens"
   - label: "SuperBam — CPO → Interim CEO"
     body: "Working the IP-protection side of the creator economy — seeing firsthand which creators are building something durable versus renting attention."
 adaptations:

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building or Renting — Jason Nellis</title>
+<meta name="description" content="Three questions for telling creators who are building something from creators renting attention. None of them are about follower count.">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jasonnellis.com/lens">
+<meta property="og:title" content="Is this creator building something, or renting attention?">
+<meta property="og:description" content="Three questions for telling creators who are building something from creators renting attention. None of them are about follower count.">
+<meta property="og:image" content="https://jasonnellis.com/og-talk-creators.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Is this creator building something, or renting attention?">
+<meta name="twitter:description" content="Three questions for telling creators who are building something from creators renting attention. None of them are about follower count.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-talk-creators.jpg">
+<link rel="canonical" href="https://jasonnellis.com/lens">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="site.css">
+<script src="nav.js"></script>
+<style>
+  .lens-wrap { max-width: 680px; margin: 0 auto; }
+
+  /* ---- Hero ---- */
+  .lens-hero { padding: 88px 0 48px; }
+  .lens-hero h1 {
+    font-size: clamp(40px, 5.6vw, 64px);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.025em;
+    margin: 16px 0 24px; max-width: 16ch; text-wrap: balance;
+  }
+  .lens-hero h1 .accent { color: var(--color-accent-vivid); }
+  .lens-hero .lede { font-size: 20px; line-height: 1.6; color: var(--fg-2); margin: 0; max-width: 34em; }
+  .lens-hero .lede strong { color: var(--fg-1); font-weight: 500; }
+  .lens-hero .meta {
+    display: flex; gap: 18px; flex-wrap: wrap; margin-top: 28px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3);
+  }
+
+  /* ---- Essay body ---- */
+  .lens-essay { padding: 16px 0 72px; }
+  .lens-essay p { font-size: 18px; line-height: 1.75; color: var(--fg-2); margin: 0; }
+  .lens-essay p + p { margin-top: 22px; }
+  .lens-essay p strong { color: var(--fg-1); font-weight: 500; }
+  .lens-essay h2 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2;
+    color: var(--fg-1); margin: 64px 0 16px; text-wrap: balance;
+  }
+  .lens-essay h2 .k {
+    display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--color-accent-vivid); font-weight: 400; margin-bottom: 12px;
+  }
+  .lens-pull {
+    margin: 48px 0; padding: 22px 26px; border-left: 2px solid var(--color-accent-vivid); background: rgba(0,230,118,0.08);
+    font-size: 22px; font-weight: 500; color: var(--fg-1); line-height: 1.45; letter-spacing: -0.01em;
+  }
+  .lens-essay p.lens-pull { color: var(--fg-1); font-size: 22px; line-height: 1.45; }
+
+  /* ---- Story card ---- */
+  .lens-story { margin: 28px 0 8px; display: grid; gap: 12px; padding: 24px 26px; }
+  .lens-story .who { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .lens-story .who h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--fg-1); }
+  .lens-story .who span { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+  .lens-story p { font-size: 15.5px; line-height: 1.65; }
+  .lens-story .src { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+  .lens-story .src a { color: var(--fg-2); text-decoration: none; border-bottom: 1px solid var(--border-strong); }
+  .lens-story .src a:hover { color: var(--color-accent-vivid); border-color: var(--color-accent-vivid); }
+
+  /* ---- CTA band ---- */
+  .lens-cta { padding: 72px 0; border-top: 1px solid var(--border-subtle); background: var(--bg-deep); }
+  .lens-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .lens-cta-grid .card { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
+  .lens-cta-grid .card.lead { border-color: rgba(0,230,118,0.35); background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,0.05) 170%); }
+  .lens-cta-grid .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-vivid); }
+  .lens-cta-grid h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--fg-1); }
+  .lens-cta-grid p { font-size: 14.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+  .lens-cta-grid .btn { align-self: flex-start; margin-top: auto; }
+
+  .lens-foot {
+    padding: 28px 0 8px; border-top: 1px solid var(--border-subtle);
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 760px) {
+    .lens-cta-grid { grid-template-columns: 1fr; }
+    .lens-hero { padding-top: 56px; }
+    .lens-essay p { font-size: 17px; }
+  }
+</style>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="lens" id="main">
+  <div class="page-wrap">
+    <div class="lens-wrap">
+
+      <!-- HERO -->
+      <header class="lens-hero">
+        <div class="section-eyebrow">The Lens</div>
+        <h1>Is this creator building something, or <span class="accent">renting attention?</span></h1>
+        <p class="lede">One question, three tells, and a few stories from people who've done it. <strong>None of it is about follower count.</strong> That's the point.</p>
+        <div class="meta"><span>5 min read</span><span>From 100+ Building Value conversations</span></div>
+      </header>
+
+      <!-- ESSAY -->
+      <article class="lens-essay">
+        <p>Platforms and brands still pick creators the same way: follower count first, engagement second, and then a media kit that was built to make both look bigger. Those numbers tell you who has attention this month. They tell you nothing about who will still be here in five years, and the two lists overlap far less than anyone in the room wants to admit.</p>
+
+        <p>I learned this from the wrong side. At Packagd we built two products for creators before we'd really listened to any, and the company only survived because we stopped building and went to sit inside creator culture every day. Later, protecting creator IP at SuperBam, I saw the same split from the other end: <strong>some creators had built something worth defending, and some had rented a moment.</strong> The difference was never how good the videos looked.</p>
+
+        <p>After a hundred-odd conversations on Building Value, the tells are consistent enough that I now ask three questions before I look at a single number.</p>
+
+        <h2><span class="k">Tell one</span>Is the asset theirs, or the platform's?</h2>
+        <p>Every platform is a landlord. It sets the rent and changes the terms whenever it likes, and the honest creators will tell you the feed doesn't amplify them unless they play its game. The durable ones play it without confusing the game for the asset. They have something the platform can't reclaim: a credential, a reputation, a name people search for, a line they won't cross for money. An audience they can reach directly is the rarest version and the most valuable. Most creators, including good ones, don't have it yet.</p>
+
+        <div class="card lens-story">
+          <div class="who"><h3>Jacklyn Dallas</h3><span>Nothing But Tech · started at 13</span></div>
+          <p>Jacklyn has been publishing since she was thirteen. Nine years on, the channel runs on two things: real-world product reviews and interviews with the CEOs who make the products. She has never done a paid review and turned down a paid CEO interview, because in her words the number one asset a creator has is trust. This year she also shut down a weekly podcast she loved, with a healthy audience, because six hours a week wasn't the best use of her focus. "You can be excellent in almost anything, but you can't be excellent at everything." The trust and the focus are hers. The subscribers are on loan.</p>
+          <span class="src">Building Value · <a href="https://www.youtube.com/watch?v=RorA7O1WT6s" target="_blank" rel="noopener">The Value of Hard Work</a></span>
+        </div>
+
+        <h2><span class="k">Tell two</span>Does the idea travel?</h2>
+        <p>Ask what's left if you take the platform away. For a lot of creators the honest answer is nothing, because the format was the platform's idea and they were the fastest to copy it. For the durable ones, the platform is just one of the places the idea happened to land.</p>
+
+        <div class="card lens-story">
+          <div class="who"><h3>Chef Mike Haracz</h3><span>Former McDonald's manager of culinary innovation</span></div>
+          <p>Mike spent years developing products for Walmart, Whole Foods, and Trader Joe's, then about four years running culinary innovation at McDonald's. When the pandemic wiped out his new job and every brand deal he'd lined up, content was what he had left: an iPhone, moving blankets, two cheap lights, and whatever his family was eating for dinner. One shoot got cut for YouTube, Twitter, TikTok, and Instagram. But the thing that travelled furthest wasn't the videos. It was the credential. "My strategy is former McDonald's corporate chef." It carried him into a national Wendy's commercial, into brand deals, and into a corporate R&amp;D job he got partly by pitching his following as a company asset, against advice to hide it. He now shoots his employer's videos on the same phone.</p>
+          <span class="src">Building Value · <a href="https://www.youtube.com/watch?v=qDVd_kNMwXY" target="_blank" rel="noopener">The TikTok Magic of a Former McDonald's Chef</a></span>
+        </div>
+
+        <h2><span class="k">Tell three</span>Did they put in the reps before anyone was watching?</h2>
+        <p>Growth curves for creators who break through have a long, flat stretch at the start, and that stretch is where most people quit. But the reps don't always happen on the channel you're looking at. Often they happened somewhere else first: behind someone else's camera, on a stream nobody watched, on a channel started in middle school. A creator's history tells you more than their analytics. Look for the years of work before the curve bent.</p>
+
+        <div class="card lens-story">
+          <div class="who"><h3>Ken Bolido</h3><span>Denki · 100K subscribers in a year</span></div>
+          <p>Ken hit a hundred thousand subscribers on his channel in about a year, faster than he expected. That's not the story. The story is the seven years before it: hired off a Twitter DM before he graduated, employee number two at Austin Evans's company, seven years shooting and editing someone else's channel and learning what the numbers actually meant. Then a year of streaming three nights a week to stop being stiff on camera. Then a channel pitched inside the company he'd helped build. The first fifty thousand subscribers came from Austin's audience. The second fifty thousand came from people who'd never heard of Austin. The borrowed audience got him seen. The reps got him the rest.</p>
+          <span class="src">Building Value · <a href="https://www.youtube.com/watch?v=KTBs8YRbAjk" target="_blank" rel="noopener">100K Subs Can't Be Wrong</a></span>
+        </div>
+
+        <p style="margin-top:32px">Jacklyn said the quiet part of all three: "Most growth just doesn't happen overnight. It's really gradual." <strong>Follower count measures the moment. These three questions measure the person.</strong></p>
+
+        <p class="lens-pull">Production value is the one thing every creator can buy. It's the one thing that predicts nothing.</p>
+
+        <h2>What to do with this</h2>
+        <p>If you run a creator program, a fund, or a brand budget, ask the three questions before you look at the reach. They take twenty minutes with a creator's public work and a conversation, and they don't require a media kit. Most of the shortlist will fail at least one. That isn't a reason to walk away. It's the thing to name, price, and write into the deal.</p>
+        <p>And when a creator passes all three, stop negotiating on follower count. You're no longer buying a moment. You're buying a piece of something that will still be here when the platform has changed its mind twice.</p>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="lens-cta">
+    <div class="page-wrap">
+      <div class="lens-cta-grid">
+        <div class="card lead">
+          <span class="kind">Advisory</span>
+          <h3>Have me read your roster.</h3>
+          <p>Send a shortlist. You get a straight read on each creator, which of the three tells they fail, and what that should mean for the deal. Two weeks, no dashboard.</p>
+          <a href="/contact?topic=advisory" class="btn primary">Book a roster read
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+        <div class="card">
+          <span class="kind">Speaking</span>
+          <h3>Bring this to your event.</h3>
+          <p>"Why Some Creators Break Through and Most Don't" is the keynote this comes from. Forty-five to sixty minutes, told from both sides of the table, adapted for platforms, brand teams, or creator conferences.</p>
+          <a href="/speaking/why-some-creators-break-through-and-most-dont/" class="btn ghost">See the talk</a>
+        </div>
+      </div>
+      <div class="lens-foot">
+        <span>The Lens · September 2026</span>
+        <span>Packagd → Meta · SuperBam · Building Value</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>

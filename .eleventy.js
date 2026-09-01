@@ -40,6 +40,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("ascii.html");
   eleventyConfig.addPassthroughCopy("press-kit.html");
   eleventyConfig.addPassthroughCopy("advisory.html");
+  eleventyConfig.addPassthroughCopy("lens.html");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
   eleventyConfig.addPassthroughCopy("404.html");
 
