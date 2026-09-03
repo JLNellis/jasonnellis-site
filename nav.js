@@ -100,7 +100,7 @@ class SiteFooter extends HTMLElement {
       <h4>Elsewhere</h4>
       <a href="${linkedIn}" target="_blank" rel="noopener">LinkedIn ↗</a>
       <a href="${twitter}" target="_blank" rel="noopener">X / Twitter ↗</a>
-      <a href="${podcast}" target="_blank" rel="noopener">Building Value ↗</a>
+      <a href="${podcast}" target="_blank" rel="noopener">Building Value archive ↗</a>
       <a href="mailto:${email}">Email ↗</a>
     </div>
     <div>

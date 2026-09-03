@@ -229,7 +229,7 @@ bullets = [
     "CPO, then Interim CEO at SuperBam — creator IP",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",
-    "Host of Building Value — 100+ creator conversations",
+    "Hosted Building Value — 100+ creator conversations, to 2024",
 ]
 col_w = (CW - 20) / 2
 for i, b in enumerate(bullets):
