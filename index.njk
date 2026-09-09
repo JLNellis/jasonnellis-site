@@ -216,7 +216,20 @@
   .post-row .arrow { color: var(--fg-3); transition: color var(--dur-fast); }
   .post-row:hover .arrow { color: var(--color-accent-vivid); }
 
+  /* Podcast band */
+  .podcast-grid { display: grid; grid-template-columns: 1fr 0.9fr; gap: 48px; align-items: center; }
+  .podcast-plate {
+    position: relative; border: 1px solid var(--border-subtle); border-radius: 14px;
+    overflow: hidden; background: var(--bg-deep);
+    box-shadow: 0 40px 80px -40px rgba(0,230,118,0.14);
+  }
+  .podcast-plate img { width: 100%; height: auto; display: block; }
+  .podcast-copy h2 { font-size: clamp(28px, 3.4vw, 38px); font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; margin: 16px 0 14px; max-width: 16ch; }
+  .podcast-copy .tagline { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--fg-1); margin: 0 0 14px; }
+  .podcast-copy p { font-size: 15px; color: var(--fg-2); line-height: 1.7; margin: 0 0 24px; max-width: 46ch; }
+
   @media (max-width: 900px) {
+    .podcast-grid { grid-template-columns: 1fr; gap: 28px; }
     .home-grid { grid-template-columns: 1fr; }
     .headshot-frame { max-width: 320px; aspect-ratio: 3/4; }
     .stats { grid-template-columns: repeat(2, 1fr); }
@@ -408,6 +421,27 @@
             <button type="submit" class="btn primary sub-btn">Subscribe</button>
           </form>
           <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PODCAST -->
+  <section class="block" id="podcast" style="padding-top: 0">
+    <div class="page-wrap">
+      <div class="podcast-grid">
+        <a class="podcast-plate" href="/building-value" aria-label="Building Value — the podcast">
+          <img src="building-value-header.jpg" alt="Building Value with Jason Nellis — How creative work becomes a business" width="1672" height="941">
+        </a>
+        <div class="podcast-copy">
+          <div class="section-eyebrow"><span class="num">05</span> The podcast</div>
+          <span class="live-pill"><span class="live-dot"></span>Relaunching soon</span>
+          <h2>Building Value is coming back.</h2>
+          <p class="tagline">How creative work becomes a business.</p>
+          <p>A hundred-plus conversations with the operators, founders, and creators turning creative work into real businesses — rebuilt with a new look and a sharper focus. Get on the list and you'll hear the moment it's back.</p>
+          <a href="/building-value" class="btn primary">Listen &amp; get notified
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
         </div>
       </div>
     </div>

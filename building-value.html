@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Value — the podcast — Jason Nellis</title>
+<meta name="description" content="Building Value with Jason Nellis — how creative work becomes a business. Conversations with the operators, founders, and creators building durable businesses. Relaunching soon.">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jasonnellis.com/building-value">
+<meta property="og:title" content="Building Value — the podcast — Jason Nellis">
+<meta property="og:description" content="How creative work becomes a business. Conversations with the operators, founders, and creators building durable businesses. Relaunching soon.">
+<meta property="og:image" content="https://jasonnellis.com/building-value-header.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Building Value — the podcast — Jason Nellis">
+<meta name="twitter:description" content="How creative work becomes a business. Conversations with the operators, founders, and creators building durable businesses. Relaunching soon.">
+<meta name="twitter:image" content="https://jasonnellis.com/building-value-header.jpg">
+<link rel="canonical" href="https://jasonnellis.com/building-value">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* ---- Hero / brand plate ---- */
+  .bv-hero { padding: 72px 0 56px; }
+  .bv-plate {
+    position: relative;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--bg-deep);
+    box-shadow: 0 40px 90px -40px rgba(0,230,118,0.14);
+    margin: 24px 0 36px;
+  }
+  .bv-plate img { width: 100%; height: auto; display: block; }
+  /* soft inner ring so the navy artwork doesn't melt into the page ground */
+  .bv-plate::after {
+    content: ""; position: absolute; inset: 0; border-radius: 16px;
+    box-shadow: inset 0 0 0 1px rgba(148,163,184,0.08);
+    pointer-events: none;
+  }
+
+  .bv-status {
+    margin-bottom: 18px;
+  }
+  .bv-hero h1 {
+    font-size: clamp(34px, 5vw, 56px);
+    font-weight: 700; line-height: 1.06; letter-spacing: -0.025em;
+    margin: 0 0 18px; max-width: 18ch;
+  }
+  .bv-hero h1 .accent { color: var(--color-accent-vivid); }
+  .bv-hero .lede {
+    font-size: 18px; line-height: 1.7; color: var(--fg-2);
+    max-width: 640px; margin: 0 0 8px;
+  }
+  .bv-hero .tagline {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--fg-1); margin: 0 0 22px;
+  }
+
+  /* the shared .subscribe-banner (site.css) carries the notify form */
+  .bv-notify { margin: 40px 0 0; }
+
+  /* ---- Archive ---- */
+  .bv-archive { padding: 72px 0 8px; border-top: 1px solid var(--border-subtle); }
+  .bv-archive h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .bv-archive .sub { font-size: 15px; color: var(--fg-2); max-width: 620px; line-height: 1.7; margin: 0 0 40px; }
+  .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .media-slot {
+    background: var(--bg-card); border: 1px solid rgba(148,163,184,0.08);
+    border-radius: 12px; overflow: hidden;
+  }
+  .media-slot .video-wrap {
+    position: relative; padding-top: 56.25%; /* 16:9 */
+    background: var(--bg-deep); overflow: hidden;
+  }
+  .media-slot .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .media-slot .media-info { padding: 20px 22px; }
+  .media-slot .media-info .badge {
+    display: inline-block; font-size: 9px; font-family: var(--font-mono);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--color-accent-vivid); border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 999px; padding: 3px 8px; margin-bottom: 10px;
+  }
+  .media-slot .media-info h3 { font-size: 15px; font-weight: 500; margin: 0 0 6px; line-height: 1.4; color: #FFF; }
+  .media-slot .media-info p { font-size: 13px; color: var(--fg-2); margin: 0; line-height: 1.55; }
+  .bv-archive .archive-cta { margin: 36px 0 0; }
+
+  /* ---- Closing CTA ---- */
+  .bv-book { padding: 72px 0 96px; }
+  .bv-book-inner {
+    background: linear-gradient(135deg, rgba(0,230,118,0.05) 0%, rgba(15,23,42,0.95) 60%);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 16px; padding: 48px 56px;
+    position: relative; overflow: hidden;
+  }
+  .bv-book-inner::before {
+    content: ""; position: absolute; top: -80px; left: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,230,118,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .bv-book-inner h2 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 14px; line-height: 1.15; max-width: 20ch; }
+  .bv-book-inner p { font-size: 15px; color: var(--fg-2); line-height: 1.7; margin: 0 0 26px; max-width: 60ch; }
+  .bv-book-inner .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) { .media-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .bv-hero { padding: 48px 0 40px; } .bv-book-inner { padding: 36px 28px; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "PodcastSeries",
+  "name": "Building Value",
+  "url": "https://jasonnellis.com/building-value",
+  "description": "How creative work becomes a business. Conversations with the operators, founders, and creators turning creative work into durable businesses, hosted by Jason Nellis.",
+  "image": "https://jasonnellis.com/building-value-header.jpg",
+  "author": {
+    "@type": "Person",
+    "name": "Jason Nellis",
+    "url": "https://jasonnellis.com"
+  },
+  "sameAs": [ "https://www.youtube.com/@JasonNellis" ]
+}
+</script>
+<script src="nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="building value" id="main">
+  <div class="page-wrap">
+
+    <!-- HERO -->
+    <div class="bv-hero">
+      <div class="section-eyebrow"><span class="num">01</span> The podcast</div>
+      <div class="bv-plate">
+        <img src="building-value-header.jpg" alt="Building Value with Jason Nellis — How creative work becomes a business" width="1672" height="941">
+      </div>
+      <span class="bv-status live-pill"><span class="live-dot"></span>Relaunching soon</span>
+      <h1>Building Value is <span class="accent">coming back.</span></h1>
+      <p class="tagline">How creative work becomes a business.</p>
+      <p class="lede">The show where I sit down with the operators, founders, and creators turning creative work into real businesses — and get specific about what actually compounds. A hundred-plus conversations in, it's being rebuilt with a new look and a sharper focus.</p>
+    </div>
+
+    <!-- NOTIFY -->
+    <div class="bv-notify">
+      <div class="subscribe-banner">
+        <div class="sub-content">
+          <span class="sub-eyebrow">Relaunch</span>
+          <p class="sub-headline">Be first to know.</p>
+          <p class="sub-body">Get on the list and you'll hear the moment new episodes drop &mdash; along with the occasional note on what I'm learning from the guests.</p>
+          <form class="sub-form" action="https://jasonnellis.substack.com/subscribe" method="get" target="_blank">
+            <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
+            <button type="submit" class="btn primary sub-btn">Notify me</button>
+          </form>
+          <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHIVE -->
+    <section class="bv-archive">
+      <div class="section-eyebrow"><span class="num">02</span> The archive</div>
+      <h2>A hundred-plus conversations, still worth your time.</h2>
+      <p class="sub">While the new season comes together, the back catalog is the best record of how I think about building, strategy, and where media is going. A few to start with:</p>
+
+      <div class="media-grid">
+
+        <div class="media-slot">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/qDVd_kNMwXY" title="The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="media-info">
+            <span class="badge">Building Value</span>
+            <h3>The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]</h3>
+            <p>A former McDonald's corporate chef on building a following on TikTok from scratch — what brands get wrong about authenticity, and how a personal voice can outperform a marketing budget.</p>
+          </div>
+        </div>
+
+        <div class="media-slot">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/L0AFy_TM6Cs" title="Hulu's First PM [Betina Chan-Martin]" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="media-info">
+            <span class="badge">Building Value</span>
+            <h3>Hulu's First PM [Betina Chan-Martin]</h3>
+            <p>Hulu's first product manager on what it took to build a streaming product from zero — and the lessons from an early-stage team that don't survive the transition to scale.</p>
+          </div>
+        </div>
+
+        <div class="media-slot">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/KTBs8YRbAjk" title="100K Subs Can't Be Wrong [Ken Bolido]" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="media-info">
+            <span class="badge">Building Value</span>
+            <h3>100K Subs Can't Be Wrong [Ken Bolido]</h3>
+            <p>Ken Bolido on the long climb to 100,000 YouTube subscribers — the strategy behind consistent growth, and why most creators quit right before it compounds.</p>
+          </div>
+        </div>
+
+        <div class="media-slot">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/RorA7O1WT6s" title="The Value of Hard Work [Jacklyn Dallas]" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="media-info">
+            <span class="badge">Building Value</span>
+            <h3>The Value of Hard Work [Jacklyn Dallas]</h3>
+            <p>Jacklyn Dallas on what "hard work" actually means when you're building a career and a brand at the same time — and why grit alone isn't the whole story.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="archive-cta">
+        <a href="https://www.youtube.com/@JasonNellis" target="_blank" rel="noopener" class="btn ghost">Watch the full archive on YouTube ↗</a>
+      </p>
+    </section>
+
+  </div>
+
+  <!-- CLOSING -->
+  <section class="bv-book">
+    <div class="page-wrap">
+      <div class="bv-book-inner">
+        <div class="section-eyebrow"><span class="num">03</span> Come on the show</div>
+        <h2>Building something worth talking about?</h2>
+        <p>If you're an operator, founder, or creator turning creative work into a real business, I'd like to hear about it — the new season is looking for guests with a point of view and the receipts to back it up.</p>
+        <div class="ctas">
+          <a href="/contact?topic=press" class="btn primary">Pitch a conversation
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@JasonNellis" target="_blank" rel="noopener" class="btn ghost">Building Value on YouTube ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>

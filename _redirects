@@ -8,6 +8,10 @@
 /press-kit.html  /press-kit 301!
 /advisory.html   /advisory  301!
 /lens.html       /lens      301!
+/building-value.html /building-value 301!
+
+# Convenience alias
+/podcast         /building-value 301
 
 # Now page removed — send old links/bookmarks to About
 /now             /about     301
@@ -22,3 +26,4 @@
 
 /advisory   /advisory.html   200
 /lens       /lens.html       200
+/building-value  /building-value.html  200

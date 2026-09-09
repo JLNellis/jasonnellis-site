@@ -23,6 +23,7 @@ const NAV_LINKS = [
   { href: '/about',    label: 'About'    },
   { href: '/blog',     label: 'Writing'  },
   { href: '/speaking', label: 'Speaking' },
+  { href: '/building-value', label: 'Podcast' },
   { href: '/advisory', label: 'Advisory' },
   { href: '/contact',  label: 'Contact'  },
 ];
@@ -100,7 +101,7 @@ class SiteFooter extends HTMLElement {
       <h4>Elsewhere</h4>
       <a href="${linkedIn}" target="_blank" rel="noopener">LinkedIn ↗</a>
       <a href="${twitter}" target="_blank" rel="noopener">X / Twitter ↗</a>
-      <a href="${podcast}" target="_blank" rel="noopener">Building Value archive ↗</a>
+      <a href="${podcast}" target="_blank" rel="noopener">Building Value on YouTube ↗</a>
       <a href="mailto:${email}">Email ↗</a>
     </div>
     <div>
