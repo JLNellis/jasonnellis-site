@@ -45,6 +45,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("building-value-header.jpg");
   eleventyConfig.addPassthroughCopy("speaking-ifa.jpg");
   eleventyConfig.addPassthroughCopy("og-speaking-ifa.jpg");
+  eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
   eleventyConfig.addPassthroughCopy("404.html");
 
