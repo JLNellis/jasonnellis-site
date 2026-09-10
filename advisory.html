@@ -80,6 +80,9 @@
   .eng-card .price { font-size: 15px; font-weight: 600; color: #FFF; font-variant-numeric: tabular-nums; }
   .eng-card .price small { display: block; font-size: 11px; font-weight: 400; color: var(--fg-3); margin-top: 2px; }
   .eng-note { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 24px 0 0; max-width: 720px; }
+  .workshop-callout { margin: 28px 0 0; padding: 24px 26px; border: 1px solid var(--border-subtle); border-left: 2px solid var(--color-accent-vivid); border-radius: var(--radius-lg); background: var(--bg-card); max-width: 760px; }
+  .workshop-callout h3 { font-size: 18px; font-weight: 600; color: #FFF; margin: 8px 0 10px; }
+  .workshop-callout p { font-size: 14px; color: var(--fg-2); line-height: 1.7; margin: 0 0 16px; }
 
   /* ---- How I work ---- */
   .how-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
@@ -90,7 +93,7 @@
   .how-list p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 0 22px; }
 
   /* ---- Proof ---- */
-  .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .proof-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .proof-card { display: flex; flex-direction: column; padding: 24px; text-decoration: none; color: inherit; }
   .proof-card .era { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 12px; }
   .proof-card h3 { font-size: 16px; font-weight: 600; color: #FFF; line-height: 1.35; margin: 0 0 8px; }
@@ -267,7 +270,12 @@
           </div>
         </article>
       </div>
-      <p class="eng-note">Need a standalone half-day workshop for your leadership team on AI, go-to-market, or audience monetization? That's a sprint with the middle taken out. <a href="/contact?topic=advisory" class="bolt">Tell me the question</a> and I'll scope it.</p>
+      <div class="workshop-callout" id="workshop">
+        <div class="section-eyebrow"><span class="num">+</span> Standalone workshop</div>
+        <h3>A leadership day around one decision.</h3>
+        <p>Bring one strategic question &mdash; your AI roadmap, go-to-market, or how you make money from an audience. Half a day, your leadership team in the room, a decision and next steps on the table by the end. It's a sprint with the middle taken out.</p>
+        <a href="/contact?topic=advisory" class="bolt">Tell me the question &rarr;</a>
+      </div>
     </section>
 
     <!-- HOW I WORK -->
@@ -277,7 +285,7 @@
       <ul class="how-list">
         <li>
           <h3>Narrative first.</h3>
-          <p>I think in stories before slides and I lead with the argument. If you need a deck before you'll engage with the problem, we'll frustrate each other.</p>
+          <p>I think in stories before slides and I lead with the argument. We start from a clear written case so the team can weigh the assumptions, trade-offs, and the decision together.</p>
         </li>
         <li>
           <h3>Fixed fee, scoped at the start.</h3>
@@ -306,14 +314,8 @@
     <section class="adv-section" id="proof">
       <div class="section-eyebrow"><span class="num">05</span> Receipts</div>
       <h2>Read the work before you hire it.</h2>
-      <p class="sub">Three case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
+      <p class="sub">Two case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
       <div class="proof-grid">
-        <a class="card proof-card" href="/blog/holding-the-line-at-superbam-archived-7q2m9/">
-          <span class="era">SuperBam · 2023 – 2026</span>
-          <h3>Holding the line at SuperBam</h3>
-          <p>Chief Product Officer to Interim CEO in the middle of a real restructuring. What the seat tests, and what narrative-first leadership looks like when the numbers are bad.</p>
-          <span class="go">Read the case study →</span>
-        </a>
         <a class="card proof-card" href="/blog/what-you-learn-when-you-stop-building-and-start-listening/">
           <span class="era">Packagd → Meta · 2016 – 2023</span>
           <h3>What you learn when you stop building and start listening</h3>
@@ -327,6 +329,7 @@
           <span class="go">Read the case study →</span>
         </a>
       </div>
+      <p class="eng-note">Want the thinking before the engagement? <a href="/lens" class="bolt">The Lens</a> walks through how I read a creator's business in three questions &mdash; with real examples.</p>
       <!-- Testimonials: add a quote strip here once the first two client quotes are in. -->
     </section>
 
@@ -339,7 +342,7 @@
         <div>
           <div class="section-eyebrow"><span class="num">06</span> Start here</div>
           <h2>Tell me the problem.</h2>
-          <p>If you're not sure which engagement fits, don't pick one. Tell me what's not working and I'll tell you within two working days whether I can help and what it would cost.</p>
+          <p>If you're not sure which engagement fits, don't pick one. Tell me what's not working and I'll tell you within 48 hours whether I can help and what it would cost.</p>
           <div class="ctas">
             <a href="/contact?topic=advisory" class="btn primary">Start a conversation
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>

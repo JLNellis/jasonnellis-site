@@ -1,10 +1,10 @@
 ---
 title: "We moved to Europe to change our lives"
 description: "Not for a vacation. Not for an adventure. For a different answer to what a life is for."
-date: 2024-06-05
+date: 2026-06-05
 category: "Life"
 readTime: "7 min"
-originalDate: "Jun 2024"
+originalDate: "Jun 2026"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_we-moved-to-europe-not-for-a-vacation-activity-7350508484901158913-IPJo"
 ---
 We moved to Europe. Not for a vacation. Not for a sabbatical. Not for an adventure, though it is certainly that. We moved because we looked at the life we were building in Los Angeles and decided that the architecture was wrong — that the version of success we were optimizing for wasn't the version we actually wanted when we said it out loud.

@@ -7,6 +7,7 @@ readTime: "7 min"
 heroImage: "/superbam.jpg"
 ogImage: "/og-case-superbam.jpg"
 unlisted: true
+permalink: false
 ---
 **Chief Product Officer → Interim CEO, SuperBam, October 2024–April 2026**
 
