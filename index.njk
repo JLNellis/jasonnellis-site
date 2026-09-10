@@ -74,6 +74,18 @@
     max-width: 580px; margin: 0 0 32px;
   }
   .home-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .home-hero .hero-writing { margin: 14px 0 0; font-size: 14px; }
+  .home-hero .hero-writing a { color: var(--fg-2); text-decoration: none; font-weight: 500; }
+  .home-hero .hero-writing a:hover { color: var(--color-accent-vivid); text-decoration: underline; text-underline-offset: 3px; }
+  .proof-strip { display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; padding: 22px 26px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 2px solid var(--color-accent-vivid); border-radius: var(--radius-lg); text-decoration: none; transition: border-color var(--dur-fast); }
+  .proof-strip:hover { border-color: rgba(0,230,118,0.4); }
+  .proof-metric { font-size: 26px; font-weight: 700; color: #FFF; white-space: nowrap; letter-spacing: -0.01em; line-height: 1.1; }
+  .proof-metric .pa { color: var(--color-accent-vivid); margin: 0 2px; }
+  .proof-metric small { display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 400; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+  .proof-copy { font-size: 14px; color: var(--fg-2); line-height: 1.6; }
+  .proof-go { font-size: 13px; font-weight: 600; color: var(--fg-1); white-space: nowrap; }
+  .proof-strip:hover .proof-go { color: var(--color-accent-vivid); }
+  @media (max-width: 680px) { .proof-strip { grid-template-columns: 1fr; gap: 14px; } .proof-go { justify-self: start; } }
 
   /* Headshot frame */
   .headshot-frame {
@@ -260,6 +272,7 @@
             <a href="/speaking" class="btn primary">Explore speaking</a>
             <a href="/advisory" class="btn ghost">Explore advisory</a>
           </div>
+          <p class="hero-writing"><a href="/blog">Or read the writing &rarr;</a></p>
         </div>
         <div class="headshot-frame">
           <div class="corner tl">JN · 2026</div>
@@ -289,6 +302,17 @@
       </div>
     </div>
   </div>
+
+  <!-- PROOF -->
+  <section class="block" id="proof" style="padding-bottom: 0">
+    <div class="page-wrap">
+      <a class="proof-strip" href="/blog/comedy-time-and-the-format-problem-at-hulu/">
+        <span class="proof-metric">$400 <span class="pa">&rarr;</span> $4,000<small>monthly revenue &middot; same content</small></span>
+        <span class="proof-copy">At Hulu, repackaging an existing comedy library into themed compilations multiplied its monthly revenue tenfold &mdash; same footage, a different format.</span>
+        <span class="proof-go">Read the case study &rarr;</span>
+      </a>
+    </div>
+  </section>
 
   <!-- WORK WITH ME -->
   <section class="block" id="work-with-me" style="padding-bottom: 0">
