@@ -123,6 +123,14 @@ test('the four other sink cards each reduce cash on their paying choice', () => 
     assert.ok(S.cash < before, id + ' should cost cash');
   }
 });
+// ---------------------------------------------------------------- event deck: size + coverage
+test('deck has ~30 cards with early/mid/late coverage', () => {
+  assert.ok(E.EVENTS.length >= 28, 'expected >= 28 events, got ' + E.EVENTS.length);
+  const hasLate = E.EVENTS.some(e => e.minWeek && e.minWeek >= 36);
+  const hasMid  = E.EVENTS.some(e => (e.minWeek && e.minWeek >= 18 && e.minWeek < 36));
+  assert.ok(hasLate, 'need at least one late-phase card');
+  assert.ok(hasMid, 'need at least one mid-phase card');
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);
