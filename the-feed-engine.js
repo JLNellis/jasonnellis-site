@@ -105,7 +105,53 @@
     designer: { label: 'Designer',      emoji: '🎨', sign: 800, weekly: 140, blurb: 'Packaging and thumbnails. More clicks everywhere.' },
   };
   const HORDER = ['editor', 'manager', 'mod', 'designer'];
-  const ANGLES = { trend: { stress: 0 }, evergreen: { stress: 0 }, personal: { stress: 6 } }; // replaced in Task 5
+  // Content angles. Multipliers on the post math; the trade-offs are the lesson.
+  //   views: reach multiplier · conv: follower conversion · heatHit: heat gain on a hit
+  //   stress: extra stress · rep: passive rep gain · badChance/badRep: chance + size of a rep hit
+  //   tail: evergreen keeps earning for CONFIG.tailWeeks · cohort: followers churn 2x
+  const ANGLES = {
+    trend:     { label: 'Trend',     emoji: '📈', views: 1.6, conv: 0.5, heatHit: [12, 20], stress: 0, badChance: 0.04, badRep: [3, 8],  cohort: true,
+                 tag: 'chase what\'s hot', bad: 'aged badly — the take didn\'t hold up.' },
+    evergreen: { label: 'Evergreen', emoji: '🌲', views: 0.8, conv: 1.3, heatHit: [4, 8],   stress: 0, tail: true,
+                 tag: 'built to last' },
+    personal:  { label: 'Personal',  emoji: '🫀', views: 1.0, conv: 1.1, heatHit: [8, 14],  stress: 6, rep: [2, 4], badChance: 0.08, badRep: [6, 12],
+                 tag: 'you, on camera', bad: 'was too much for some people. Oversharing has a cost.' },
+  };
+  const AORDER = ['trend', 'evergreen', 'personal'];
+
+  // Topic lines: written like real titles. 5 per niche per angle. Dealt with an 8-week cooldown.
+  const TOPICS = {
+    gaming: {
+      trend:     ['I tried the patch everyone\'s furious about', 'Ranking every announcement from the showcase', 'The speedrun record just got destroyed', 'This game is dying and nobody will say it', 'Reacting to the most cursed clip of the week'],
+      evergreen: ['The complete beginner\'s guide to speedrunning', 'Every setting you should change on day one', 'How matchmaking actually works', 'The best games nobody played this year', 'A beginner build that still wins'],
+      personal:  ['Why I almost quit streaming', 'What 1,000 hours in one game did to me', 'My setup tour — the honest version', 'The DM that changed how I read chat', 'I got banned for this'],
+    },
+    beauty: {
+      trend:     ['Testing the viral $9 dupe', 'Trying the routine that\'s all over my feed', 'Is this brand actually cancelled? The receipts', 'First impressions: the launch everyone\'s mad about', 'The clean-girl look in five minutes'],
+      evergreen: ['Skincare basics I wish someone told me at 20', 'How to actually match your foundation', 'Everything in my bag, ranked by cost per wear', 'The 10-minute face for people who hate makeup', 'Reading an ingredients list without panicking'],
+      personal:  ['Why I stopped hiding my skin', 'The brand deal I turned down', 'Getting ready with me on a bad day', 'My face at 30 vs 20 — no filter', 'The comment that made me stop posting for a month'],
+    },
+    edu: {
+      trend:     ['That viral stat is wrong — here\'s the math', 'The news story everyone got wrong', 'Reacting to the study that broke the internet', 'Debunking the thread with 40 million views', 'Why the exam is trending, and what it means'],
+      evergreen: ['The complete beginner\'s guide to compound interest', 'Every logical fallacy in 12 minutes', 'How to learn anything in 20 hours', 'The history nobody teaches in school', 'How the internet actually works, from first principles'],
+      personal:  ['I failed out. Here\'s what actually happened.', 'What ten years of teaching taught me', 'The student question I couldn\'t answer', 'My study routine — the honest version', 'Why I left academia'],
+    },
+    comedy: {
+      trend:     ['Every reply guy, ranked', 'Doing the trend but wrong on purpose', 'Live-reacting to the worst take of the week', 'The group chat when the drama drops', 'If the algorithm were a person'],
+      evergreen: ['Types of people at every airport', 'The customer who\'s "just looking"', 'Every family dinner, condensed', 'The universal experience of a bad haircut', 'How to lose an argument you were winning'],
+      personal:  ['The set that bombed so badly I rewrote everything', 'Why I stopped doing crowd work', 'My worst DM, read aloud', 'Getting sober on the internet', 'What my mom thinks I do for a living'],
+    },
+    fitness: {
+      trend:     ['Testing the 75-day challenge everyone\'s doing', 'That viral workout is going to hurt you', 'Reacting to the celebrity\'s "routine"', 'The supplement everyone\'s mad about — tested', '30 days on the trending diet'],
+      evergreen: ['The complete beginner\'s guide to the gym', 'Form check: five lifts you\'re doing wrong', 'How to actually build a habit', 'Eating enough — the guide nobody asked for', 'A home workout that isn\'t a scam'],
+      personal:  ['The injury that took a year off my life', 'What I eat in a day — no lies this time', 'Why I deleted my progress photos', 'Training through a breakup', 'The DM from someone who started because of me'],
+    },
+    music: {
+      trend:     ['Breaking down the song everyone\'s fighting about', 'Producing the trending sound in 10 minutes', 'Reacting to the award-show performance', 'This sample is about to blow up', 'Remixing the meme before it dies'],
+      evergreen: ['Music theory in 15 minutes, no jargon', 'How a hit is actually built, layer by layer', 'Every chord progression you already know', 'Mixing for people with cheap headphones', 'The gear you actually need to start'],
+      personal:  ['The label email I never answered', 'Why I stopped chasing playlists', 'Playing my first song again, five years later', 'Stage fright, on camera', 'The song I wrote about my dad'],
+    },
+  };
   const TIERS = ['Amateur', 'Scrappy', 'Rising', 'Established', 'Icon'];
   const TIERCUT = [0, 18, 40, 70, 110];
 
@@ -168,7 +214,7 @@
     if (hasStudio(S)) m *= CONFIG.studioViewsMult;
     if (S.hires.designer) m *= 1.15;
     if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) m *= 1.05;
-    if (stressBand(S) === 'fumes' || stressBand(S) === 'redline') m *= CONFIG.fumesViewsMult;
+    const band = stressBand(S); if (band === 'fumes' || band === 'redline') m *= CONFIG.fumesViewsMult;
     return m;
   }
   function stressCost(S, pkey, angleKey) {
@@ -181,6 +227,7 @@
     const nx = S.gear + 1;
     if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio — nothing left to buy.' };
     const cost = CONFIG.gearCost[nx];
+    // nx === 4 only when S.gear === 3 — the Studio needs the full kit first.
     if (nx === 4 && totalFollowers(S) < CONFIG.studioUnlockFollowers) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers.' };
     if (S.cash < cost) return { next: nx, cost, ok: false, reason: 'Costs ' + money(cost) + '.' };
     if (S.slots.business <= 0) return { next: nx, cost, ok: false, reason: 'No business slot left this week.' };
@@ -189,31 +236,48 @@
 
   const L = () => ({ floats: [], feed: [], bump: [] });
 
-  // ======================= the adaptive hand =======================
+  // ======================= the dealt hand =======================
+  function pickTopic(S, angleKey) {
+    const all = TOPICS[S.niche][angleKey];
+    const recent = new Set(S.usedTopics.filter(u => S.week - u.week < CONFIG.topicCooldown).map(u => u.topic));
+    const fresh = all.filter(t => !recent.has(t));
+    return pick(fresh.length ? fresh : all);
+  }
+  function postCard(S, p, angleKey, ride) {
+    let mod = 1;
+    if (p.heat >= 52) mod *= 1.35;
+    if (p.proven && p.fatigue < 45) mod *= 1.12;
+    if (p.fatigue >= 52) mod *= 0.55;
+    if (ride) mod *= 1.6;
+    // keep the topic the player already saw this week for this platform+angle
+    const prev = (S.hand || []).find(c => c.pkey === p.key && c.angle === angleKey && c.topic);
+    return { kind: ride ? 'ride' : 'post', pkey: p.key, angle: angleKey, topic: prev ? prev.topic : pickTopic(S, angleKey),
+             mod, stress: stressCost(S, p.key, angleKey), special: !!ride, ride: !!ride, heat: p.heat, fatigue: p.fatigue, proven: p.proven };
+  }
   function buildHand(S) {
-    const hand = [];
-    activePlats(S).forEach(p => {
-      const pf = PLATFORMS[p.key]; let mod = 1, special = false, kind = 'post';
-      if (p.heat >= 52) mod *= 1.35;
-      if (p.proven && p.fatigue < 45) mod *= 1.12;
-      if (p.fatigue >= 52) mod *= 0.55;
-      let ride = false;
-      if (S.lastHit && S.lastHit.key === p.key && S.week - S.lastHit.week <= 1) { special = true; mod *= 1.7; kind = 'ride'; ride = true; }
-      hand.push({ kind, pkey: p.key, mod, energy: pf.energy, special, heat: p.heat, fatigue: p.fatigue, proven: p.proven, ride });
+    const hand = [], act = activePlats(S);
+    let personalUsed = false;
+    act.forEach(p => {
+      const ride = !!(S.lastHit && S.lastHit.key === p.key && S.week - S.lastHit.week <= 1);
+      let angle = 'evergreen';
+      if (ride || p.heat >= 40) angle = 'trend';
+      else if (S.rep < 50 && !personalUsed) { angle = 'personal'; personalUsed = true; }
+      hand.push(postCard(S, p, angle, ride));
     });
-    const act = activePlats(S);
+    // With ≤3 platforms, add a second angle on the strongest so there's usually a Trend-vs-Evergreen choice.
+    const top = strongest(S);
+    if (top && hand.length <= 3) {
+      const have = hand.find(c => c.pkey === top.key);
+      hand.push(postCard(S, top, have.angle === 'trend' ? 'evergreen' : 'trend', false));
+    }
     if (act.length >= 2) {
       const src = act.slice().sort((a, b) => b.followers - a.followers)[0];
       const dst = act.slice().sort((a, b) => a.followers - b.followers)[0];
       if (src.key !== dst.key && src.followers > 500 && src.heat > 25)
-        hand.push({ kind: 'crosspost', src: src.key, dst: dst.key, special: true, energy: 8 });
+        hand.push({ kind: 'crosspost', src: src.key, dst: dst.key, special: true, stress: 4 });
     }
-    act.forEach(p => {
-      if (S.week - p.lastPost >= 3 && p.heat < 15 && p.followers > 200)
-        hand.push({ kind: 'post', pkey: p.key, special: true, revive: true, mod: 1.1, energy: PLATFORMS[p.key].energy });
-    });
     const locked = PORDER.map(k => S.plats[k]).filter(p => !p.active && totalFollowers(S) >= PLATFORMS[p.key].unlock);
-    if (locked.length) hand.push({ kind: 'start', pkey: locked[0].key, special: true, energy: PLATFORMS[locked[0].key].energy });
+    if (locked.length) hand.push({ kind: 'start', pkey: locked[0].key, special: true, stress: 8 });
     S.hand = hand;
     return hand;
   }
@@ -257,10 +321,11 @@
     return log;
   }
   function applyMove(S, m) {
-    S.energy = clamp(S.energy - m.energy, 0, 100);
+    if (!useSlot(S, 'content')) return L();
+    addStress(S, m.stress);
     if (m.kind === 'start') return startPlatform(S, m.pkey);
     if (m.kind === 'crosspost') return crosspost(S, m.src, m.dst);
-    return doPost(S, m.pkey, m.mod);
+    return doPost(S, m.pkey, m.angle, m.topic, m.mod);
   }
 
   // ======================= business actions =======================
@@ -438,12 +503,12 @@
   };
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, HIRES, HORDER, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier,
     useSlot, addStress, stressBand, hasStudio, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
     viewsMult, stressCost, upgradeInfo,
-    buildHand, applyMove, doPost, startPlatform, crosspost, biz,
+    pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings,
   };
 });

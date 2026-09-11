@@ -160,6 +160,65 @@ test('studio requires tier 3, 25K followers and $12K', () => {
   assert.strictEqual(E.upgradeInfo(S).next, null, 'nothing left to buy');
 });
 
+// ---------------------------------------------------------------- angles, topics, hand
+test('TOPICS has 5 lines per niche per angle', () => {
+  for (const n of Object.keys(E.NICHES)) for (const a of Object.keys(E.ANGLES)) {
+    assert.strictEqual(E.TOPICS[n][a].length, 5, `${n}/${a}`);
+    E.TOPICS[n][a].forEach(t => assert.ok(t.length > 8 && t.length <= 64, `${n}/${a}: "${t}"`));
+  }
+});
+test('pickTopic avoids topics used within the cooldown', () => {
+  const S = mk('gaming');
+  const all = E.TOPICS.gaming.evergreen;
+  all.slice(0, 4).forEach(t => S.usedTopics.push({ topic: t, week: 1 }));
+  for (let i = 0; i < 20; i++) assert.strictEqual(E.pickTopic(S, 'evergreen'), all[4]);
+  S.week = 1 + E.CONFIG.topicCooldown;
+  const seen = new Set(); for (let i = 0; i < 60; i++) seen.add(E.pickTopic(S, 'evergreen'));
+  assert.ok(seen.size > 1, 'cooldown expired → other topics dealt again');
+});
+test('pickTopic falls back to any topic when all are on cooldown', () => {
+  const S = mk('gaming');
+  E.TOPICS.gaming.trend.forEach(t => S.usedTopics.push({ topic: t, week: 1 }));
+  assert.ok(E.TOPICS.gaming.trend.includes(E.pickTopic(S, 'trend')));
+});
+test('buildHand: one post card per active platform, evergreen by default, plus an alt-angle card', () => {
+  const S = mk(); const hand = E.buildHand(S);
+  const posts = hand.filter(c => c.kind === 'post');
+  assert.ok(posts.some(c => c.pkey === 'longform' && c.angle === 'evergreen'));
+  assert.ok(posts.some(c => c.pkey === 'longform' && c.angle === 'trend'), 'alt angle for the strongest platform');
+  posts.forEach(c => { assert.ok(c.topic); assert.strictEqual(c.stress, E.stressCost(S, c.pkey, c.angle)); });
+});
+test('buildHand: trend when hot, personal when rep low (max one), ride after a hit', () => {
+  const S = mk(); S.plats.shortform.active = true; S.plats.micro.active = true;
+  S.plats.shortform.heat = 45; S.rep = 40;
+  const hand = E.buildHand(S).filter(c => c.kind === 'post' || c.kind === 'ride');
+  assert.strictEqual(hand.find(c => c.pkey === 'shortform').angle, 'trend');
+  assert.strictEqual(hand.filter(c => c.angle === 'personal').length, 1);
+  S.rep = 60; S.lastHit = { key: 'micro', week: S.week - 1 };
+  const ride = E.buildHand(S).find(c => c.kind === 'ride');
+  assert.ok(ride && ride.pkey === 'micro' && ride.angle === 'trend' && ride.special);
+});
+test('buildHand keeps the same topic for the same platform+angle within a week', () => {
+  const S = mk(); const a = E.buildHand(S).find(c => c.kind === 'post' && c.angle === 'evergreen').topic;
+  const b = E.buildHand(S).find(c => c.kind === 'post' && c.angle === 'evergreen').topic;
+  assert.strictEqual(a, b);
+});
+test('buildHand still deals cross-post and launch cards', () => {
+  const S = mk(); S.plats.longform.followers = 3000; S.plats.longform.heat = 40; S.plats.shortform.active = true; S.plats.shortform.followers = 100;
+  const hand = E.buildHand(S);
+  const x = hand.find(c => c.kind === 'crosspost'); assert.ok(x && x.src === 'longform' && x.dst === 'shortform' && x.stress === 4);
+  const st = hand.find(c => c.kind === 'start'); assert.ok(st && st.pkey === 'micro' && st.stress === 8);
+});
+test('applyMove consumes a content slot, adds stress, refuses at zero', () => {
+  const S = mk(); const card = E.buildHand(S).find(c => c.kind === 'post');
+  const s0 = S.stress; E.applyMove(S, card);
+  assert.strictEqual(S.slots.content, 1); assert.strictEqual(S.stress, s0 + card.stress);
+  E.applyMove(S, E.buildHand(S).find(c => c.kind === 'post'));
+  assert.strictEqual(S.slots.content, 0);
+  const posts = S.plats.longform.posts; const log = E.applyMove(S, E.buildHand(S).find(c => c.kind === 'post'));
+  assert.strictEqual(S.plats.longform.posts, posts, 'refused'); assert.strictEqual(log.feed.length, 0);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
