@@ -105,6 +105,7 @@
     designer: { label: 'Designer',      emoji: '🎨', sign: 800, weekly: 140, blurb: 'Packaging and thumbnails. More clicks everywhere.' },
   };
   const HORDER = ['editor', 'manager', 'mod', 'designer'];
+  const ANGLES = { trend: { stress: 0 }, evergreen: { stress: 0 }, personal: { stress: 6 } }; // replaced in Task 5
   const TIERS = ['Amateur', 'Scrappy', 'Rising', 'Established', 'Icon'];
   const TIERCUT = [0, 18, 40, 70, 110];
 
@@ -159,6 +160,31 @@
     if (S.cash < h.sign) return { ok: false, reason: 'Signing costs ' + money(h.sign) + '.' };
     if (S.slots.business <= 0) return { ok: false, reason: 'No business slot left this week.' };
     return { ok: true, reason: '' };
+  }
+
+  // --- multipliers: every hire/gear/stress effect on output lives here ---
+  function viewsMult(S, pkey) {
+    let m = Math.pow(CONFIG.gearViewsMult, Math.min(S.gear, 3));
+    if (hasStudio(S)) m *= CONFIG.studioViewsMult;
+    if (S.hires.designer) m *= 1.15;
+    if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) m *= 1.05;
+    if (stressBand(S) === 'fumes' || stressBand(S) === 'redline') m *= CONFIG.fumesViewsMult;
+    return m;
+  }
+  function stressCost(S, pkey, angleKey) {
+    let c = PLATFORMS[pkey].stress + (ANGLES[angleKey] ? ANGLES[angleKey].stress : 0);
+    if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) c -= 8;
+    if (hasStudio(S)) c -= CONFIG.studioStressRelief;
+    return Math.max(1, c);
+  }
+  function upgradeInfo(S) {
+    const nx = S.gear + 1;
+    if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio — nothing left to buy.' };
+    const cost = CONFIG.gearCost[nx];
+    if (nx === 4 && totalFollowers(S) < CONFIG.studioUnlockFollowers) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers.' };
+    if (S.cash < cost) return { next: nx, cost, ok: false, reason: 'Costs ' + money(cost) + '.' };
+    if (S.slots.business <= 0) return { next: nx, cost, ok: false, reason: 'No business slot left this week.' };
+    return { next: nx, cost, ok: true, reason: '' };
   }
 
   const L = () => ({ floats: [], feed: [], bump: [] });
@@ -249,9 +275,12 @@
       S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
       const log = L(); log.floats.push({ anchor: 'cash', text: '+' + money(pay), tone: 'cash' }); log.floats.push({ anchor: 'rep', text: '-' + h.toFixed(0), tone: 'loss' });
       log.feed.push({ emoji: '🤝', text: `Ran a sponsored segment. +${money(pay)} — some fans smell the sellout.`, kind: '' }); return log; },
-    upgrade(S) { const nx = S.gear + 1, c = CONFIG.gearCost[nx]; if (nx > 3 || S.cash < c) return L(); S.cash -= c; S.gear = nx;
-      const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(c), tone: 'loss' }); log.bump = PORDER.slice();
-      log.feed.push({ emoji: '🛠️', text: `Upgraded your kit (tier ${nx}). Every channel just got more polished.`, kind: 'good' }); return log; },
+    upgrade(S) { const u = upgradeInfo(S); if (!u.ok || !useSlot(S, 'business')) return L();
+      S.cash -= u.cost; S.gear = u.next;
+      const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(u.cost), tone: 'loss' }); log.bump = PORDER.slice();
+      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. The Studio is yours — every post gets bigger, every week costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
+      else log.feed.push({ emoji: '🛠️', text: `Upgraded your kit (tier ${u.next}). Every channel just got more polished.`, kind: 'good' });
+      return log; },
     paid(S) { if (S.members > 0 || totalFollowers(S) < CONFIG.paidUnlock) return L(); S.energy = clamp(S.energy - 12, 0, 100);
       S.members = Math.round(totalFollowers(S) * rnd(CONFIG.memberConvMin, CONFIG.memberConvMax));
       const log = L(); log.feed.push({ emoji: '⭐', text: `Launched a paid membership. ${fmt(S.members)} true fans signed up — recurring income at last.`, kind: 'good' }); return log; },
@@ -409,10 +438,11 @@
   };
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, HIRES, HORDER, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier,
     useSlot, addStress, stressBand, hasStudio, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
+    viewsMult, stressCost, upgradeInfo,
     buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings,
   };

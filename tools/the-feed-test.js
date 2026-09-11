@@ -81,7 +81,7 @@ test('overhead is flat + per-platform + payroll + lease, and breakdown sums', ()
 });
 test('hire cap is 2 without studio, 4 with', () => {
   const S = mk(); S.cash = 99999;
-  assert.strictEqual(E.hireCap(S), 2);
+  assert.strictEqual(E.hireCap(S), E.CONFIG.hireCapBase);
   E.biz.hire(S, 'editor'); S.slots.business = 1;
   E.biz.hire(S, 'mod'); S.slots.business = 1;
   assert.strictEqual(E.hireCount(S), 2);
@@ -90,7 +90,7 @@ test('hire cap is 2 without studio, 4 with', () => {
   assert.strictEqual(S.hires.designer, false, 'third hire refused without studio');
   assert.strictEqual(S.cash, before, 'refused hire costs nothing');
   assert.strictEqual(S.slots.business, 1, 'refused hire keeps the slot');
-  S.gear = 4; assert.strictEqual(E.hireCap(S), 4);
+  S.gear = 4; assert.strictEqual(E.hireCap(S), E.CONFIG.hireCapStudio);
   E.biz.hire(S, 'designer');
   assert.strictEqual(S.hires.designer, true);
 });
@@ -120,6 +120,44 @@ test('hireInfo explains refusals', () => {
   S.cash = 5000; assert.strictEqual(E.hireInfo(S, 'mod').ok, true);
   S.hires.editor = S.hires.manager = true;
   assert.match(E.hireInfo(S, 'mod').reason, /studio/i);
+});
+
+// ---------------------------------------------------------------- gear + studio + multipliers
+test('viewsMult stacks gear, studio, designer, editor(longform/live), fumes', () => {
+  const S = mk();
+  assert.strictEqual(E.viewsMult(S, 'longform'), 1);
+  S.gear = 2; assert.ok(Math.abs(E.viewsMult(S, 'micro') - E.CONFIG.gearViewsMult * E.CONFIG.gearViewsMult) < 1e-9);
+  S.gear = 4; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.CONFIG.studioViewsMult) < 1e-9);
+  S.gear = 0; S.hires.designer = true; assert.ok(Math.abs(E.viewsMult(S, 'micro') - 1.15) < 1e-9);
+  S.hires.designer = false; S.hires.editor = true;
+  assert.ok(Math.abs(E.viewsMult(S, 'longform') - 1.05) < 1e-9);
+  assert.strictEqual(E.viewsMult(S, 'micro'), 1, 'editor does not touch micro');
+  S.hires.editor = false; S.stress = 75; assert.strictEqual(E.viewsMult(S, 'micro'), E.CONFIG.fumesViewsMult);
+});
+test('stressCost: platform + angle − editor − studio, min 1', () => {
+  const S = mk();
+  assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress);
+  assert.strictEqual(E.stressCost(S, 'longform', 'personal'), E.PLATFORMS.longform.stress + E.ANGLES.personal.stress);
+  S.hires.editor = true; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), 10);
+  assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress, 'editor does not touch micro');
+  S.gear = 4; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), 1, 'floors at 1');
+});
+test('upgrade tiers 1-3 cost cash and a business slot', () => {
+  const S = mk(); S.cash = 5000;
+  E.biz.upgrade(S); assert.strictEqual(S.gear, 1); assert.strictEqual(S.cash, 5000 - E.CONFIG.gearCost[1]); assert.strictEqual(S.slots.business, 0);
+  E.biz.upgrade(S); assert.strictEqual(S.gear, 1, 'no slot → refused');
+  S.slots.business = 1; E.biz.upgrade(S); assert.strictEqual(S.gear, 2);
+});
+test('studio requires tier 3, 25K followers and $12K', () => {
+  const S = mk(); S.gear = 3; S.cash = 20000; S.plats.longform.followers = 1000;
+  assert.strictEqual(E.upgradeInfo(S).ok, false); assert.match(E.upgradeInfo(S).reason, /25K/);
+  E.biz.upgrade(S); assert.strictEqual(S.gear, 3);
+  S.plats.longform.followers = 30000;
+  assert.strictEqual(E.upgradeInfo(S).ok, true); assert.strictEqual(E.upgradeInfo(S).cost, E.CONFIG.gearCost[4]);
+  const log = E.biz.upgrade(S);
+  assert.strictEqual(S.gear, 4); assert.strictEqual(S.cash, 20000 - E.CONFIG.gearCost[4]);
+  assert.ok(log.feed.some(f => f.kind === 'big'));
+  assert.strictEqual(E.upgradeInfo(S).next, null, 'nothing left to buy');
 });
 
 // ---------------------------------------------------------------- runner
