@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PP4FTXFZRX');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Work in progress — remove the next line when you want this indexed by search engines. -->
+<meta name="robots" content="noindex">
+<title>The Feed — a content-creator life sim</title>
+<meta name="description" content="A browser life-sim about building a content-creator career across five platforms. Post, grind, dodge the trolls, survive a year, and find out which of eight endings is yours.">
+<link rel="icon" href="/favicon.svg">
+<!-- Site design system: DM Sans / DM Mono @font-face + Bolt OS tokens -->
+<link rel="stylesheet" href="/colors_and_type.css">
+<style>
+  /* ============================================================
+     THE FEED — styled in the site's Bolt OS "Precision Engine"
+     system. All colors/type/radii pull from colors_and_type.css
+     tokens; platform accents map onto the Bolt OS status palette.
+     ============================================================ */
+  *{box-sizing:border-box}
+  body{margin:0; min-height:100vh; background:
+      radial-gradient(1100px 560px at 88% -10%, var(--color-accent-soft), transparent 60%),
+      radial-gradient(900px 620px at -8% 108%, rgba(59,130,246,.06), transparent 55%),
+      var(--bg-base);
+    color:var(--fg-1); font-family:var(--font-sans); line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1120px; margin:0 auto; padding:clamp(16px,3vw,30px) clamp(14px,3vw,26px) 60px}
+  .mono{font-family:var(--font-mono)}
+  a.backlink{display:inline-block; margin-bottom:16px; font-family:var(--font-mono); font-size:12px;
+    letter-spacing:.02em; color:var(--fg-2); text-decoration:none; transition:color var(--dur-fast) var(--ease-standard)}
+  a.backlink:hover{color:var(--color-accent-vivid)}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px}
+  .logo{font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:clamp(23px,4vw,34px);
+    letter-spacing:-.02em; line-height:1; display:flex; align-items:center; gap:10px}
+  .logo .the{color:var(--fg-3); font-weight:var(--fw-medium)}
+  .logo .feed{color:var(--color-accent-vivid)}
+  .logo .live{font-family:var(--font-mono); font-size:10px; font-weight:var(--fw-medium); letter-spacing:.14em;
+    text-transform:uppercase; color:var(--color-accent-vivid); border:1px solid rgba(0,230,118,.3);
+    background:var(--color-accent-soft); padding:4px 9px; border-radius:var(--radius-pill); display:inline-flex; align-items:center; gap:6px}
+  .logo .live .dot{width:6px; height:6px; border-radius:50%; background:var(--color-accent-vivid);
+    box-shadow:0 0 8px var(--color-accent-vivid); animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+  .topbar .spacer{flex:1}
+  .totfollow{text-align:right} .totfollow b{font-family:var(--font-mono); font-weight:500; font-size:20px; display:block; line-height:1; font-variant-numeric:tabular-nums}
+  .totfollow span{font-size:11px; color:var(--fg-2); letter-spacing:.03em}
+  .weekchip{font-family:var(--font-mono); font-size:12px; color:var(--color-accent-vivid); border:1px solid var(--border-subtle);
+    background:var(--bg-deep); padding:7px 12px; border-radius:var(--radius-pill); white-space:nowrap}
+
+  /* ---------- layout ---------- */
+  .board{display:grid; grid-template-columns:312px 1fr; gap:18px; align-items:start}
+  @media (max-width:860px){ .board{grid-template-columns:1fr} }
+  .panel{background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-xl); box-shadow:var(--shadow-pop)}
+
+  /* ---------- creator card ---------- */
+  .chan{display:flex; gap:13px; align-items:center; padding:17px; border-bottom:1px solid var(--border-subtle)}
+  .avatar{width:54px; height:54px; border-radius:var(--radius-lg); display:grid; place-items:center; font-size:28px;
+    background:var(--bg-deep); border:1px solid var(--border-default); flex:none}
+  .chan h2{margin:0; font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:18px; letter-spacing:-.01em}
+  .nichebadge{font-size:11px; color:var(--color-accent-vivid); background:var(--color-accent-soft); border:1px solid rgba(0,230,118,.22);
+    padding:2px 8px; border-radius:var(--radius-pill); margin-top:5px; display:inline-block}
+
+  .meters{padding:15px 17px; display:flex; flex-direction:column; gap:13px}
+  .meter .mtop{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .meter .mname{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--fg-2); display:flex; gap:6px; align-items:center}
+  .meter .mval{font-family:var(--font-mono); font-size:12.5px; font-variant-numeric:tabular-nums}
+  .bar{height:7px; border-radius:var(--radius-pill); background:rgba(148,163,184,.14); overflow:hidden; position:relative}
+  .bar > i{position:absolute; inset:0 auto 0 0; width:0; border-radius:var(--radius-pill); transition:width var(--dur-slow) var(--ease-emphasis)}
+  .fill-energy{background:var(--color-status-warning)}
+  .fill-rep{background:var(--color-accent-vivid)}
+  .fill-skill{background:var(--color-status-info)}
+  .money{padding:0 17px 16px; display:flex; gap:10px}
+  .stat{flex:1; background:var(--bg-deep); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:10px 12px}
+  .stat .k{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2)}
+  .stat .v{font-family:var(--font-mono); font-size:18px; margin-top:2px; font-variant-numeric:tabular-nums}
+  .v.pos{color:var(--color-accent-vivid)} .v.neg{color:var(--color-status-error)}
+  .helpline{padding:0 17px 16px; font-size:11.5px; color:var(--fg-3); line-height:1.5}
+
+  /* ---------- channels ---------- */
+  .channels{margin-bottom:16px}
+  .sechead{display:flex; align-items:center; justify-content:space-between; margin:0 2px 9px}
+  .sechead h3{margin:0; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3)}
+  .sechead .hint{font-size:11px; color:var(--fg-3)}
+  .chanrow{display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
+  .chancard{flex:0 0 auto; width:224px; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-subtle);
+    background:var(--bg-deep); box-shadow:var(--shadow-card); transition:transform var(--dur-slow) var(--ease-standard), box-shadow var(--dur-slow) var(--ease-standard)}
+  .chancard.up{animation:levelup .7s var(--ease-emphasis)}
+  @keyframes levelup{0%{transform:scale(1)}40%{transform:scale(1.045); box-shadow:var(--shadow-glow)}100%{transform:scale(1)}}
+  .chanmeta{padding:9px 12px 11px; display:flex; align-items:center; justify-content:space-between; gap:8px}
+  .chanmeta .tl{font-size:11px; color:var(--fg-2)} .chanmeta .tl b{color:var(--fg-1); font-weight:var(--fw-bold)}
+  .tierpill{font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; padding:2px 7px; border-radius:var(--radius-pill); border:1px solid var(--border-subtle); white-space:nowrap}
+
+  /* ---------- stage ---------- */
+  .stage{min-height:400px; display:flex; flex-direction:column}
+  .stagehead{padding:15px 19px; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .stagehead h2{margin:0; font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:17px; letter-spacing:-.01em}
+  .energypill{font-family:var(--font-mono); font-size:12px; color:var(--color-status-warning);
+    border:1px solid rgba(245,158,11,.28); background:rgba(245,158,11,.08); padding:5px 11px; border-radius:var(--radius-pill); white-space:nowrap}
+  .movelabel{padding:14px 18px 4px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--fg-3)}
+
+  .moves{padding:6px 17px 4px; display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media (max-width:520px){ .moves{grid-template-columns:1fr} }
+  .move{text-align:left; cursor:pointer; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:12px 13px;
+    background:var(--bg-card-soft); color:var(--fg-1); font-family:inherit; font-size:13.5px; display:flex; gap:11px; align-items:flex-start;
+    transition:transform var(--dur-fast) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard)}
+  .move:hover:not(:disabled){transform:translateY(-2px); border-color:var(--border-accent); background:rgba(30,41,59,.9)}
+  .move:disabled{opacity:.42; cursor:not-allowed}
+  .move.special{border-color:rgba(0,230,118,.35); background:linear-gradient(180deg,var(--color-accent-soft),var(--bg-card-soft))}
+  .move .ico{font-size:20px; line-height:1; flex:none; margin-top:1px}
+  .move .mt{font-weight:var(--fw-medium); display:flex; align-items:center; gap:6px}
+  .move .md{font-size:11.5px; color:var(--fg-2); margin-top:2px; line-height:1.4}
+  .move .flags{margin-top:6px; display:flex; gap:5px; flex-wrap:wrap}
+  .flag{font-family:var(--font-mono); font-size:10px; padding:2px 6px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle); color:var(--fg-2)}
+  .flag.up{color:var(--color-accent-vivid); border-color:rgba(0,230,118,.3)}
+  .flag.dn{color:var(--color-status-error); border-color:rgba(239,68,68,.3)}
+  .flag.en{color:var(--color-status-warning)} .flag.mo{color:var(--color-accent-vivid)}
+  .flag.hot{color:var(--color-accent-vivid); border-color:rgba(0,230,118,.4)}
+
+  .stagefoot{margin-top:auto; padding:13px 17px; border-top:1px solid var(--border-subtle); display:flex; gap:9px; flex-wrap:wrap}
+  .btn{font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:13.5px; border-radius:var(--radius-md); padding:11px 18px;
+    border:1px solid transparent; cursor:pointer; transition:background var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), transform var(--dur-fast)}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{flex:1; min-width:150px; background:var(--color-accent-vivid); color:#0F172A; border-color:var(--color-accent-vivid)}
+  .btn.primary:hover{background:var(--color-accent-signal)}
+  .btn.ghost{background:transparent; color:var(--fg-1); border-color:var(--border-strong)}
+  .btn.ghost:hover{color:var(--color-accent-vivid); border-color:var(--color-accent-vivid)}
+
+  /* ---------- event ---------- */
+  .event{padding:21px 21px 18px; display:flex; flex-direction:column; gap:13px}
+  .event .ebadge{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase}
+  .event .ebadge.hostile{color:var(--color-status-error)} .event .ebadge.neutral{color:var(--color-status-info)}
+  .event .ehead{display:flex; gap:13px; align-items:center}
+  .event .eemoji{font-size:36px}
+  .event h2{margin:0; font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:21px; letter-spacing:-.01em; text-wrap:balance}
+  .event p.etext{margin:0; color:var(--fg-2); font-size:14px; max-width:60ch}
+  .choices{display:flex; flex-direction:column; gap:9px; margin-top:2px}
+  .choice{text-align:left; cursor:pointer; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:12px 14px;
+    background:var(--bg-card-soft); color:var(--fg-1); font-family:inherit; display:flex; gap:11px; align-items:flex-start;
+    transition:transform var(--dur-fast) var(--ease-standard), border-color var(--dur-base), background var(--dur-base)}
+  .choice:hover{transform:translateX(3px); background:rgba(30,41,59,.9)}
+  .choice.repair:hover{border-color:var(--color-accent-vivid)} .choice.neutral:hover{border-color:var(--color-status-info)} .choice.escalate:hover{border-color:var(--color-status-error)}
+  .choice .ci{font-size:18px; flex:none; margin-top:1px}
+  .choice b{font-weight:var(--fw-bold)} .choice span{display:block; font-size:12px; color:var(--fg-2); margin-top:2px}
+
+  /* ---------- feed ---------- */
+  .feed{margin-top:18px}
+  .feedlist{display:flex; flex-direction:column; gap:8px}
+  .fitem{display:flex; gap:10px; align-items:flex-start; background:var(--bg-deep); border:1px solid var(--border-subtle);
+    border-radius:var(--radius-md); padding:9px 12px; font-size:13px; animation:slidein var(--dur-slow) var(--ease-standard)}
+  @keyframes slidein{from{opacity:0; transform:translateY(-6px)}to{opacity:1; transform:none}}
+  .fitem .fe{font-size:15px; flex:none} .fitem span:last-child{color:var(--fg-2)}
+  .fitem.good{border-color:rgba(0,230,118,.25)} .fitem.good span:last-child{color:var(--fg-1)}
+  .fitem.bad{border-color:rgba(239,68,68,.25)}
+  .fitem.big{border-color:rgba(0,230,118,.4); background:linear-gradient(90deg,var(--color-accent-soft),var(--bg-deep))} .fitem.big span:last-child{color:var(--fg-1)}
+
+  /* ---------- floating deltas ---------- */
+  .floats{position:fixed; pointer-events:none; inset:0; overflow:hidden; z-index:40}
+  .flt{position:absolute; font-family:var(--font-mono); font-weight:500; font-size:15px; animation:floatup 1.15s var(--ease-standard) forwards; text-shadow:0 2px 10px rgba(0,0,0,.6)}
+  @keyframes floatup{0%{opacity:0; transform:translateY(6px) scale(.9)}15%{opacity:1}100%{opacity:0; transform:translateY(-40px) scale(1.05)}}
+
+  /* ---------- overlays ---------- */
+  .overlay{position:fixed; inset:0; background:rgba(10,20,35,.78); backdrop-filter:blur(7px); display:grid; place-items:center; padding:18px; z-index:60; overflow:auto}
+  .card{max-width:600px; width:100%; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-xl);
+    box-shadow:var(--shadow-pop); padding:clamp(20px,4vw,32px); animation:pop var(--dur-slow) var(--ease-emphasis)}
+  @keyframes pop{from{opacity:0; transform:scale(.96) translateY(8px)}to{opacity:1; transform:none}}
+  .kick{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-vivid)}
+  .card h1{margin:6px 0 6px; font-family:var(--font-sans); font-weight:var(--fw-bold); letter-spacing:-.02em; font-size:clamp(24px,5vw,34px); line-height:1.08; text-wrap:balance}
+  .card .lede{color:var(--fg-2); margin:0 0 18px; font-size:14.5px; line-height:1.6; max-width:52ch}
+  .field{margin-bottom:15px}
+  .field label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2); margin-bottom:7px}
+  .field input{width:100%; background:var(--bg-deep); border:1px solid var(--border-default); color:var(--fg-1); border-radius:var(--radius-md); padding:11px 13px; font-family:inherit; font-size:15px}
+  .field input:focus{outline:none; border-color:var(--color-accent-vivid); box-shadow:var(--shadow-glow-sm)}
+  .pgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+  @media (max-width:480px){ .pgrid{grid-template-columns:repeat(2,1fr)} }
+  .pick{cursor:pointer; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:11px 7px; text-align:center; background:var(--bg-deep); transition:border-color var(--dur-base) var(--ease-standard)}
+  .pick:hover{border-color:var(--border-strong)}
+  .pick.sel{border-color:var(--color-accent-vivid); box-shadow:var(--shadow-glow-sm)}
+  .pick .pe{font-size:22px} .pick .pl{display:block; font-size:12px; margin-top:4px; font-weight:var(--fw-medium)}
+  .pick .pm{display:block; font-size:10px; color:var(--fg-2); margin-top:3px; line-height:1.3}
+
+  .endhero{display:flex; align-items:center; gap:15px; margin-bottom:6px}
+  .endhero .ee{font-size:48px}
+  .endstats{display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin:16px 0 18px}
+  .endstat{background:var(--bg-deep); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:10px 12px}
+  .endstat .k{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2)}
+  .endstat .v{font-family:var(--font-mono); font-size:17px; margin-top:2px; font-variant-numeric:tabular-nums}
+  .lesson{font-size:13px; color:var(--fg-2); border-left:2px solid var(--color-accent-vivid); padding:4px 0 4px 13px; margin:0 0 18px; font-style:italic}
+
+  .hidden{display:none!important}
+  @media (prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important; transition-duration:.001ms!important} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="backlink" href="/">← back to jasonnellis.com</a>
+
+  <div class="topbar">
+    <div class="logo"><span class="the">THE</span> <span class="feed">FEED</span> <span class="live"><span class="dot"></span>Live</span></div>
+    <div class="spacer"></div>
+    <div class="totfollow"><b class="mono" id="totfollow">0</b><span>total following</span></div>
+    <div class="weekchip" id="weekchip">WEEK 01 / 52</div>
+  </div>
+
+  <div class="board">
+    <div class="panel" id="sidepanel">
+      <div class="chan">
+        <div class="avatar" id="avatar">🎥</div>
+        <div><h2 id="channame">Your Channel</h2><span class="nichebadge" id="nichebadge">—</span></div>
+      </div>
+      <div class="meters">
+        <div class="meter"><div class="mtop"><span class="mname">⚡ Energy</span><span class="mval mono" id="v-energy">100</span></div><div class="bar"><i class="fill-energy" id="b-energy"></i></div></div>
+        <div class="meter"><div class="mtop"><span class="mname">💚 Reputation</span><span class="mval mono" id="v-rep">60</span></div><div class="bar"><i class="fill-rep" id="b-rep"></i></div></div>
+        <div class="meter"><div class="mtop"><span class="mname">🎬 Skill</span><span class="mval mono" id="v-skill">18</span></div><div class="bar"><i class="fill-skill" id="b-skill"></i></div></div>
+      </div>
+      <div class="money">
+        <div class="stat"><div class="k">Bank</div><div class="v mono pos" id="v-cash">$900</div></div>
+        <div class="stat"><div class="k">Weekly costs</div><div class="v mono neg" id="v-rent">-$120</div></div>
+      </div>
+      <div class="helpline" id="helpline">Energy is your only real limit — you can't feed every platform every week. Choose where your attention goes.</div>
+    </div>
+
+    <div>
+      <div class="channels">
+        <div class="sechead"><h3>Your Channels</h3><span class="hint" id="chanhint">Each platform grows on its own terms</span></div>
+        <div class="chanrow" id="chanrow"></div>
+      </div>
+      <div class="panel stage" id="stage">
+        <div class="stagehead"><h2 id="stagetitle">This Week</h2><span class="energypill" id="energypill">⚡ 100 energy left</span></div>
+        <div id="stagebody"></div>
+      </div>
+      <div class="feed">
+        <div class="sechead"><h3>The Feed</h3></div>
+        <div class="feedlist" id="feedlist"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="floats" id="floats"></div>
+
+<!-- START -->
+<div class="overlay" id="startOverlay">
+  <div class="card">
+    <div class="kick">A content-creator life sim</div>
+    <h1>One phone. One year. Every platform wants a piece of you.</h1>
+    <p class="lede">Grow across surfaces that each reward you differently, adapt as the algorithm shifts, survive the trolls — and find out which of eight endings is yours.</p>
+    <div class="field"><label for="nameInput">Creator / channel name</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
+    <div class="field"><label>Your lane (content vertical)</label><div class="pgrid" id="nichegrid"></div></div>
+    <div class="field"><label>Where do you post first?</label><div class="pgrid" id="homegrid"></div></div>
+    <button class="btn primary" id="startBtn" style="width:100%">Go live →</button>
+  </div>
+</div>
+
+<!-- END -->
+<div class="overlay hidden" id="endOverlay">
+  <div class="card">
+    <div class="kick" id="endKicker">The story ends</div>
+    <div class="endhero"><div class="ee" id="endEmoji">🎬</div><h1 id="endTitle" style="margin:0">—</h1></div>
+    <p class="lede" id="endBlurb">—</p>
+    <div class="endstats" id="endStats"></div>
+    <p class="lesson" id="endLesson">—</p>
+    <button class="btn primary" id="againBtn" style="width:100%">Run it back</button>
+  </div>
+</div>
+
+<script src="/the-feed-engine.js"></script>
+<script>
+(function(){
+  "use strict";
+  const E = window.FeedEngine;
+  const { PLATFORMS, NICHES, TIERS, PORDER, fmt, money, clamp } = E;
+  const $ = id => document.getElementById(id);
+  const pick = a => a[Math.floor(Math.random()*a.length)];
+
+  let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {};
+
+  // engine-bound convenience wrappers (S is closed over)
+  const N = () => NICHES[S.niche];
+  const activePlats = () => E.activePlats(S);
+  const totalFollowers = () => E.totalFollowers(S);
+  const skillCap = () => E.skillCap(S);
+  const rent = () => E.rent(S);
+  const platTier = p => E.platTier(S, p);
+
+  function newGame(name, niche, home){
+    S = E.newState(niche, home); S.name = name || 'untitled';
+    pushFeed(NICHES[niche].emoji, `Channel created on ${PLATFORMS[home].name}. The first post is always the hardest.`, '');
+    E.buildHand(S); render(); openClose($('startOverlay'), false);
+  }
+
+  // ---------- feedback layer: turn engine logs into pops / feed / bumps ----------
+  const TONE = { hit:'var(--color-accent-vivid)', gain:'var(--color-accent-signal)', cash:'var(--color-accent-vivid)',
+                 up:'var(--color-accent-signal)', loss:'var(--color-status-error)', down:'var(--color-status-error)' };
+  function anchorId(a){ if(a==='cash')return 'v-cash'; if(a==='rep')return 'v-rep'; if(a==='skill')return 'v-skill';
+    if(a.indexOf('plat:')===0)return 'cc-'+a.slice(5); return null; }
+  function applyLog(log){ if(!log)return;
+    (log.floats||[]).forEach(f=>floatDelta(anchorId(f.anchor), f.text, TONE[f.tone]||'var(--fg-1)'));
+    (log.feed||[]).forEach(f=>pushFeed(f.emoji, f.text, f.kind));
+    (log.bump||[]).forEach(k=>{ bumped[k]=true; });
+  }
+  function pushFeed(e,t,k){ S.feed = S.feed||[]; S.feed.unshift({e,t,k:k||''}); if(S.feed.length>7)S.feed.pop(); }
+  function floatDelta(id,text,color){ const a=id&&$(id); if(!a)return; const r=a.getBoundingClientRect();
+    const el=document.createElement('div'); el.className='flt'; el.textContent=text; el.style.color=color;
+    el.style.left=(r.left+r.width/2-12+(Math.random()*16-8))+'px'; el.style.top=(r.top-4)+'px';
+    $('floats').appendChild(el); setTimeout(()=>el.remove(),1200); }
+
+  // ---------- actions ----------
+  function takeMove(i){ const m=S.hand[i]; if(!m||m.energy>S.energy)return; applyLog(E.applyMove(S,m)); E.buildHand(S); render(); }
+  const bizDo = id => { applyLog(E.biz[id](S)); E.buildHand(S); render(); };
+
+  function endWeek(){ E.settleWeek(S); const ev=E.rollEvent(S);
+    if(ev){ S.event=ev; S.phase='event'; render(); return; } advance(); }
+  function advance(){ E.advanceWeek(S); if(E.checkEndings(S)){ endGame(S.endKey); return; } S.phase='play'; E.buildHand(S); render(); }
+  function chooseEvent(i){ applyLog(E.applyEventChoice(S, S.event, i)); S.event=null; advance(); }
+  function restWeek(){ applyLog(E.biz.rest(S)); endWeek(); }
+
+  // ---------- move display (presentation of the engine's hand) ----------
+  function moveView(m){
+    if(m.kind==='start'){ const pf=PLATFORMS[m.pkey];
+      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a second front (${pf.tag}). More reach, but another mouth to feed each week.`,
+        flags:[['+platform','up'],['-'+m.energy+' ⚡','en']] }; }
+    if(m.kind==='crosspost'){
+      return { ico:'🔗', label:`Cross-post ${PLATFORMS[m.src].name} → ${PLATFORMS[m.dst].name}`,
+        desc:`Funnel your ${PLATFORMS[m.src].name} audience to your smaller ${PLATFORMS[m.dst].name}.`,
+        flags:[['🔗 Funnel','up'],['-'+m.energy+' ⚡','en']] }; }
+    const pf=PLATFORMS[m.pkey], flags=[];
+    let ico=pf.emoji, label='Post '+pf.fmt;
+    if(m.ride){ ico='🌊'; label='Ride the wave on '+pf.name; flags.push(['🔥 Momentum','hot']); }
+    else if(m.revive){ ico='🔁'; label='Revive '+pf.name; flags.push(['🔁 Comeback','up']); }
+    if(m.heat>=52) flags.push(['🔥 Hot','hot']);
+    if(m.proven && m.fatigue<45) flags.push(['⭐ Proven','up']);
+    if(m.fatigue>=52) flags.push(['😴 Fatigued','dn']);
+    flags.push(['-'+m.energy+' ⚡','en']);
+    const outlook = (m.mod||1)>=1.4?'primed to pop':(m.mod||1)>=1.05?'in a good spot':(m.mod||1)<=0.7?'burning out this audience':'steady';
+    const loy = pf.loyal>=1.4?'very high':pf.loyal>=1.1?'high':pf.loyal>=.8?'medium':'low';
+    return { ico, label, desc:`${pf.tag} · loyalty ${loy} · ${outlook}.`, flags };
+  }
+
+  // ---------- channel SVG (levels up visually with tier) ----------
+  function channelSVG(p){
+    const pf=PLATFORMS[p.key], t=platTier(p), col=pf.color, id=p.key;
+    const banner = t>=2 ? `<rect x="0" y="0" width="224" height="40" fill="${col}" opacity="${0.14+0.05*t}"/><rect x="0" y="39" width="224" height="1.5" fill="${col}" opacity="0.5"/>`
+      : t>=1 ? `<rect x="0" y="0" width="224" height="40" fill="${col}" opacity="0.10"/>`
+      : `<rect x="0" y="0" width="224" height="40" fill="#0A2540"/>`;
+    const verified = t>=3 ? `<circle cx="150" cy="58" r="7" fill="${col}"/><path d="M146.4 58 l2.4 2.4 l4.7 -4.9" fill="none" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` : '';
+    const filled=clamp(t,0,3);
+    let thumbs=''; for(let i=0;i<3;i++){ const x=14+i*68; const on=i<filled;
+      thumbs+= on ? `<rect x="${x}" y="86" width="60" height="30" rx="5" fill="${col}" opacity="${0.22+0.10*t/4}"/><rect x="${x}" y="86" width="60" height="30" rx="5" fill="none" stroke="${col}" opacity="0.55"/>`
+                   : `<rect x="${x}" y="86" width="60" height="30" rx="5" fill="none" stroke="#334155" stroke-dasharray="4 4"/>`; }
+    const glow = t>=3?`filter="drop-shadow(0 0 8px ${col})"`:'';
+    return `<svg viewBox="0 0 224 126" width="100%" height="126" xmlns="http://www.w3.org/2000/svg" ${glow} id="cc-${id}">
+      <rect x="0.5" y="0.5" width="223" height="125" rx="10" fill="#0F172A" stroke="rgba(148,163,184,.14)"/>
+      <clipPath id="cl${id}"><rect x="0.5" y="0.5" width="223" height="125" rx="10"/></clipPath>
+      <g clip-path="url(#cl${id})">
+        ${banner}
+        <circle cx="40" cy="44" r="20" fill="#0A2540" stroke="${col}" stroke-width="${t>=2?2:1}"/>
+        <text x="40" y="51" font-size="20" text-anchor="middle">${N().emoji}</text>
+        <text x="70" y="42" fill="#FFFFFF" font-family="DM Sans, sans-serif" font-weight="700" font-size="13">${pf.emoji} ${pf.name}</text>
+        ${verified}
+        <text x="70" y="60" fill="${col}" font-family="DM Mono, monospace" font-weight="500" font-size="15">${fmt(p.followers)}</text>
+        <text x="128" y="60" fill="#94A3B8" font-family="DM Sans, sans-serif" font-size="10">followers</text>
+        ${thumbs}
+      </g></svg>`;
+  }
+
+  // ---------- render ----------
+  function render(){ if(!S)return;
+    $('channame').textContent=S.name; $('avatar').textContent=N().emoji;
+    $('nichebadge').textContent=N().label+' · '+N().blurb;
+    $('totfollow').textContent=fmt(totalFollowers());
+    $('weekchip').textContent='WEEK '+String(Math.min(S.week,52)).padStart(2,'0')+' / 52';
+    setMeter('energy',S.energy); setMeter('rep',S.rep); setMeter('skill',S.skill,skillCap());
+    const c=$('v-cash'); c.textContent=money(S.cash); c.className='v mono '+(S.cash<0?'neg':'pos');
+    $('v-rent').textContent='-'+money(rent());
+    $('energypill').textContent='⚡ '+Math.round(S.energy)+' energy left';
+    renderChannels();
+    if(S.phase==='event'&&S.event) renderEvent(); else renderMoves();
+    renderFeed();
+  }
+  function setMeter(k,v,max){ max=max||100; $('b-'+k).style.width=clamp(v/max*100,0,100)+'%';
+    $('v-'+k).textContent=Math.round(v)+(k==='skill'?'/'+Math.round(max):''); }
+
+  function renderChannels(){ const row=$('chanrow'); const act=activePlats();
+    $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet');
+    row.innerHTML=act.map(p=>{ const t=platTier(p);
+      return `<div class="chancard ${bumped[p.key]?'up':''}" data-k="${p.key}">${channelSVG(p)}
+        <div class="chanmeta"><span class="tl"><b>${TIERS[t]}</b> tier</span>
+        <span class="tierpill" style="color:${PLATFORMS[p.key].color}">${'●'.repeat(t+1)}${'○'.repeat(4-t)}</span></div></div>`; }).join('');
+    bumped={};
+  }
+
+  function renderMoves(){
+    $('stagetitle').textContent='Week '+Math.min(S.week,52)+' — where does your energy go?';
+    const canDeal=totalFollowers()>=1000, nx=S.gear+1, gearCost=E.CONFIG.gearCost[nx];
+    const canPaid=S.members===0&&totalFollowers()>=E.CONFIG.paidUnlock;
+    const moveHTML=S.hand.map((m,i)=>{ const v=moveView(m);
+      return `<button class="move ${m.special?'special':''}" data-i="${i}" ${m.energy>S.energy?'disabled':''}>
+        <span class="ico">${v.ico}</span><span><span class="mt">${v.label}</span><span class="md">${v.desc}</span>
+        <span class="flags">${v.flags.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`; }).join('');
+    const biz=[
+      {id:'grind',ic:'🎓',t:'Study the craft',d:'Raise your skill ceiling (gear caps how high).',on:S.energy>=15,f:[['-15 ⚡','en'],['+skill','up']]},
+      {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:S.energy>=10,f:[['-10 ⚡','en'],['+rep','up']]},
+      {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow.':'Locked — reach 1K total first.',on:canDeal&&S.energy>=10,f:[['-10 ⚡','en'],['+$$','mo'],['-rep','dn']]},
+      canPaid?{id:'paid',ic:'⭐',t:'Launch paid membership',d:'Convert true fans into recurring income.',on:S.energy>=12,f:[['-12 ⚡','en'],['+members','up']]}
+             :{id:'upgrade',ic:'🛠️',t:nx<=3?'Upgrade gear ('+money(gearCost)+')':'Studio maxed',d:nx<=3?'Better videos + higher skill ceiling across all channels.':'Full rig — nothing left to buy.',on:nx<=3&&S.cash>=gearCost,f:nx<=3?[['-'+money(gearCost),'dn'],['+quality','up']]:[]},
+    ];
+    const bizHTML=biz.map(b=>`<button class="move" data-biz="${b.id}" ${b.on?'':'disabled'}>
+      <span class="ico">${b.ic}</span><span><span class="mt">${b.t}</span><span class="md">${b.d}</span>
+      <span class="flags">${b.f.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`).join('');
+    $('stagebody').innerHTML=`<div class="movelabel">📣 Content moves — this week's hand adapts to your history</div>
+      <div class="moves">${moveHTML}</div>
+      <div class="movelabel">🧰 Studio &amp; business</div>
+      <div class="moves">${bizHTML}</div>
+      <div class="stagefoot"><button class="btn primary" id="endWeekBtn">End the week ▸</button>
+        <button class="btn ghost" id="restBtn">😌 Rest &amp; recover</button></div>`;
+    $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
+    $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo(b.dataset.biz); });
+    $('endWeekBtn').onclick=endWeek; $('restBtn').onclick=restWeek;
+  }
+
+  function renderEvent(){
+    $('stagetitle').textContent='Something happened';
+    const ev=S.event, cls=ev.kind==='hostile'?'hostile':'neutral';
+    $('stagebody').innerHTML=`<div class="event">
+      <span class="ebadge ${cls}">${ev.kind==='hostile'?'⚠️ ':'✦ '}${ev.badge}</span>
+      <div class="ehead"><div class="eemoji">${ev.emoji}</div><h2>${ev.title}</h2></div>
+      <p class="etext">${ev.text}</p>
+      <div class="choices">${ev.choices.map((c,i)=>`<button class="choice ${c.t}" data-i="${i}"><span class="ci">${c.ci}</span><span><b>${c.label}</b><span>${c.desc}</span></span></button>`).join('')}</div>
+    </div>`;
+    $('stagebody').querySelectorAll('.choice').forEach(b=>b.onclick=()=>chooseEvent(+b.dataset.i));
+  }
+  function renderFeed(){ $('feedlist').innerHTML=(S.feed||[]).map(f=>`<div class="fitem ${f.k}"><span class="fe">${f.e}</span><span>${f.t}</span></div>`).join(''); }
+
+  // ---------- endings ----------
+  function endGame(key){ S.phase='end'; const e=E.ENDINGS[key];
+    $('endEmoji').textContent=e.emoji; $('endKicker').textContent='Ending · '+e.kicker;
+    $('endTitle').textContent=e.title; $('endBlurb').textContent=e.blurb; $('endLesson').textContent='“'+e.lesson+'”';
+    $('endStats').innerHTML=[['Total following',fmt(totalFollowers())],['Weeks',Math.min(S.week-1,52)+' / 52'],
+      ['Platforms run',activePlats().length],['Bank',money(S.cash)]].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+    render(); openClose($('endOverlay'),true);
+  }
+  function openClose(el,show){ el.classList.toggle('hidden',!show); }
+
+  // ---------- start wiring ----------
+  function buildStart(){
+    $('nichegrid').innerHTML=Object.entries(NICHES).map(([k,n])=>`<div class="pick ${k===selNiche?'sel':''}" data-k="${k}"><span class="pe">${n.emoji}</span><span class="pl">${n.label}</span><span class="pm">${n.blurb}</span></div>`).join('');
+    $('homegrid').innerHTML=PORDER.filter(k=>PLATFORMS[k].unlock===0).map(k=>{const p=PLATFORMS[k];
+      return `<div class="pick ${k===selHome?'sel':''}" data-k="${k}"><span class="pe">${p.emoji}</span><span class="pl">${p.name}</span><span class="pm">${p.tag}</span></div>`;}).join('');
+    $('nichegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{selNiche=el.dataset.k; $('nichegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
+    $('homegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{selHome=el.dataset.k; $('homegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
+  }
+  buildStart();
+  $('startBtn').onclick=()=>{ const nm=$('nameInput').value.trim()||pick(['midnight uploads','the daily grind','no filter','raw takes','after hours','main character']);
+    newGame(nm, selNiche, selHome); };
+  $('nameInput').addEventListener('keydown',e=>{ if(e.key==='Enter')$('startBtn').click(); });
+  $('againBtn').onclick=()=>{ openClose($('endOverlay'),false); openClose($('startOverlay'),true); $('nameInput').value=''; };
+})();
+</script>
+</body>
+</html>

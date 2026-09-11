@@ -8,6 +8,7 @@
 /press-kit.html  /press-kit 301!
 /advisory.html   /advisory  301!
 /lens.html       /lens      301!
+/the-feed.html   /the-feed  301!
 /building-value.html /building-value 301!
 
 # Convenience alias
@@ -26,4 +27,5 @@
 
 /advisory   /advisory.html   200
 /lens       /lens.html       200
+/the-feed   /the-feed.html   200
 /building-value  /building-value.html  200
