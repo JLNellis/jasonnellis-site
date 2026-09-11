@@ -18,10 +18,10 @@
  * ------------------------------------------------------------------
  */
 const E = require('../the-feed-engine.js');
-const { CONFIG, HORDER, fmt, totalFollowers, activePlats } = E;
+const { CONFIG, HORDER, fmt, totalFollowers, activePlats, pick } = E;
 
 if (process.env.SEED) { let s = parseInt(process.env.SEED, 10) >>> 0; E.setRng(() => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }); }
-const pick = a => a[Math.floor(Math.random() * a.length)];
+// pick / rint / chance come from the engine so SEED= makes the whole run reproducible.
 
 // ======================= persona helpers =======================
 // A persona's act(S) returns ONE action per call; the runner keeps calling until
@@ -73,6 +73,7 @@ const PERSONAS = {
   // Watches stress, favours evergreen, hires an editor + mod, never buys the Studio. Target: Niche Legend.
   'The Sustainable': { home: 'longform', eventPref: ['repair', 'neutral', 'escalate'], act(S) {
     if (content(S)) {
+      const st = H.start(S); if (st >= 0 && activePlats(S).length < 2 && S.stress < 40) return { card: st };
       const heavyOk = S.stress < 50, anyOk = S.stress < 65;
       if (S.slots.content === CONFIG.slotsContent || heavyOk) {
         if (anyOk) { const r = H.ride(S); if (r >= 0) return { card: r }; let i = H.byAngle(S, 'evergreen'); if (i < 0) i = H.lightest(S); if (i >= 0 && (heavyOk || S.hand[i].stress <= 10)) return { card: i }; }
@@ -123,7 +124,7 @@ function resolveEvent(S, ev, persona) {
   const prefs = persona.eventPref || ['repair', 'neutral', 'escalate'];
   let idx = -1;
   for (const tag of prefs) { idx = ev.choices.findIndex(c => c.t === tag); if (idx >= 0) break; }
-  if (idx < 0) idx = Math.floor(Math.random() * ev.choices.length);
+  if (idx < 0) idx = E.rint(0, ev.choices.length - 1);
   E.applyEventChoice(S, ev, idx);
 }
 function playWeek(S, persona) {
