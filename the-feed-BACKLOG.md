@@ -8,9 +8,10 @@ listed in `.eleventyignore`.)
 Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Currently `noindex`
 and not in the nav (deliberately unlisted while in progress).
 
-The rework is three sub-projects, specced in `docs/superpowers/specs/`:
-**A. core loop** (shipped) · **B. event deck** (shipped — see below) ·
-**C. social-app reskin** (next). The spec + plan for C get written when it starts.
+The rework was three sub-projects, specced in `docs/superpowers/specs/` — all
+shipped: **A. core loop** · **B. event deck** · **C. social-app reskin** (see
+each below). Remaining open work: the ending → essay CTA (blocked on essays) and
+the deferred leaderboard.
 
 ---
 
@@ -99,13 +100,32 @@ final weeks after the last tax event. Draining further would need a recurring
 late sink (more mechanics); left as-is deliberately. No 7th balance target was
 added.
 
-## Next: sub-project C — social-app reskin
+## Shipped: sub-project C — social-app reskin
 
-Make the game *look like being a creator*: a phone-shaped fake social app
-(Home = this week's cards, Notifications = the feed with fake usernames and
-comments, Inbox = events arrive as DMs, Stats = sparklines), Bolt OS tokens
-only for the chrome. Drop emoji-as-icons for a small bespoke icon set. Fix the
-mobile stacking order (moves above meters). Ship the engine's data as-is.
+The game now *looks like being a creator*: a **phone-width "Sticker Feed" app
+column** (one layout at every width — the desktop view is the mobile view
+centered, so the old mobile stacking bug is gone by construction). Four tabs:
+**Home** (this week's cards) · **Alerts** (the feed as notifications with fake
+@handles, engine text kept verbatim) · **Inbox** (events arrive as DMs, choices
+as reply chips — the forced weekly decision is preserved) · **Stats** (four
+sparklines off a UI-only weekly-history array). Emoji-as-icons replaced by a
+**bespoke solid SVG icon set** (~19 glyphs, selective color: mono chrome +
+red-active, platform icons in their engine colors, semantic meters). Skin is
+Jason's own brand let loose — navy #0B1E38 base, signal green #00E676 thread,
+**YouTube red #FF0033** as the pop/active, gold + blue, Space Grotesk + DM Mono,
+2px borders + hard offset shadows. Start + end overlays reskinned to match
+("create account" / "year in review"); the ending Substack CTA target is
+unchanged.
+
+Chrome only — `the-feed-engine.js`, the sim, and the tests were **not** touched
+(engine tests stay 58/58). The float-anchor contract (`v-cash`/`v-rep`/
+`v-stress`/`cc-<key>`), the Kenney sound layer, `noindex`, and Plausible are all
+preserved. The per-line feed/event **narrative emoji stay** (out of scope). The
+game still doesn't load `nav.js`. Spec + plan:
+`docs/superpowers/{specs,plans}/2026-09-11-the-feed-social-app-reskin*`.
+
+The **OpenMoji** entry in `the-feed-assets/CREDITS.md` can now be deleted — the
+reskin removed emoji as the icon system (see "Dropped — OpenMoji" below).
 
 ---
 
