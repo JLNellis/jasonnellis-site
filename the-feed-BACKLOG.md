@@ -8,106 +8,126 @@ listed in `.eleventyignore`.)
 Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Currently `noindex`
 and not in the nav (deliberately unlisted while in progress).
 
+The rework is three sub-projects, specced in `docs/superpowers/specs/`:
+**A. core loop** (shipped — see below) · **B. event deck** · **C. social-app
+reskin**. Specs and plans for B and C get written when each starts.
+
 ---
 
-## Architecture (already shipped)
+## Architecture (shipped)
 
 - **`the-feed.html`** — the game page. Standalone (does not load `nav.js`),
-  styled in the site's Bolt OS system via `/colors_and_type.css` tokens
-  (navy + Signal-Green, DM Sans / DM Mono). Contains rendering, input, the
-  sound layer, and the Substack end-screen CTA.
+  styled in the site's Bolt OS system via `/colors_and_type.css` tokens.
+  Contains rendering, input, the sound layer, and the Substack end-screen CTA.
 - **`the-feed-engine.js`** — the **single source of truth** for all mechanics,
   economy, events, and balance (`CONFIG` block at top). Pure/UMD. Imported by
-  **both** the game (`<script src="/the-feed-engine.js">`) and the simulator,
-  so they can't drift. State-mutating actions return an effect-log
-  `{floats, feed, bump}` the browser animates and the sim ignores.
-- **`tools/the-feed-sim.js`** — headless balance simulator. `require`s the
-  engine, adds player personas + a runner. Run: `node tools/the-feed-sim.js 1200`
-  (optional 2nd arg = HTML report path). **To rebalance: edit `CONFIG` in the
-  engine and re-run — both game and sim move together.**
-- **Sound** — Kenney CC0 interface pack in `the-feed-assets/sfx/`, Web Audio
-  manager in the game, mute toggle persisted to `localStorage`.
-- **Capture** — end-screen CTA links to Substack (*The Long Yes*); Substack is
-  the data controller (opt-in, consent, unsubscribe all handled there). No
-  email touches the game — the GDPR-safe pattern.
-- **Analytics** — Plausible, site-wide (cookieless, no consent banner). NOTE:
-  the game carries the Plausible snippet **inline** (it doesn't load `nav.js`);
-  normal pages get it from `nav.js`.
+  the game, the simulator and the tests, so they can't drift. State-mutating
+  actions (including `settleWeek`) return an effect-log `{floats, feed, bump}`
+  the browser animates and the sim ignores. RNG is injectable (`setRng`).
+- **`tools/the-feed-sim.js`** — headless balance simulator with seven player
+  personas. `npm run sim` (or `node tools/the-feed-sim.js 1200 report.html`).
+  Its **⚑ BALANCE TARGETS** block encodes the spec's six exit criteria and the
+  process exits non-zero if any fail. **To rebalance: edit `CONFIG`, re-run.**
+- **`tools/the-feed-test.js`** — deterministic engine tests. `npm test`.
+- **Sound** — Kenney CC0 pack in `the-feed-assets/sfx/`, mute persisted.
+- **Capture** — end-screen CTA links to Substack; no email touches the game.
+- **Analytics** — Plausible, inline snippet (page doesn't load `nav.js`).
 - **Assets/licenses** — `the-feed-assets/CREDITS.md`.
-- **Eleventy wiring** — passthrough copy for `the-feed.html`,
-  `the-feed-engine.js`, `the-feed-assets`; clean-URL + subdomain rules in
-  `_redirects`; `the-feed-assets` is in `.eleventyignore`.
+
+## The game, mechanically (after sub-project A)
+
+- **52 weeks.** Each week: **2 content slots + 1 business slot**. Leaving a
+  slot empty is how you rest.
+- **Stress** (0–100) replaces energy. Bands: <50 normal · 50–69 running hot ·
+  70–89 on fumes (views −15%) · ≥90 redline. Three redline weeks = Burnout.
+  Every band change is announced in the feed. Recovery is 23/week plus 18 per
+  empty content slot; bands are judged on the stress you ended the week's work
+  at, before that recovery is applied. Post costs: longform 13, shortform 10,
+  micro 6, newsletter 12, live 16 — Personal angle adds +6, Engage costs +1,
+  a brand deal costs +4.
+- **Content cards** are dealt each week: platform × **angle** × authored topic
+  line (`TOPICS` in the engine, 5 per niche per angle, 8-week cooldown).
+  Angles: **Trend** (×1.6 views, ×0.5 conversion, cohort churns 2×, may age
+  badly) · **Evergreen** (×0.8 views, ×1.3 conversion, 4-week tail of 15%
+  views/week) · **Personal** (+rep, +6 stress, may overshare).
+- **Views → followers → money.** Posts produce views; followers = views ×
+  conversion; ad revenue = views × per-view RPM. Followers **churn** (0.6%/wk
+  base, trend cohort 1.2%, 2% when a platform is idle 3+ weeks) and hostile
+  events cost followers.
+- **Business** (one/week): Engage · Brand deal (base $150, scales with
+  followers and rep, pays more at high rep; a Manager adds ×1.3) · Upgrade
+  gear (3 tiers, +10% views each) · **The Studio** (tier 4: $12,000 up front +
+  $3,000/wk lease, views ×2.8, −6 stress/post, needed for >2 hires; unlocks at
+  tier 3 + 25K followers) · Launch membership ($4/member/week, 2.5% new-
+  follower conversion, 4% churn — 12% in a week you post nothing; recomputed
+  weekly) · **Team** (Editor / Manager / Mod / Designer; hire & fire; weekly
+  payroll).
+- **Overhead** = $60 + $10/platform + payroll + lease. No hidden creep.
+- Eight endings. Bankrupt floor is −$2,500. The growth endings read their
+  thresholds from `CONFIG`: Niche Legend at 37K followers (rep ≥55), Viral
+  Star at 70K, G.O.A.T. at 200K.
 
 ### When ready to launch publicly
 1. Remove `<meta name="robots" content="noindex">` from `the-feed.html`.
-2. Add a nav entry (`NAV_LINKS` in `nav.js`) or link it from `/lens` / a tools page.
+2. Add a nav entry (`NAV_LINKS` in `nav.js`) or link it from a tools page.
 3. Consider adding it to `sitemap.njk`.
 
 ---
 
-## Deferred build 1 — High-score leaderboard (Netlify Blobs)
+## Next: sub-project B — event deck expansion
 
-**Status:** not started. No plumbing exists yet (`netlify/functions/` dir absent,
-`@netlify/blobs` not in `package.json`).
+Ten events is too few for 52 weeks (all seen by ~week 15, "review-bombed"
+seven times in one run). Target 30+, gated by phase (early/mid/late) and
+state (hires, studio, angles used, churn), non-repeating within a run.
+Candidate cards: collab offer (the #1 real growth lever — asymmetric by
+creator size), platform beta invite, press feature, a copycat stealing your
+format, a strike/demonetization, seasonal CPM swings (Q4 spike, summer slump),
+a tax bill, an editor quitting, a sponsor pulling out after a scandal, a
+year-end awards/annual-review arc for weeks 45–52.
 
-**Plan:**
-1. `npm i @netlify/blobs`. Create `netlify/functions/`. Add to `netlify.toml`:
-   `[functions]\n  directory = "netlify/functions"`.
-2. **`submit-score`** (POST) — body `{ name, followers, ending, week }`.
-   Validate + clamp (reject absurd `followers`, cap string lengths), basic
-   rate-limit. Write to a Blobs store: `getStore('the-feed-scores')`. Keep a
-   capped "top" list (e.g. read list, insert, sort desc by followers, slice
-   top 100, write back) or store per-entry keys and compute top on read.
-3. **`top-scores`** (GET) — return top N `{ name, followers, ending }`.
-4. **Game integration** (`the-feed.html`): on the end screen, "Add your run to
-   the board" → POST the channel **display name** (already typed by the player)
-   + total followers + ending key. Then GET + render the board in the overlay.
-5. **Privacy:** name is a display handle, NOT PII; never collect email here.
-6. **Caveat to state in UI/code:** client-submitted scores are spoofable. Fine
-   for a toy board (clamp + rate-limit). True anti-cheat would need
-   server-authoritative simulation — not worth it here.
+## Then: sub-project C — social-app reskin
 
-**Files:** `package.json`, `netlify.toml`, `netlify/functions/*.mjs`,
-`the-feed.html` (submit + board UI). Engine unchanged (maybe export an ending
-label helper).
+Make the game *look like being a creator*: a phone-shaped fake social app
+(Home = this week's cards, Notifications = the feed with fake usernames and
+comments, Inbox = events arrive as DMs, Stats = sparklines), Bolt OS tokens
+only for the chrome. Drop emoji-as-icons for a small bespoke icon set. Fix the
+mobile stacking order (moves above meters). Ship the engine's data as-is.
 
 ---
 
-## Deferred build 2 — OpenMoji (consistent emoji everywhere)
+## Priority item — ending → essay CTA (blocked on content)
 
-**Status:** not started. CREDITS.md already has the OpenMoji entry staged.
-License: **CC BY-SA 4.0** (attribution + share-alike required — keep the credit
-visible).
+Each ending's Substack CTA should link to a specific essay on that ending's
+theme (Burnout → an essay on creator burnout, Sellout → one on brand trust,
+etc.). **Blocked until the essays exist.** When they do: add an `essay` URL
+per `ENDINGS` entry in the engine and swap the end-screen CTA copy/link.
+This is the whole reason the game exists — do not let it slip.
 
-**Why it's non-trivial:** emoji are used as inline text in ~50 places, including
-*inside* feed message strings and in engine data — so a find-replace won't do it.
-Do it as a Twemoji-style runtime swap.
+## Deferred — high-score leaderboard (Netlify Blobs)
 
-**Plan:**
-1. Vendor the ~50 needed color SVGs into `the-feed-assets/openmoji/` from
-   `github.com/hfg-gmuend/openmoji` (`color/svg/<HEX>.svg`). The emoji set spans:
-   niches (🎮💄📚🤡💪🎧🎥), platforms (🎬📱💬📰🔴), meters/actions
-   (⚡💚🎬🔥😌🛠️🤝⭐📣🧰📈🎓😴🌊🔁🔗✨), every event + choice emoji, and the
-   8 ending glyphs (📛💸🕯️🤑🌟👑🏆🌫️). Grep the engine + game for the full list.
-2. Keep engine emoji as **unicode** (source of truth; the sim must stay text).
-   Convert to `<img>` only at display time, in the browser.
-3. Add a small parser: walk text nodes under the game root and replace emoji
-   runs with `<img class="oe" alt="<emoji>" src="/the-feed-assets/openmoji/<HEX>.svg">`.
-   Run it after each `render()` (or via a MutationObserver on the game container).
-   CSS: `.oe{height:1em;width:1em;vertical-align:-0.15em}`.
-4. Passthrough-copy `the-feed-assets/openmoji` (already covered — the whole
-   `the-feed-assets` dir is passthrough-copied).
-5. Keep the OpenMoji credit link visible (CREDITS.md + maybe a small footer note
-   on the game, per CC BY-SA).
+Defer until after C. Client-submitted scores are spoofable (acceptable for a
+toy board with clamping + rate-limits). Score should be a composite (followers,
+rep, weeks survived, ending), not raw followers. Plan when picked up: `npm i
+@netlify/blobs`, `netlify/functions/submit-score.mjs` + `top-scores.mjs`,
+board UI on the end screen. Display name only, never email.
 
-**Files:** `the-feed-assets/openmoji/*.svg` (new), `the-feed.html` (parser + CSS),
-`the-feed-assets/CREDITS.md` (already staged).
+## Dropped — OpenMoji
 
----
+Consistent emoji would polish the exact thing the reskin removes (emoji as the
+icon system). Not doing it. The OpenMoji entry in `CREDITS.md` can be deleted
+when C ships.
+
+## Open items
+
+Notes from the latest balance pass, not yet actioned:
+
+- Cash is still meaningless for non-Studio winners (~$60–85K at week 52) —
+  needs sinks from sub-project B's events, not more knobs.
+- The Star → GOAT gap is only ~2.9× because growth is near-linear.
+- The Optimizer persona spreads across four platforms, which the engine
+  currently punishes.
+- Grinder median survival sits exactly on the 15-week target floor.
 
 ## Other noted ideas (not committed to)
-- Ending-personalized Substack CTA (e.g. "You're a Niche Legend — here's an essay
-  on exactly that").
-- Inline email capture instead of link-out (more work; needs consent UI + ESP API).
-- Mid-game depth for weeks ~20–40 if playtesting shows a sag (rival creators, a
-  shifting platform meta).
+- Inline email capture — no; Substack link-out is the right GDPR/maintenance call.
+- Rivals / a shifting platform meta as a persistent system (B may cover this with events first).
