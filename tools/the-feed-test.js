@@ -6,8 +6,9 @@
 const assert = require('assert');
 const E = require('../the-feed-engine.js');
 
-// Deterministic LCG so every test sees the same "random" sequence.
-function seeded(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+// Deterministic LCG so every test sees the same "random" sequence. Warmed up: the raw LCG's
+// first output is nearly linear in the seed, which made small-seed searches degenerate.
+function seeded(seed) { let s = seed >>> 0; const next = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; for (let i = 0; i < 3; i++) next(); return next; }
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -375,11 +376,21 @@ test('every hostile escalate outcome costs followers', () => {
     const esc = ev.choices.find(c => c.t === 'escalate');
     // run until we hit a 'bad' outcome (some escalations are coin flips)
     let lostAny = false;
-    // this LCG's early outputs climb slowly, so the troll-swarm coin flip (chance(.45)) needs
-    // seeds into the hundreds before it ever comes up false — widen the loop rather than the assertion.
-    for (let seed = 1; seed < 600 && !lostAny; seed++) { E.setRng(seeded(seed)); const S = mk(); S.week = 20; S.rep = 80; S.plats.longform.followers = 10000; const log = esc.apply(S); if (log.feed[0].kind === 'bad') lostAny = S.plats.longform.followers < 10000; }
+    // some escalations (e.g. the troll-swarm chance(.45)) are coin flips, so loop seeds
+    // rather than assuming the first seed lands on a 'bad' outcome.
+    for (let seed = 1; seed < 40 && !lostAny; seed++) { E.setRng(seeded(seed)); const S = mk(); S.week = 20; S.rep = 80; S.plats.longform.followers = 10000; const log = esc.apply(S); if (log.feed[0].kind === 'bad') lostAny = S.plats.longform.followers < 10000; }
     assert.ok(lostAny, ev.title);
   });
+});
+test('follower-loss float anchors on the platform that actually lost them', () => {
+  const S = mk(); S.plats.shortform.active = true;
+  S.plats.longform.followers = 10000; S.plats.shortform.followers = 9900; // a 1–3% loss on longform drops it below shortform
+  const esc = E.EVENTS.find(e => /crypto/.test(e.title)).choices.find(c => c.t === 'escalate');
+  const log = esc.apply(S);
+  const f = log.floats.find(x => x.tone === 'loss' && /^plat:/.test(x.anchor));
+  assert.ok(f, 'has a follower-loss float');
+  assert.strictEqual(f.anchor, 'plat:longform');
+  assert.ok(S.plats.longform.followers < 10000 && S.plats.shortform.followers === 9900);
 });
 test('no engine code references energy or skill', () => {
   const src = require('fs').readFileSync(require.resolve('../the-feed-engine.js'), 'utf8');
