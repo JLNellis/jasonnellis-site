@@ -239,7 +239,7 @@ Replace the whole `CONFIG` block in `the-feed-engine.js` with:
     topicCooldown: 8,
     // money
     bankruptFloor: -1500,
-    dealBase: 90, dealScale: 0.018,
+    dealBase: 90, dealScale: 0.018, dealRepBase: 0.6,
     paidUnlock: 1500, memberRate: 6, memberConvMin: 0.02, memberConvMax: 0.045,
     memberNewConv: 0.025, memberChurn: 0.03, memberChurnIdle: 0.06,
     // gear: tiers 1-3 are kit, tier 4 is the Studio
@@ -1080,7 +1080,8 @@ test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens r
   S.plats.longform.followers = 10000;
   E.setRng(seeded(5)); const lo = mk(); lo.plats.longform.followers = 10000; lo.rep = 40; const c0 = lo.cash; E.biz.deal(lo);
   E.setRng(seeded(5)); const hi = mk(); hi.plats.longform.followers = 10000; hi.rep = 80; const c1 = hi.cash; E.biz.deal(hi);
-  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - 1.5) < 0.01, 'rep 80 pays 1.5x rep 40');
+  const expectRatio = (E.CONFIG.dealRepBase + 0.8) / (E.CONFIG.dealRepBase + 0.4); // 1.4 at base 0.6
+  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - expectRatio) < 0.01, `rep 80 pays ${expectRatio.toFixed(2)}x rep 40`);
   E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
   assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
   assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
@@ -1149,7 +1150,7 @@ test('no engine code references energy or skill', () => {
       const log = L(); log.floats.push({ anchor: 'rep', text: '+' + r.toFixed(1), tone: 'up' });
       log.feed.push({ emoji: '💬', text: 'Showed up in the comments and DMs. The core crowd feels seen.', kind: 'good' }); return log; },
     deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, 4);
-      const repMult = 0.6 + S.rep / 100, mgr = S.hires.manager;
+      const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
       const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);
       S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;

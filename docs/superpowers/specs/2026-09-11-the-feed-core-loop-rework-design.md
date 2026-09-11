@@ -174,7 +174,7 @@ One business action per week.
 | Action | Rule |
 |---|---|
 | **Engage** | unchanged: +2–5 rep, +1–4 heat everywhere, +5 stress |
-| **Brand deal** | gated at 1K followers. `pay = (dealBase + followers × dealScale) × niche.deal × repMult` where `repMult = 0.6 + rep/100` (rep 80 pays ~1.5× rep 40). Rep cost −4–9, +4 stress. Manager: pay ×1.3, rep cost ×0.6. |
+| **Brand deal** | gated at 1K followers. `pay = (dealBase + followers × dealScale) × niche.deal × repMult` where `repMult = dealRepBase + rep/100` with `dealRepBase: 0.6` in CONFIG (rep 80 pays 1.4× rep 40; lower the base to widen the spread). Rep cost −4–9, +4 stress. Manager: pay ×1.3, rep cost ×0.6. |
 | **Upgrade** | tiers 1–3 as today ($350 / $800 / $1,700), each **views ×1.10** (stacking multiplicatively). **Skill is removed** (no meter, no `grind`, no `skillCap`). |
 | **The Studio (tier 4)** | see below |
 | **Launch membership** | gated at 1.5K followers. Initial members = followers × 2–4.5%. **Recomputed weekly** in `settleWeek`: `members += newFollowersThisWeek × 0.025; members −= members × 0.03` (churn doubles to 6% in a week with no posts). Income `members × memberRate` unchanged. |
