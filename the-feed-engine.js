@@ -131,17 +131,17 @@
     gaming: {
       trend:     ['I tried the patch everyone\'s furious about', 'Ranking every announcement from the showcase', 'The speedrun record just got destroyed', 'This game is dying and nobody will say it', 'Reacting to the most cursed clip of the week'],
       evergreen: ['The complete beginner\'s guide to speedrunning', 'Every setting you should change on day one', 'How matchmaking actually works', 'The best games nobody played this year', 'A beginner build that still wins'],
-      personal:  ['Why I almost quit streaming', 'What 1,000 hours in one game did to me', 'My setup tour — the honest version', 'The DM that changed how I read chat', 'I got banned for this'],
+      personal:  ['Why I almost quit streaming', 'What 1,000 hours in one game did to me', 'My setup tour, the honest version', 'The DM that changed how I read chat', 'I got banned for this'],
     },
     beauty: {
       trend:     ['Testing the viral $9 dupe', 'Trying the routine that\'s all over my feed', 'Is this brand actually cancelled? The receipts', 'First impressions: the launch everyone\'s mad about', 'The clean-girl look in five minutes'],
       evergreen: ['Skincare basics I wish someone told me at 20', 'How to actually match your foundation', 'Everything in my bag, ranked by cost per wear', 'The 10-minute face for people who hate makeup', 'Reading an ingredients list without panicking'],
-      personal:  ['Why I stopped hiding my skin', 'The brand deal I turned down', 'Getting ready with me on a bad day', 'My face at 30 vs 20 — no filter', 'The comment that made me stop posting for a month'],
+      personal:  ['Why I stopped hiding my skin', 'The brand deal I turned down', 'Getting ready with me on a bad day', 'My face at 30 vs 20, no filter', 'The comment that made me stop posting for a month'],
     },
     edu: {
-      trend:     ['That viral stat is wrong — here\'s the math', 'The news story everyone got wrong', 'Reacting to the study that broke the internet', 'Debunking the thread with 40 million views', 'Why the exam is trending, and what it means'],
+      trend:     ['That viral stat is wrong. Here\'s the math', 'The news story everyone got wrong', 'Reacting to the study that broke the internet', 'Debunking the thread with 40 million views', 'Why the exam is trending, and what it means'],
       evergreen: ['The complete beginner\'s guide to compound interest', 'Every logical fallacy in 12 minutes', 'How to learn anything in 20 hours', 'The history nobody teaches in school', 'How the internet actually works, from first principles'],
-      personal:  ['I failed out. Here\'s what actually happened.', 'What ten years of teaching taught me', 'The student question I couldn\'t answer', 'My study routine — the honest version', 'Why I left academia'],
+      personal:  ['I failed out. Here\'s what actually happened.', 'What ten years of teaching taught me', 'The student question I couldn\'t answer', 'My study routine, the honest version', 'Why I left academia'],
     },
     comedy: {
       trend:     ['Every reply guy, ranked', 'Doing the trend but wrong on purpose', 'Live-reacting to the worst take of the week', 'The group chat when the drama drops', 'If the algorithm were a person'],
@@ -149,9 +149,9 @@
       personal:  ['The set that bombed so badly I rewrote everything', 'Why I stopped doing crowd work', 'My worst DM, read aloud', 'Getting sober on the internet', 'What my mom thinks I do for a living'],
     },
     fitness: {
-      trend:     ['Testing the 75-day challenge everyone\'s doing', 'That viral workout is going to hurt you', 'Reacting to the celebrity\'s "routine"', 'The supplement everyone\'s mad about — tested', '30 days on the trending diet'],
-      evergreen: ['The complete beginner\'s guide to the gym', 'Form check: five lifts you\'re doing wrong', 'How to actually build a habit', 'Eating enough — the guide nobody asked for', 'A home workout that isn\'t a scam'],
-      personal:  ['The injury that took a year off my life', 'What I eat in a day — no lies this time', 'Why I deleted my progress photos', 'Training through a breakup', 'The DM from someone who started because of me'],
+      trend:     ['Testing the 75-day challenge everyone\'s doing', 'That viral workout is going to hurt you', 'Reacting to the celebrity\'s "routine"', 'The supplement everyone\'s mad about, tested', '30 days on the trending diet'],
+      evergreen: ['The complete beginner\'s guide to the gym', 'Form check: five lifts you\'re doing wrong', 'How to actually build a habit', 'Eating enough: the guide nobody asked for', 'A home workout that isn\'t a scam'],
+      personal:  ['The injury that took a year off my life', 'What I eat in a day, no lies this time', 'Why I deleted my progress photos', 'Training through a breakup', 'The DM from someone who started because of me'],
     },
     music: {
       trend:     ['Breaking down the song everyone\'s fighting about', 'Producing the trending sound in 10 minutes', 'Reacting to the award-show performance', 'This sample is about to blow up', 'Remixing the meme before it dies'],
@@ -209,7 +209,7 @@
   function hireInfo(S, role) {
     const h = HIRES[role];
     if (S.hires[role]) return { ok: false, reason: 'Already on the team.' };
-    if (hireCount(S) >= hireCap(S)) return { ok: false, reason: hasStudio(S) ? 'Team is full.' : 'No room — you need the Studio to hold more than two people.' };
+    if (hireCount(S) >= hireCap(S)) return { ok: false, reason: hasStudio(S) ? 'Team is full.' : 'No room. You need the Studio to hold more than two people.' };
     if (S.cash < h.sign) return { ok: false, reason: 'Signing costs ' + money(h.sign) + '.' };
     if (S.slots.business <= 0) return { ok: false, reason: 'No business slot left this week.' };
     return { ok: true, reason: '' };
@@ -232,7 +232,7 @@
   }
   function upgradeInfo(S) {
     const nx = S.gear + 1;
-    if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio — nothing left to buy.' };
+    if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio. Nothing left to buy.' };
     const cost = CONFIG.gearCost[nx];
     // nx === 4 only when S.gear === 3 — the Studio needs the full kit first.
     if (nx === 4 && totalFollowers(S) < CONFIG.studioUnlockFollowers) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers.' };
@@ -458,12 +458,12 @@
         { t: 'neutral', ci: '⏳', label: 'Report and wait', desc: 'Trust the platform to sort it.',
           apply: S => { if (chance(.55)) return fed('⏳', 'Platform caught the coordinated abuse and reversed it. No lasting harm.', ''); const p = strongest(S); p.heat = clamp(p.heat - 9, 0, 100); return hurt(S, '😑', 'The reports went nowhere for now. Reach took a hit.', .005, .015); } },
         { t: 'escalate', ci: '🎯', label: 'Name and target their community', desc: 'Point your audience at them. Starts a war.',
-          apply: S => { const r = repHit(S, 8, 16); if (chance(.4)) { const p = strongest(S); const g = Math.round(rnd(800, 3000)); p.followers += g; S.newFollowers += g; const log = fed('⚔️', `Started an all-out war. Messy — but +${fmt(g)} rubberneckers subscribed. Rep −${r}.`, 'bad'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } return hurt(S, '🔥', `The feud spiralled. Both sides look bad; you look worse. Rep −${r}.`, .02, .04); } },
+          apply: S => { const r = repHit(S, 8, 16); if (chance(.4)) { const p = strongest(S); const g = Math.round(rnd(800, 3000)); p.followers += g; S.newFollowers += g; const log = fed('⚔️', `Started an all-out war. Messy, but +${fmt(g)} rubberneckers subscribed. Rep −${r}.`, 'bad'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } return hurt(S, '🔥', `The feud spiralled. Both sides look bad; you look worse. Rep −${r}.`, .02, .04); } },
       ] },
     { kind: 'hostile', emoji: '🕵️', title: 'A "receipts" account is digging through your old posts.', badge: 'Callout', cond: S => S.week > 8,
       text: 'Someone is building a thread of your worst old takes, screenshotting everything from years ago.',
       choices: [
-        { t: 'repair', ci: '🌱', label: 'Get ahead of it — address the old stuff', desc: 'Acknowledge growth, delete nothing quietly.',
+        { t: 'repair', ci: '🌱', label: 'Get ahead of it. Address the old stuff', desc: 'Acknowledge growth, delete nothing quietly.',
           apply: S => { S.rep = clamp(S.rep + rint(2, 7), 0, 100); return fed('🌱', 'You owned your growth before they could frame it. Mature move, mostly respected.', 'good'); } },
         { t: 'neutral', ci: '😶', label: "Don't dignify it", desc: 'Keep posting like nothing happened.',
           apply: S => { if (chance(.5)) return fed('😶', 'The thread got some traction, then faded. No real damage.', ''); const r = repHit(S, 5, 11); return hurt(S, '🗂️', `The receipts thread stuck around and got quoted. Rep −${r}.`, .01, .02); } },
