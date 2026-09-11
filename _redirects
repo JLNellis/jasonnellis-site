@@ -28,4 +28,10 @@
 /advisory   /advisory.html   200
 /lens       /lens.html       200
 /the-feed   /the-feed.html   200
+
+# The Feed on its own subdomain: serve the game at thefeed.jasonnellis.com root.
+# Only the exact root is rewritten, so /the-feed-engine.js and /the-feed-assets/*
+# still resolve as themselves on that host. (Requires the domain alias in Netlify
+# + a CNAME `thefeed` -> <site>.netlify.app in GoDaddy first.)
+https://thefeed.jasonnellis.com/   /the-feed.html   200
 /building-value  /building-value.html  200

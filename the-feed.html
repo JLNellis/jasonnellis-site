@@ -197,6 +197,11 @@
   .endstat .k{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2)}
   .endstat .v{font-family:var(--font-mono); font-size:17px; margin-top:2px; font-variant-numeric:tabular-nums}
   .lesson{font-size:13px; color:var(--fg-2); border-left:2px solid var(--color-accent-vivid); padding:4px 0 4px 13px; margin:0 0 18px; font-style:italic}
+  .substack-cta{display:block; text-decoration:none; border:1px solid var(--border-default); border-radius:var(--radius-lg);
+    padding:14px 15px; margin-bottom:12px; background:var(--bg-deep); transition:border-color var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard)}
+  .substack-cta:hover{border-color:var(--color-accent-vivid); background:rgba(0,230,118,.05)}
+  .substack-cta .sc-copy{display:block; font-size:13px; color:var(--fg-2); line-height:1.5}
+  .substack-cta .sc-go{display:block; margin-top:7px; font-weight:var(--fw-bold); font-size:14px; color:var(--color-accent-vivid)}
 
   .hidden{display:none!important}
   @media (prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important; transition-duration:.001ms!important} }
@@ -273,6 +278,10 @@
     <p class="lede" id="endBlurb">—</p>
     <div class="endstats" id="endStats"></div>
     <p class="lesson" id="endLesson">—</p>
+    <a class="substack-cta" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">
+      <span class="sc-copy">📬 The real thing is harder than the game. I write about the creator economy, media, and what actually breaks through.</span>
+      <span class="sc-go">Get “The Long Yes” →</span>
+    </a>
     <button class="btn primary" id="againBtn" style="width:100%">Run it back</button>
   </div>
 </div>
