@@ -1174,8 +1174,8 @@ test('no engine code references energy or skill', () => {
   // choice.t ∈ repair | neutral | escalate  (personas pick by this tag)
   // choice.apply(S) -> effect log
   const fed = (e, t, k) => { const log = L(); log.feed.push({ emoji: e, text: t, kind: k || '' }); return log; };
-  // a "bad" outcome that also costs followers on your biggest channel
-  const hurt = (S, e, t, fracLo, fracHi) => { const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, `${t} −${fmt(n)} followers.`, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + strongest(S).key, text: '-' + fmt(n), tone: 'loss' }); return log; };
+  // a "bad" outcome that also costs followers on your biggest channel (anchor captured BEFORE the loss shrinks it)
+  const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, `${t} −${fmt(n)} followers.`, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
   const EVENTS = [
     { kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
       text: 'One upload is spiking to people who have never heard of you. The window is open.',
