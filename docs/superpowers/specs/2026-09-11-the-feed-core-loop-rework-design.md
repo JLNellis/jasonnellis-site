@@ -250,10 +250,14 @@ The numbers above were design starting points; the tuned values live in
 `CONFIG` and are the source of truth. Where the tuned game differs
 materially from the text above:
 
-- **Stress:** weekly recovery 30 (not 12); longform/newsletter/live cost
-  14/11/16. A pure two-heavy-posts-a-week grinder now redlines around week
-  15 and burns out ~week 19 — stress is a slow burn that only bites sustained
-  overwork, and an Editor nearly removes it for longform.
+- **Stress** (after a second, stress-only pass): weekly recovery **23** (not
+  12), **+18 per empty content slot** (not 8); longform/newsletter/live cost
+  13/12/16; Engage costs 1 (`engageStress`), deals 4 (`dealStress`). Two
+  heavy posts every week with no rest: *hot* at week 3, *fumes* week 9,
+  *redline* week 16, Burnout week 18. One lighter week every 4th week keeps
+  you in *normal* indefinitely. Stress bites sustained maximum output and
+  nothing else; an Editor nearly removes it for longform. Bands are judged
+  on the stress you ended the week's work at, before recovery.
 - **Overhead:** base $60/week (not $140). Needed so a one-light-post-a-week
   creator can limp to week 52 and Fade instead of going Broke.
 - **The Studio:** lease **$3,000/week** (not $350) and views **×2.8** (not
