@@ -8,6 +8,22 @@
 //  No other files need to change.
 // ============================================================
 
+// ---- Privacy-friendly analytics (Plausible) — single source for the whole site.
+//      Cookieless + GDPR/ePrivacy compliant, so no consent banner is required.
+//      Standalone pages that don't load nav.js (the-feed.html, ascii.html) carry
+//      this same snippet inline in their own <head>. ----
+(function () {
+  if (window.__plausibleLoaded) return;
+  window.__plausibleLoaded = true;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://plausible.io/js/pa-FUfzYY9D62KrzjacQWAWo.js';
+  (document.head || document.documentElement).appendChild(s);
+  window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments); };
+  plausible.init = plausible.init || function (i) { plausible.o = i || {}; };
+  plausible.init();
+})();
+
 const SITE_CONFIG = {
   substackHandle: 'jasonnellis', // "The Long Yes" — https://jasonnellis.substack.com/
   linkedIn:       'https://linkedin.com/in/jasonnellis',
