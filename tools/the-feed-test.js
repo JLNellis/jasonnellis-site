@@ -34,6 +34,19 @@ test('newState has slots, stress, no energy/skill', () => {
   assert.strictEqual(S.redlineStreak, 0);
   assert.strictEqual(S.band, 'normal');
 });
+// ---------------------------------------------------------------- event deck: state init
+test('newState seeds event-deck tracking fields', () => {
+  const S = mk();
+  assert.deepStrictEqual(S.seenEvents, []);
+  assert.strictEqual(S.grossEarned, 0);
+  assert.strictEqual(S.taxedThrough, 0);
+});
+test('CONFIG exposes phase bands and tax rate', () => {
+  assert.strictEqual(typeof E.CONFIG.phases.earlyEnd, 'number');
+  assert.strictEqual(typeof E.CONFIG.phases.midEnd, 'number');
+  assert.ok(E.CONFIG.phases.earlyEnd < E.CONFIG.phases.midEnd);
+  assert.ok(E.CONFIG.taxRate > 0 && E.CONFIG.taxRate < 1);
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);

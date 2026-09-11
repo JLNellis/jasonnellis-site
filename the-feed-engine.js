@@ -65,6 +65,9 @@
     goatAt: 200000, starAt: 70000, legendAt: 37000, legendRep: 55,
     sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
     eventChance: 0.55,
+    // event deck: phase bands (weeks) + tax rate on gross earned since last tax event
+    phases: { earlyEnd: 17, midEnd: 35 }, // early 2–17 · mid 18–35 · late 36–52
+    taxRate: 0.22,
     years: 52,
   };
 
@@ -173,6 +176,7 @@
       slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
       hires: { editor: false, manager: false, mod: false, designer: false },
       tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
+      seenEvents: [], grossEarned: 0, taxedThrough: 0,
       lastHit: null, over: false, endKey: null, plats: {}, hand: [],
     };
     PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9 }; });
