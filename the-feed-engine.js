@@ -46,11 +46,14 @@
   };
 
   // ======================= RNG helpers =======================
-  const rnd = (a, b) => a + Math.random() * (b - a);
+  // Injectable so the tests and the sim can be reproducible. Defaults to Math.random.
+  let rng = Math.random;
+  const setRng = fn => { rng = fn || Math.random; };
+  const rnd = (a, b) => a + rng() * (b - a);
   const rint = (a, b) => Math.floor(rnd(a, b + 1));
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const chance = p => Math.random() < p;
-  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const chance = p => rng() < p;
+  const pick = a => a[Math.floor(rng() * a.length)];
 
   function fmt(n) { n = Math.round(n); const a = Math.abs(n);
     if (a >= 1e6) return (n / 1e6).toFixed(a % 1e6 === 0 ? 0 : 1) + 'M';
@@ -343,7 +346,7 @@
 
   return {
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ENDINGS, EVENTS,
-    rnd, rint, clamp, chance, pick, fmt, money,
+    setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, skillCap, rent, platTier, strongest,
     buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings,
