@@ -393,6 +393,13 @@ test('follower-loss float anchors on the platform that actually lost them', () =
   assert.strictEqual(f.anchor, 'plat:longform');
   assert.ok(S.plats.longform.followers < 10000 && S.plats.shortform.followers === 9900);
 });
+test('endingText fills platform count and the star/goat thresholds from CONFIG', () => {
+  const S = mk(); S.plats.shortform.active = true;
+  assert.match(E.endingText(S, 'burnout').blurb, /Feeding 2 platforms/);
+  assert.match(E.endingText(S, 'star').blurb, new RegExp('^' + E.fmt(E.CONFIG.starAt) + '-plus'));
+  assert.match(E.endingText(S, 'goat').blurb, new RegExp('^' + E.fmt(E.CONFIG.goatAt) + '-plus'));
+  assert.ok(!/\{(n|s|star|goat)\}/.test(E.endingText(S, 'star').blurb + E.endingText(S, 'goat').blurb + E.endingText(S, 'burnout').blurb));
+});
 test('no engine code references energy or skill', () => {
   const src = require('fs').readFileSync(require.resolve('../the-feed-engine.js'), 'utf8');
   assert.ok(!/S\.energy|S\.skill|skillCap|\brent\(/.test(src));
