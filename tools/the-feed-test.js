@@ -47,6 +47,21 @@ test('CONFIG exposes phase bands and tax rate', () => {
   assert.ok(E.CONFIG.phases.earlyEnd < E.CONFIG.phases.midEnd);
   assert.ok(E.CONFIG.taxRate > 0 && E.CONFIG.taxRate < 1);
 });
+// ---------------------------------------------------------------- event deck: gross earnings
+test('doPost adds ad revenue to grossEarned', () => {
+  E.setRng(seeded(3));
+  const S = mk('beauty', 'longform'); S.plats.longform.followers = 5000;
+  const before = S.grossEarned;
+  E.doPost(S, 'longform', 'evergreen', 'x', 1);
+  assert.ok(S.grossEarned > before, 'grossEarned should grow by ad revenue');
+});
+test('biz.deal adds pay to grossEarned', () => {
+  E.setRng(seeded(3));
+  const S = mk('beauty', 'longform'); S.plats.longform.followers = 5000;
+  const before = S.grossEarned;
+  E.biz.deal(S);
+  assert.ok(S.grossEarned > before, 'grossEarned should grow by deal pay');
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);

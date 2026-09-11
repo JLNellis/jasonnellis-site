@@ -316,7 +316,7 @@
     const gain = Math.round(views * CONFIG.baseConv * pf.loyal * A.conv);
     const rev = Math.round(views * pf.rpm);
     p.followers += gain; if (A.cohort) p.trendFollowers += gain;
-    S.newFollowers += gain; S.totalViews += views; S.cash += rev;
+    S.newFollowers += gain; S.totalViews += views; S.cash += rev; S.grossEarned += rev;
     p.posts++; p.lastPost = S.week; p.fatigue = clamp(p.fatigue + rint(10, 20), 0, 100);
     const hit = luck > 1.12;
     p.heat = clamp(p.heat + (hit ? rint(A.heatHit[0], A.heatHit[1]) : -rint(0, 3)), 0, 100);
@@ -371,7 +371,7 @@
       const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
       const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);
-      S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
+      S.cash += pay; S.grossEarned += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
       const log = L(); log.floats.push({ anchor: 'cash', text: '+' + money(pay), tone: 'cash' }); log.floats.push({ anchor: 'rep', text: '-' + h.toFixed(0), tone: 'loss' });
       log.feed.push({ emoji: '🤝', text: `Ran a sponsored segment for ${money(pay)}${mgr ? '; your manager did the talking' : ''}. A few fans noticed the ad read.`, kind: '' }); return log; },
     upgrade(S) { const u = upgradeInfo(S); if (!u.ok || !useSlot(S, 'business')) return L();
@@ -519,7 +519,8 @@
       passive += S.members * CONFIG.memberRate;
     }
     const oh = overhead(S);
-    S.cash += Math.round(passive); S.cash -= oh; S.peakOverhead = Math.max(S.peakOverhead, oh);
+    const passiveR = Math.round(passive); S.cash += passiveR; S.grossEarned += passiveR;
+    S.cash -= oh; S.peakOverhead = Math.max(S.peakOverhead, oh);
     // churn
     let lost = 0;
     activePlats(S).forEach(p => {
