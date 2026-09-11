@@ -35,29 +35,29 @@
     startCash: 900, startStress: 20,
     slotsContent: 2, slotsBusiness: 1,
     // stress: recovery per week, extra per empty content slot, band thresholds
-    stressRecover: 12, stressRecoverPerEmptySlot: 8,
+    stressRecover: 30, stressRecoverPerEmptySlot: 8,
     bandHot: 50, bandFumes: 70, bandRedline: 90, fumesViewsMult: 0.85,
     burnoutStreak: 3,
     // overhead (replaces rent): flat + per platform + payroll + studio lease
-    overheadBase: 140, overheadPerPlatform: 10, studioLease: 350,
+    overheadBase: 60, overheadPerPlatform: 10, studioLease: 3000,
     // post math
-    viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 4.5,
+    viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 6,
     // churn
     churnBase: 0.006, churnTrend: 0.012, churnIdle: 0.02, idleWeeks: 3,
     // evergreen tail
     tailWeeks: 4, tailRate: 0.15,
     topicCooldown: 8,
     // money
-    bankruptFloor: -1500,
-    dealBase: 90, dealScale: 0.018, dealRepBase: 0.6,
-    paidUnlock: 1500, memberRate: 6, memberConvMin: 0.02, memberConvMax: 0.045,
-    memberNewConv: 0.025, memberChurn: 0.03, memberChurnIdle: 0.06,
+    bankruptFloor: -2500,
+    dealBase: 150, dealScale: 0.018, dealRepBase: 0.6,
+    paidUnlock: 1500, memberRate: 4, memberConvMin: 0.02, memberConvMax: 0.045,
+    memberNewConv: 0.025, memberChurn: 0.04, memberChurnIdle: 0.12,
     // gear: tiers 1-3 are kit, tier 4 is the Studio
     gearCost: [0, 350, 800, 1700, 12000], gearViewsMult: 1.10,
-    studioUnlockFollowers: 25000, studioViewsMult: 1.3, studioStressRelief: 6,
+    studioUnlockFollowers: 25000, studioViewsMult: 2.8, studioStressRelief: 6,
     hireCapBase: 2, hireCapStudio: 4,
     // endings
-    goatAt: 1200000, starAt: 300000, legendAt: 40000, legendRep: 55,
+    goatAt: 200000, starAt: 70000, legendAt: 37000, legendRep: 55,
     sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
     eventChance: 0.55,
     years: 52,
@@ -92,11 +92,11 @@
   // green (hero), blue (info), slate (muted), amber (warning), red (live).
   // `stress` = stress cost per post. `rpm` = ad revenue per VIEW.
   const PLATFORMS = {
-    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', stress: 18, rpm: .0045, viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
+    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', stress: 14, rpm: .0045, viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
     shortform: { name: 'Short Video',    tag: 'vertical clips',  emoji: '📱', color: '#3B82F6', stress: 10, rpm: .0006, viral: 1.6,  loyal: .6,   unlock: 0,    fmt: 'a batch of shorts' },
     micro:     { name: 'Microblog',      tag: 'text posts',      emoji: '💬', color: '#94A3B8', stress: 6,  rpm: .0003, viral: 1.25, loyal: .8,   unlock: 0,    fmt: 'a hot take' },
-    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', stress: 14, rpm: .006,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
-    live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', stress: 20, rpm: .003,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
+    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', stress: 11, rpm: .006,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
+    live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', stress: 16, rpm: .003,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
   };
   const PORDER = ['longform', 'shortform', 'micro', 'writing', 'live'];
   // Team. Each role is a one-line modifier applied at exactly one site in the engine.

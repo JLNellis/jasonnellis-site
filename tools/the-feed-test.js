@@ -139,7 +139,7 @@ test('stressCost: platform + angle − editor − studio, min 1', () => {
   const S = mk();
   assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress);
   assert.strictEqual(E.stressCost(S, 'longform', 'personal'), E.PLATFORMS.longform.stress + E.ANGLES.personal.stress);
-  S.hires.editor = true; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), 10);
+  S.hires.editor = true; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress - 8, 'editor takes 8 off longform');
   assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress, 'editor does not touch micro');
   S.gear = 4; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), 1, 'floors at 1');
 });
@@ -303,7 +303,8 @@ test('membership recomputes weekly: grows with new followers, churns, churns dou
 test('membership income = members × memberRate', () => {
   const S = mk(); S.members = 100; S.plats.longform.lastPost = S.week; const cash0 = S.cash;
   E.settleWeek(S);
-  assert.strictEqual(S.cash, cash0 + Math.round(97 * E.CONFIG.memberRate) - E.overhead(S));
+  const after = Math.round(100 - 100 * E.CONFIG.memberChurn); // members churn before they pay
+  assert.strictEqual(S.cash, cash0 + Math.round(after * E.CONFIG.memberRate) - E.overhead(S));
 });
 test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1%', () => {
   const S = mk(); S.plats.longform.followers = 10000; S.plats.longform.trendFollowers = 2000; S.plats.longform.lastPost = S.week;
@@ -316,7 +317,7 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
   assert.ok(log2.feed.some(f => /unfollowed/.test(f.text)), 'idle churn is loud');
 });
-test('stress: band + redline streak judged before recovery; recovery is 12 + 8 per empty slot', () => {
+test('stress: band + redline streak judged before recovery; recovery is stressRecover + stressRecoverPerEmptySlot per empty slot', () => {
   const S = mk(); S.stress = 60; S.slots.content = 2;
   let log = E.settleWeek(S);
   assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /running hot/.test(f.text)), 'normal→hot logged');
