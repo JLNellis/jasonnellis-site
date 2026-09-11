@@ -53,6 +53,11 @@
   .totfollow span{font-size:11px; color:var(--fg-2); letter-spacing:.03em}
   .weekchip{font-family:var(--font-mono); font-size:12px; color:var(--color-accent-vivid); border:1px solid var(--border-subtle);
     background:var(--bg-deep); padding:7px 12px; border-radius:var(--radius-pill); white-space:nowrap}
+  .soundbtn{width:32px; height:32px; border-radius:var(--radius-md); background:var(--bg-deep); border:1px solid var(--border-subtle);
+    color:var(--fg-2); font-size:14px; line-height:1; cursor:pointer; display:grid; place-items:center;
+    transition:border-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard)}
+  .soundbtn:hover{border-color:var(--color-accent-vivid); color:var(--color-accent-vivid)}
+  .soundbtn.muted{opacity:.55}
 
   /* ---------- layout ---------- */
   .board{display:grid; grid-template-columns:312px 1fr; gap:18px; align-items:start}
@@ -206,6 +211,7 @@
     <div class="logo"><span class="the">THE</span> <span class="feed">FEED</span> <span class="live"><span class="dot"></span>Live</span></div>
     <div class="spacer"></div>
     <div class="totfollow"><b class="mono" id="totfollow">0</b><span>total following</span></div>
+    <button class="soundbtn" id="soundBtn" type="button" aria-label="Toggle sound" title="Sound on / off">🔊</button>
     <div class="weekchip" id="weekchip">WEEK 01 / 52</div>
   </div>
 
@@ -282,6 +288,35 @@
 
   let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {};
 
+  // ---------- sound (Kenney CC0 interface pack, via Web Audio) ----------
+  const SFX = (function(){
+    const NAMES = ['click','post','hit','cash','level','bad','event','week','win','lose'];
+    const VOL = { click:.45, post:.55, hit:.8, cash:.6, level:.75, bad:.6, event:.55, week:.35, win:.85, lose:.8 };
+    let ctx=null, master=null, buffers={}, loaded=false, muted=false;
+    try{ muted = localStorage.getItem('thefeed_muted')==='1'; }catch(e){}
+    function init(){ if(ctx)return; try{ ctx=new (window.AudioContext||window.webkitAudioContext)();
+      master=ctx.createGain(); master.gain.value=muted?0:0.55; master.connect(ctx.destination);
+      if(!loaded){ loaded=true; NAMES.forEach(n=>fetch('/the-feed-assets/sfx/'+n+'.wav')
+        .then(r=>r.arrayBuffer()).then(a=>ctx.decodeAudioData(a)).then(b=>{buffers[n]=b;}).catch(()=>{})); }
+    }catch(e){} }
+    return {
+      unlock(){ init(); if(ctx&&ctx.state==='suspended')ctx.resume(); },
+      play(n){ if(!n||!ctx||muted||!buffers[n])return; try{ const s=ctx.createBufferSource(); s.buffer=buffers[n];
+        const g=ctx.createGain(); g.gain.value=VOL[n]||0.6; s.connect(g); g.connect(master); s.start(0); }catch(e){} },
+      toggleMute(){ muted=!muted; try{localStorage.setItem('thefeed_muted',muted?'1':'0');}catch(e){} if(master)master.gain.value=muted?0:0.55; return muted; },
+      isMuted(){ return muted; },
+    };
+  })();
+  document.addEventListener('pointerdown', ()=>SFX.unlock(), { once:true });
+  // pick the most salient sound implied by an effect-log
+  function logSound(log){ if(!log)return null; const f=log.floats||[], fe=log.feed||[];
+    if(fe.some(x=>/leveled up/.test(x.text))) return 'level';
+    if(f.some(x=>x.tone==='hit')) return 'hit';
+    if(fe.some(x=>x.kind==='bad')) return 'bad';
+    if(f.some(x=>x.tone==='cash')) return 'cash';
+    if(f.some(x=>x.tone==='gain'||x.tone==='up')) return 'post';
+    return null; }
+
   // engine-bound convenience wrappers (S is closed over)
   const N = () => NICHES[S.niche];
   const activePlats = () => E.activePlats(S);
@@ -291,6 +326,7 @@
   const platTier = p => E.platTier(S, p);
 
   function newGame(name, niche, home){
+    SFX.unlock(); SFX.play('level');
     S = E.newState(niche, home); S.name = name || 'untitled';
     pushFeed(NICHES[niche].emoji, `Channel created on ${PLATFORMS[home].name}. The first post is always the hardest.`, '');
     E.buildHand(S); render(); openClose($('startOverlay'), false);
@@ -305,6 +341,7 @@
     (log.floats||[]).forEach(f=>floatDelta(anchorId(f.anchor), f.text, TONE[f.tone]||'var(--fg-1)'));
     (log.feed||[]).forEach(f=>pushFeed(f.emoji, f.text, f.kind));
     (log.bump||[]).forEach(k=>{ bumped[k]=true; });
+    SFX.play(logSound(log));
   }
   function pushFeed(e,t,k){ S.feed = S.feed||[]; S.feed.unshift({e,t,k:k||''}); if(S.feed.length>7)S.feed.pop(); }
   function floatDelta(id,text,color){ const a=id&&$(id); if(!a)return; const r=a.getBoundingClientRect();
@@ -317,7 +354,7 @@
   const bizDo = id => { applyLog(E.biz[id](S)); E.buildHand(S); render(); };
 
   function endWeek(){ E.settleWeek(S); const ev=E.rollEvent(S);
-    if(ev){ S.event=ev; S.phase='event'; render(); return; } advance(); }
+    if(ev){ S.event=ev; S.phase='event'; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
   function advance(){ E.advanceWeek(S); if(E.checkEndings(S)){ endGame(S.endKey); return; } S.phase='play'; E.buildHand(S); render(); }
   function chooseEvent(i){ applyLog(E.applyEventChoice(S, S.event, i)); S.event=null; advance(); }
   function restWeek(){ applyLog(E.biz.rest(S)); endWeek(); }
@@ -440,7 +477,7 @@
   function renderFeed(){ $('feedlist').innerHTML=(S.feed||[]).map(f=>`<div class="fitem ${f.k}"><span class="fe">${f.e}</span><span>${f.t}</span></div>`).join(''); }
 
   // ---------- endings ----------
-  function endGame(key){ S.phase='end'; const e=E.ENDINGS[key];
+  function endGame(key){ S.phase='end'; SFX.play(['goat','star','legend'].indexOf(key)>=0?'win':'lose'); const e=E.ENDINGS[key];
     $('endEmoji').textContent=e.emoji; $('endKicker').textContent='Ending · '+e.kicker;
     $('endTitle').textContent=e.title; $('endBlurb').textContent=e.blurb; $('endLesson').textContent='“'+e.lesson+'”';
     $('endStats').innerHTML=[['Total following',fmt(totalFollowers())],['Weeks',Math.min(S.week-1,52)+' / 52'],
@@ -454,10 +491,13 @@
     $('nichegrid').innerHTML=Object.entries(NICHES).map(([k,n])=>`<div class="pick ${k===selNiche?'sel':''}" data-k="${k}"><span class="pe">${n.emoji}</span><span class="pl">${n.label}</span><span class="pm">${n.blurb}</span></div>`).join('');
     $('homegrid').innerHTML=PORDER.filter(k=>PLATFORMS[k].unlock===0).map(k=>{const p=PLATFORMS[k];
       return `<div class="pick ${k===selHome?'sel':''}" data-k="${k}"><span class="pe">${p.emoji}</span><span class="pl">${p.name}</span><span class="pm">${p.tag}</span></div>`;}).join('');
-    $('nichegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{selNiche=el.dataset.k; $('nichegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
-    $('homegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{selHome=el.dataset.k; $('homegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
+    $('nichegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{SFX.unlock(); SFX.play('click'); selNiche=el.dataset.k; $('nichegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
+    $('homegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{SFX.unlock(); SFX.play('click'); selHome=el.dataset.k; $('homegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
   }
   buildStart();
+  const soundBtn=$('soundBtn');
+  if(SFX.isMuted()){ soundBtn.textContent='🔇'; soundBtn.classList.add('muted'); }
+  soundBtn.onclick=()=>{ SFX.unlock(); const m=SFX.toggleMute(); soundBtn.textContent=m?'🔇':'🔊'; soundBtn.classList.toggle('muted',m); if(!m)SFX.play('click'); };
   $('startBtn').onclick=()=>{ const nm=$('nameInput').value.trim()||pick(['midnight uploads','the daily grind','no filter','raw takes','after hours','main character']);
     newGame(nm, selNiche, selHome); };
   $('nameInput').addEventListener('keydown',e=>{ if(e.key==='Enter')$('startBtn').click(); });

@@ -43,6 +43,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("lens.html");
   eleventyConfig.addPassthroughCopy("the-feed.html");
   eleventyConfig.addPassthroughCopy("the-feed-engine.js");
+  eleventyConfig.addPassthroughCopy("the-feed-assets");
   eleventyConfig.addPassthroughCopy("building-value.html");
   eleventyConfig.addPassthroughCopy("building-value-header.jpg");
   eleventyConfig.addPassthroughCopy("speaking-ifa.jpg");
