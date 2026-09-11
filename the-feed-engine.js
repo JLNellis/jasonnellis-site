@@ -97,6 +97,14 @@
     live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', stress: 20, rpm: .003,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
   };
   const PORDER = ['longform', 'shortform', 'micro', 'writing', 'live'];
+  // Team. Each role is a one-line modifier applied at exactly one site in the engine.
+  const HIRES = {
+    editor:   { label: 'Editor',        emoji: '✂️', sign: 600, weekly: 110, blurb: 'Cuts the grind out of longform and live.' },
+    manager:  { label: 'Manager',       emoji: '📞', sign: 500, weekly: 90,  blurb: 'Better deals, less of the sellout smell.' },
+    mod:      { label: 'Community mod', emoji: '🛡️', sign: 400, weekly: 60,  blurb: 'Keeps the comments from becoming the story.' },
+    designer: { label: 'Designer',      emoji: '🎨', sign: 800, weekly: 140, blurb: 'Packaging and thumbnails. More clicks everywhere.' },
+  };
+  const HORDER = ['editor', 'manager', 'mod', 'designer'];
   const TIERS = ['Amateur', 'Scrappy', 'Rising', 'Established', 'Icon'];
   const TIERCUT = [0, 18, 40, 70, 110];
 
@@ -132,6 +140,25 @@
     if (S.stress >= CONFIG.bandFumes) return 'fumes';
     if (S.stress >= CONFIG.bandHot) return 'hot';
     return 'normal';
+  }
+
+  // --- team, overhead ---
+  const hasStudio = S => S.gear >= 4;
+  const hireCount = S => HORDER.filter(k => S.hires[k]).length;
+  const hireCap = S => hasStudio(S) ? CONFIG.hireCapStudio : CONFIG.hireCapBase;
+  const payroll = S => HORDER.reduce((s, k) => s + (S.hires[k] ? HIRES[k].weekly : 0), 0);
+  function overheadBreakdown(S) {
+    const b = { base: CONFIG.overheadBase, platforms: activePlats(S).length * CONFIG.overheadPerPlatform, payroll: payroll(S), lease: hasStudio(S) ? CONFIG.studioLease : 0 };
+    b.total = b.base + b.platforms + b.payroll + b.lease; return b;
+  }
+  const overhead = S => overheadBreakdown(S).total;
+  function hireInfo(S, role) {
+    const h = HIRES[role];
+    if (S.hires[role]) return { ok: false, reason: 'Already on the team.' };
+    if (hireCount(S) >= hireCap(S)) return { ok: false, reason: hasStudio(S) ? 'Team is full.' : 'No room — you need the Studio to hold more than two people.' };
+    if (S.cash < h.sign) return { ok: false, reason: 'Signing costs ' + money(h.sign) + '.' };
+    if (S.slots.business <= 0) return { ok: false, reason: 'No business slot left this week.' };
+    return { ok: true, reason: '' };
   }
 
   const L = () => ({ floats: [], feed: [], bump: [] });
@@ -230,6 +257,13 @@
       const log = L(); log.feed.push({ emoji: '⭐', text: `Launched a paid membership. ${fmt(S.members)} true fans signed up — recurring income at last.`, kind: 'good' }); return log; },
     rest(S) { S.energy = clamp(S.energy + rint(28, 44), 0, 100); activePlats(S).forEach(p => p.heat = clamp(p.heat - rint(4, 9), 0, 100));
       const log = L(); log.feed.push({ emoji: '😌', text: 'Took real time off. Rested up — the feed forgot you a little.', kind: '' }); return log; },
+    hire(S, role) { const h = HIRES[role]; if (!h || !hireInfo(S, role).ok || !useSlot(S, 'business')) return L();
+      S.cash -= h.sign; S.hires[role] = true;
+      const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(h.sign), tone: 'loss' });
+      log.feed.push({ emoji: h.emoji, text: `Hired a ${h.label.toLowerCase()}. Payroll is now ${money(payroll(S))}/week.`, kind: 'good' }); return log; },
+    fire(S, role) { const h = HIRES[role]; if (!h || !S.hires[role] || !useSlot(S, 'business')) return L();
+      S.hires[role] = false;
+      const log = L(); log.feed.push({ emoji: '👋', text: `You let your ${h.label.toLowerCase()} go. Payroll −${money(h.weekly)}/week.`, kind: '' }); return log; },
   };
 
   // ======================= events (single deck: display + effect) =======================
@@ -375,10 +409,10 @@
   };
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier,
-    useSlot, addStress, stressBand,
+    useSlot, addStress, stressBand, hasStudio, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
     buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings,
   };

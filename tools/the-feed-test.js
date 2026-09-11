@@ -64,6 +64,64 @@ test('burnout ending after 3 redline weeks', () => {
   S.redlineStreak = 3; assert.strictEqual(E.checkEndings(S), 'burnout');
 });
 
+// ---------------------------------------------------------------- hires + overhead
+test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
+  const S = mk();
+  assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);
+  S.plats.shortform.active = true;
+  assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform * 2);
+  S.hires.editor = true;
+  assert.strictEqual(E.payroll(S), E.HIRES.editor.weekly);
+  S.gear = 4;
+  const b = E.overheadBreakdown(S);
+  assert.strictEqual(b.base, E.CONFIG.overheadBase); assert.strictEqual(b.platforms, E.CONFIG.overheadPerPlatform * 2);
+  assert.strictEqual(b.payroll, E.HIRES.editor.weekly); assert.strictEqual(b.lease, E.CONFIG.studioLease);
+  assert.strictEqual(b.total, E.overhead(S));
+  assert.strictEqual(b.total, b.base + b.platforms + b.payroll + b.lease);
+});
+test('hire cap is 2 without studio, 4 with', () => {
+  const S = mk(); S.cash = 99999;
+  assert.strictEqual(E.hireCap(S), 2);
+  E.biz.hire(S, 'editor'); S.slots.business = 1;
+  E.biz.hire(S, 'mod'); S.slots.business = 1;
+  assert.strictEqual(E.hireCount(S), 2);
+  const before = S.cash;
+  E.biz.hire(S, 'designer');
+  assert.strictEqual(S.hires.designer, false, 'third hire refused without studio');
+  assert.strictEqual(S.cash, before, 'refused hire costs nothing');
+  assert.strictEqual(S.slots.business, 1, 'refused hire keeps the slot');
+  S.gear = 4; assert.strictEqual(E.hireCap(S), 4);
+  E.biz.hire(S, 'designer');
+  assert.strictEqual(S.hires.designer, true);
+});
+test('hire takes signing cost and business slot; fire clears payroll', () => {
+  const S = mk(); S.cash = 5000;
+  const log = E.biz.hire(S, 'manager');
+  assert.strictEqual(S.cash, 5000 - E.HIRES.manager.sign);
+  assert.strictEqual(S.slots.business, 0);
+  assert.ok(log.feed.length === 1 && /manager/i.test(log.feed[0].text));
+  assert.strictEqual(E.payroll(S), E.HIRES.manager.weekly);
+  E.biz.fire(S, 'manager');
+  assert.strictEqual(S.hires.manager, true, 'fire refused: no business slot left');
+  S.slots.business = 1;
+  E.biz.fire(S, 'manager');
+  assert.strictEqual(S.hires.manager, false);
+  assert.strictEqual(E.payroll(S), 0);
+});
+test('hire refused when broke', () => {
+  const S = mk(); S.cash = 10;
+  E.biz.hire(S, 'mod');
+  assert.strictEqual(S.hires.mod, false); assert.strictEqual(S.slots.business, 1);
+});
+test('hireInfo explains refusals', () => {
+  const S = mk(); S.cash = 10;
+  assert.strictEqual(E.hireInfo(S, 'mod').ok, false);
+  assert.match(E.hireInfo(S, 'mod').reason, /\$/);
+  S.cash = 5000; assert.strictEqual(E.hireInfo(S, 'mod').ok, true);
+  S.hires.editor = S.hires.manager = true;
+  assert.match(E.hireInfo(S, 'mod').reason, /studio/i);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
