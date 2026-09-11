@@ -219,6 +219,24 @@ hardcode hex values.
 
 ---
 
+## The Feed (game at `/the-feed`)
+
+A content-creator life-sim game. Full state, architecture, and the open
+backlog (leaderboard + OpenMoji, both deferred) live in
+**`the-feed-BACKLOG.md`** — read it before touching the game. Key facts:
+
+- Mechanics/economy/balance are in **`the-feed-engine.js`** (single source of
+  truth, `CONFIG` block); imported by both the game and the balance simulator
+  `tools/the-feed-sim.js`. To rebalance: edit `CONFIG`, run
+  `node tools/the-feed-sim.js`.
+- `the-feed.html` is standalone (does NOT load `nav.js`) — so its Plausible
+  snippet is inline, and it's styled via Bolt OS tokens from
+  `colors_and_type.css`.
+- Live at `/the-feed` and `thefeed.jasonnellis.com`; currently `noindex` and
+  not in the nav (unlisted on purpose).
+
+---
+
 ## Working preferences
 
 - **Minimal maintenance is the priority.** Don't propose solutions that
