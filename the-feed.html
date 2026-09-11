@@ -382,7 +382,7 @@
   // ---------- move display (presentation of the engine's hand) ----------
   function moveView(m){
     if(m.kind==='start'){ const pf=PLATFORMS[m.pkey];
-      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a second front (${pf.tag}). More reach, another mouth to feed each week.`,
+      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, another mouth to feed each week.`,
         flags:[['+platform','up'],['+'+m.stress+' stress','en']] }; }
     if(m.kind==='crosspost'){
       return { ico:'🔗', label:`Cross-post ${PLATFORMS[m.src].name} → ${PLATFORMS[m.dst].name}`,
@@ -466,7 +466,7 @@
       {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked — reach 1K total first.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
       up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
-        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×1.3, −6 stress per post, room for a full team — and +'+money(E.CONFIG.studioLease)+'/week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×1.3 views','up']]}
+        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team — and +'+money(E.CONFIG.studioLease)+'/week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
         :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel (+10% views).':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+quality','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked — reach '+fmt(E.CONFIG.paidUnlock)+' total first.',on:canPaid&&!noBiz,f:[['+members','up']]},

@@ -11,7 +11,7 @@
  * The browser turns floats into number-pops, feed into the activity feed,
  * and bump into the channel-card level-up animation. The sim ignores logs
  * and only reads the resulting state. Anchors are SEMANTIC
- * ('cash' | 'rep' | 'skill' | 'plat:<key>') so the engine stays DOM-free.
+ * ('cash' | 'rep' | 'plat:<key>') so the engine stays DOM-free.
  *
  * Weekly orchestration (both consumers follow the same sequence):
  *   buildHand(S)               deal this week's content cards
@@ -393,7 +393,7 @@
   // choice.apply(S) -> effect log
   const fed = (e, t, k) => { const log = L(); log.feed.push({ emoji: e, text: t, kind: k || '' }); return log; };
   // a "bad" outcome that also costs followers on your biggest channel (anchor captured BEFORE the loss shrinks it)
-  const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, `${t} −${fmt(n)} followers.`, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
+  const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, n ? `${t} −${fmt(n)} followers.` : t, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
   const EVENTS = [
     { kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
       text: 'One upload is spiking to people who have never heard of you. The window is open.',
