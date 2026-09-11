@@ -33,5 +33,5 @@
 # Only the exact root is rewritten, so /the-feed-engine.js and /the-feed-assets/*
 # still resolve as themselves on that host. (Requires the domain alias in Netlify
 # + a CNAME `thefeed` -> <site>.netlify.app in GoDaddy first.)
-https://thefeed.jasonnellis.com/   /the-feed.html   200
+https://thefeed.jasonnellis.com/   /the-feed.html   200!
 /building-value  /building-value.html  200
