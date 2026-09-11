@@ -939,12 +939,15 @@ test('settleWeek returns a log and charges overhead, tracking the peak', () => {
 });
 test('evergreen tails pay out 15% of views for 4 weeks then expire', () => {
   const S = mk(); S.slots.content = 0; // no empty-slot bonus noise
-  S.tails.push({ pkey: 'longform', topic: 'T', views: 10000, weeksLeft: 4 });
+  S.plats.longform.lastPost = S.week; // posted this week → not idle, so base churn applies
+  S.tails.push({ pkey: 'longform', topic: 'T', views: 10000, weeksLeft: E.CONFIG.tailWeeks });
   const f0 = S.plats.longform.followers, cash0 = S.cash;
   const log = E.settleWeek(S);
-  const expectedGain = Math.round(1500 * E.CONFIG.baseConv * E.PLATFORMS.longform.loyal * E.ANGLES.evergreen.conv);
-  assert.strictEqual(S.plats.longform.followers - f0 + Math.round(f0 * E.CONFIG.churnBase), expectedGain, 'tail gain (after base churn)');
-  assert.strictEqual(S.totalViews, 1500);
+  const tailViews = Math.round(10000 * E.CONFIG.tailRate);
+  const expectedGain = Math.round(tailViews * E.CONFIG.baseConv * E.PLATFORMS.longform.loyal * E.ANGLES.evergreen.conv);
+  const afterTail = f0 + expectedGain; // churn is applied to the post-tail count
+  assert.strictEqual(S.plats.longform.followers, afterTail - Math.round(afterTail * E.CONFIG.churnBase), 'tail gain, then base churn');
+  assert.strictEqual(S.totalViews, tailViews);
   assert.ok(S.cash > cash0 - E.overhead(S), 'tail revenue landed');
   assert.ok(log.feed.some(f => /still getting found/.test(f.text)));
   assert.strictEqual(S.tails[0].weeksLeft, 3);
@@ -974,16 +977,18 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * .02));
   assert.ok(log2.feed.some(f => /unfollowed/.test(f.text)), 'idle churn is loud');
 });
-test('stress recovers 12 + 8 per empty content slot; bands log on change; redline streak counts', () => {
+test('stress: band + redline streak judged before recovery; recovery is 12 + 8 per empty slot', () => {
   const S = mk(); S.stress = 60; S.slots.content = 2;
-  let log = E.settleWeek(S); assert.strictEqual(S.stress, 60 - 12 - 16);
-  assert.ok(log.feed.some(f => /stress/i.test(f.text)), 'band went hot→normal, logged');
-  assert.strictEqual(S.band, 'normal');
+  let log = E.settleWeek(S);
+  assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /running hot/.test(f.text)), 'normal→hot logged');
+  assert.strictEqual(S.stress, 60 - E.CONFIG.stressRecover - 2 * E.CONFIG.stressRecoverPerEmptySlot);
   S.stress = 95; S.slots.content = 0; log = E.settleWeek(S);
-  assert.strictEqual(S.stress, 83); assert.strictEqual(S.band, 'fumes'); assert.strictEqual(S.redlineStreak, 0, 'ended the week below 90');
-  S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 1);
+  assert.strictEqual(S.band, 'redline'); assert.strictEqual(S.redlineStreak, 1);
+  assert.ok(log.feed.some(f => /REDLINE/.test(f.text)), 'hot→redline logged');
+  assert.strictEqual(S.stress, 95 - E.CONFIG.stressRecover);
   S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 2);
-  S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets');
+  S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets'); assert.strictEqual(S.band, 'hot');
+  S.stress = 30; log = E.settleWeek(S); assert.strictEqual(S.band, 'normal'); assert.ok(log.feed.some(f => /under control/.test(f.text)), 'hot→normal logged');
 });
 ```
 
@@ -1031,11 +1036,12 @@ test('stress recovers 12 + 8 per empty content slot; bands log on change; redlin
     if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people unfollowed this week. Silence and old trend-chasers both bleed.`, kind: 'bad' });
     // heat / fatigue decay
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
-    // stress: recover, then band + burnout streak
-    addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
+    // stress: judge the band + burnout streak on the stress you ended the week's work at,
+    // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
     const band = stressBand(S);
     if (band !== S.band) { log.feed.push(BAND_MSG[band]); S.band = band; }
     S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
+    addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
     S.newFollowers = 0;
     return log;
   }

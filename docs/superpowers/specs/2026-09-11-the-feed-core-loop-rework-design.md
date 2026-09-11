@@ -66,8 +66,10 @@ Stress rises with work and falls with lighter weeks.
 
 So two heavy posts net about +24/week; one light post nets about −10.
 
-**Bands** (evaluated in `settleWeek`; a feed message fires on every band
-change, so the trap is never silent):
+**Bands** (evaluated in `settleWeek` on the stress you ended the week's work
+at — i.e. *before* weekly recovery is applied, otherwise redline could never
+be reached; a feed message fires on every band change, so the trap is never
+silent):
 
 | Stress | Band | Effect |
 |---|---|---|
