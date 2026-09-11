@@ -28,20 +28,36 @@
   'use strict';
 
   // ======================= TUNING KNOBS =======================
+  // To rebalance: edit here, run `npm run sim`. Both game and sim read this block.
   const CONFIG = {
-    startCash: 900, startEnergy: 100, startSkill: 18,
-    rentBase: 120, rentPerWeek: 3, rentPerGear: 12, rentPerPlatform: 8,
-    postK: 5.5,
-    weeklyRecoveryMin: 5, weeklyRecoveryMax: 11,
-    bankruptFloor: -1200,
-    goatAt: 1000000, starAt: 250000, legendAt: 40000, legendRep: 55,
-    sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
+    startCash: 900, startStress: 20,
+    slotsContent: 2, slotsBusiness: 1,
+    // stress: recovery per week, extra per empty content slot, band thresholds
+    stressRecover: 12, stressRecoverPerEmptySlot: 8,
+    bandHot: 50, bandFumes: 70, bandRedline: 90, fumesViewsMult: 0.85,
+    burnoutStreak: 3,
+    // overhead (replaces rent): flat + per platform + payroll + studio lease
+    overheadBase: 140, overheadPerPlatform: 10, studioLease: 350,
+    // post math
+    viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 4.5,
+    // churn
+    churnBase: 0.006, churnTrend: 0.012, churnIdle: 0.02, idleWeeks: 3,
+    // evergreen tail
+    tailWeeks: 4, tailRate: 0.15,
+    topicCooldown: 8,
+    // money
+    bankruptFloor: -1500,
     dealBase: 90, dealScale: 0.018,
     paidUnlock: 1500, memberRate: 6, memberConvMin: 0.02, memberConvMax: 0.045,
-    burnoutStreak: 4,
+    memberNewConv: 0.025, memberChurn: 0.03, memberChurnIdle: 0.06,
+    // gear: tiers 1-3 are kit, tier 4 is the Studio
+    gearCost: [0, 350, 800, 1700, 12000], gearViewsMult: 1.10,
+    studioUnlockFollowers: 25000, studioViewsMult: 1.3, studioStressRelief: 6,
+    hireCapBase: 2, hireCapStudio: 4,
+    // endings
+    goatAt: 1200000, starAt: 300000, legendAt: 40000, legendRep: 55,
+    sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
     eventChance: 0.55,
-    gearCost: [0, 350, 800, 1700],
-    sizeSat: 55000, sizeMax: 4.5,
     years: 52,
   };
 
@@ -72,12 +88,13 @@
   };
   // Platform accent colors map onto the site's Bolt OS status palette:
   // green (hero), blue (info), slate (muted), amber (warning), red (live).
+  // `stress` = stress cost per post. `rpm` = ad revenue per VIEW.
   const PLATFORMS = {
-    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', energy: 24, rpm: .013,  viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
-    shortform: { name: 'Short Video',    tag: 'vertical clips',  emoji: '📱', color: '#3B82F6', energy: 12, rpm: .0022, viral: 1.6,  loyal: .6,   unlock: 0,    fmt: 'a batch of shorts' },
-    micro:     { name: 'Microblog',      tag: 'text posts',      emoji: '💬', color: '#94A3B8', energy: 7,  rpm: .0013, viral: 1.25, loyal: .8,   unlock: 0,    fmt: 'a hot take' },
-    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', energy: 18, rpm: .010,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
-    live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', energy: 22, rpm: .008,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
+    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', stress: 18, rpm: .0045, viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
+    shortform: { name: 'Short Video',    tag: 'vertical clips',  emoji: '📱', color: '#3B82F6', stress: 10, rpm: .0006, viral: 1.6,  loyal: .6,   unlock: 0,    fmt: 'a batch of shorts' },
+    micro:     { name: 'Microblog',      tag: 'text posts',      emoji: '💬', color: '#94A3B8', stress: 6,  rpm: .0003, viral: 1.25, loyal: .8,   unlock: 0,    fmt: 'a hot take' },
+    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', stress: 14, rpm: .006,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
+    live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', stress: 20, rpm: .003,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
   };
   const PORDER = ['longform', 'shortform', 'micro', 'writing', 'live'];
   const TIERS = ['Amateur', 'Scrappy', 'Rising', 'Established', 'Icon'];
@@ -88,21 +105,34 @@
     const n = NICHES[niche];
     const S = {
       name: '', niche, week: 1, phase: 'play',
-      cash: CONFIG.startCash, energy: CONFIG.startEnergy, rep: n.rep0, skill: CONFIG.startSkill,
-      gear: 0, deals: 0, members: 0, lowStreak: 0,
-      lastHit: null, over: false, endKey: null, plats: {}, hand: [], _studied: false,
+      cash: CONFIG.startCash, stress: CONFIG.startStress, rep: n.rep0,
+      gear: 0, deals: 0, members: 0,
+      band: 'normal', redlineStreak: 0,
+      slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
+      hires: { editor: false, manager: false, mod: false, designer: false },
+      tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
+      lastHit: null, over: false, endKey: null, plats: {}, hand: [],
     };
-    PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9 }; });
+    PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9 }; });
     S.plats[home].active = true;
     S.plats[home].followers = 40;
     return S;
   }
   const activePlats = S => PORDER.map(k => S.plats[k]).filter(p => p.active);
   const totalFollowers = S => PORDER.reduce((s, k) => s + S.plats[k].followers, 0);
-  const skillCap = S => 42 + S.gear * 18;
-  const rent = S => CONFIG.rentBase + (S.week - 1) * CONFIG.rentPerWeek + S.gear * CONFIG.rentPerGear + activePlats(S).length * CONFIG.rentPerPlatform;
-  function platTier(S, p) { const pol = p.posts * 3 + S.skill * 0.45 + S.gear * 7; let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
   const strongest = S => activePlats(S).sort((a, b) => b.followers - a.followers)[0];
+  // Tier is cosmetic polish on the channel card: posts + gear.
+  function platTier(S, p) { const pol = p.posts * 3 + S.gear * 9; let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
+
+  // --- slots & stress ---
+  function useSlot(S, kind) { if (S.slots[kind] <= 0) return false; S.slots[kind]--; return true; }
+  function addStress(S, n) { S.stress = clamp(S.stress + n, 0, 100); }
+  function stressBand(S) {
+    if (S.stress >= CONFIG.bandRedline) return 'redline';
+    if (S.stress >= CONFIG.bandFumes) return 'fumes';
+    if (S.stress >= CONFIG.bandHot) return 'hot';
+    return 'normal';
+  }
 
   const L = () => ({ floats: [], feed: [], bump: [] });
 
@@ -315,13 +345,13 @@
   function drawEvent(S) { const deck = EVENTS.filter(e => !e.cond || e.cond(S)); return pick(deck); }
   function rollEvent(S) { return (S.week >= 2 && chance(CONFIG.eventChance)) ? drawEvent(S) : null; }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
-  function advanceWeek(S) { S.week++; S.energy = clamp(S.energy + (S.energy < 100 ? rint(CONFIG.weeklyRecoveryMin, CONFIG.weeklyRecoveryMax) : 0), 0, 100); S._studied = false; }
+  function advanceWeek(S) { S.week++; S.slots = { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness }; }
 
   function checkEndings(S) {
     const tot = totalFollowers(S); let key = null;
     if (S.rep <= 0) key = 'cancelled';
     else if (S.cash < CONFIG.bankruptFloor) key = 'bankrupt';
-    else if ((S.lowStreak || 0) >= CONFIG.burnoutStreak) key = 'burnout';
+    else if (S.redlineStreak >= CONFIG.burnoutStreak) key = 'burnout';
     else if (S.deals >= CONFIG.sellDeals && S.rep < CONFIG.sellRepUnder && S.cash > CONFIG.sellCashOver) key = 'sellout';
     else if (S.week > CONFIG.years) {
       if (tot >= CONFIG.goatAt) key = 'goat';
@@ -347,7 +377,8 @@
   return {
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
-    newState, activePlats, totalFollowers, skillCap, rent, platTier, strongest,
+    newState, activePlats, totalFollowers, strongest, platTier,
+    useSlot, addStress, stressBand,
     buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings,
   };

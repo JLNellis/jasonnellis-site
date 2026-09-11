@@ -23,11 +23,52 @@ test('setRng makes the engine deterministic', () => {
   assert.notStrictEqual(a[0], c);
 });
 
+// ---------------------------------------------------------------- slots + stress
+test('newState has slots, stress, no energy/skill', () => {
+  const S = mk();
+  assert.deepStrictEqual(S.slots, { content: 2, business: 1 });
+  assert.strictEqual(S.stress, E.CONFIG.startStress);
+  assert.strictEqual(S.energy, undefined);
+  assert.strictEqual(S.skill, undefined);
+  assert.strictEqual(S.redlineStreak, 0);
+  assert.strictEqual(S.band, 'normal');
+});
+test('useSlot decrements and refuses at zero', () => {
+  const S = mk();
+  assert.strictEqual(E.useSlot(S, 'content'), true);
+  assert.strictEqual(E.useSlot(S, 'content'), true);
+  assert.strictEqual(E.useSlot(S, 'content'), false);
+  assert.strictEqual(S.slots.content, 0);
+  assert.strictEqual(E.useSlot(S, 'business'), true);
+  assert.strictEqual(E.useSlot(S, 'business'), false);
+});
+test('advanceWeek resets slots', () => {
+  const S = mk(); E.useSlot(S, 'content'); E.useSlot(S, 'business');
+  E.advanceWeek(S);
+  assert.deepStrictEqual(S.slots, { content: 2, business: 1 });
+  assert.strictEqual(S.week, 2);
+});
+test('addStress clamps 0..100', () => {
+  const S = mk(); E.addStress(S, 500); assert.strictEqual(S.stress, 100);
+  E.addStress(S, -500); assert.strictEqual(S.stress, 0);
+});
+test('stressBand thresholds', () => {
+  const S = mk();
+  S.stress = 49; assert.strictEqual(E.stressBand(S), 'normal');
+  S.stress = 50; assert.strictEqual(E.stressBand(S), 'hot');
+  S.stress = 70; assert.strictEqual(E.stressBand(S), 'fumes');
+  S.stress = 90; assert.strictEqual(E.stressBand(S), 'redline');
+});
+test('burnout ending after 3 redline weeks', () => {
+  const S = mk(); S.redlineStreak = 2; assert.strictEqual(E.checkEndings(S), null);
+  S.redlineStreak = 3; assert.strictEqual(E.checkEndings(S), 'burnout');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
   try { E.setRng(seeded(42)); fn(); console.log('  ✓', name); }
-  catch (e) { failed++; console.log('  ✗', name, '\n     ', e.message.split('\n')[0]); }
+  catch (e) { failed++; console.log('  ✗', name, '\n     ', e.message); }
 }
 console.log(`\n${tests.length - failed}/${tests.length} passed\n`);
 process.exit(failed ? 1 : 0);
