@@ -264,7 +264,7 @@
       else if (S.rep < 50 && !personalUsed) { angle = 'personal'; personalUsed = true; }
       hand.push(postCard(S, p, angle, ride));
     });
-    // With ≤3 platforms, add a second angle on the strongest so there's usually a Trend-vs-Evergreen choice.
+    // With ≤3 platforms, add a second angle on the strongest so there's usually a second angle to weigh against the first.
     const top = strongest(S);
     if (top && hand.length <= 3) {
       const have = hand.find(c => c.pkey === top.key);
@@ -283,23 +283,35 @@
   }
 
   // ======================= applying content moves =======================
-  function doPost(S, k, mod) {
-    const p = S.plats[k], pf = PLATFORMS[k], before = platTier(S, p);
-    const q = S.skill * 0.5 + S.gear * 8 + (S.energy / 100) * 16 + rnd(4, 18);
+  // views -> followers -> money. Views are the per-post output (shown in the feed,
+  // summed into S.totalViews); followers are the persistent number; ad revenue is views × rpm.
+  function doPost(S, k, angleKey, topic, mod) {
+    const p = S.plats[k], pf = PLATFORMS[k], A = ANGLES[angleKey], before = platTier(S, p);
+    const q = 22 + rnd(4, 18);
     const heatF = 1 + p.heat / 45, luck = rnd(.55, 1.6);
     const sizeF = 1 + CONFIG.sizeMax * p.followers / (p.followers + CONFIG.sizeSat); // saturating, no runaway
-    const gain = Math.round(q * heatF * sizeF * pf.viral * NICHES[S.niche].viral * (mod || 1) * clamp(1 - p.fatigue / 160, .5, 1) * luck * CONFIG.postK);
-    const rev = Math.round(p.followers * pf.rpm * (.4 + p.heat / 160) * rnd(.7, 1.3));
-    p.followers += gain; S.cash += rev; p.posts++; p.lastPost = S.week; p.fatigue = clamp(p.fatigue + rint(10, 20), 0, 100);
+    const views = Math.max(1, Math.round(q * heatF * sizeF * pf.viral * NICHES[S.niche].viral * A.views * (mod || 1)
+                  * clamp(1 - p.fatigue / 160, .5, 1) * luck * CONFIG.viewsK * viewsMult(S, k)));
+    const gain = Math.round(views * CONFIG.baseConv * pf.loyal * A.conv);
+    const rev = Math.round(views * pf.rpm);
+    p.followers += gain; if (A.cohort) p.trendFollowers += gain;
+    S.newFollowers += gain; S.totalViews += views; S.cash += rev;
+    p.posts++; p.lastPost = S.week; p.fatigue = clamp(p.fatigue + rint(10, 20), 0, 100);
     const hit = luck > 1.12;
-    p.heat = clamp(p.heat + (hit ? rint(9, 18) : -rint(0, 3)), 0, 100);
+    p.heat = clamp(p.heat + (hit ? rint(A.heatHit[0], A.heatHit[1]) : -rint(0, 3)), 0, 100);
     if (hit) { p.proven = true; S.lastHit = { key: k, week: S.week }; }
-    S.rep = clamp(S.rep + rnd(-.4, 1.2), 0, 100);
+    if (A.rep) S.rep = clamp(S.rep + rint(A.rep[0], A.rep[1]), 0, 100);
+    let repHit = 0;
+    if (A.badChance && chance(A.badChance)) { repHit = rint(A.badRep[0], A.badRep[1]); S.rep = clamp(S.rep - repHit, 0, 100); }
+    if (A.tail) S.tails.push({ pkey: k, topic, views, weeksLeft: CONFIG.tailWeeks });
+    S.usedTopics.push({ topic, week: S.week });
+
     const log = L();
     log.floats.push({ anchor: 'plat:' + k, text: '+' + fmt(gain), tone: hit ? 'hit' : 'gain' });
     if (rev > 0) log.floats.push({ anchor: 'cash', text: '+' + money(rev), tone: 'cash' });
-    log.feed.push({ emoji: pf.emoji, text: `Posted ${pf.fmt} on ${pf.name} — ${hit ? 'it took off!' : 'modest numbers'}. +${fmt(gain)} followers${rev > 0 ? ', +' + money(rev) : ''}.`, kind: hit ? 'good' : '' });
+    log.feed.push({ emoji: pf.emoji, text: `‘${topic}’ did ${fmt(views)} views on ${pf.name} — +${fmt(gain)} followers${rev > 0 ? ', +' + money(rev) : ''}.${hit ? ' It took off.' : ''}`, kind: hit ? 'good' : '' });
     if (hit) log.feed.push({ emoji: '🔥', text: `${pf.name} is hot right now — ride it next week before it cools.`, kind: 'big' });
+    if (repHit) { log.floats.push({ anchor: 'rep', text: '-' + repHit, tone: 'loss' }); log.feed.push({ emoji: '😬', text: `‘${topic}’ ${A.bad} Rep −${repHit}.`, kind: 'bad' }); }
     log.bump.push(k);
     if (platTier(S, p) > before) log.feed.push({ emoji: '📈', text: `Your ${pf.name} leveled up to ${TIERS[platTier(S, p)]} — it looks more professional now.`, kind: 'good' });
     return log;
@@ -315,6 +327,7 @@
     const src = S.plats[sk], dst = S.plats[dk];
     const moved = Math.round(src.followers * rnd(.02, .06) * (1 + src.heat / 100));
     dst.followers += moved; dst.heat = clamp(dst.heat + 12, 0, 100); dst.lastPost = S.week;
+    S.newFollowers += moved;
     const log = L(); log.bump.push(dk);
     log.floats.push({ anchor: 'plat:' + dk, text: '+' + fmt(moved), tone: 'gain' });
     log.feed.push({ emoji: '🔗', text: `Cross-posted to ${PLATFORMS[dk].name}. +${fmt(moved)} followers followed you over.`, kind: 'good' });

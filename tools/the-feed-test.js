@@ -219,6 +219,54 @@ test('applyMove consumes a content slot, adds stress, refuses at zero', () => {
   assert.strictEqual(S.plats.longform.posts, posts, 'refused'); assert.strictEqual(log.feed.length, 0);
 });
 
+// ---------------------------------------------------------------- doPost
+function firstCard(S, angle) { return E.buildHand(S).find(c => c.kind === 'post' && c.angle === angle); }
+test('doPost produces views, followers, revenue and a written feed line', () => {
+  const S = mk(); const c = firstCard(S, 'evergreen');
+  const f0 = S.plats.longform.followers, cash0 = S.cash;
+  const log = E.doPost(S, 'longform', 'evergreen', c.topic, 1);
+  assert.ok(S.totalViews > 500, 'views ' + S.totalViews);
+  assert.ok(S.plats.longform.followers > f0);
+  assert.ok(S.cash >= cash0);
+  assert.strictEqual(S.newFollowers, S.plats.longform.followers - f0);
+  const line = log.feed[0].text;
+  assert.ok(line.startsWith(`‘${c.topic}’`), line);
+  assert.match(line, /did [\d.]+K? views on Longform Video — \+[\d.]+K? followers/);
+  assert.ok(!/!\./.test(line), 'no double punctuation');
+  assert.deepStrictEqual(S.usedTopics, [{ topic: c.topic, week: 1 }]);
+});
+test('trend: more views, fewer followers per view, tags the cohort', () => {
+  E.setRng(seeded(7)); const A = mk(); E.doPost(A, 'longform', 'trend', 'x', 1);
+  E.setRng(seeded(7)); const B = mk(); E.doPost(B, 'longform', 'evergreen', 'x', 1);
+  assert.ok(A.totalViews > B.totalViews);
+  assert.ok(A.plats.longform.followers < B.plats.longform.followers);
+  assert.strictEqual(A.plats.longform.trendFollowers, A.plats.longform.followers - 40);
+  assert.strictEqual(B.plats.longform.trendFollowers, 0);
+});
+test('evergreen pushes a 4-week tail; others do not', () => {
+  const S = mk(); E.doPost(S, 'longform', 'evergreen', 't', 1);
+  assert.strictEqual(S.tails.length, 1);
+  assert.deepStrictEqual(Object.keys(S.tails[0]).sort(), ['pkey', 'topic', 'views', 'weeksLeft']);
+  assert.strictEqual(S.tails[0].weeksLeft, E.CONFIG.tailWeeks);
+  E.doPost(S, 'longform', 'trend', 't2', 1); assert.strictEqual(S.tails.length, 1);
+});
+test('personal raises rep on a normal post', () => {
+  // seed chosen so badChance (8%) does not fire on the first draw
+  let S, r0; for (let seed = 1; seed < 50; seed++) { E.setRng(seeded(seed)); S = mk(); r0 = S.rep; E.doPost(S, 'longform', 'personal', 't', 1); if (S.rep > r0) break; }
+  assert.ok(S.rep > r0, 'a seed in 1..49 should produce a normal personal post');
+});
+test('a hit sets lastHit/proven and raises heat by the angle range', () => {
+  let S, hitLog; for (let seed = 1; seed < 200; seed++) { E.setRng(seeded(seed)); S = mk(); hitLog = E.doPost(S, 'longform', 'trend', 't', 1); if (S.lastHit) break; }
+  assert.ok(S.lastHit && S.lastHit.key === 'longform'); assert.ok(S.plats.longform.proven);
+  assert.ok(S.plats.longform.heat >= 12 && S.plats.longform.heat <= 20, 'heat ' + S.plats.longform.heat);
+  assert.ok(hitLog.feed[0].text.endsWith('It took off.'));
+});
+test('fumes band reduces views', () => {
+  E.setRng(seeded(3)); const A = mk(); E.doPost(A, 'longform', 'evergreen', 't', 1);
+  E.setRng(seeded(3)); const B = mk(); B.stress = 75; E.doPost(B, 'longform', 'evergreen', 't', 1);
+  assert.ok(Math.abs(B.totalViews / A.totalViews - E.CONFIG.fumesViewsMult) < 0.02);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
