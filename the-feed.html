@@ -11,8 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- Work in progress — remove the next line when you want this indexed by search engines. -->
 <meta name="robots" content="noindex">
-<title>The Feed — a content-creator life sim</title>
-<meta name="description" content="A browser life-sim about building a content-creator career across five platforms. Post, grind, dodge the trolls, survive a year, and find out which of eight endings is yours.">
+<title>The Feed: a creator life sim</title>
+<meta name="description" content="A year as a content creator, in ten minutes. Five platforms, one stress meter, eight endings.">
 <link rel="icon" href="/favicon.svg">
 <!-- Site design system: DM Sans / DM Mono @font-face + Bolt OS tokens -->
 <link rel="stylesheet" href="/colors_and_type.css">
@@ -189,7 +189,7 @@
   .endstat{background:var(--bg-deep); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:10px 12px}
   .endstat .k{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2)}
   .endstat .v{font-family:var(--font-mono); font-size:17px; margin-top:2px; font-variant-numeric:tabular-nums}
-  .lesson{font-size:13px; color:var(--fg-2); border-left:2px solid var(--color-accent-vivid); padding:4px 0 4px 13px; margin:0 0 18px; font-style:italic}
+  .lesson{font-size:13px; color:var(--fg-2); border-left:2px solid var(--color-accent-vivid); padding:4px 0 4px 13px; margin:0 0 18px}
   .substack-cta{display:block; text-decoration:none; border:1px solid var(--border-default); border-radius:var(--radius-lg);
     padding:14px 15px; margin-bottom:12px; background:var(--bg-deep); transition:border-color var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard)}
   .substack-cta:hover{border-color:var(--color-accent-vivid); background:rgba(0,230,118,.05)}
@@ -250,7 +250,7 @@
         <div class="stat"><div class="k">Bank</div><div class="v mono pos" id="v-cash">$900</div></div>
         <div class="stat"><div class="k">Overhead</div><div class="v mono neg" id="v-rent">-$120</div></div>
       </div>
-      <div class="helpline" id="helpline">Two content slots and one business slot a week. Leaving a slot empty is how you rest — stress is the one number that ends runs.</div>
+      <div class="helpline" id="helpline">Two things to make and one business call a week. Leave a slot empty and you rest. Stress is the number that ends runs.</div>
     </div>
 
     <div>
@@ -275,11 +275,11 @@
 <!-- START -->
 <div class="overlay" id="startOverlay">
   <div class="card">
-    <div class="kick">A content-creator life sim</div>
-    <h1>One phone. One year. Every platform wants a piece of you.</h1>
-    <p class="lede">Grow across surfaces that each reward you differently, adapt as the algorithm shifts, survive the trolls — and find out which of eight endings is yours.</p>
-    <div class="field"><label for="nameInput">Creator / channel name</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
-    <div class="field"><label>Your lane (content vertical)</label><div class="pgrid" id="nichegrid"></div></div>
+    <div class="kick">A year as a creator, in about ten minutes</div>
+    <h1>Your first video is up. Forty people watched it. One of them was your mom.</h1>
+    <p class="lede">Fifty-two weeks to turn that into a living. Every platform wants something different from you, the algorithm changes its mind without telling you, and the comments are about to get interesting. There are eight ways this ends.</p>
+    <div class="field"><label for="nameInput">What’s the channel called?</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
+    <div class="field"><label>What do you make?</label><div class="pgrid" id="nichegrid"></div></div>
     <div class="field"><label>Where do you post first?</label><div class="pgrid" id="homegrid"></div></div>
     <button class="btn primary" id="startBtn" style="width:100%">Go live →</button>
   </div>
@@ -294,7 +294,7 @@
     <div class="endstats" id="endStats"></div>
     <p class="lesson" id="endLesson">—</p>
     <a class="substack-cta" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">
-      <span class="sc-copy">📬 The real thing is harder than the game. I write about the creator economy, media, and what actually breaks through.</span>
+      <span class="sc-copy">The real thing is harder than this. I write about it every week.</span>
       <span class="sc-go">Get “The Long Yes” →</span>
     </a>
     <button class="btn primary" id="againBtn" style="width:100%">Run it back</button>
@@ -350,7 +350,7 @@
   function newGame(name, niche, home){
     SFX.unlock(); SFX.play('level');
     S = E.newState(niche, home); S.name = name || 'untitled'; teamOpen = false;
-    pushFeed(NICHES[niche].emoji, `Channel created on ${PLATFORMS[home].name}. The first post is always the hardest.`, '');
+    pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
     E.buildHand(S); render(); openClose($('startOverlay'), false);
   }
 
@@ -382,7 +382,7 @@
   // ---------- move display (presentation of the engine's hand) ----------
   function moveView(m){
     if(m.kind==='start'){ const pf=PLATFORMS[m.pkey];
-      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, another mouth to feed each week.`,
+      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, one more mouth to feed.`,
         flags:[['+platform','up'],['+'+m.stress+' stress','en']] }; }
     if(m.kind==='crosspost'){
       return { ico:'🔗', label:`Cross-post ${PLATFORMS[m.src].name} → ${PLATFORMS[m.dst].name}`,
@@ -455,7 +455,7 @@
   }
 
   function renderMoves(){
-    $('stagetitle').textContent='Week '+Math.min(S.week,52)+' — what are you making?';
+    $('stagetitle').textContent='Week '+Math.min(S.week,52)+'. What are you making?';
     const noContent=S.slots.content<=0, noBiz=S.slots.business<=0;
     const moveHTML=S.hand.map((m,i)=>{ const v=moveView(m);
       return `<button class="move ${m.special?'special':''}" data-i="${i}" ${noContent?'disabled':''}>
@@ -466,11 +466,11 @@
       {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked — reach 1K total first.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
       up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
-        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team — and +'+money(E.CONFIG.studioLease)+'/week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
+        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
         :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel (+10% views).':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+quality','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked — reach '+fmt(E.CONFIG.paidUnlock)+' total first.',on:canPaid&&!noBiz,f:[['+members','up']]},
-      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Every role is a weekly salary.',on:true,f:[]},
+      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Everyone on the list costs you every week.',on:true,f:[]},
     ];
     const bizHTML=biz.map(b=>`<button class="move ${b.id==='team'&&teamOpen?'special':''}" data-biz="${b.id}" ${b.on?'':'disabled'}>
       <span class="ico">${b.ic}</span><span><span class="mt">${b.t}</span><span class="md">${b.d}</span>
@@ -480,9 +480,9 @@
           <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
           ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}
       <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot.</div></div>`;
-    $('stagebody').innerHTML=`<div class="movelabel">📣 Content — pick up to ${E.CONFIG.slotsContent}. Angles are trade-offs, not grades.</div>
+    $('stagebody').innerHTML=`<div class="movelabel">📣 Content. Pick up to ${E.CONFIG.slotsContent}; angles are bets, not grades.</div>
       <div class="moves">${moveHTML}</div>
-      <div class="movelabel">🧰 Business — one a week</div>
+      <div class="movelabel">🧰 Business. One move a week.</div>
       <div class="moves">${bizHTML}</div>${teamHTML}
       <div class="stagefoot"><button class="btn primary" id="endWeekBtn">End the week ▸</button></div>`;
     $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
@@ -493,7 +493,7 @@
   }
 
   function renderEvent(){
-    $('stagetitle').textContent='Something happened';
+    $('stagetitle').textContent='Meanwhile.';
     const ev=S.event, cls=ev.kind==='hostile'?'hostile':'neutral';
     $('stagebody').innerHTML=`<div class="event">
       <span class="ebadge ${cls}">${ev.kind==='hostile'?'⚠️ ':'✦ '}${ev.badge}</span>
@@ -508,7 +508,7 @@
   // ---------- endings ----------
   function endGame(key){ S.phase='end'; SFX.play(['goat','star','legend'].indexOf(key)>=0?'win':'lose'); const e=E.endingText(S,key);
     $('endEmoji').textContent=e.emoji; $('endKicker').textContent='Ending · '+e.kicker;
-    $('endTitle').textContent=e.title; $('endBlurb').textContent=e.blurb; $('endLesson').textContent='“'+e.lesson+'”';
+    $('endTitle').textContent=e.title; $('endBlurb').textContent=e.blurb; $('endLesson').textContent=e.lesson;
     $('endStats').innerHTML=[['Total following',fmt(totalFollowers())],['Total views',fmt(S.totalViews)],['Weeks',Math.min(S.week-1,52)+' / 52'],
       ['Platforms run',activePlats().length],['Bank',money(S.cash)],['Peak overhead',money(S.peakOverhead)+'/wk']].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
     render(); openClose($('endOverlay'),true);

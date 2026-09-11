@@ -86,12 +86,12 @@
 
   // ======================= game data =======================
   const NICHES = {
-    gaming:  { label: 'Gaming',    emoji: '🎮', rep0: 52, viral: 1.15, deal: 1.0,  skill: 1.1,  blurb: 'high buzz, fickle' },
-    beauty:  { label: 'Beauty',    emoji: '💄', rep0: 58, viral: 1.0,  deal: 1.35, skill: 1.0,  blurb: 'sponsors love you' },
-    edu:     { label: 'Education', emoji: '📚', rep0: 70, viral: 0.82, deal: 0.9,  skill: 1.15, blurb: 'slow but sticky' },
+    gaming:  { label: 'Gaming',    emoji: '🎮', rep0: 52, viral: 1.15, deal: 1.0,  skill: 1.1,  blurb: 'loud, then gone' },
+    beauty:  { label: 'Beauty',    emoji: '💄', rep0: 58, viral: 1.0,  deal: 1.35, skill: 1.0,  blurb: 'brands will call' },
+    edu:     { label: 'Education', emoji: '📚', rep0: 70, viral: 0.82, deal: 0.9,  skill: 1.15, blurb: 'slow, then loyal' },
     comedy:  { label: 'Comedy',    emoji: '🤡', rep0: 54, viral: 1.3,  deal: 0.95, skill: 1.0,  blurb: 'viral or cancelled' },
-    fitness: { label: 'Fitness',   emoji: '💪', rep0: 60, viral: 1.05, deal: 1.2,  skill: 1.0,  blurb: 'steady grind' },
-    music:   { label: 'Music',     emoji: '🎧', rep0: 60, viral: 1.2,  deal: 0.9,  skill: 1.2,  blurb: 'talent scales slow' },
+    fitness: { label: 'Fitness',   emoji: '💪', rep0: 60, viral: 1.05, deal: 1.2,  skill: 1.0,  blurb: 'show up every day' },
+    music:   { label: 'Music',     emoji: '🎧', rep0: 60, viral: 1.2,  deal: 0.9,  skill: 1.2,  blurb: 'the long way round' },
   };
   // Platform accent colors map onto the site's Bolt OS status palette:
   // green (hero), blue (info), slate (muted), amber (warning), red (live).
@@ -118,11 +118,11 @@
   //   tail: evergreen keeps earning for CONFIG.tailWeeks · cohort: followers churn 2x
   const ANGLES = {
     trend:     { label: 'Trend',     emoji: '📈', views: 1.6, conv: 0.5, heatHit: [12, 20], stress: 0, badChance: 0.04, badRep: [3, 8],  cohort: true,
-                 tag: 'chase what\'s hot', bad: 'aged badly — the take didn\'t hold up.' },
+                 tag: 'chase what\'s hot', bad: 'aged badly. The take didn\'t hold up.' },
     evergreen: { label: 'Evergreen', emoji: '🌲', views: 0.8, conv: 1.3, heatHit: [4, 8],   stress: 0, tail: true,
                  tag: 'built to last' },
     personal:  { label: 'Personal',  emoji: '🫀', views: 1.0, conv: 1.1, heatHit: [8, 14],  stress: 6, rep: [2, 4], badChance: 0.08, badRep: [6, 12],
-                 tag: 'you, on camera', bad: 'was too much for some people. Oversharing has a cost.' },
+                 tag: 'you, on camera', bad: 'was too much for some people.' },
   };
   const AORDER = ['trend', 'evergreen', 'personal'];
 
@@ -326,18 +326,18 @@
     const log = L();
     log.floats.push({ anchor: 'plat:' + k, text: '+' + fmt(gain), tone: hit ? 'hit' : 'gain' });
     if (rev > 0) log.floats.push({ anchor: 'cash', text: '+' + money(rev), tone: 'cash' });
-    log.feed.push({ emoji: pf.emoji, text: `‘${topic}’ did ${fmt(views)} views on ${pf.name} — +${fmt(gain)} followers${rev > 0 ? ', +' + money(rev) : ''}.${hit ? ' It took off.' : ''}`, kind: hit ? 'good' : '' });
-    if (hit) log.feed.push({ emoji: '🔥', text: `${pf.name} is hot right now — ride it next week before it cools.`, kind: 'big' });
+    log.feed.push({ emoji: pf.emoji, text: `‘${topic}’ did ${fmt(views)} views on ${pf.name}. +${fmt(gain)} followers${rev > 0 ? ', +' + money(rev) : ''}.${hit ? ' It took off.' : ''}`, kind: hit ? 'good' : '' });
+    if (hit) log.feed.push({ emoji: '🔥', text: `${pf.name} is hot. Ride it next week or lose it.`, kind: 'big' });
     if (repHit) { log.floats.push({ anchor: 'rep', text: '-' + repHit, tone: 'loss' }); log.feed.push({ emoji: '😬', text: `‘${topic}’ ${A.bad} Rep −${repHit}.`, kind: 'bad' }); }
     log.bump.push(k);
-    if (platTier(S, p) > before) log.feed.push({ emoji: '📈', text: `Your ${pf.name} leveled up to ${TIERS[platTier(S, p)]} — it looks more professional now.`, kind: 'good' });
+    if (platTier(S, p) > before) log.feed.push({ emoji: '📈', text: `${pf.name} is ${TIERS[platTier(S, p)]} tier now. It looks like someone means it.`, kind: 'good' });
     return log;
   }
   function startPlatform(S, k) {
     const p = S.plats[k], pf = PLATFORMS[k];
     p.active = true; p.followers = Math.round(totalFollowers(S) * 0.02 + 20); p.lastPost = S.week; p.posts = 1;
     const log = L(); log.bump.push(k);
-    log.feed.push({ emoji: '✨', text: `Launched on ${pf.name}. A fresh channel, a blank slate.`, kind: 'good' });
+    log.feed.push({ emoji: '✨', text: `${pf.name} is live. Nobody’s there yet.`, kind: 'good' });
     return log;
   }
   function crosspost(S, sk, dk) {
@@ -347,7 +347,7 @@
     S.newFollowers += moved;
     const log = L(); log.bump.push(dk);
     log.floats.push({ anchor: 'plat:' + dk, text: '+' + fmt(moved), tone: 'gain' });
-    log.feed.push({ emoji: '🔗', text: `Cross-posted to ${PLATFORMS[dk].name}. +${fmt(moved)} followers followed you over.`, kind: 'good' });
+    log.feed.push({ emoji: '🔗', text: `Cross-posted to ${PLATFORMS[dk].name}. ${fmt(moved)} of them followed you over.`, kind: 'good' });
     return log;
   }
   function applyMove(S, m) {
@@ -369,16 +369,16 @@
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);
       S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
       const log = L(); log.floats.push({ anchor: 'cash', text: '+' + money(pay), tone: 'cash' }); log.floats.push({ anchor: 'rep', text: '-' + h.toFixed(0), tone: 'loss' });
-      log.feed.push({ emoji: '🤝', text: `Ran a sponsored segment. +${money(pay)}${mgr ? ' (your manager negotiated)' : ''} — some fans smell the sellout.`, kind: '' }); return log; },
+      log.feed.push({ emoji: '🤝', text: `Ran a sponsored segment for ${money(pay)}${mgr ? '; your manager did the talking' : ''}. A few fans noticed the ad read.`, kind: '' }); return log; },
     upgrade(S) { const u = upgradeInfo(S); if (!u.ok || !useSlot(S, 'business')) return L();
       S.cash -= u.cost; S.gear = u.next;
       const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(u.cost), tone: 'loss' }); log.bump = PORDER.slice();
-      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. The Studio is yours — every post gets bigger, every week costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
-      else log.feed.push({ emoji: '🛠️', text: `Upgraded your kit (tier ${u.next}). Every channel just got more polished.`, kind: 'good' });
+      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. Every post gets bigger. Every week costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
+      else log.feed.push({ emoji: '🛠️', text: `New kit, tier ${u.next}. Everything looks a little more expensive now.`, kind: 'good' });
       return log; },
     paid(S) { if (S.members > 0 || totalFollowers(S) < CONFIG.paidUnlock || !useSlot(S, 'business')) return L();
       S.members = Math.round(totalFollowers(S) * rnd(CONFIG.memberConvMin, CONFIG.memberConvMax));
-      const log = L(); log.feed.push({ emoji: '⭐', text: `Launched a paid membership. ${fmt(S.members)} true fans signed up — recurring income, as long as you keep showing up.`, kind: 'good' }); return log; },
+      const log = L(); log.feed.push({ emoji: '⭐', text: `Membership is live. ${fmt(S.members)} people are paying you every month now. Keep showing up.`, kind: 'good' }); return log; },
     hire(S, role) { const h = HIRES[role]; if (!h || !hireInfo(S, role).ok || !useSlot(S, 'business')) return L();
       S.cash -= h.sign; S.hires[role] = true;
       const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(h.sign), tone: 'loss' });
@@ -396,11 +396,11 @@
   const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, n ? `${t} −${fmt(n)} followers.` : t, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
   const EVENTS = [
     { kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
-      text: 'One upload is spiking to people who have never heard of you. The window is open.',
+      text: 'One upload is spiking with strangers. The window is open.',
       choices: [
         { t: 'repair', ci: '🌊', label: 'Ride it across every platform', desc: 'Cross-promote hard. Costs stress, huge upside.',
           apply: S => { const g = Math.round(rnd(2000, 8000) * (1 + totalFollowers(S) / 40000)); const p = strongest(S); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 22, 0, 100); addStress(S, 10); S.lastHit = { key: p.key, week: S.week };
-            const log = fed('🚀', `You rode it hard. +${fmt(g)} followers and the buzz is roaring.`, 'big'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } },
+            const log = fed('🚀', `You rode it. +${fmt(g)} followers and the buzz is loud.`, 'big'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } },
         { t: 'neutral', ci: '😌', label: 'Let it breathe', desc: 'Take the smaller bump, keep your head.',
           apply: S => { const p = strongest(S); const g = Math.round(rnd(600, 2000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 8, 0, 100);
             const log = fed('🌊', `Didn't force it. +${fmt(g)} followers, stress intact.`, 'good'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'gain' }); log.bump.push(p.key); return log; } },
@@ -409,17 +409,17 @@
       text: 'The rules just changed. Nobody knows what the feed rewards anymore.',
       choices: [
         { t: 'repair', ci: '📡', label: 'Chase the new format fast', desc: 'Adapt aggressively. Coin flip.',
-          apply: S => { if (chance(.55)) { activePlats(S).forEach(p => p.heat = clamp(p.heat + 16, 0, 100)); return fed('📡', 'You cracked the new format early. Buzz surged everywhere.', 'big'); } activePlats(S).forEach(p => p.heat = clamp(p.heat - 13, 0, 100)); return fed('📉', 'Guessed wrong. Reach cratered across the board this week.', 'bad'); } },
+          apply: S => { if (chance(.55)) { activePlats(S).forEach(p => p.heat = clamp(p.heat + 16, 0, 100)); return fed('📡', 'You cracked the new format first. Everything’s loud.', 'big'); } activePlats(S).forEach(p => p.heat = clamp(p.heat - 13, 0, 100)); return fed('📉', 'Guessed wrong. Reach cratered across the board this week.', 'bad'); } },
         { t: 'neutral', ci: '🎯', label: 'Keep doing your thing', desc: 'Stay the course.',
           apply: S => { activePlats(S).forEach(p => p.heat = clamp(p.heat - 7, 0, 100)); S.rep = clamp(S.rep + 3, 0, 100); return fed('🎯', "Didn't chase it. Reach dipped, but the loyal ones stayed.", ''); } },
       ] },
     { kind: 'neutral', emoji: '🎁', title: 'A fan sends $500 and a note.', badge: 'Wholesome', cond: () => true,
-      text: '"Your stuff got me through a hard year." It lands harder than any metric.',
+      text: '"Your stuff got me through a hard year." You read it three times.',
       choices: [
         { t: 'repair', ci: '💖', label: 'Shout them out', desc: 'Feature the note. The community glows.',
-          apply: S => { S.cash += 500; S.rep = clamp(S.rep + rint(4, 9), 0, 100); addStress(S, -5); const log = fed('💖', 'You shared it. +$500 and a wave of goodwill.', 'good'); log.floats.push({ anchor: 'cash', text: '+$500', tone: 'cash' }); return log; } },
+          apply: S => { S.cash += 500; S.rep = clamp(S.rep + rint(4, 9), 0, 100); addStress(S, -5); const log = fed('💖', 'You shared it. +$500, and the comments went soft for a day.', 'good'); log.floats.push({ anchor: 'cash', text: '+$500', tone: 'cash' }); return log; } },
         { t: 'neutral', ci: '🙏', label: 'Thank them privately', desc: 'Keep it personal.',
-          apply: S => { S.cash += 500; S.rep = clamp(S.rep + 3, 0, 100); const log = fed('🙏', 'A quiet thank-you DM. +$500 and a warm feeling.', 'good'); log.floats.push({ anchor: 'cash', text: '+$500', tone: 'cash' }); return log; } },
+          apply: S => { S.cash += 500; S.rep = clamp(S.rep + 3, 0, 100); const log = fed('🙏', 'A quiet thank-you. +$500 and a good night’s sleep.', 'good'); log.floats.push({ anchor: 'cash', text: '+$500', tone: 'cash' }); return log; } },
       ] },
     { kind: 'neutral', emoji: '💸', title: 'A crypto brand slides into your DMs.', badge: 'Sponsor', cond: () => true,
       text: '"$$$ for one video. No disclosure needed 😉." Big bag, bad vibe.',
@@ -427,7 +427,7 @@
         { t: 'escalate', ci: '💰', label: 'Take the bag', desc: "Cash now. Your audience won't forget.",
           apply: S => { const p = Math.round(rnd(900, 2400)); S.cash += p; const r = repHit(S, 12, 22); S.deals++; const log = hurt(S, '💸', `Cashed it: +${money(p)}. The comments are rough. Rep −${r}.`, .01, .03); log.floats.push({ anchor: 'cash', text: '+' + money(p), tone: 'cash' }); return log; } },
         { t: 'repair', ci: '🛡️', label: 'Decline on camera', desc: 'Fans respect the integrity.',
-          apply: S => { S.rep = clamp(S.rep + rint(6, 12), 0, 100); return fed('🛡️', 'You called it out publicly. Reputation up.', 'good'); } },
+          apply: S => { S.rep = clamp(S.rep + rint(6, 12), 0, 100); return fed('🛡️', 'You read the DM out on camera. Reputation up.', 'good'); } },
       ] },
     // ---- hostile sub-deck: repair / neutral / escalate ----
     { kind: 'hostile', emoji: '👹', title: 'A troll swarm hit your comments.', badge: 'Coordinated trolling', cond: () => true,
@@ -484,7 +484,7 @@
       text: 'The grind is catching up. Your body is sending invoices.',
       choices: [
         { t: 'escalate', ci: '⛽', label: 'Push through it', desc: 'Keep the streak alive. Risky.',
-          apply: S => { addStress(S, 12); activePlats(S).forEach(p => p.heat = clamp(p.heat + 5, 0, 100)); return fed('⛽', 'You pushed through. The feed stayed fed — you did not.', 'bad'); } },
+          apply: S => { addStress(S, 12); activePlats(S).forEach(p => p.heat = clamp(p.heat + 5, 0, 100)); return fed('⛽', 'You pushed through. The feed got fed. You didn’t.', 'bad'); } },
         { t: 'repair', ci: '🛌', label: 'Log off and recover', desc: 'Reset stress, lose momentum.',
           apply: S => { addStress(S, -30); activePlats(S).forEach(p => p.heat = clamp(p.heat - 10, 0, 100)); return fed('🛌', 'You logged off for real. Stress dropped, buzz cooled.', 'good'); } },
       ] },
@@ -493,9 +493,9 @@
   // ======================= weekly orchestration =======================
   const BAND_MSG = {
     normal:  { emoji: '😮‍💨', text: 'Stress is back under control. Good.', kind: 'good' },
-    hot:     { emoji: '🌡️', text: 'You\'re running hot. Fine for a week or two — not for a month.', kind: '' },
-    fumes:   { emoji: '🥵', text: 'On fumes. Your output is suffering (−15% reach) and you\'re one bad week from the wall.', kind: 'bad' },
-    redline: { emoji: '🚨', text: 'REDLINE. Three weeks like this and you\'re done. Leave a slot empty.', kind: 'bad' },
+    hot:     { emoji: '🌡️', text: 'Running hot. Fine for a week or two. Not a month.', kind: '' },
+    fumes:   { emoji: '🥵', text: 'On fumes. Everything you make is 15% worse, and you can feel it.', kind: 'bad' },
+    redline: { emoji: '🚨', text: 'Redline. Three weeks of this and it\'s over. Leave a slot empty.', kind: 'bad' },
   };
   function settleWeek(S) {
     const log = L();
@@ -505,7 +505,7 @@
       const pf = PLATFORMS[t.pkey], p = S.plats[t.pkey];
       const v = Math.round(t.views * CONFIG.tailRate), g = Math.round(v * CONFIG.baseConv * pf.loyal * ANGLES.evergreen.conv);
       p.followers += g; S.newFollowers += g; S.totalViews += v; passive += v * pf.rpm; t.weeksLeft--;
-      log.feed.push({ emoji: '🌲', text: `‘${t.topic}’ is still getting found — +${fmt(v)} views this week.`, kind: '' });
+      log.feed.push({ emoji: '🌲', text: `‘${t.topic}’ is still getting found. +${fmt(v)} views this week.`, kind: '' });
     });
     S.tails = S.tails.filter(t => t.weeksLeft > 0);
     // membership: recomputed every week
@@ -526,7 +526,7 @@
       p.followers = Math.max(0, p.followers - trendLoss - baseLoss);
       lost += trendLoss + baseLoss;
     });
-    if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people unfollowed this week. Silence and old trend-chasers both bleed.`, kind: 'bad' });
+    if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
     // heat / fatigue decay
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
     // stress: judge the band + burnout streak on the stress you ended the week's work at,
@@ -560,14 +560,14 @@
   }
 
   const ENDINGS = {
-    cancelled: { emoji: '📛', kicker: 'Cancelled', title: 'The internet turned on you.', blurb: 'Reputation hit zero. Sponsors ghosted, fans left, and your name is trending for all the wrong reasons.', lesson: 'Reputation compounds slower than followers — and collapses faster. How you answer your haters is half the game.' },
-    bankrupt: { emoji: '💸', kicker: 'Broke', title: 'You ran out of runway.', blurb: "The debt got too deep. Rent and gear and living costs don't care how good last week's video was. You got a day job.", lesson: "Audience isn't income. Diversifying platforms — and getting fans to pay you directly — is what turns reach into rent." },
-    burnout: { emoji: '🕯️', kicker: 'Burnout', title: 'You burned all the way out.', blurb: 'The stress redlined and stayed there. Feeding {n} platform{s} at once, you stopped being able to make anything at all.', lesson: 'You cannot feed every platform every week. The creators who last pick their surfaces and protect the one resource nobody tracks.' },
-    sellout: { emoji: '🤑', kicker: 'Sold out', title: 'You became an ad in human form.', blurb: 'The bag got too tempting, too often. Rich and technically famous, but nobody remembers what you actually make.', lesson: "Every brand deal is a small withdrawal from trust. Overdraw it and there's nothing left to sell but yourself." },
-    star: { emoji: '🌟', kicker: 'Viral star', title: 'You went fully mainstream.', blurb: '{star}-plus and climbing across platforms. Brands, press, maybe a Netflix producer in your DMs.', lesson: "Breaking out takes real skill AND a viral moment you can't schedule. Talent loads the dice; luck rolls them." },
-    goat: { emoji: '👑', kicker: 'G.O.A.T.', title: 'Biggest creator on the planet.', blurb: '{goat}-plus followers and a cultural footprint across every surface. You didn\'t just win the game — you became it.', lesson: 'The very top is skill, stamina, and an absurd amount of luck stacked together. Almost nobody reaches it. You did.' },
-    legend: { emoji: '🏆', kicker: 'Niche legend', title: 'You built something that lasts.', blurb: "Not the biggest — but beloved, respected, sustainable. A loyal audience, real income, and a life you didn't have to torch to keep it.", lesson: "The healthiest ending isn't the biggest number. An audience that trusts you beats a huge one that doesn't." },
-    faded: { emoji: '🌫️', kicker: 'Faded out', title: 'You slowly faded into the feed.', blurb: 'A year in, the numbers never quite took off. Not a disaster, not a triumph — just another creator the algorithm stopped recommending.', lesson: 'This is the most common ending by far. Not failure — just the quiet math of an attention economy with room for very few.' },
+    cancelled: { emoji: '📛', kicker: 'Cancelled', title: 'The internet turned on you.', blurb: 'Reputation hit zero. Sponsors ghosted, fans left, and your name is trending for all the wrong reasons.', lesson: 'Followers came fast. Trust left faster. Nobody screenshots the apology.' },
+    bankrupt: { emoji: '💸', kicker: 'Broke', title: 'You ran out of runway.', blurb: "The overdraft won. Overhead doesn't care how good last week's video was. You got a day job.", lesson: "An audience isn't an income. Reach pays rent the day somebody chooses to pay you." },
+    burnout: { emoji: '🕯️', kicker: 'Burnout', title: 'You burned all the way out.', blurb: 'The stress redlined and stayed there. Feeding {n} platform{s} at once, you stopped being able to make anything at all.', lesson: 'You can feed every platform, or you can last. The ones still here took the week off.' },
+    sellout: { emoji: '🤑', kicker: 'Sold out', title: 'You became an ad in human form.', blurb: 'The bag got too tempting, too often. Rich and technically famous, but nobody remembers what you actually make.', lesson: 'Every deal was a withdrawal from trust. You overdrew, and the only product left was you.' },
+    star: { emoji: '🌟', kicker: 'Viral star', title: 'You went fully mainstream.', blurb: '{star}-plus and climbing across platforms. Brands, press, maybe a Netflix producer in your DMs.', lesson: 'You did the work, then the algorithm did you a favor. Talent loads the dice. Luck rolls them.' },
+    goat: { emoji: '👑', kicker: 'G.O.A.T.', title: 'Biggest creator on the planet.', blurb: '{goat}-plus followers and a footprint on every surface. You didn\'t win the game. You became it.', lesson: 'Stamina, taste, and an absurd amount of luck. Almost nobody gets here. Run it again and watch it not happen.' },
+    legend: { emoji: '🏆', kicker: 'Niche legend', title: 'You built something that lasts.', blurb: "Not the biggest. Beloved, paid, and still sleeping at night. A loyal audience and a life you didn't have to torch to keep it.", lesson: "This is the good ending. It just doesn't trend." },
+    faded: { emoji: '🌫️', kicker: 'Faded out', title: 'You slowly faded into the feed.', blurb: 'A year in, the numbers never took off. Not a disaster, not a triumph. The algorithm just stopped mentioning you.', lesson: 'This is the ending most people get. Nobody writes about it, which is the whole point.' },
   };
 
   // Ending copy with the run's numbers filled in.

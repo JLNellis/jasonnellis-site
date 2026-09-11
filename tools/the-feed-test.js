@@ -232,7 +232,7 @@ test('doPost produces views, followers, revenue and a written feed line', () => 
   assert.strictEqual(S.newFollowers, S.plats.longform.followers - f0);
   const line = log.feed[0].text;
   assert.ok(line.startsWith(`‘${c.topic}’`), line);
-  assert.match(line, /did [\d.]+K? views on Longform Video — \+[\d.]+K? followers/);
+  assert.match(line, /did [\d.]+K? views on Longform Video\. \+[\d.]+K? followers/);
   assert.ok(!/!\./.test(line), 'no double punctuation');
   assert.deepStrictEqual(S.usedTopics, [{ topic: c.topic, week: 1 }]);
 });
@@ -311,20 +311,20 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   const log = E.settleWeek(S);
   assert.strictEqual(S.plats.longform.followers, 10000 - Math.round(8000 * E.CONFIG.churnBase) - Math.round(2000 * E.CONFIG.churnTrend));
   assert.strictEqual(S.plats.longform.trendFollowers, 2000 - Math.round(2000 * E.CONFIG.churnTrend));
-  assert.ok(!log.feed.some(f => /unfollowed/.test(f.text)), 'small churn is silent');
+  assert.ok(!log.feed.some(f => /people left/.test(f.text)), 'small churn is silent');
   const T = mk(); T.plats.longform.followers = 10000; T.plats.longform.lastPost = T.week - 3; T.week = 4;
   const log2 = E.settleWeek(T);
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
-  assert.ok(log2.feed.some(f => /unfollowed/.test(f.text)), 'idle churn is loud');
+  assert.ok(log2.feed.some(f => /people left/.test(f.text)), 'idle churn is loud');
 });
 test('stress: band + redline streak judged before recovery; recovery is stressRecover + stressRecoverPerEmptySlot per empty slot', () => {
   const S = mk(); S.stress = 60; S.slots.content = 2;
   let log = E.settleWeek(S);
-  assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /running hot/.test(f.text)), 'normal→hot logged');
+  assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /Running hot/.test(f.text)), 'normal→hot logged');
   assert.strictEqual(S.stress, 60 - E.CONFIG.stressRecover - 2 * E.CONFIG.stressRecoverPerEmptySlot);
   S.stress = 95; S.slots.content = 0; log = E.settleWeek(S);
   assert.strictEqual(S.band, 'redline'); assert.strictEqual(S.redlineStreak, 1);
-  assert.ok(log.feed.some(f => /REDLINE/.test(f.text)), 'hot→redline logged');
+  assert.ok(log.feed.some(f => /Redline/.test(f.text)), 'hot→redline logged');
   assert.strictEqual(S.stress, 95 - E.CONFIG.stressRecover);
   S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 2);
   S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets'); assert.strictEqual(S.band, 'hot');
