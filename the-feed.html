@@ -194,6 +194,22 @@
   .badge{position:absolute;top:2px;right:calc(50% - 15px);width:8px;height:8px;border-radius:50%;background:var(--sf-red);border:1.5px solid var(--sf-bg)}
   .badge[hidden]{display:none}
 
+  /* ---------- desktop console: three panes side by side ---------- */
+  /* On phone widths .rail is transparent to layout (its panes stack in the
+     tab flow exactly as before). At >=980px it becomes the right column. */
+  .rail{display:contents}
+  @media(min-width:980px){
+    .app{max-width:1180px;height:calc(100vh - 36px)}
+    .tabbody{display:grid;grid-template-columns:296px minmax(0,1fr) 340px;overflow:hidden;padding:0}
+    .tabbody>#tab-home,.tabbody>#tab-alerts,.rail>.tabpane{overflow-y:auto;min-height:0;padding:16px 16px 20px}
+    #tab-home{border-right:2px solid var(--sf-line)}
+    #tab-alerts{border-right:2px solid var(--sf-line);background:rgba(255,255,255,.02)}
+    .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+    #tab-inbox{flex:none;max-height:46%}
+    #tab-stats{flex:1;border-top:2px solid var(--sf-line)}
+    .tabbar{display:none}
+  }
+
   /* ---------- floats ---------- */
   .floats{position:fixed;inset:0;pointer-events:none;z-index:60}
   .flt{position:fixed;font-family:var(--sf-mono);font-weight:500;font-size:14px;font-variant-numeric:tabular-nums;
@@ -290,8 +306,10 @@
       <div id="stagebody"></div>
     </section>
     <section class="tabpane" id="tab-alerts" hidden><div class="feedlist" id="feedlist"></div></section>
-    <section class="tabpane" id="tab-inbox" hidden><div id="inboxbody"></div></section>
-    <section class="tabpane" id="tab-stats" hidden><div id="statsbody"></div></section>
+    <div class="rail">
+      <section class="tabpane" id="tab-inbox" hidden><div id="inboxbody"></div></section>
+      <section class="tabpane" id="tab-stats" hidden><div id="statsbody"></div></section>
+    </div>
   </main>
 
   <nav class="tabbar" id="tabbar">
@@ -352,6 +370,11 @@
   let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {}, teamOpen = false;
   let tab = 'home', seenFeedLen = 0, hist = [];   // hist is UI-only; never enters S/engine/sim/tests
   function switchTab(t){ tab = t; SFX.play('click'); render(); }
+  // Desktop console: >=980px shows every pane at once (no tab bar). Re-render
+  // when we cross the breakpoint so panes fill/empty and hidden flags update.
+  const wideMQ = window.matchMedia('(min-width:980px)');
+  const isWide = () => wideMQ.matches;
+  wideMQ.addEventListener('change', ()=>{ if(S) render(); });
   function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep) }); }
 
   // ---------- sound (Kenney CC0 interface pack, via Web Audio) ----------
@@ -485,18 +508,27 @@
     $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     // ----- a pending event forces the Inbox tab -----
     if(S.phase==='event'&&S.event) tab='inbox';
-    // ----- tab visibility + active styling + badges -----
-    ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); });
-    document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
-    const unseen=(S.feed||[]).length>seenFeedLen;
-    $('badge-alerts').hidden = !(unseen && tab!=='alerts');
-    $('badge-inbox').hidden = !(S.phase==='event');
-    if(tab==='alerts') seenFeedLen=(S.feed||[]).length;
-    // ----- fill the active pane -----
-    if(tab==='home'){ renderChannels(); if(S.phase==='event') renderHomeWaiting(); else renderMoves(); }
-    else if(tab==='alerts') renderFeed();
-    else if(tab==='inbox') renderInbox();
-    else if(tab==='stats') renderStats();
+    if(isWide()){
+      // desktop console: every pane is on screen, so fill them all every render
+      ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden=false; });
+      $('badge-alerts').hidden=true; $('badge-inbox').hidden=true;   // nothing is hidden behind a tab
+      seenFeedLen=(S.feed||[]).length;
+      renderChannels(); if(S.phase==='event') renderHomeWaiting(); else renderMoves();
+      renderFeed(); renderInbox(); renderStats();
+    } else {
+      // mobile: one pane at a time, driven by the tab bar
+      ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); });
+      document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
+      const unseen=(S.feed||[]).length>seenFeedLen;
+      $('badge-alerts').hidden = !(unseen && tab!=='alerts');
+      $('badge-inbox').hidden = !(S.phase==='event');
+      if(tab==='alerts') seenFeedLen=(S.feed||[]).length;
+      // ----- fill the active pane -----
+      if(tab==='home'){ renderChannels(); if(S.phase==='event') renderHomeWaiting(); else renderMoves(); }
+      else if(tab==='alerts') renderFeed();
+      else if(tab==='inbox') renderInbox();
+      else if(tab==='stats') renderStats();
+    }
   }
   function setMeter(k,v){ $('b-'+k).style.width=clamp(v,0,100)+'%'; $('v-'+k).textContent=Math.round(v); }
 

@@ -129,6 +129,34 @@ reskin removed emoji as the icon system (see "Dropped — OpenMoji" below).
 
 ---
 
+## Shipped: desktop console (responsive multi-pane)
+
+The old reskin was one 440px phone column centered at **every** width, so
+desktop wasted the horizontal space and forced scrolling + tab-hopping —
+worst right after a week settled, when results flooded Alerts and you had to
+hop Home→Alerts→Stats to connect what you did to what happened.
+
+Fixed with a **pure chrome/CSS layer** (engine, sim, tests, float anchors,
+sound, `noindex`, Plausible all untouched — engine tests stay 58/58). At
+**≥ 980px** the phone frame opens into a framed console (max-width 1180px,
+same 2px border + shadow): full-width header on top, then three
+independently-scrolling columns — **This Week** (cards + business) · **Live
+Feed** (Alerts, always visible) · a right **rail** stacking **Inbox** over
+**Stats**. The bottom tab bar is hidden. Below 980px it's **byte-for-byte
+today's build**: single column, four tabs, tab bar — so the mobile-stacking
+bug C killed stays killed.
+
+How it's wired, for future edits (`the-feed.html` only):
+- Inbox + Stats are wrapped in a `<div class="rail">`. On phone widths
+  `.rail{display:contents}` makes it transparent to layout (panes stack in
+  the tab flow as before); at ≥980px it becomes the third grid column.
+- `render()` branches on `isWide()` (a `matchMedia('(min-width:980px)')`).
+  Narrow = the old one-pane-at-a-time behavior. Wide = **every** pane is
+  filled each render and all `hidden` flags cleared (the tab loop only fills
+  the *active* pane, so showing all panes needs the JS branch, not just CSS).
+- A `wideMQ` change listener re-renders when you cross the breakpoint.
+- Start/end overlays stay phone-width centered dialogs at all sizes.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
