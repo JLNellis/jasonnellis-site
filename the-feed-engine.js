@@ -49,7 +49,7 @@
     topicCooldown: 8,
     // money
     bankruptFloor: -1500,
-    dealBase: 90, dealScale: 0.018,
+    dealBase: 90, dealScale: 0.018, dealRepBase: 0.6,
     paidUnlock: 1500, memberRate: 6, memberConvMin: 0.02, memberConvMax: 0.045,
     memberNewConv: 0.025, memberChurn: 0.03, memberChurnIdle: 0.06,
     // gear: tiers 1-3 are kit, tier 4 is the Studio
@@ -359,7 +359,7 @@
       const log = L(); log.floats.push({ anchor: 'rep', text: '+' + r.toFixed(1), tone: 'up' });
       log.feed.push({ emoji: '💬', text: 'Showed up in the comments and DMs. The core crowd feels seen.', kind: 'good' }); return log; },
     deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, 4);
-      const repMult = 0.4 + S.rep / 100, mgr = S.hires.manager;
+      const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
       const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);
       S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;

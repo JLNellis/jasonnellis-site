@@ -340,7 +340,8 @@ test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens r
   S.plats.longform.followers = 10000;
   E.setRng(seeded(5)); const lo = mk(); lo.plats.longform.followers = 10000; lo.rep = 40; const c0 = lo.cash; E.biz.deal(lo);
   E.setRng(seeded(5)); const hi = mk(); hi.plats.longform.followers = 10000; hi.rep = 80; const c1 = hi.cash; E.biz.deal(hi);
-  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - 1.5) < 0.01, 'rep 80 pays 1.5x rep 40');
+  const expectRatio = (E.CONFIG.dealRepBase + 0.8) / (E.CONFIG.dealRepBase + 0.4);
+  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - expectRatio) < 0.01, `rep 80 pays ${expectRatio.toFixed(2)}x rep 40`);
   E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
   assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
   assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
