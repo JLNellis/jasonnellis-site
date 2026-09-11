@@ -34,6 +34,103 @@ test('newState has slots, stress, no energy/skill', () => {
   assert.strictEqual(S.redlineStreak, 0);
   assert.strictEqual(S.band, 'normal');
 });
+// ---------------------------------------------------------------- event deck: state init
+test('newState seeds event-deck tracking fields', () => {
+  const S = mk();
+  assert.deepStrictEqual(S.seenEvents, []);
+  assert.strictEqual(S.grossEarned, 0);
+  assert.strictEqual(S.taxedThrough, 0);
+});
+test('CONFIG exposes phase bands and tax rate', () => {
+  assert.strictEqual(typeof E.CONFIG.phases.earlyEnd, 'number');
+  assert.strictEqual(typeof E.CONFIG.phases.midEnd, 'number');
+  assert.ok(E.CONFIG.phases.earlyEnd < E.CONFIG.phases.midEnd);
+  assert.ok(E.CONFIG.taxRate > 0 && E.CONFIG.taxRate < 1);
+});
+// ---------------------------------------------------------------- event deck: gross earnings
+test('doPost adds ad revenue to grossEarned', () => {
+  E.setRng(seeded(3));
+  const S = mk('beauty', 'longform'); S.plats.longform.followers = 5000;
+  const before = S.grossEarned;
+  E.doPost(S, 'longform', 'evergreen', 'x', 1);
+  assert.ok(S.grossEarned > before, 'grossEarned should grow by ad revenue');
+});
+test('biz.deal adds pay to grossEarned', () => {
+  E.setRng(seeded(3));
+  const S = mk('beauty', 'longform'); S.plats.longform.followers = 5000;
+  const before = S.grossEarned;
+  E.biz.deal(S);
+  assert.ok(S.grossEarned > before, 'grossEarned should grow by deal pay');
+});
+// ---------------------------------------------------------------- event deck: draw filtering
+test('every event has a unique id and valid choice tags', () => {
+  const ids = new Set();
+  E.EVENTS.forEach(ev => {
+    assert.ok(ev.id, 'event missing id: ' + ev.title);
+    assert.ok(!ids.has(ev.id), 'duplicate id: ' + ev.id); ids.add(ev.id);
+    ev.choices.forEach(c => assert.ok(['repair','neutral','escalate'].includes(c.t), 'bad tag on ' + ev.id));
+  });
+});
+test('drawEvent does not repeat a non-repeatable event within a run', () => {
+  E.setRng(seeded(5));
+  const S = mk(); S.week = 40; S.plats.longform.followers = 50000; S.rep = 60; S.deals = 3; S.gear = 2;
+  const drawn = [];
+  for (let i = 0; i < 200; i++) { const ev = E.drawEvent(S); if (!ev) break; drawn.push(ev.id); if (!ev.repeatable && !S.seenEvents.includes(ev.id)) S.seenEvents.push(ev.id); }
+  const repeatableIds = new Set(E.EVENTS.filter(e => e.repeatable).map(e => e.id));
+  const nonRepeat = drawn.filter(id => !repeatableIds.has(id));
+  assert.strictEqual(nonRepeat.length, new Set(nonRepeat).size, 'a non-repeatable id repeated');
+});
+test('drawEvent respects minWeek/maxWeek phase gating', () => {
+  E.setRng(seeded(6));
+  for (const wk of [3, 20, 50]) {
+    for (let i = 0; i < 300; i++) {
+      const S = mk(); S.week = wk; S.plats.longform.followers = 60000; S.rep = 60; S.deals = 4; S.gear = 3;
+      const ev = E.drawEvent(S); if (!ev) continue;
+      if (ev.minWeek != null) assert.ok(wk >= ev.minWeek, `${ev.id} fired at wk ${wk} < minWeek ${ev.minWeek}`);
+      if (ev.maxWeek != null) assert.ok(wk <= ev.maxWeek, `${ev.id} fired at wk ${wk} > maxWeek ${ev.maxWeek}`);
+    }
+  }
+});
+// ---------------------------------------------------------------- event deck: cash sinks
+const evById = id => E.EVENTS.find(e => e.id === id);
+test('tax-bill exists, is phase-gated mid, and scales to gross earned', () => {
+  E.setRng(seeded(7));
+  const ev = evById('tax-bill');
+  assert.ok(ev && ev.minWeek >= 18 && !ev.repeatable);
+  const S = mk(); S.cash = 20000; S.grossEarned = 40000; S.taxedThrough = 0;
+  const payChoice = ev.choices.find(c => c.t === 'repair');
+  payChoice.apply(S);
+  assert.ok(S.cash < 20000, 'tax should reduce cash');
+  assert.strictEqual(S.taxedThrough, 40000, 'taxedThrough advances to grossEarned');
+});
+test('tax bills only the gross earned since the last tax event', () => {
+  E.setRng(seeded(7));
+  const ev = evById('tax-bill');
+  const S = mk(); S.cash = 20000; S.grossEarned = 40000; S.taxedThrough = 30000;
+  const pay = ev.choices.find(c => c.t === 'repair');
+  const before = S.cash; pay.apply(S);
+  // taxable = 40000 - 30000 = 10000; bill ≈ 10000 * taxRate
+  const bill = before - S.cash;
+  assert.ok(bill > 0 && bill < 10000 * E.CONFIG.taxRate + 5 && bill > 10000 * E.CONFIG.taxRate - 5);
+});
+test('the four other sink cards each reduce cash on their paying choice', () => {
+  for (const id of ['demonetization', 'gear-dies', 'sponsor-clawback', 'surprise-expense']) {
+    E.setRng(seeded(8));
+    const ev = evById(id); assert.ok(ev, 'missing ' + id);
+    const S = mk(); S.cash = 30000; S.gear = 2; S.deals = 3; S.plats.longform.followers = 20000;
+    const c = ev.choices.find(x => x.t === 'repair') || ev.choices[0];
+    const before = S.cash; c.apply(S);
+    assert.ok(S.cash < before, id + ' should cost cash');
+  }
+});
+// ---------------------------------------------------------------- event deck: size + coverage
+test('deck has ~30 cards with early/mid/late coverage', () => {
+  assert.ok(E.EVENTS.length >= 28, 'expected >= 28 events, got ' + E.EVENTS.length);
+  const hasLate = E.EVENTS.some(e => e.minWeek && e.minWeek >= 36);
+  const hasMid  = E.EVENTS.some(e => (e.minWeek && e.minWeek >= 18 && e.minWeek < 36));
+  assert.ok(hasLate, 'need at least one late-phase card');
+  assert.ok(hasMid, 'need at least one mid-phase card');
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);
