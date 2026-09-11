@@ -9,8 +9,8 @@ Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Currently `noindex`
 and not in the nav (deliberately unlisted while in progress).
 
 The rework is three sub-projects, specced in `docs/superpowers/specs/`:
-**A. core loop** (shipped — see below) · **B. event deck** · **C. social-app
-reskin**. Specs and plans for B and C get written when each starts.
+**A. core loop** (shipped) · **B. event deck** (shipped — see below) ·
+**C. social-app reskin** (next). The spec + plan for C get written when it starts.
 
 ---
 
@@ -74,18 +74,32 @@ reskin**. Specs and plans for B and C get written when each starts.
 
 ---
 
-## Next: sub-project B — event deck expansion
+## Shipped: sub-project B — event deck expansion
 
-Ten events is too few for 52 weeks (all seen by ~week 15, "review-bombed"
-seven times in one run). Target 30+, gated by phase (early/mid/late) and
-state (hires, studio, angles used, churn), non-repeating within a run.
-Candidate cards: collab offer (the #1 real growth lever — asymmetric by
-creator size), platform beta invite, press feature, a copycat stealing your
-format, a strike/demonetization, seasonal CPM swings (Q4 spike, summer slump),
-a tax bill, an editor quitting, a sponsor pulling out after a scandal, a
-year-end awards/annual-review arc for weeks 45–52.
+Deck grown **10 → 30 cards** with per-run non-repeat tracking (`S.seenEvents`;
+four generic beats stay `repeatable`) and phase gating (`minWeek`/`maxWeek`
+against `CONFIG.phases`), so a run stays fresh to week 52 without the old
+review-bomb repetition. Added a **threat cash-sink sub-deck** — tax bills
+(scaled to `S.grossEarned` since the last one, via `CONFIG.taxRate`),
+demonetization, gear failure, sponsor clawback, surprise life expense — plus a
+growth/variety sub-deck (collab offers, platform beta, press, copycat, editor
+quitting, sponsor pullout, seasonal CPM, awards nod, annual reckoning, brand
+inbound, milestone). Sinks are **progressive**: each is capped at a fraction of
+cash-on-hand (`bite` helper), so they drain hoarders hard but never bankrupt a
+lean player. Deterministic tests cover non-repeat, phase gating, gross
+accumulation and sink mechanics; **all six `npm run sim` balance targets stay
+green** across seeds. No arc sequencing, no lingering multipliers, no UI change
+(that's C) — the browser was untouched.
 
-## Then: sub-project C — social-app reskin
+**Resolved open item — meaningless cash:** the threat sinks make cash matter
+*during* a run (a tax bill or demonetization you must absorb; a buffer worth
+keeping). End-of-run hoard for non-Studio winners dropped from ~$85–99K to
+~$64–72K. It is reduced, not eliminated — winners still keep earning in the
+final weeks after the last tax event. Draining further would need a recurring
+late sink (more mechanics); left as-is deliberately. No 7th balance target was
+added.
+
+## Next: sub-project C — social-app reskin
 
 Make the game *look like being a creator*: a phone-shaped fake social app
 (Home = this week's cards, Notifications = the feed with fake usernames and
@@ -121,9 +135,9 @@ when C ships.
 
 Notes from the latest balance pass, not yet actioned:
 
-- Cash is still meaningless for non-Studio winners (~$60–85K at week 52) —
-  needs sinks from sub-project B's events, not more knobs.
-- The Star → GOAT gap is only ~2.9× because growth is near-linear.
+- The Star → GOAT gap is only ~2.9× because growth is near-linear. (B's growth
+  cards were tuned down specifically to keep Optimizer GOAT ≤25% — the near-
+  linear growth is sensitive to any large follower injection.)
 - The Optimizer persona spreads across four platforms, which the engine
   currently punishes.
 - Grinder median survival sits exactly on the 15-week target floor.
