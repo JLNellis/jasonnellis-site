@@ -329,6 +329,62 @@ test('stress: band + redline streak judged before recovery; recovery is 12 + 8 p
   S.stress = 30; log = E.settleWeek(S); assert.strictEqual(S.band, 'normal'); assert.ok(log.feed.some(f => /under control/.test(f.text)), 'hot→normal logged');
 });
 
+// ---------------------------------------------------------------- business + events
+test('engage uses the business slot and adds 5 stress', () => {
+  const S = mk(); const r0 = S.rep, s0 = S.stress; E.biz.engage(S);
+  assert.ok(S.rep > r0); assert.strictEqual(S.stress, s0 + 5); assert.strictEqual(S.slots.business, 0);
+  const r1 = S.rep; E.biz.engage(S); assert.strictEqual(S.rep, r1, 'refused without slot');
+});
+test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens rep cost', () => {
+  const S = mk(); S.plats.longform.followers = 500; E.biz.deal(S); assert.strictEqual(S.deals, 0);
+  S.plats.longform.followers = 10000;
+  E.setRng(seeded(5)); const lo = mk(); lo.plats.longform.followers = 10000; lo.rep = 40; const c0 = lo.cash; E.biz.deal(lo);
+  E.setRng(seeded(5)); const hi = mk(); hi.plats.longform.followers = 10000; hi.rep = 80; const c1 = hi.cash; E.biz.deal(hi);
+  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - 1.5) < 0.01, 'rep 80 pays 1.5x rep 40');
+  E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
+  assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
+  assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
+  assert.strictEqual(m.stress, E.CONFIG.startStress + 4);
+});
+test('paid membership: gated, once, uses the slot', () => {
+  const S = mk(); E.biz.paid(S); assert.strictEqual(S.members, 0);
+  S.plats.longform.followers = 2000; E.biz.paid(S); assert.ok(S.members >= 2000 * E.CONFIG.memberConvMin && S.members <= 2000 * E.CONFIG.memberConvMax); assert.strictEqual(S.slots.business, 0);
+  S.slots.business = 1; const m = S.members; E.biz.paid(S); assert.strictEqual(S.members, m, 'only once');
+});
+test('grind no longer exists', () => { assert.strictEqual(E.biz.grind, undefined); assert.strictEqual(E.biz.rest, undefined); });
+test('loseFollowers takes a % of the strongest platform, halved by a mod, shrinks cohort proportionally', () => {
+  const S = mk(); S.plats.longform.followers = 10000; S.plats.longform.trendFollowers = 5000;
+  assert.strictEqual(E.loseFollowers(S, 0.10, 0.10), 1000);
+  assert.strictEqual(S.plats.longform.followers, 9000); assert.strictEqual(S.plats.longform.trendFollowers, 4500);
+  S.hires.mod = true; assert.strictEqual(E.loseFollowers(S, 0.10, 0.10), 450);
+});
+test('repHit is softened to 2/3 by a mod', () => {
+  const S = mk(); S.rep = 60; E.repHit(S, 9, 9); assert.strictEqual(S.rep, 51);
+  S.hires.mod = true; E.repHit(S, 9, 9); assert.strictEqual(S.rep, 45);
+});
+test('health event triggers on stress and moves stress', () => {
+  const ev = E.EVENTS.find(e => /slept/.test(e.title));
+  const S = mk(); S.stress = 59; assert.strictEqual(ev.cond(S), false); S.stress = 60; assert.strictEqual(ev.cond(S), true);
+  const push = ev.choices.find(c => c.t === 'escalate'), rest = ev.choices.find(c => c.t === 'repair');
+  push.apply(S); assert.strictEqual(S.stress, 72);
+  rest.apply(S); assert.strictEqual(S.stress, 42);
+});
+test('every hostile escalate outcome costs followers', () => {
+  E.EVENTS.filter(e => e.kind === 'hostile').forEach(ev => {
+    const esc = ev.choices.find(c => c.t === 'escalate');
+    // run until we hit a 'bad' outcome (some escalations are coin flips)
+    let lostAny = false;
+    // this LCG's early outputs climb slowly, so the troll-swarm coin flip (chance(.45)) needs
+    // seeds into the hundreds before it ever comes up false — widen the loop rather than the assertion.
+    for (let seed = 1; seed < 600 && !lostAny; seed++) { E.setRng(seeded(seed)); const S = mk(); S.week = 20; S.rep = 80; S.plats.longform.followers = 10000; const log = esc.apply(S); if (log.feed[0].kind === 'bad') lostAny = S.plats.longform.followers < 10000; }
+    assert.ok(lostAny, ev.title);
+  });
+});
+test('no engine code references energy or skill', () => {
+  const src = require('fs').readFileSync(require.resolve('../the-feed-engine.js'), 'utf8');
+  assert.ok(!/S\.energy|S\.skill|skillCap|\brent\(/.test(src));
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
