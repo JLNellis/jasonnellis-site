@@ -267,6 +267,68 @@ test('fumes band reduces views', () => {
   assert.ok(Math.abs(B.totalViews / A.totalViews - E.CONFIG.fumesViewsMult) < 0.02);
 });
 
+// ---------------------------------------------------------------- settleWeek
+test('settleWeek returns a log and charges overhead, tracking the peak', () => {
+  const S = mk(); const cash0 = S.cash;
+  const log = E.settleWeek(S);
+  assert.ok(log && Array.isArray(log.feed));
+  assert.strictEqual(S.cash, cash0 - E.overhead(S));
+  assert.strictEqual(S.peakOverhead, E.overhead(S));
+});
+test('evergreen tails pay out 15% of views for 4 weeks then expire', () => {
+  const S = mk(); S.slots.content = 0; // no empty-slot bonus noise
+  S.plats.longform.lastPost = S.week; // posted this week → not idle, so base churn applies
+  S.tails.push({ pkey: 'longform', topic: 'T', views: 10000, weeksLeft: E.CONFIG.tailWeeks });
+  const f0 = S.plats.longform.followers, cash0 = S.cash;
+  const log = E.settleWeek(S);
+  const tailViews = Math.round(10000 * E.CONFIG.tailRate);
+  const expectedGain = Math.round(tailViews * E.CONFIG.baseConv * E.PLATFORMS.longform.loyal * E.ANGLES.evergreen.conv);
+  const afterTail = f0 + expectedGain; // churn is applied to the post-tail count
+  assert.strictEqual(S.plats.longform.followers, afterTail - Math.round(afterTail * E.CONFIG.churnBase), 'tail gain, then base churn');
+  assert.strictEqual(S.totalViews, tailViews);
+  assert.ok(S.cash > cash0 - E.overhead(S), 'tail revenue landed');
+  assert.ok(log.feed.some(f => /still getting found/.test(f.text)));
+  assert.strictEqual(S.tails[0].weeksLeft, 3);
+  S.tails[0].weeksLeft = 1; E.settleWeek(S); assert.strictEqual(S.tails.length, 0);
+});
+test('membership recomputes weekly: grows with new followers, churns, churns double when idle', () => {
+  const S = mk(); S.members = 1000; S.newFollowers = 4000; S.plats.longform.lastPost = S.week;
+  E.settleWeek(S);
+  assert.strictEqual(S.members, Math.round(1000 + 4000 * E.CONFIG.memberNewConv - 1000 * E.CONFIG.memberChurn));
+  assert.strictEqual(S.newFollowers, 0, 'reset each week');
+  const T = mk(); T.members = 1000; T.plats.longform.lastPost = -9;
+  E.settleWeek(T); assert.strictEqual(T.members, 1000 - Math.round(1000 * E.CONFIG.memberChurnIdle));
+});
+test('membership income = members × memberRate', () => {
+  const S = mk(); S.members = 100; S.plats.longform.lastPost = S.week; const cash0 = S.cash;
+  E.settleWeek(S);
+  assert.strictEqual(S.cash, cash0 + Math.round(97 * E.CONFIG.memberRate) - E.overhead(S));
+});
+test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1%', () => {
+  const S = mk(); S.plats.longform.followers = 10000; S.plats.longform.trendFollowers = 2000; S.plats.longform.lastPost = S.week;
+  const log = E.settleWeek(S);
+  assert.strictEqual(S.plats.longform.followers, 10000 - Math.round(8000 * E.CONFIG.churnBase) - Math.round(2000 * E.CONFIG.churnTrend));
+  assert.strictEqual(S.plats.longform.trendFollowers, 2000 - Math.round(2000 * E.CONFIG.churnTrend));
+  assert.ok(!log.feed.some(f => /unfollowed/.test(f.text)), 'small churn is silent');
+  const T = mk(); T.plats.longform.followers = 10000; T.plats.longform.lastPost = T.week - 3; T.week = 4;
+  const log2 = E.settleWeek(T);
+  assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
+  assert.ok(log2.feed.some(f => /unfollowed/.test(f.text)), 'idle churn is loud');
+});
+test('stress: band + redline streak judged before recovery; recovery is 12 + 8 per empty slot', () => {
+  const S = mk(); S.stress = 60; S.slots.content = 2;
+  let log = E.settleWeek(S);
+  assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /running hot/.test(f.text)), 'normal→hot logged');
+  assert.strictEqual(S.stress, 60 - E.CONFIG.stressRecover - 2 * E.CONFIG.stressRecoverPerEmptySlot);
+  S.stress = 95; S.slots.content = 0; log = E.settleWeek(S);
+  assert.strictEqual(S.band, 'redline'); assert.strictEqual(S.redlineStreak, 1);
+  assert.ok(log.feed.some(f => /REDLINE/.test(f.text)), 'hot→redline logged');
+  assert.strictEqual(S.stress, 95 - E.CONFIG.stressRecover);
+  S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 2);
+  S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets'); assert.strictEqual(S.band, 'hot');
+  S.stress = 30; log = E.settleWeek(S); assert.strictEqual(S.band, 'normal'); assert.ok(log.feed.some(f => /under control/.test(f.text)), 'hot→normal logged');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

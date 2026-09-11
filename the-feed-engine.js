@@ -290,7 +290,7 @@
     const q = 22 + rnd(4, 18);
     const heatF = 1 + p.heat / 45, luck = rnd(.55, 1.6);
     const sizeF = 1 + CONFIG.sizeMax * p.followers / (p.followers + CONFIG.sizeSat); // saturating, no runaway
-    const views = Math.max(1, Math.round(q * heatF * sizeF * pf.viral * NICHES[S.niche].viral * A.views * (mod || 1)
+    const views = Math.max(1, Math.round(q * heatF * sizeF * pf.viral * NICHES[S.niche].viral * A.views * (mod ?? 1)
                   * clamp(1 - p.fatigue / 160, .5, 1) * luck * CONFIG.viewsK * viewsMult(S, k)));
     const gain = Math.round(views * CONFIG.baseConv * pf.loyal * A.conv);
     const rev = Math.round(views * pf.rpm);
@@ -474,14 +474,52 @@
   ];
 
   // ======================= weekly orchestration =======================
+  const BAND_MSG = {
+    normal:  { emoji: '😮‍💨', text: 'Stress is back under control. Good.', kind: 'good' },
+    hot:     { emoji: '🌡️', text: 'You\'re running hot. Fine for a week or two — not for a month.', kind: '' },
+    fumes:   { emoji: '🥵', text: 'On fumes. Your output is suffering (−15% reach) and you\'re one bad week from the wall.', kind: 'bad' },
+    redline: { emoji: '🚨', text: 'REDLINE. Three weeks like this and you\'re done. Leave a slot empty.', kind: 'bad' },
+  };
   function settleWeek(S) {
+    const log = L();
     let passive = 0;
-    activePlats(S).forEach(p => { passive += p.followers * PLATFORMS[p.key].rpm * (0.5 + p.heat / 200); });
-    passive += S.members * CONFIG.memberRate;
-    S.cash += Math.round(passive); S.cash -= rent(S);
+    // evergreen tails keep earning
+    S.tails.forEach(t => {
+      const pf = PLATFORMS[t.pkey], p = S.plats[t.pkey];
+      const v = Math.round(t.views * CONFIG.tailRate), g = Math.round(v * CONFIG.baseConv * pf.loyal * ANGLES.evergreen.conv);
+      p.followers += g; S.newFollowers += g; S.totalViews += v; passive += v * pf.rpm; t.weeksLeft--;
+      log.feed.push({ emoji: '🌲', text: `‘${t.topic}’ is still getting found — +${fmt(v)} views this week.`, kind: '' });
+    });
+    S.tails = S.tails.filter(t => t.weeksLeft > 0);
+    // membership: recomputed every week
+    if (S.members > 0) {
+      const posted = activePlats(S).some(p => p.lastPost === S.week);
+      S.members = Math.max(0, Math.round(S.members + S.newFollowers * CONFIG.memberNewConv - S.members * (posted ? CONFIG.memberChurn : CONFIG.memberChurnIdle)));
+      passive += S.members * CONFIG.memberRate;
+    }
+    const oh = overhead(S);
+    S.cash += Math.round(passive); S.cash -= oh; S.peakOverhead = Math.max(S.peakOverhead, oh);
+    // churn
+    let lost = 0;
+    activePlats(S).forEach(p => {
+      const idle = S.week - p.lastPost >= CONFIG.idleWeeks;
+      const trendLoss = Math.round(p.trendFollowers * (idle ? CONFIG.churnIdle : CONFIG.churnTrend));
+      const baseLoss = Math.round((p.followers - p.trendFollowers) * (idle ? CONFIG.churnIdle : CONFIG.churnBase));
+      p.trendFollowers = Math.max(0, p.trendFollowers - trendLoss);
+      p.followers = Math.max(0, p.followers - trendLoss - baseLoss);
+      lost += trendLoss + baseLoss;
+    });
+    if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people unfollowed this week. Silence and old trend-chasers both bleed.`, kind: 'bad' });
+    // heat / fatigue decay
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
-    if (S.energy <= 8) S.lowStreak = (S.lowStreak || 0) + 1; else S.lowStreak = 0;
-    return Math.round(passive);
+    // stress: judge the band + burnout streak on the stress you ended the week's work at,
+    // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
+    const band = stressBand(S);
+    if (band !== S.band) { log.feed.push(BAND_MSG[band]); S.band = band; }
+    S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
+    addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
+    S.newFollowers = 0;
+    return log;
   }
   function drawEvent(S) { const deck = EVENTS.filter(e => !e.cond || e.cond(S)); return pick(deck); }
   function rollEvent(S) { return (S.week >= 2 && chance(CONFIG.eventChance)) ? drawEvent(S) : null; }
