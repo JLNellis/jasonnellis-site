@@ -66,8 +66,10 @@ Stress rises with work and falls with lighter weeks.
 
 So two heavy posts net about +24/week; one light post nets about −10.
 
-**Bands** (evaluated in `settleWeek`; a feed message fires on every band
-change, so the trap is never silent):
+**Bands** (evaluated in `settleWeek` on the stress you ended the week's work
+at — i.e. *before* weekly recovery is applied, otherwise redline could never
+be reached; a feed message fires on every band change, so the trap is never
+silent):
 
 | Stress | Band | Effect |
 |---|---|---|
@@ -172,7 +174,7 @@ One business action per week.
 | Action | Rule |
 |---|---|
 | **Engage** | unchanged: +2–5 rep, +1–4 heat everywhere, +5 stress |
-| **Brand deal** | gated at 1K followers. `pay = (dealBase + followers × dealScale) × niche.deal × repMult` where `repMult = 0.6 + rep/100` (rep 80 pays ~1.5× rep 40). Rep cost −4–9, +4 stress. Manager: pay ×1.3, rep cost ×0.6. |
+| **Brand deal** | gated at 1K followers. `pay = (dealBase + followers × dealScale) × niche.deal × repMult` where `repMult = dealRepBase + rep/100` with `dealRepBase: 0.6` in CONFIG (rep 80 pays 1.4× rep 40; lower the base to widen the spread). Rep cost −4–9, +4 stress. Manager: pay ×1.3, rep cost ×0.6. |
 | **Upgrade** | tiers 1–3 as today ($350 / $800 / $1,700), each **views ×1.10** (stacking multiplicatively). **Skill is removed** (no meter, no `grind`, no `skillCap`). |
 | **The Studio (tier 4)** | see below |
 | **Launch membership** | gated at 1.5K followers. Initial members = followers × 2–4.5%. **Recomputed weekly** in `settleWeek`: `members += newFollowersThisWeek × 0.025; members −= members × 0.03` (churn doubles to 6% in a week with no posts). Income `members × memberRate` unchanged. |
@@ -236,9 +238,50 @@ Same eight keys, same copy except:
    Broke. Broke requires overspending (payroll/lease you can't cover).
 3. Sustainable persona → Niche Legend 50–70%.
 4. Optimizer → Star ≥ 50%, GOAT 10–25%. Pooled GOAT ≤ 5%.
-5. No persona funnels > 85% into one ending.
+5. No *strategic* persona funnels > 85% into one ending. (The Grinder and
+   the Minimalist are deterministic by design — target 1 *requires* the
+   Grinder to burn out — so they're exempt.)
 6. Studio-buying personas account for the majority of Broke endings among
    personas that survive past week 20.
+
+### Balance outcome (Task 10, 2026-09-11)
+
+The numbers above were design starting points; the tuned values live in
+`CONFIG` and are the source of truth. Where the tuned game differs
+materially from the text above:
+
+- **Stress** (after a second, stress-only pass): weekly recovery **23** (not
+  12), **+18 per empty content slot** (not 8); longform/newsletter/live cost
+  13/12/16; Engage costs 1 (`engageStress`), deals 4 (`dealStress`). Two
+  heavy posts every week with no rest: *hot* at week 3, *fumes* week 9,
+  *redline* week 16, Burnout week 18. One lighter week every 4th week keeps
+  you in *normal* indefinitely. Stress bites sustained maximum output and
+  nothing else; an Editor nearly removes it for longform. Bands are judged
+  on the stress you ended the week's work at, before recovery.
+- **Overhead:** base $60/week (not $140). Needed so a one-light-post-a-week
+  creator can limp to week 52 and Fade instead of going Broke.
+- **The Studio:** lease **$3,000/week** (not $350) and views **×2.8** (not
+  ×1.3). At the spec's numbers it was never a bet — membership income
+  covered it trivially. It is now the game's one real gamble: ~64% of late
+  Broke endings are Studio owners.
+- **Money:** `memberRate` 4, `memberChurn` 4%, idle churn 12%, `dealBase`
+  150. Non-Studio winners still end with ~$60–85K, which is meaningless;
+  this is a known open item (see §"Open items after A").
+- **Ending thresholds:** Legend 37K · Star 70K · GOAT 200K. The follower
+  curve is roughly linear (views saturate via `sizeF`), so p90 ≈ 2× p50 for
+  every persona and a wider Star→GOAT gap is not available without
+  reshaping growth. Ending copy now reads the thresholds from CONFIG.
+- **Optimizer** (best persona) median: ~104K followers, 136K views/week,
+  Star 54% / GOAT 15%.
+
+### Open items after A (for B/C or a later balance pass)
+- Cash is still meaningless for non-Studio winners — needs another sink
+  (B's events: tax bill, editor quitting, etc.) rather than more knob work.
+- Star→GOAT gap is only ~2.9×; consider late-game compounding (a
+  "breakout" mechanic) if the top ending should feel rarer.
+- The Optimizer persona spreads posts across four platforms, which the
+  engine punishes (split `sizeF`, low-loyalty platforms); a concentrating
+  optimizer would score higher. Persona design, not a balance bug.
 
 ## 6. Simulator
 

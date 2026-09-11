@@ -76,9 +76,7 @@
   .meter .mval{font-family:var(--font-mono); font-size:12.5px; font-variant-numeric:tabular-nums}
   .bar{height:7px; border-radius:var(--radius-pill); background:rgba(148,163,184,.14); overflow:hidden; position:relative}
   .bar > i{position:absolute; inset:0 auto 0 0; width:0; border-radius:var(--radius-pill); transition:width var(--dur-slow) var(--ease-emphasis)}
-  .fill-energy{background:var(--color-status-warning)}
   .fill-rep{background:var(--color-accent-vivid)}
-  .fill-skill{background:var(--color-status-info)}
   .money{padding:0 17px 16px; display:flex; gap:10px}
   .stat{flex:1; background:var(--bg-deep); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:10px 12px}
   .stat .k{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-2)}
@@ -104,8 +102,6 @@
   .stage{min-height:400px; display:flex; flex-direction:column}
   .stagehead{padding:15px 19px; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; gap:12px}
   .stagehead h2{margin:0; font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:17px; letter-spacing:-.01em}
-  .energypill{font-family:var(--font-mono); font-size:12px; color:var(--color-status-warning);
-    border:1px solid rgba(245,158,11,.28); background:rgba(245,158,11,.08); padding:5px 11px; border-radius:var(--radius-pill); white-space:nowrap}
   .movelabel{padding:14px 18px 4px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--fg-3)}
 
   .moves{padding:6px 17px 4px; display:grid; grid-template-columns:1fr 1fr; gap:10px}
@@ -147,8 +143,7 @@
   .choice{text-align:left; cursor:pointer; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:12px 14px;
     background:var(--bg-card-soft); color:var(--fg-1); font-family:inherit; display:flex; gap:11px; align-items:flex-start;
     transition:transform var(--dur-fast) var(--ease-standard), border-color var(--dur-base), background var(--dur-base)}
-  .choice:hover{transform:translateX(3px); background:rgba(30,41,59,.9)}
-  .choice.repair:hover{border-color:var(--color-accent-vivid)} .choice.neutral:hover{border-color:var(--color-status-info)} .choice.escalate:hover{border-color:var(--color-status-error)}
+  .choice:hover{transform:translateX(3px); background:rgba(30,41,59,.9); border-color:var(--border-strong)}
   .choice .ci{font-size:18px; flex:none; margin-top:1px}
   .choice b{font-weight:var(--fw-bold)} .choice span{display:block; font-size:12px; color:var(--fg-2); margin-top:2px}
 
@@ -201,6 +196,29 @@
   .substack-cta .sc-copy{display:block; font-size:13px; color:var(--fg-2); line-height:1.5}
   .substack-cta .sc-go{display:block; margin-top:7px; font-weight:var(--fw-bold); font-size:14px; color:var(--color-accent-vivid)}
 
+  /* ---------- stress bands, angle badges, slot pill, team panel ---------- */
+  .fill-stress{background:var(--color-status-info)}
+  .fill-stress.hot{background:var(--color-status-warning)}
+  .fill-stress.fumes,.fill-stress.redline{background:var(--color-status-error)}
+  .fill-stress.redline{animation:pulse 1s infinite}
+  .mband{font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; margin-left:8px; color:var(--fg-3)}
+  .mband.hot{color:var(--color-status-warning)} .mband.fumes,.mband.redline{color:var(--color-status-error)}
+  .abadge{font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; padding:2px 7px; border-radius:var(--radius-pill); border:1px solid var(--border-subtle); text-transform:uppercase}
+  .abadge.trend{color:var(--color-status-info); border-color:rgba(59,130,246,.4)}
+  .abadge.evergreen{color:var(--fg-2); border-color:var(--border-default)}
+  .abadge.personal{color:var(--color-status-warning); border-color:rgba(245,158,11,.4)}
+  .slotpill{font-family:var(--font-mono); font-size:12px; color:var(--fg-2); border:1px solid var(--border-subtle); background:var(--bg-deep); padding:5px 11px; border-radius:var(--radius-pill); white-space:nowrap}
+  .slotpill b{color:var(--color-accent-vivid); font-weight:500}
+  .move .topic{display:block; font-weight:var(--fw-bold); font-size:14px; line-height:1.3}
+  .team{margin:4px 17px 8px; border:1px solid var(--border-subtle); border-radius:var(--radius-lg); background:var(--bg-deep); overflow:hidden}
+  .trow{display:flex; align-items:center; gap:12px; padding:10px 13px; border-top:1px solid var(--border-subtle); font-size:13px}
+  .trow:first-child{border-top:0}
+  .trow .te{font-size:18px; flex:none} .trow .tt{flex:1} .trow .tt b{display:block} .trow .tt span{font-size:11.5px; color:var(--fg-2)}
+  .trow .tcost{font-family:var(--font-mono); font-size:11px; color:var(--fg-3); white-space:nowrap}
+  .tbtn{font-family:var(--font-sans); font-weight:var(--fw-bold); font-size:12px; padding:7px 12px; border-radius:var(--radius-md); cursor:pointer; border:1px solid var(--border-strong); background:transparent; color:var(--fg-1)}
+  .tbtn.hire{border-color:var(--color-accent-vivid); color:var(--color-accent-vivid)} .tbtn:disabled{opacity:.4; cursor:not-allowed}
+  .tnote{padding:9px 13px; font-size:11.5px; color:var(--fg-3); border-top:1px solid var(--border-subtle)}
+
   .hidden{display:none!important}
   @media (prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important; transition-duration:.001ms!important} }
 </style>
@@ -225,15 +243,14 @@
         <div><h2 id="channame">Your Channel</h2><span class="nichebadge" id="nichebadge">—</span></div>
       </div>
       <div class="meters">
-        <div class="meter"><div class="mtop"><span class="mname">⚡ Energy</span><span class="mval mono" id="v-energy">100</span></div><div class="bar"><i class="fill-energy" id="b-energy"></i></div></div>
+        <div class="meter"><div class="mtop"><span class="mname">🌡️ Stress<span class="mband" id="v-band"></span></span><span class="mval mono" id="v-stress">20</span></div><div class="bar"><i class="fill-stress" id="b-stress"></i></div></div>
         <div class="meter"><div class="mtop"><span class="mname">💚 Reputation</span><span class="mval mono" id="v-rep">60</span></div><div class="bar"><i class="fill-rep" id="b-rep"></i></div></div>
-        <div class="meter"><div class="mtop"><span class="mname">🎬 Skill</span><span class="mval mono" id="v-skill">18</span></div><div class="bar"><i class="fill-skill" id="b-skill"></i></div></div>
       </div>
       <div class="money">
         <div class="stat"><div class="k">Bank</div><div class="v mono pos" id="v-cash">$900</div></div>
-        <div class="stat"><div class="k">Weekly costs</div><div class="v mono neg" id="v-rent">-$120</div></div>
+        <div class="stat"><div class="k">Overhead</div><div class="v mono neg" id="v-rent">-$120</div></div>
       </div>
-      <div class="helpline" id="helpline">Energy is your only real limit — you can't feed every platform every week. Choose where your attention goes.</div>
+      <div class="helpline" id="helpline">Two content slots and one business slot a week. Leaving a slot empty is how you rest — stress is the one number that ends runs.</div>
     </div>
 
     <div>
@@ -242,7 +259,7 @@
         <div class="chanrow" id="chanrow"></div>
       </div>
       <div class="panel stage" id="stage">
-        <div class="stagehead"><h2 id="stagetitle">This Week</h2><span class="energypill" id="energypill">⚡ 100 energy left</span></div>
+        <div class="stagehead"><h2 id="stagetitle">This Week</h2><span class="slotpill" id="slotpill"><b>2</b> content · <b>1</b> business</span></div>
         <div id="stagebody"></div>
       </div>
       <div class="feed">
@@ -289,11 +306,11 @@
 (function(){
   "use strict";
   const E = window.FeedEngine;
-  const { PLATFORMS, NICHES, TIERS, PORDER, fmt, money, clamp } = E;
+  const { PLATFORMS, NICHES, TIERS, PORDER, ANGLES, HIRES, HORDER, fmt, money, clamp } = E;
   const $ = id => document.getElementById(id);
   const pick = a => a[Math.floor(Math.random()*a.length)];
 
-  let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {};
+  let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {}, teamOpen = false;
 
   // ---------- sound (Kenney CC0 interface pack, via Web Audio) ----------
   const SFX = (function(){
@@ -317,8 +334,8 @@
   document.addEventListener('pointerdown', ()=>SFX.unlock(), { once:true });
   // pick the most salient sound implied by an effect-log
   function logSound(log){ if(!log)return null; const f=log.floats||[], fe=log.feed||[];
-    if(fe.some(x=>/leveled up/.test(x.text))) return 'level';
-    if(f.some(x=>x.tone==='hit')) return 'hit';
+    if(fe.some(x=>/leveled up|signed the lease/.test(x.text))) return 'level';
+    if(f.some(x=>x.tone==='hit')||fe.some(x=>x.kind==='big')) return 'hit';
     if(fe.some(x=>x.kind==='bad')) return 'bad';
     if(f.some(x=>x.tone==='cash')) return 'cash';
     if(f.some(x=>x.tone==='gain'||x.tone==='up')) return 'post';
@@ -328,13 +345,11 @@
   const N = () => NICHES[S.niche];
   const activePlats = () => E.activePlats(S);
   const totalFollowers = () => E.totalFollowers(S);
-  const skillCap = () => E.skillCap(S);
-  const rent = () => E.rent(S);
   const platTier = p => E.platTier(S, p);
 
   function newGame(name, niche, home){
     SFX.unlock(); SFX.play('level');
-    S = E.newState(niche, home); S.name = name || 'untitled';
+    S = E.newState(niche, home); S.name = name || 'untitled'; teamOpen = false;
     pushFeed(NICHES[niche].emoji, `Channel created on ${PLATFORMS[home].name}. The first post is always the hardest.`, '');
     E.buildHand(S); render(); openClose($('startOverlay'), false);
   }
@@ -342,7 +357,7 @@
   // ---------- feedback layer: turn engine logs into pops / feed / bumps ----------
   const TONE = { hit:'var(--color-accent-vivid)', gain:'var(--color-accent-signal)', cash:'var(--color-accent-vivid)',
                  up:'var(--color-accent-signal)', loss:'var(--color-status-error)', down:'var(--color-status-error)' };
-  function anchorId(a){ if(a==='cash')return 'v-cash'; if(a==='rep')return 'v-rep'; if(a==='skill')return 'v-skill';
+  function anchorId(a){ if(a==='cash')return 'v-cash'; if(a==='rep')return 'v-rep'; if(a==='stress')return 'v-stress';
     if(a.indexOf('plat:')===0)return 'cc-'+a.slice(5); return null; }
   function applyLog(log){ if(!log)return;
     (log.floats||[]).forEach(f=>floatDelta(anchorId(f.anchor), f.text, TONE[f.tone]||'var(--fg-1)'));
@@ -350,42 +365,37 @@
     (log.bump||[]).forEach(k=>{ bumped[k]=true; });
     SFX.play(logSound(log));
   }
-  function pushFeed(e,t,k){ S.feed = S.feed||[]; S.feed.unshift({e,t,k:k||''}); if(S.feed.length>7)S.feed.pop(); }
+  function pushFeed(e,t,k){ S.feed = S.feed||[]; S.feed.unshift({e,t,k:k||''}); if(S.feed.length>8)S.feed.pop(); }
   function floatDelta(id,text,color){ const a=id&&$(id); if(!a)return; const r=a.getBoundingClientRect();
     const el=document.createElement('div'); el.className='flt'; el.textContent=text; el.style.color=color;
     el.style.left=(r.left+r.width/2-12+(Math.random()*16-8))+'px'; el.style.top=(r.top-4)+'px';
     $('floats').appendChild(el); setTimeout(()=>el.remove(),1200); }
 
   // ---------- actions ----------
-  function takeMove(i){ const m=S.hand[i]; if(!m||m.energy>S.energy)return; applyLog(E.applyMove(S,m)); E.buildHand(S); render(); }
-  const bizDo = id => { applyLog(E.biz[id](S)); E.buildHand(S); render(); };
-
-  function endWeek(){ E.settleWeek(S); const ev=E.rollEvent(S);
+  function takeMove(i){ const m=S.hand[i]; if(!m||S.slots.content<=0)return; applyLog(E.applyMove(S,m)); E.buildHand(S); render(); }
+  function bizDo(id, role){ applyLog(E.biz[id](S, role)); E.buildHand(S); render(); }
+  function endWeek(){ applyLog(E.settleWeek(S)); const ev=E.rollEvent(S);
     if(ev){ S.event=ev; S.phase='event'; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
   function advance(){ E.advanceWeek(S); if(E.checkEndings(S)){ endGame(S.endKey); return; } S.phase='play'; E.buildHand(S); render(); }
   function chooseEvent(i){ applyLog(E.applyEventChoice(S, S.event, i)); S.event=null; advance(); }
-  function restWeek(){ applyLog(E.biz.rest(S)); endWeek(); }
 
   // ---------- move display (presentation of the engine's hand) ----------
   function moveView(m){
     if(m.kind==='start'){ const pf=PLATFORMS[m.pkey];
-      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a second front (${pf.tag}). More reach, but another mouth to feed each week.`,
-        flags:[['+platform','up'],['-'+m.energy+' ⚡','en']] }; }
+      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, another mouth to feed each week.`,
+        flags:[['+platform','up'],['+'+m.stress+' stress','en']] }; }
     if(m.kind==='crosspost'){
       return { ico:'🔗', label:`Cross-post ${PLATFORMS[m.src].name} → ${PLATFORMS[m.dst].name}`,
         desc:`Funnel your ${PLATFORMS[m.src].name} audience to your smaller ${PLATFORMS[m.dst].name}.`,
-        flags:[['🔗 Funnel','up'],['-'+m.energy+' ⚡','en']] }; }
-    const pf=PLATFORMS[m.pkey], flags=[];
-    let ico=pf.emoji, label='Post '+pf.fmt;
-    if(m.ride){ ico='🌊'; label='Ride the wave on '+pf.name; flags.push(['🔥 Momentum','hot']); }
-    else if(m.revive){ ico='🔁'; label='Revive '+pf.name; flags.push(['🔁 Comeback','up']); }
-    if(m.heat>=52) flags.push(['🔥 Hot','hot']);
+        flags:[['🔗 Funnel','up'],['+'+m.stress+' stress','en']] }; }
+    const pf=PLATFORMS[m.pkey], A=ANGLES[m.angle], flags=[[A.label, 'angle '+m.angle]];
+    if(m.ride) flags.push(['🔥 Ride the wave','hot']);
+    else if(m.heat>=52) flags.push(['🔥 Hot','hot']);
     if(m.proven && m.fatigue<45) flags.push(['⭐ Proven','up']);
     if(m.fatigue>=52) flags.push(['😴 Fatigued','dn']);
-    flags.push(['-'+m.energy+' ⚡','en']);
-    const outlook = (m.mod||1)>=1.4?'primed to pop':(m.mod||1)>=1.05?'in a good spot':(m.mod||1)<=0.7?'burning out this audience':'steady';
-    const loy = pf.loyal>=1.4?'very high':pf.loyal>=1.1?'high':pf.loyal>=.8?'medium':'low';
-    return { ico, label, desc:`${pf.tag} · loyalty ${loy} · ${outlook}.`, flags };
+    flags.push(['+'+m.stress+' stress','en']);
+    const outlook = (m.mod||1)>=1.4?'primed to pop':(m.mod||1)>=1.05?'in a good spot':(m.mod||1)<=0.7?'this audience is tired':'steady';
+    return { ico:pf.emoji, label:m.topic, topic:true, desc:`${pf.name} · ${A.tag} · ${outlook}.`, flags };
   }
 
   // ---------- channel SVG (levels up visually with tier) ----------
@@ -416,24 +426,27 @@
   }
 
   // ---------- render ----------
+  const BAND_LABEL = { normal:'', hot:'running hot', fumes:'on fumes', redline:'redline' };
   function render(){ if(!S)return;
     $('channame').textContent=S.name; $('avatar').textContent=N().emoji;
     $('nichebadge').textContent=N().label+' · '+N().blurb;
     $('totfollow').textContent=fmt(totalFollowers());
     $('weekchip').textContent='WEEK '+String(Math.min(S.week,52)).padStart(2,'0')+' / 52';
-    setMeter('energy',S.energy); setMeter('rep',S.rep); setMeter('skill',S.skill,skillCap());
+    const band=E.stressBand(S);
+    setMeter('stress',S.stress); $('b-stress').className='fill-stress '+band; $('v-band').className='mband '+band; $('v-band').textContent=BAND_LABEL[band];
+    setMeter('rep',S.rep);
     const c=$('v-cash'); c.textContent=money(S.cash); c.className='v mono '+(S.cash<0?'neg':'pos');
-    $('v-rent').textContent='-'+money(rent());
-    $('energypill').textContent='⚡ '+Math.round(S.energy)+' energy left';
+    const ob=E.overheadBreakdown(S); $('v-rent').textContent='-'+money(ob.total);
+    $('helpline').textContent=`Overhead: ${money(ob.base)} living + ${money(ob.platforms)} platforms`+(ob.payroll?` + ${money(ob.payroll)} payroll`:'')+(ob.lease?` + ${money(ob.lease)} studio lease`:'')+'. Leaving a slot empty is how you rest.';
+    $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     renderChannels();
     if(S.phase==='event'&&S.event) renderEvent(); else renderMoves();
     renderFeed();
   }
-  function setMeter(k,v,max){ max=max||100; $('b-'+k).style.width=clamp(v/max*100,0,100)+'%';
-    $('v-'+k).textContent=Math.round(v)+(k==='skill'?'/'+Math.round(max):''); }
+  function setMeter(k,v){ $('b-'+k).style.width=clamp(v,0,100)+'%'; $('v-'+k).textContent=Math.round(v); }
 
   function renderChannels(){ const row=$('chanrow'); const act=activePlats();
-    $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet');
+    $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet')+(E.hasStudio(S)?' · 🏢 studio':'');
     row.innerHTML=act.map(p=>{ const t=platTier(p);
       return `<div class="chancard ${bumped[p.key]?'up':''}" data-k="${p.key}">${channelSVG(p)}
         <div class="chanmeta"><span class="tl"><b>${TIERS[t]}</b> tier</span>
@@ -442,32 +455,41 @@
   }
 
   function renderMoves(){
-    $('stagetitle').textContent='Week '+Math.min(S.week,52)+' — where does your energy go?';
-    const canDeal=totalFollowers()>=1000, nx=S.gear+1, gearCost=E.CONFIG.gearCost[nx];
-    const canPaid=S.members===0&&totalFollowers()>=E.CONFIG.paidUnlock;
+    $('stagetitle').textContent='Week '+Math.min(S.week,52)+' — what are you making?';
+    const noContent=S.slots.content<=0, noBiz=S.slots.business<=0;
     const moveHTML=S.hand.map((m,i)=>{ const v=moveView(m);
-      return `<button class="move ${m.special?'special':''}" data-i="${i}" ${m.energy>S.energy?'disabled':''}>
-        <span class="ico">${v.ico}</span><span><span class="mt">${v.label}</span><span class="md">${v.desc}</span>
-        <span class="flags">${v.flags.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`; }).join('');
+      return `<button class="move ${m.special?'special':''}" data-i="${i}" ${noContent?'disabled':''}>
+        <span class="ico">${v.ico}</span><span><span class="${v.topic?'topic':'mt'}">${v.topic?'‘'+v.label+'’':v.label}</span><span class="md">${v.desc}</span>
+        <span class="flags">${v.flags.map(f=>f[1].indexOf('angle ')===0?`<span class="abadge ${f[1].slice(6)}">${f[0]}</span>`:`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`; }).join('');
+    const canDeal=totalFollowers()>=1000, up=E.upgradeInfo(S), canPaid=S.members===0&&totalFollowers()>=E.CONFIG.paidUnlock;
     const biz=[
-      {id:'grind',ic:'🎓',t:'Study the craft',d:'Raise your skill ceiling (gear caps how high).',on:S.energy>=15,f:[['-15 ⚡','en'],['+skill','up']]},
-      {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:S.energy>=10,f:[['-10 ⚡','en'],['+rep','up']]},
-      {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow.':'Locked — reach 1K total first.',on:canDeal&&S.energy>=10,f:[['-10 ⚡','en'],['+$$','mo'],['-rep','dn']]},
-      canPaid?{id:'paid',ic:'⭐',t:'Launch paid membership',d:'Convert true fans into recurring income.',on:S.energy>=12,f:[['-12 ⚡','en'],['+members','up']]}
-             :{id:'upgrade',ic:'🛠️',t:nx<=3?'Upgrade gear ('+money(gearCost)+')':'Studio maxed',d:nx<=3?'Better videos + higher skill ceiling across all channels.':'Full rig — nothing left to buy.',on:nx<=3&&S.cash>=gearCost,f:nx<=3?[['-'+money(gearCost),'dn'],['+quality','up']]:[]},
+      {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
+      {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked — reach 1K total first.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
+      up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
+        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team — and +'+money(E.CONFIG.studioLease)+'/week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
+        :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel (+10% views).':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+quality','up']]},
+      S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
+        :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked — reach '+fmt(E.CONFIG.paidUnlock)+' total first.',on:canPaid&&!noBiz,f:[['+members','up']]},
+      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Every role is a weekly salary.',on:true,f:[]},
     ];
-    const bizHTML=biz.map(b=>`<button class="move" data-biz="${b.id}" ${b.on?'':'disabled'}>
+    const bizHTML=biz.map(b=>`<button class="move ${b.id==='team'&&teamOpen?'special':''}" data-biz="${b.id}" ${b.on?'':'disabled'}>
       <span class="ico">${b.ic}</span><span><span class="mt">${b.t}</span><span class="md">${b.d}</span>
       <span class="flags">${b.f.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`).join('');
-    $('stagebody').innerHTML=`<div class="movelabel">📣 Content moves — this week's hand adapts to your history</div>
+    const teamHTML = !teamOpen ? '' : `<div class="team">${HORDER.map(r=>{ const h=HIRES[r], info=E.hireInfo(S,r), have=S.hires[r];
+        return `<div class="trow"><span class="te">${h.emoji}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
+          <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
+          ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}
+      <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot.</div></div>`;
+    $('stagebody').innerHTML=`<div class="movelabel">📣 Content — pick up to ${E.CONFIG.slotsContent}. Angles are trade-offs, not grades.</div>
       <div class="moves">${moveHTML}</div>
-      <div class="movelabel">🧰 Studio &amp; business</div>
-      <div class="moves">${bizHTML}</div>
-      <div class="stagefoot"><button class="btn primary" id="endWeekBtn">End the week ▸</button>
-        <button class="btn ghost" id="restBtn">😌 Rest &amp; recover</button></div>`;
+      <div class="movelabel">🧰 Business — one a week</div>
+      <div class="moves">${bizHTML}</div>${teamHTML}
+      <div class="stagefoot"><button class="btn primary" id="endWeekBtn">End the week ▸</button></div>`;
     $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
-    $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo(b.dataset.biz); });
-    $('endWeekBtn').onclick=endWeek; $('restBtn').onclick=restWeek;
+    $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; if(b.dataset.biz==='team'){ teamOpen=!teamOpen; SFX.play('click'); render(); return; } bizDo(b.dataset.biz); });
+    $('stagebody').querySelectorAll('[data-hire]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo('hire', b.dataset.hire); });
+    $('stagebody').querySelectorAll('[data-fire]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo('fire', b.dataset.fire); });
+    $('endWeekBtn').onclick=endWeek;
   }
 
   function renderEvent(){
@@ -477,18 +499,18 @@
       <span class="ebadge ${cls}">${ev.kind==='hostile'?'⚠️ ':'✦ '}${ev.badge}</span>
       <div class="ehead"><div class="eemoji">${ev.emoji}</div><h2>${ev.title}</h2></div>
       <p class="etext">${ev.text}</p>
-      <div class="choices">${ev.choices.map((c,i)=>`<button class="choice ${c.t}" data-i="${i}"><span class="ci">${c.ci}</span><span><b>${c.label}</b><span>${c.desc}</span></span></button>`).join('')}</div>
+      <div class="choices">${ev.choices.map((c,i)=>`<button class="choice" data-i="${i}"><span class="ci">${c.ci}</span><span><b>${c.label}</b><span>${c.desc}</span></span></button>`).join('')}</div>
     </div>`;
     $('stagebody').querySelectorAll('.choice').forEach(b=>b.onclick=()=>chooseEvent(+b.dataset.i));
   }
   function renderFeed(){ $('feedlist').innerHTML=(S.feed||[]).map(f=>`<div class="fitem ${f.k}"><span class="fe">${f.e}</span><span>${f.t}</span></div>`).join(''); }
 
   // ---------- endings ----------
-  function endGame(key){ S.phase='end'; SFX.play(['goat','star','legend'].indexOf(key)>=0?'win':'lose'); const e=E.ENDINGS[key];
+  function endGame(key){ S.phase='end'; SFX.play(['goat','star','legend'].indexOf(key)>=0?'win':'lose'); const e=E.endingText(S,key);
     $('endEmoji').textContent=e.emoji; $('endKicker').textContent='Ending · '+e.kicker;
     $('endTitle').textContent=e.title; $('endBlurb').textContent=e.blurb; $('endLesson').textContent='“'+e.lesson+'”';
-    $('endStats').innerHTML=[['Total following',fmt(totalFollowers())],['Weeks',Math.min(S.week-1,52)+' / 52'],
-      ['Platforms run',activePlats().length],['Bank',money(S.cash)]].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+    $('endStats').innerHTML=[['Total following',fmt(totalFollowers())],['Total views',fmt(S.totalViews)],['Weeks',Math.min(S.week-1,52)+' / 52'],
+      ['Platforms run',activePlats().length],['Bank',money(S.cash)],['Peak overhead',money(S.peakOverhead)+'/wk']].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
     render(); openClose($('endOverlay'),true);
   }
   function openClose(el,show){ el.classList.toggle('hidden',!show); }
@@ -497,7 +519,7 @@
   function buildStart(){
     $('nichegrid').innerHTML=Object.entries(NICHES).map(([k,n])=>`<div class="pick ${k===selNiche?'sel':''}" data-k="${k}"><span class="pe">${n.emoji}</span><span class="pl">${n.label}</span><span class="pm">${n.blurb}</span></div>`).join('');
     $('homegrid').innerHTML=PORDER.filter(k=>PLATFORMS[k].unlock===0).map(k=>{const p=PLATFORMS[k];
-      return `<div class="pick ${k===selHome?'sel':''}" data-k="${k}"><span class="pe">${p.emoji}</span><span class="pl">${p.name}</span><span class="pm">${p.tag}</span></div>`;}).join('');
+      return `<div class="pick ${k===selHome?'sel':''}" data-k="${k}"><span class="pe">${p.emoji}</span><span class="pl">${p.name}</span><span class="pm">${p.tag} · +${p.stress} stress</span></div>`;}).join('');
     $('nichegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{SFX.unlock(); SFX.play('click'); selNiche=el.dataset.k; $('nichegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
     $('homegrid').querySelectorAll('.pick').forEach(el=>el.onclick=()=>{SFX.unlock(); SFX.play('click'); selHome=el.dataset.k; $('homegrid').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===el));});
   }

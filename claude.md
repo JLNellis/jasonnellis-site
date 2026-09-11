@@ -226,9 +226,14 @@ backlog (leaderboard + OpenMoji, both deferred) live in
 **`the-feed-BACKLOG.md`** — read it before touching the game. Key facts:
 
 - Mechanics/economy/balance are in **`the-feed-engine.js`** (single source of
-  truth, `CONFIG` block); imported by both the game and the balance simulator
-  `tools/the-feed-sim.js`. To rebalance: edit `CONFIG`, run
-  `node tools/the-feed-sim.js`.
+  truth, `CONFIG` block); imported by the game, the balance simulator
+  `tools/the-feed-sim.js` and the tests `tools/the-feed-test.js`. To
+  rebalance: edit `CONFIG`, run `npm run sim` (exits non-zero if the six
+  balance targets fail). `npm test` runs the deterministic engine tests.
+- The week loop is **2 content slots + 1 business slot**; **stress** (not
+  energy) is the health meter; content cards are platform × angle
+  (Trend / Evergreen / Personal) × an authored topic line. There is no skill
+  stat. See `the-feed-BACKLOG.md` for the full mechanical summary.
 - `the-feed.html` is standalone (does NOT load `nav.js`) — so its Plausible
   snippet is inline, and it's styled via Bolt OS tokens from
   `colors_and_type.css`.

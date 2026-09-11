@@ -5,7 +5,9 @@
   "description": "jasonnellis.com — static site, Eleventy builds the essay archive only",
   "scripts": {
     "build": "eleventy",
-    "serve": "eleventy --serve"
+    "serve": "eleventy --serve",
+    "test": "node tools/the-feed-test.js",
+    "sim": "node tools/the-feed-sim.js"
   },
   "repository": {
     "type": "git",

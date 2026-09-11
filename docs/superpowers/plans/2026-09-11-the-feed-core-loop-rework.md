@@ -239,7 +239,7 @@ Replace the whole `CONFIG` block in `the-feed-engine.js` with:
     topicCooldown: 8,
     // money
     bankruptFloor: -1500,
-    dealBase: 90, dealScale: 0.018,
+    dealBase: 90, dealScale: 0.018, dealRepBase: 0.6,
     paidUnlock: 1500, memberRate: 6, memberConvMin: 0.02, memberConvMax: 0.045,
     memberNewConv: 0.025, memberChurn: 0.03, memberChurnIdle: 0.06,
     // gear: tiers 1-3 are kit, tier 4 is the Studio
@@ -939,12 +939,15 @@ test('settleWeek returns a log and charges overhead, tracking the peak', () => {
 });
 test('evergreen tails pay out 15% of views for 4 weeks then expire', () => {
   const S = mk(); S.slots.content = 0; // no empty-slot bonus noise
-  S.tails.push({ pkey: 'longform', topic: 'T', views: 10000, weeksLeft: 4 });
+  S.plats.longform.lastPost = S.week; // posted this week → not idle, so base churn applies
+  S.tails.push({ pkey: 'longform', topic: 'T', views: 10000, weeksLeft: E.CONFIG.tailWeeks });
   const f0 = S.plats.longform.followers, cash0 = S.cash;
   const log = E.settleWeek(S);
-  const expectedGain = Math.round(1500 * E.CONFIG.baseConv * E.PLATFORMS.longform.loyal * E.ANGLES.evergreen.conv);
-  assert.strictEqual(S.plats.longform.followers - f0 + Math.round(f0 * E.CONFIG.churnBase), expectedGain, 'tail gain (after base churn)');
-  assert.strictEqual(S.totalViews, 1500);
+  const tailViews = Math.round(10000 * E.CONFIG.tailRate);
+  const expectedGain = Math.round(tailViews * E.CONFIG.baseConv * E.PLATFORMS.longform.loyal * E.ANGLES.evergreen.conv);
+  const afterTail = f0 + expectedGain; // churn is applied to the post-tail count
+  assert.strictEqual(S.plats.longform.followers, afterTail - Math.round(afterTail * E.CONFIG.churnBase), 'tail gain, then base churn');
+  assert.strictEqual(S.totalViews, tailViews);
   assert.ok(S.cash > cash0 - E.overhead(S), 'tail revenue landed');
   assert.ok(log.feed.some(f => /still getting found/.test(f.text)));
   assert.strictEqual(S.tails[0].weeksLeft, 3);
@@ -974,16 +977,18 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * .02));
   assert.ok(log2.feed.some(f => /unfollowed/.test(f.text)), 'idle churn is loud');
 });
-test('stress recovers 12 + 8 per empty content slot; bands log on change; redline streak counts', () => {
+test('stress: band + redline streak judged before recovery; recovery is 12 + 8 per empty slot', () => {
   const S = mk(); S.stress = 60; S.slots.content = 2;
-  let log = E.settleWeek(S); assert.strictEqual(S.stress, 60 - 12 - 16);
-  assert.ok(log.feed.some(f => /stress/i.test(f.text)), 'band went hot→normal, logged');
-  assert.strictEqual(S.band, 'normal');
+  let log = E.settleWeek(S);
+  assert.strictEqual(S.band, 'hot'); assert.ok(log.feed.some(f => /running hot/.test(f.text)), 'normal→hot logged');
+  assert.strictEqual(S.stress, 60 - E.CONFIG.stressRecover - 2 * E.CONFIG.stressRecoverPerEmptySlot);
   S.stress = 95; S.slots.content = 0; log = E.settleWeek(S);
-  assert.strictEqual(S.stress, 83); assert.strictEqual(S.band, 'fumes'); assert.strictEqual(S.redlineStreak, 0, 'ended the week below 90');
-  S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 1);
+  assert.strictEqual(S.band, 'redline'); assert.strictEqual(S.redlineStreak, 1);
+  assert.ok(log.feed.some(f => /REDLINE/.test(f.text)), 'hot→redline logged');
+  assert.strictEqual(S.stress, 95 - E.CONFIG.stressRecover);
   S.stress = 100; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 2);
-  S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets');
+  S.stress = 60; E.settleWeek(S); assert.strictEqual(S.redlineStreak, 0, 'streak resets'); assert.strictEqual(S.band, 'hot');
+  S.stress = 30; log = E.settleWeek(S); assert.strictEqual(S.band, 'normal'); assert.ok(log.feed.some(f => /under control/.test(f.text)), 'hot→normal logged');
 });
 ```
 
@@ -1031,11 +1036,12 @@ test('stress recovers 12 + 8 per empty content slot; bands log on change; redlin
     if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people unfollowed this week. Silence and old trend-chasers both bleed.`, kind: 'bad' });
     // heat / fatigue decay
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
-    // stress: recover, then band + burnout streak
-    addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
+    // stress: judge the band + burnout streak on the stress you ended the week's work at,
+    // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
     const band = stressBand(S);
     if (band !== S.band) { log.feed.push(BAND_MSG[band]); S.band = band; }
     S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
+    addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
     S.newFollowers = 0;
     return log;
   }
@@ -1074,7 +1080,8 @@ test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens r
   S.plats.longform.followers = 10000;
   E.setRng(seeded(5)); const lo = mk(); lo.plats.longform.followers = 10000; lo.rep = 40; const c0 = lo.cash; E.biz.deal(lo);
   E.setRng(seeded(5)); const hi = mk(); hi.plats.longform.followers = 10000; hi.rep = 80; const c1 = hi.cash; E.biz.deal(hi);
-  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - 1.5) < 0.01, 'rep 80 pays 1.5x rep 40');
+  const expectRatio = (E.CONFIG.dealRepBase + 0.8) / (E.CONFIG.dealRepBase + 0.4); // 1.4 at base 0.6
+  assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - expectRatio) < 0.01, `rep 80 pays ${expectRatio.toFixed(2)}x rep 40`);
   E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
   assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
   assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
@@ -1143,7 +1150,7 @@ test('no engine code references energy or skill', () => {
       const log = L(); log.floats.push({ anchor: 'rep', text: '+' + r.toFixed(1), tone: 'up' });
       log.feed.push({ emoji: '💬', text: 'Showed up in the comments and DMs. The core crowd feels seen.', kind: 'good' }); return log; },
     deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, 4);
-      const repMult = 0.6 + S.rep / 100, mgr = S.hires.manager;
+      const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
       const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);
       S.cash += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
@@ -1167,8 +1174,8 @@ test('no engine code references energy or skill', () => {
   // choice.t ∈ repair | neutral | escalate  (personas pick by this tag)
   // choice.apply(S) -> effect log
   const fed = (e, t, k) => { const log = L(); log.feed.push({ emoji: e, text: t, kind: k || '' }); return log; };
-  // a "bad" outcome that also costs followers on your biggest channel
-  const hurt = (S, e, t, fracLo, fracHi) => { const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, `${t} −${fmt(n)} followers.`, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + strongest(S).key, text: '-' + fmt(n), tone: 'loss' }); return log; };
+  // a "bad" outcome that also costs followers on your biggest channel (anchor captured BEFORE the loss shrinks it)
+  const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, `${t} −${fmt(n)} followers.`, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
   const EVENTS = [
     { kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
       text: 'One upload is spiking to people who have never heard of you. The window is open.',
@@ -1337,10 +1344,10 @@ No unit tests for the sim itself — it *is* the test for balance. The check is 
  * ------------------------------------------------------------------
  */
 const E = require('../the-feed-engine.js');
-const { CONFIG, HORDER, fmt, totalFollowers, activePlats } = E;
+const { CONFIG, HORDER, fmt, totalFollowers, activePlats, pick } = E;
 
 if (process.env.SEED) { let s = parseInt(process.env.SEED, 10) >>> 0; E.setRng(() => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }); }
-const pick = a => a[Math.floor(Math.random() * a.length)];
+// pick / rint / chance come from the engine so SEED= makes the whole run reproducible.
 
 // ======================= persona helpers =======================
 // A persona's act(S) returns ONE action per call; the runner keeps calling until
@@ -1389,9 +1396,10 @@ const PERSONAS = {
     if (content(S)) { let i = H.byAngle(S, 'trend'); if (i < 0) i = H.bestMod(S); if (i >= 0) return { card: i }; }
     return { end: true };
   } },
-  // Watches stress, favours evergreen, hires an editor + mod, never buys the Studio. Target: Niche Legend.
+  // Watches stress, favours evergreen, runs two platforms, hires an editor + mod, never buys the Studio. Target: Niche Legend.
   'The Sustainable': { home: 'longform', eventPref: ['repair', 'neutral', 'escalate'], act(S) {
     if (content(S)) {
+      const st = H.start(S); if (st >= 0 && activePlats(S).length < 2 && S.stress < 40) return { card: st };
       const heavyOk = S.stress < 50, anyOk = S.stress < 65;
       if (S.slots.content === CONFIG.slotsContent || heavyOk) {
         if (anyOk) { const r = H.ride(S); if (r >= 0) return { card: r }; let i = H.byAngle(S, 'evergreen'); if (i < 0) i = H.lightest(S); if (i >= 0 && (heavyOk || S.hand[i].stress <= 10)) return { card: i }; }
@@ -1442,7 +1450,7 @@ function resolveEvent(S, ev, persona) {
   const prefs = persona.eventPref || ['repair', 'neutral', 'escalate'];
   let idx = -1;
   for (const tag of prefs) { idx = ev.choices.findIndex(c => c.t === tag); if (idx >= 0) break; }
-  if (idx < 0) idx = Math.floor(Math.random() * ev.choices.length);
+  if (idx < 0) idx = E.rint(0, ev.choices.length - 1);
   E.applyEventChoice(S, ev, idx);
 }
 function playWeek(S, persona) {
@@ -1529,8 +1537,10 @@ function printReport(results, N) {
   const o = R('The Optimizer');
   checks.push([pct(o.dist.star, N) >= 50 && pct(o.dist.goat, N) >= 10 && pct(o.dist.goat, N) <= 25 && pct(total.goat, grand) <= 5,
     `4. Optimizer → Star ${pct(o.dist.star, N).toFixed(0)}% (need ≥50), GOAT ${pct(o.dist.goat, N).toFixed(0)}% (need 10–25); pooled GOAT ${pct(total.goat, grand).toFixed(1)}% (need ≤5)`]);
-  const funnels = Object.entries(results).filter(([, r]) => pct(r.dist[top(r)], N) > 85).map(([n, r]) => `${n} ${pct(r.dist[top(r)], N).toFixed(0)}% ${ENDING_LABEL[top(r)]}`);
-  checks.push([funnels.length === 0, `5. No persona >85% into one ending${funnels.length ? ' — ' + funnels.join('; ') : ''}`]);
+  // Grinder and Minimalist are deterministic by design (target 1 REQUIRES the Grinder to burn out), so target 5 covers the strategic personas.
+  const DETERMINISTIC = ['The Grinder', 'The Minimalist'];
+  const funnels = Object.entries(results).filter(([n, r]) => !DETERMINISTIC.includes(n) && pct(r.dist[top(r)], N) > 85).map(([n, r]) => `${n} ${pct(r.dist[top(r)], N).toFixed(0)}% ${ENDING_LABEL[top(r)]}`);
+  checks.push([funnels.length === 0, `5. No strategic persona >85% into one ending${funnels.length ? ' — ' + funnels.join('; ') : ''}`]);
   const lateBroke = Object.values(results).flatMap(r => r.runs).filter(r => r.end === 'bankrupt' && r.week > 20);
   const studioShare = pct(lateBroke.filter(r => r.studio).length, lateBroke.length);
   checks.push([lateBroke.length === 0 || studioShare > 50, `6. Late (>20w) Broke endings caused by the Studio: ${studioShare.toFixed(0)}% of ${lateBroke.length} (need >50)`]);
