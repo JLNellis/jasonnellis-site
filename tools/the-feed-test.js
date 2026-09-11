@@ -91,6 +91,38 @@ test('drawEvent respects minWeek/maxWeek phase gating', () => {
     }
   }
 });
+// ---------------------------------------------------------------- event deck: cash sinks
+const evById = id => E.EVENTS.find(e => e.id === id);
+test('tax-bill exists, is phase-gated mid, and scales to gross earned', () => {
+  E.setRng(seeded(7));
+  const ev = evById('tax-bill');
+  assert.ok(ev && ev.minWeek >= 18 && !ev.repeatable);
+  const S = mk(); S.cash = 20000; S.grossEarned = 40000; S.taxedThrough = 0;
+  const payChoice = ev.choices.find(c => c.t === 'repair');
+  payChoice.apply(S);
+  assert.ok(S.cash < 20000, 'tax should reduce cash');
+  assert.strictEqual(S.taxedThrough, 40000, 'taxedThrough advances to grossEarned');
+});
+test('tax bills only the gross earned since the last tax event', () => {
+  E.setRng(seeded(7));
+  const ev = evById('tax-bill');
+  const S = mk(); S.cash = 20000; S.grossEarned = 40000; S.taxedThrough = 30000;
+  const pay = ev.choices.find(c => c.t === 'repair');
+  const before = S.cash; pay.apply(S);
+  // taxable = 40000 - 30000 = 10000; bill ≈ 10000 * taxRate
+  const bill = before - S.cash;
+  assert.ok(bill > 0 && bill < 10000 * E.CONFIG.taxRate + 5 && bill > 10000 * E.CONFIG.taxRate - 5);
+});
+test('the four other sink cards each reduce cash on their paying choice', () => {
+  for (const id of ['demonetization', 'gear-dies', 'sponsor-clawback', 'surprise-expense']) {
+    E.setRng(seeded(8));
+    const ev = evById(id); assert.ok(ev, 'missing ' + id);
+    const S = mk(); S.cash = 30000; S.gear = 2; S.deals = 3; S.plats.longform.followers = 20000;
+    const c = ev.choices.find(x => x.t === 'repair') || ev.choices[0];
+    const before = S.cash; c.apply(S);
+    assert.ok(S.cash < before, id + ' should cost cash');
+  }
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);

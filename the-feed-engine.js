@@ -398,6 +398,10 @@
   const fed = (e, t, k) => { const log = L(); log.feed.push({ emoji: e, text: t, kind: k || '' }); return log; };
   // a "bad" outcome that also costs followers on your biggest channel (anchor captured BEFORE the loss shrinks it)
   const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, n ? `${t} −${fmt(n)} followers.` : t, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
+  // event apply-helpers for cash effects (float on the cash meter + a feed line)
+  const spend = (S, e, t, amount, kind) => { const n = Math.max(0, Math.round(amount)); S.cash -= n; const log = fed(e, t, kind == null ? 'bad' : kind); log.floats.push({ anchor: 'cash', text: '-' + money(n), tone: 'loss' }); return log; };
+  const gift  = (S, e, t, amount, kind) => { const n = Math.max(0, Math.round(amount)); S.cash += n; const log = fed(e, t, kind == null ? 'good' : kind); log.floats.push({ anchor: 'cash', text: '+' + money(n), tone: 'cash' }); return log; };
+  const taxBill = S => { const taxable = Math.max(0, S.grossEarned - S.taxedThrough); S.taxedThrough = S.grossEarned; return Math.round(taxable * CONFIG.taxRate); };
   const EVENTS = [
     { id: 'viral-moment', repeatable: true, kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
       text: 'One upload is spiking with strangers. The window is open.',
@@ -491,6 +495,55 @@
           apply: S => { addStress(S, 12); activePlats(S).forEach(p => p.heat = clamp(p.heat + 5, 0, 100)); return fed('⛽', 'You pushed through. The feed got fed. You didn’t.', 'bad'); } },
         { t: 'repair', ci: '🛌', label: 'Log off and recover', desc: 'Reset stress, lose momentum.',
           apply: S => { addStress(S, -30); activePlats(S).forEach(p => p.heat = clamp(p.heat - 10, 0, 100)); return fed('🛌', 'You logged off for real. Stress dropped, buzz cooled.', 'good'); } },
+      ] },
+    // ---- cash-sink sub-deck (the balance fix) ----
+    { id: 'tax-bill', kind: 'neutral', emoji: '🧾', title: 'The tax bill came due.', badge: 'Taxes', minWeek: 18, maxWeek: 36,
+      text: 'Quarterly estimate. The number at the bottom is bigger than you told yourself it would be.',
+      choices: [
+        { t: 'repair', ci: '💳', label: 'Pay it clean', desc: 'Settle in full. Done is done.',
+          apply: S => { const bill = taxBill(S); addStress(S, 4); return spend(S, '🧾', `Paid the estimate: −${money(bill)}. No letters coming.`, bill); } },
+        { t: 'escalate', ci: '🧮', label: 'Get creative with it', desc: 'Write off everything. Coin flip.',
+          apply: S => { const bill = taxBill(S); if (chance(.5)) { const paid = Math.round(bill * 0.5); return spend(S, '🧮', `The deductions held. Only −${money(paid)} this quarter.`, paid, ''); } const owed = Math.round(bill * 1.5); const r = repHit(S, 3, 8); addStress(S, 8); return spend(S, '📛', `Flagged for review. Back taxes and penalties: −${money(owed)}. Rep −${r}.`, owed); } },
+      ] },
+    { id: 'tax-year-end', kind: 'neutral', emoji: '🧾', title: 'Year-end taxes hit.', badge: 'Taxes', minWeek: 45,
+      text: 'Everything you made since the last reckoning, all on one line.',
+      choices: [
+        { t: 'repair', ci: '💳', label: 'Pay it and move on', desc: 'Close the year clean.',
+          apply: S => { const bill = taxBill(S); addStress(S, 4); return spend(S, '🧾', `Squared up for the year: −${money(bill)}.`, bill); } },
+        { t: 'escalate', ci: '⏳', label: 'Set up a payment plan', desc: 'Spread it, eat the interest.',
+          apply: S => { const bill = Math.round(taxBill(S) * 1.2); addStress(S, 6); return spend(S, '⏳', `On a plan now, with interest: −${money(bill)} this pass.`, bill); } },
+      ] },
+    { id: 'demonetization', kind: 'neutral', emoji: '🚫', title: 'Your account got demonetized.', badge: 'Strike', minWeek: 10,
+      text: 'A blanket policy sweep caught you in it. The revenue dashboard just flatlined.',
+      choices: [
+        { t: 'repair', ci: '📩', label: 'Appeal and wait', desc: 'File it, lose the month either way.',
+          apply: S => { const gap = Math.round(1200 + totalFollowers(S) * 0.04); addStress(S, 6); return spend(S, '🚫', `Ad money frozen while you appeal: −${money(gap)} this month.`, gap); } },
+        { t: 'escalate', ci: '📢', label: 'Make it public and loud', desc: 'Post about it. Sympathy or noise.',
+          apply: S => { const gap = Math.round(1200 + totalFollowers(S) * 0.04); if (chance(.5)) { const p = strongest(S); const ggn = Math.round(rnd(800, 2600)); p.followers += ggn; S.newFollowers += ggn; const log = spend(S, '📢', `The callout landed. Still down ${money(gap)}, but +${fmt(ggn)} showed up angry on your behalf.`, gap, ''); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(ggn), tone: 'gain' }); log.bump.push(p.key); return log; } const r = repHit(S, 2, 6); return spend(S, '📉', `Read as whining. Down ${money(gap)} and Rep −${r}.`, gap); } },
+      ] },
+    { id: 'gear-dies', kind: 'neutral', emoji: '🎥', title: 'Your main rig just died.', badge: 'Equipment', cond: S => S.gear >= 1 && S.gear <= 3,
+      text: 'Mid-shoot, the whole setup gave up. You are not making anything good on a phone.',
+      choices: [
+        { t: 'repair', ci: '🛒', label: 'Replace it now', desc: 'Buy back the tier you were on.',
+          apply: S => { const cost = CONFIG.gearCost[S.gear]; return spend(S, '🎥', `Bought the replacement: −${money(cost)}. Back in business.`, cost); } },
+        { t: 'escalate', ci: '📵', label: 'Limp along without it', desc: 'Save the cash, lose the quality.',
+          apply: S => { S.gear = Math.max(0, S.gear - 1); activePlats(S).forEach(p => p.heat = clamp(p.heat - 8, 0, 100)); return fed('📵', 'Downgraded to whatever still works. Everything looks cheaper now.', 'bad'); } },
+      ] },
+    { id: 'sponsor-clawback', kind: 'neutral', emoji: '💼', title: 'A past sponsor wants their money back.', badge: 'Clawback', cond: S => S.deals >= 2, minWeek: 12,
+      text: 'The brand you ran got caught in its own scandal, and the contract had a morality clause pointed the wrong way.',
+      choices: [
+        { t: 'repair', ci: '✍️', label: 'Honor the clause', desc: 'Pay it back, keep your name clean.',
+          apply: S => { const amt = Math.round(900 + totalFollowers(S) * 0.02); S.rep = clamp(S.rep + rint(1, 4), 0, 100); return spend(S, '💼', `Refunded the fee: −${money(amt)}. The lawyers went quiet.`, amt); } },
+        { t: 'escalate', ci: '⚖️', label: 'Fight it', desc: 'Refuse. Legal fees either way.',
+          apply: S => { const fees = Math.round(700 + totalFollowers(S) * 0.03); const r = repHit(S, 2, 6); return spend(S, '⚖️', `Dragged it out. Legal fees anyway: −${money(fees)}. Rep −${r}.`, fees); } },
+      ] },
+    { id: 'surprise-expense', kind: 'neutral', emoji: '💥', title: 'Something expensive just broke.', badge: 'Life', minWeek: 6,
+      text: 'Not the content. Life. The kind of bill that does not care about your posting schedule.',
+      choices: [
+        { t: 'repair', ci: '💸', label: 'Just handle it', desc: 'Pay and keep moving.',
+          apply: S => { const amt = Math.round(600 + totalFollowers(S) * 0.015); addStress(S, 3); return spend(S, '💥', `Handled it: −${money(amt)}. Onward.`, amt); } },
+        { t: 'escalate', ci: '🩹', label: 'Put it off', desc: 'Ignore it. It gets worse.',
+          apply: S => { const amt = Math.round((600 + totalFollowers(S) * 0.015) * 1.6); addStress(S, 9); return spend(S, '🩹', `Let it fester. Now it is −${money(amt)} and a worse week.`, amt); } },
       ] },
   ];
 
