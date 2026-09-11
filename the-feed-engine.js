@@ -399,7 +399,7 @@
   // a "bad" outcome that also costs followers on your biggest channel (anchor captured BEFORE the loss shrinks it)
   const hurt = (S, e, t, fracLo, fracHi) => { const key = strongest(S).key; const n = loseFollowers(S, fracLo, fracHi); const log = fed(e, n ? `${t} −${fmt(n)} followers.` : t, 'bad'); if (n) log.floats.push({ anchor: 'plat:' + key, text: '-' + fmt(n), tone: 'loss' }); return log; };
   const EVENTS = [
-    { kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
+    { id: 'viral-moment', repeatable: true, kind: 'neutral', emoji: '🚀', title: 'A post is going viral right now.', badge: 'Momentum', cond: () => true,
       text: 'One upload is spiking with strangers. The window is open.',
       choices: [
         { t: 'repair', ci: '🌊', label: 'Ride it across every platform', desc: 'Cross-promote hard. Costs stress, huge upside.',
@@ -409,7 +409,7 @@
           apply: S => { const p = strongest(S); const g = Math.round(rnd(600, 2000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 8, 0, 100);
             const log = fed('🌊', `Didn't force it. +${fmt(g)} followers, stress intact.`, 'good'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'gain' }); log.bump.push(p.key); return log; } },
       ] },
-    { kind: 'neutral', emoji: '🔄', title: 'The platform changed its algorithm overnight.', badge: 'Platform shift', cond: () => true,
+    { id: 'algo-shift', repeatable: true, kind: 'neutral', emoji: '🔄', title: 'The platform changed its algorithm overnight.', badge: 'Platform shift', cond: () => true,
       text: 'The rules just changed. Nobody knows what the feed rewards anymore.',
       choices: [
         { t: 'repair', ci: '📡', label: 'Chase the new format fast', desc: 'Adapt aggressively. Coin flip.',
@@ -417,7 +417,7 @@
         { t: 'neutral', ci: '🎯', label: 'Keep doing your thing', desc: 'Stay the course.',
           apply: S => { activePlats(S).forEach(p => p.heat = clamp(p.heat - 7, 0, 100)); S.rep = clamp(S.rep + 3, 0, 100); return fed('🎯', "Didn't chase it. Reach dipped, but the loyal ones stayed.", ''); } },
       ] },
-    { kind: 'neutral', emoji: '🎁', title: 'A fan sends $500 and a note.', badge: 'Wholesome', cond: () => true,
+    { id: 'fan-gift', kind: 'neutral', emoji: '🎁', title: 'A fan sends $500 and a note.', badge: 'Wholesome', cond: () => true,
       text: '"Your stuff got me through a hard year." You read it three times.',
       choices: [
         { t: 'repair', ci: '💖', label: 'Shout them out', desc: 'Feature the note. The community glows.',
@@ -425,7 +425,7 @@
         { t: 'neutral', ci: '🙏', label: 'Thank them privately', desc: 'Keep it personal.',
           apply: S => { S.cash += 500; S.rep = clamp(S.rep + 3, 0, 100); const log = fed('🙏', 'A quiet thank-you. +$500 and a good night’s sleep.', 'good'); log.floats.push({ anchor: 'cash', text: '+$500', tone: 'cash' }); return log; } },
       ] },
-    { kind: 'neutral', emoji: '💸', title: 'A crypto brand slides into your DMs.', badge: 'Sponsor', cond: () => true,
+    { id: 'crypto-dm', kind: 'neutral', emoji: '💸', title: 'A crypto brand slides into your DMs.', badge: 'Sponsor', cond: () => true,
       text: '"$$$ for one video. No disclosure needed 😉." Big bag, bad vibe.',
       choices: [
         { t: 'escalate', ci: '💰', label: 'Take the bag', desc: "Cash now. Your audience won't forget.",
@@ -434,7 +434,7 @@
           apply: S => { S.rep = clamp(S.rep + rint(6, 12), 0, 100); return fed('🛡️', 'You read the DM out on camera. Reputation up.', 'good'); } },
       ] },
     // ---- hostile sub-deck: repair / neutral / escalate ----
-    { kind: 'hostile', emoji: '👹', title: 'A troll swarm hit your comments.', badge: 'Coordinated trolling', cond: () => true,
+    { id: 'troll-swarm', repeatable: true, kind: 'hostile', emoji: '👹', title: 'A troll swarm hit your comments.', badge: 'Coordinated trolling', cond: () => true,
       text: 'A pile-on is filling every thread with bad-faith garbage. Newcomers see it first.',
       choices: [
         { t: 'repair', ci: '🧹', label: 'Moderate & set boundaries', desc: 'Clean it up, pin a calm reply.',
@@ -444,7 +444,7 @@
         { t: 'escalate', ci: '🤬', label: 'Roast them publicly', desc: 'Clap back hard. High variance.',
           apply: S => { if (chance(.45)) { const p = strongest(S); const g = Math.round(rnd(1200, 5000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 16, 0, 100); const log = fed('🔥', `The roast went viral. +${fmt(g)} followers came for the show.`, 'big'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } const r = repHit(S, 10, 18); return hurt(S, '💀', `It read as punching down. Screenshots everywhere. Rep −${r}.`, .02, .05); } },
       ] },
-    { kind: 'hostile', emoji: '⚖️', title: "You're being cancelled over a misread clip.", badge: 'Cancel attempt', cond: S => S.rep > 25,
+    { id: 'cancel-clip', kind: 'hostile', emoji: '⚖️', title: "You're being cancelled over a misread clip.", badge: 'Cancel attempt', cond: S => S.rep > 25,
       text: 'A 12-second clip is circulating out of context. People who never watched you are furious. It\'s trending.',
       choices: [
         { t: 'repair', ci: '🎥', label: 'Post a calm clarification', desc: 'Show the full context, own any real mistake.',
@@ -454,7 +454,7 @@
         { t: 'escalate', ci: '🗯️', label: 'Deny everything, attack the accusers', desc: 'Refuse to engage in good faith.',
           apply: S => { const r = repHit(S, 14, 26); activePlats(S).forEach(p => p.heat = clamp(p.heat - 8, 0, 100)); return hurt(S, '🌋', `Defiance poured fuel on it. The pile-on doubled. This is how creators get cancelled for real. Rep −${r}.`, .03, .06); } },
       ] },
-    { kind: 'hostile', emoji: '⭐', title: "You're getting review-bombed.", badge: 'Brigade', cond: S => totalFollowers(S) > 2000,
+    { id: 'review-bomb', kind: 'hostile', emoji: '⭐', title: "You're getting review-bombed.", badge: 'Brigade', cond: S => totalFollowers(S) > 2000,
       text: 'A brigade from another community is mass-downvoting and one-star-reviewing everything you post.',
       choices: [
         { t: 'repair', ci: '📣', label: 'Rally your real community', desc: 'Ask loyal fans to drown out the noise.',
@@ -464,7 +464,7 @@
         { t: 'escalate', ci: '🎯', label: 'Name and target their community', desc: 'Point your audience at them. Starts a war.',
           apply: S => { const r = repHit(S, 8, 16); if (chance(.4)) { const p = strongest(S); const g = Math.round(rnd(800, 3000)); p.followers += g; S.newFollowers += g; const log = fed('⚔️', `Started an all-out war. Messy, but +${fmt(g)} rubberneckers subscribed. Rep −${r}.`, 'bad'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'hit' }); log.bump.push(p.key); return log; } return hurt(S, '🔥', `The feud spiralled. Both sides look bad; you look worse. Rep −${r}.`, .02, .04); } },
       ] },
-    { kind: 'hostile', emoji: '🕵️', title: 'A "receipts" account is digging through your old posts.', badge: 'Callout', cond: S => S.week > 8,
+    { id: 'receipts', kind: 'hostile', emoji: '🕵️', title: 'A "receipts" account is digging through your old posts.', badge: 'Callout', cond: S => S.week > 8,
       text: 'Someone is building a thread of your worst old takes, screenshotting everything from years ago.',
       choices: [
         { t: 'repair', ci: '🌱', label: 'Get ahead of it. Address the old stuff', desc: 'Acknowledge growth, delete nothing quietly.',
@@ -474,7 +474,7 @@
         { t: 'escalate', ci: '🚫', label: "Mass-delete and deny it's you", desc: 'Scrub everything, gaslight the thread.',
           apply: S => { const r = repHit(S, 12, 22); return hurt(S, '🧨', `People screenshot faster than you can delete. The cover-up became the story. Rep −${r}.`, .02, .05); } },
       ] },
-    { kind: 'hostile', emoji: '💔', title: 'A parasocial superfan turned on you.', badge: 'Parasocial', cond: S => totalFollowers(S) > 4000,
+    { id: 'parasocial', kind: 'hostile', emoji: '💔', title: 'A parasocial superfan turned on you.', badge: 'Parasocial', cond: S => totalFollowers(S) > 4000,
       text: "A former top supporter feels personally betrayed you didn't reply, and is now your loudest hater.",
       choices: [
         { t: 'repair', ci: '🫶', label: 'Reach out privately, set kind boundaries', desc: 'Human, but firm about limits.',
@@ -484,7 +484,7 @@
         { t: 'escalate', ci: '📸', label: 'Expose their DMs publicly', desc: 'Post the receipts to humiliate them.',
           apply: S => { if (chance(.5)) { const r = repHit(S, 8, 15); return hurt(S, '😖', `Airing a fan's private breakdown looked cruel. Rep −${r}.`, .01, .03); } const r = repHit(S, 3, 7); return hurt(S, '😐', `Some cheered, many winced. A wash that left a bad taste. Rep −${r}.`, .005, .015); } },
       ] },
-    { kind: 'neutral', emoji: '🥵', title: "You haven't slept in days.", badge: 'Health', cond: S => S.stress >= 60,
+    { id: 'sleepless', repeatable: true, kind: 'neutral', emoji: '🥵', title: "You haven't slept in days.", badge: 'Health', cond: S => S.stress >= 60,
       text: 'The grind is catching up. Your body is sending invoices.',
       choices: [
         { t: 'escalate', ci: '⛽', label: 'Push through it', desc: 'Keep the streak alive. Risky.',
@@ -543,8 +543,20 @@
     S.newFollowers = 0;
     return log;
   }
-  function drawEvent(S) { const deck = EVENTS.filter(e => !e.cond || e.cond(S)); return pick(deck); }
-  function rollEvent(S) { return (S.week >= 2 && chance(CONFIG.eventChance)) ? drawEvent(S) : null; }
+  function drawEvent(S) {
+    const deck = EVENTS.filter(e =>
+         (!e.cond || e.cond(S))
+      && (e.minWeek == null || S.week >= e.minWeek)
+      && (e.maxWeek == null || S.week <= e.maxWeek)
+      && (e.repeatable || !S.seenEvents.includes(e.id)));
+    return deck.length ? pick(deck) : null;
+  }
+  function rollEvent(S) {
+    if (!(S.week >= 2 && chance(CONFIG.eventChance))) return null;
+    const ev = drawEvent(S);
+    if (ev && !ev.repeatable && !S.seenEvents.includes(ev.id)) S.seenEvents.push(ev.id);
+    return ev;
+  }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
   function advanceWeek(S) { S.week++; S.slots = { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness }; }
 

@@ -62,6 +62,35 @@ test('biz.deal adds pay to grossEarned', () => {
   E.biz.deal(S);
   assert.ok(S.grossEarned > before, 'grossEarned should grow by deal pay');
 });
+// ---------------------------------------------------------------- event deck: draw filtering
+test('every event has a unique id and valid choice tags', () => {
+  const ids = new Set();
+  E.EVENTS.forEach(ev => {
+    assert.ok(ev.id, 'event missing id: ' + ev.title);
+    assert.ok(!ids.has(ev.id), 'duplicate id: ' + ev.id); ids.add(ev.id);
+    ev.choices.forEach(c => assert.ok(['repair','neutral','escalate'].includes(c.t), 'bad tag on ' + ev.id));
+  });
+});
+test('drawEvent does not repeat a non-repeatable event within a run', () => {
+  E.setRng(seeded(5));
+  const S = mk(); S.week = 40; S.plats.longform.followers = 50000; S.rep = 60; S.deals = 3; S.gear = 2;
+  const drawn = [];
+  for (let i = 0; i < 200; i++) { const ev = E.drawEvent(S); if (!ev) break; drawn.push(ev.id); if (!ev.repeatable && !S.seenEvents.includes(ev.id)) S.seenEvents.push(ev.id); }
+  const repeatableIds = new Set(E.EVENTS.filter(e => e.repeatable).map(e => e.id));
+  const nonRepeat = drawn.filter(id => !repeatableIds.has(id));
+  assert.strictEqual(nonRepeat.length, new Set(nonRepeat).size, 'a non-repeatable id repeated');
+});
+test('drawEvent respects minWeek/maxWeek phase gating', () => {
+  E.setRng(seeded(6));
+  for (const wk of [3, 20, 50]) {
+    for (let i = 0; i < 300; i++) {
+      const S = mk(); S.week = wk; S.plats.longform.followers = 60000; S.rep = 60; S.deals = 4; S.gear = 3;
+      const ev = E.drawEvent(S); if (!ev) continue;
+      if (ev.minWeek != null) assert.ok(wk >= ev.minWeek, `${ev.id} fired at wk ${wk} < minWeek ${ev.minWeek}`);
+      if (ev.maxWeek != null) assert.ok(wk <= ev.maxWeek, `${ev.id} fired at wk ${wk} > maxWeek ${ev.maxWeek}`);
+    }
+  }
+});
 test('useSlot decrements and refuses at zero', () => {
   const S = mk();
   assert.strictEqual(E.useSlot(S, 'content'), true);
