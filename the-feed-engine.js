@@ -35,7 +35,12 @@
     startCash: 900, startStress: 20,
     slotsContent: 2, slotsBusiness: 1,
     // stress: recovery per week, extra per empty content slot, band thresholds
-    stressRecover: 30, stressRecoverPerEmptySlot: 8,
+    // Tuned so two heavy posts (longform ×2 = 26) net +3/week over stressRecover — sustained max
+    // output redlines ~w16 and burns out ~w18 — while one empty slot (23 + 18 − 13) nets −28.
+    // The Grinder persona = that ramp + engageStress every week; target 1 needs it to last ≥15w,
+    // which is why engageStress is 1 (at 2 the Grinder burns out at ~12w).
+    stressRecover: 23, stressRecoverPerEmptySlot: 18,
+    engageStress: 1, dealStress: 4,
     bandHot: 50, bandFumes: 70, bandRedline: 90, fumesViewsMult: 0.85,
     burnoutStreak: 3,
     // overhead (replaces rent): flat + per platform + payroll + studio lease
@@ -92,10 +97,10 @@
   // green (hero), blue (info), slate (muted), amber (warning), red (live).
   // `stress` = stress cost per post. `rpm` = ad revenue per VIEW.
   const PLATFORMS = {
-    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', stress: 14, rpm: .0045, viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
+    longform:  { name: 'Longform Video', tag: 'YT-style',       emoji: '🎬', color: '#00E676', stress: 13, rpm: .0045, viral: 1.0,  loyal: 1.25, unlock: 0,    fmt: 'a deep-dive video' },
     shortform: { name: 'Short Video',    tag: 'vertical clips',  emoji: '📱', color: '#3B82F6', stress: 10, rpm: .0006, viral: 1.6,  loyal: .6,   unlock: 0,    fmt: 'a batch of shorts' },
     micro:     { name: 'Microblog',      tag: 'text posts',      emoji: '💬', color: '#94A3B8', stress: 6,  rpm: .0003, viral: 1.25, loyal: .8,   unlock: 0,    fmt: 'a hot take' },
-    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', stress: 11, rpm: .006,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
+    writing:   { name: 'Newsletter',     tag: 'long writing',    emoji: '📰', color: '#F59E0B', stress: 12, rpm: .006,  viral: .75,  loyal: 1.5,  unlock: 1200, fmt: 'a longform essay' },
     live:      { name: 'Live Stream',    tag: 'live',            emoji: '🔴', color: '#EF4444', stress: 16, rpm: .003,  viral: .9,   loyal: 1.6,  unlock: 2500, fmt: 'a live stream' },
   };
   const PORDER = ['longform', 'shortform', 'micro', 'writing', 'live'];
@@ -355,10 +360,10 @@
 
   // ======================= business actions (one per week) =======================
   const biz = {
-    engage(S) { if (!useSlot(S, 'business')) return L(); addStress(S, 5); const r = rnd(2, 5); S.rep = clamp(S.rep + r, 0, 100); activePlats(S).forEach(p => p.heat = clamp(p.heat + rint(1, 4), 0, 100));
+    engage(S) { if (!useSlot(S, 'business')) return L(); addStress(S, CONFIG.engageStress); const r = rnd(2, 5); S.rep = clamp(S.rep + r, 0, 100); activePlats(S).forEach(p => p.heat = clamp(p.heat + rint(1, 4), 0, 100));
       const log = L(); log.floats.push({ anchor: 'rep', text: '+' + r.toFixed(1), tone: 'up' });
       log.feed.push({ emoji: '💬', text: 'Showed up in the comments and DMs. The core crowd feels seen.', kind: 'good' }); return log; },
-    deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, 4);
+    deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, CONFIG.dealStress);
       const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
       const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
       const h = rnd(4, 9) * (mgr ? 0.6 : 1);

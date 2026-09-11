@@ -332,9 +332,9 @@ test('stress: band + redline streak judged before recovery; recovery is stressRe
 });
 
 // ---------------------------------------------------------------- business + events
-test('engage uses the business slot and adds 5 stress', () => {
+test('engage uses the business slot and adds CONFIG.engageStress', () => {
   const S = mk(); const r0 = S.rep, s0 = S.stress; E.biz.engage(S);
-  assert.ok(S.rep > r0); assert.strictEqual(S.stress, s0 + 5); assert.strictEqual(S.slots.business, 0);
+  assert.ok(S.rep > r0); assert.strictEqual(S.stress, s0 + E.CONFIG.engageStress); assert.strictEqual(S.slots.business, 0);
   const r1 = S.rep; E.biz.engage(S); assert.strictEqual(S.rep, r1, 'refused without slot');
 });
 test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens rep cost', () => {
@@ -347,7 +347,7 @@ test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens r
   E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
   assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
   assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
-  assert.strictEqual(m.stress, E.CONFIG.startStress + 4);
+  assert.strictEqual(m.stress, E.CONFIG.startStress + E.CONFIG.dealStress);
 });
 test('paid membership: gated, once, uses the slot', () => {
   const S = mk(); E.biz.paid(S); assert.strictEqual(S.members, 0);
