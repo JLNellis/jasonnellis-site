@@ -168,7 +168,17 @@ horizontal (`.chanrow` row), and **"End the week" is a sticky footer**
 (`.stagefoot`) so it's always visible. Feed + inbox/stats became rails
 (`minmax(0,1fr) 320px 300px`). Scroll dropped from ~764px to ~264px and the
 end button never leaves view. Mobile unchanged (decks are plain stacked blocks,
-footer static). `.rail.evt` event handling still applies in the 300px rail.
+footer static).
+
+**Follow-up — events use the workspace too.** With the decision now the widest
+column, a pending event that stayed in the 300px rail meant the *forced choice*
+sat in the narrowest lane while the wide workspace showed only a "Hold on"
+card — idle prime space, eye-travel to the far right. Now on desktop the event
+DM renders straight into the workspace (`renderEventDM(target)` takes a
+container; `render()` passes `#stagebody` when wide + event, capped at 460px so
+it reads as a chat), the rail inbox is hidden and Stats fills the rail. The old
+`.rail.evt` expand-the-rail approach was removed. Mobile still shows events in
+the Inbox tab exactly as before.
 
 ## Shipped: experience polish pass
 

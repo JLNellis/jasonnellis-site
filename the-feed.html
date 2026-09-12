@@ -230,9 +230,8 @@
     .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
     #tab-inbox{flex:none;max-height:46%}
     #tab-stats{flex:1;border-top:2px solid var(--sf-line)}
-    /* a pending decision owns the rail so its reply chips are never clipped */
-    .rail.evt #tab-inbox{flex:1 1 auto;max-height:none}
-    .rail.evt #tab-stats{flex:0 0 auto;max-height:34%}
+    /* during an event the decision renders in the workspace — keep it chat-width */
+    #stagebody .dm{max-width:460px}
     .tabbar{display:none}
   }
 
@@ -542,14 +541,17 @@
     $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     // ----- a pending event forces the Inbox tab -----
     if(S.phase==='event'&&S.event) tab='inbox';
-    document.querySelector('.rail').classList.toggle('evt', S.phase==='event');   // give the decision the rail (desktop)
     if(isWide()){
       // desktop console: every pane is on screen, so fill them all every render
-      ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden=false; });
+      const evt = S.phase==='event' && S.event;
+      ['home','alerts','stats'].forEach(t=>{ $('tab-'+t).hidden=false; });
+      $('tab-inbox').hidden = evt;   // during an event the decision moves into the workspace; hide the rail copy
       $('badge-alerts').hidden=true; $('badge-inbox').hidden=true;   // nothing is hidden behind a tab
       seenFeedLen=(S.feed||[]).length;
-      renderChannels(); if(S.phase==='event') renderHomeWaiting(); else renderMoves();
-      renderFeed(); renderInbox(); renderStats();
+      renderChannels();
+      if(evt){ $('stagetitle').textContent='Your call.'; $('slotpill').innerHTML=''; renderEventDM($('stagebody')); }
+      else renderMoves();
+      renderFeed(); if(!evt) renderInbox(); renderStats();
     } else {
       // mobile: one pane at a time, driven by the tab bar
       ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); });
@@ -619,13 +621,11 @@
 
   // ---------- Home: waiting on the inbox while an event is pending ----------
   function renderHomeWaiting(){
+    // Mobile only: on desktop the decision is rendered straight into the
+    // workspace (see render()), so this "check the inbox tab" nudge never shows.
     $('stagetitle').textContent='Hold on.';
     $('slotpill').innerHTML='';
-    // On desktop the inbox is already open in the right rail, so point there
-    // instead of telling the player to "open" something that's visible.
-    $('stagebody').innerHTML = isWide()
-      ? `<div class="waiting"><b>Something needs an answer.</b><br>It's in your inbox — <span class="go">on the right →</span></div>`
-      : `<div class="waiting"><b>Something's in your inbox.</b><br>Open it to get through the week.</div>`;
+    $('stagebody').innerHTML=`<div class="waiting"><b>Something's in your inbox.</b><br>Open it to get through the week.</div>`;
   }
 
   // ---------- Alerts: the feed as notifications ----------
@@ -656,17 +656,19 @@
 
   // ---------- Inbox: events arrive as DMs ----------
   function renderInbox(){
-    if(S.phase==='event'&&S.event){ renderEventDM(); return; }
+    if(S.phase==='event'&&S.event){ renderEventDM($('inboxbody')); return; }
     $('inboxbody').innerHTML='<p class="empty">No messages. Events land here as they happen.</p>';
   }
-  function renderEventDM(){
+  // Renders the pending-decision DM into `target` — the rail inbox on mobile,
+  // or the wide workspace on desktop so the forced choice gets the prime space.
+  function renderEventDM(target){
     const ev=S.event, sender = ev.kind==='hostile' ? 'the pile-on' : (ev.badge||'a message');
-    $('inboxbody').innerHTML=`<div class="dm ${ev.kind==='hostile'?'hostile':'neutral'}">
+    target.innerHTML=`<div class="dm ${ev.kind==='hostile'?'hostile':'neutral'}">
       <div class="dmhead"><span class="dmfrom">${ev.emoji} ${sender}</span><span class="dmbadge">${ev.badge}</span></div>
       <div class="dmbubble"><b>${ev.title}</b><p>${ev.text}</p></div>
       <div class="dmreplies">${ev.choices.map((c,i)=>`<button class="reply ${c.t}" data-i="${i}"><span class="ci">${c.ci}</span><span class="rl"><b>${c.label}</b><span>${c.desc}</span></span></button>`).join('')}</div>
     </div>`;
-    $('inboxbody').querySelectorAll('.reply').forEach(b=>b.onclick=()=>chooseEvent(+b.dataset.i));
+    target.querySelectorAll('.reply').forEach(b=>b.onclick=()=>chooseEvent(+b.dataset.i));
   }
 
   // ---------- Stats: UI-side weekly-history sparklines ----------
