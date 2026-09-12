@@ -277,8 +277,9 @@
     if (p.proven && p.fatigue < 45) mod *= 1.12;
     if (p.fatigue >= 52) mod *= 0.55;
     if (ride) mod *= 1.6;
-    // keep the topic the player already saw this week for this platform+angle
-    const prev = (S.hand || []).find(c => c.pkey === p.key && c.angle === angleKey && c.topic);
+    // keep the topic the player already saw this week for this platform+angle — unless they just posted it
+    const usedNow = new Set(S.usedTopics.filter(u => u.week === S.week).map(u => u.topic));
+    const prev = (S.hand || []).find(c => c.pkey === p.key && c.angle === angleKey && c.topic && !usedNow.has(c.topic));
     return { kind: ride ? 'ride' : 'post', pkey: p.key, angle: angleKey, topic: prev ? prev.topic : pickTopic(S, angleKey),
              mod, stress: stressCost(S, p.key, angleKey), special: !!ride, ride: !!ride, heat: p.heat, fatigue: p.fatigue, proven: p.proven };
   }

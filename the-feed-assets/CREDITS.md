@@ -30,19 +30,20 @@ use. CC0 requires no attribution; it is credited here anyway as good practice.
   Sourced via the CC0 re-pack at
   [github.com/Calinou/kenney-interface-sounds](https://github.com/Calinou/kenney-interface-sounds).
 
-## Emoji artwork
-
-<!-- Added when the OpenMoji swap lands. -->
-- **OpenMoji** — [openmoji.org](https://openmoji.org)
-  License: **CC BY-SA 4.0** — attribution + share-alike required.
-  Used for the game's emoji glyphs (niches, platforms, events) so they render
-  consistently across devices instead of relying on each OS's emoji font.
-
 ## Typography
 
 - **DM Sans** and **DM Mono** by Colophon Foundry / Jonny Pinhorn —
   **SIL Open Font License 1.1**. Self-hosted in `/fonts/` (site-wide via
   `colors_and_type.css`).
+- **Space Grotesk** by Florian Karsten — **SIL OFL 1.1**. Loaded from Google
+  Fonts; display face for headings and card titles.
+- **Anton** by Vernon Adams — **SIL OFL 1.1**. Loaded from Google Fonts; used
+  only for the big words inside the generated content-card thumbnails.
+
+## Icons
+
+- All in-game glyphs (nav, platforms, angles, niches, feed, endings) are a
+  bespoke inline SVG sprite in `the-feed.html`. No emoji, no icon library.
 
 ---
 

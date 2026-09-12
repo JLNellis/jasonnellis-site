@@ -260,6 +260,78 @@ setup/studio status (incl. the slot count it buys), team roster + payroll,
 overhead breakdown, and the week's remaining capacity. Mobile Inbox tab
 unchanged (events still land there). Verified both states live in the browser.
 
+## Shipped: UI review pass (2026-09-12) — thumbnails + readability
+
+Jason's read: the game "felt too AI-esque". Two reviews agreed on the tells —
+every surface the same bordered card, 8–10px mono-uppercase eyebrows as the
+only structural device, emoji next to flat SVG, nothing ever big, none of the
+creator world's own visual language on screen. Five chrome-only changes
+(`the-feed.html`; engine/sim/tests untouched, tests 58/58):
+
+1. **Verbs + copy.** Content cards carry a `Post ▸` / `Open ▸` / `Cross-post ▸`
+   chip; a week-1 `.loophint` says a tap posts immediately and an empty slot
+   is a rest. Header/end-screen "following" → "followers". Stress band reads
+   "Stress · on fumes" in sentence case.
+2. **Type floor + labels.** Nothing below 11px (thumb chrome excepted);
+   mono-uppercase eyebrows retired everywhere — labels are sentence-case DM
+   Sans 600, mono is reserved for numbers and @handles. Stress sparkline is
+   coloured by band (gold / red) and each stat shows its net change since
+   week 1 (`.statd`).
+3. **Informed End-the-week + a11y.** The button reads what's unused
+   ("1 post and 1 business move unused · an empty post slot is a rest") and is
+   outlined (`.idle`) until the week's work is out, then filled red. Start
+   pickers are real `<button role="radio">` groups with roving tabindex and
+   arrow keys.
+4. **Results in place.** A UI-only `weekLog` (cleared in `advance()`) records
+   each move's deltas (views / followers / cash / rep / stress / members,
+   computed from `capture()` before/after) and `renderMoves` prepends a
+   `.posted` stub above the deck — so on mobile the result never lives in
+   another tab. Business moves get the same stub.
+5. **Thumbnail cards + one icon language.** `thumbHTML(m)` generates a fake
+   16:9 thumbnail per content card from the topic string: platform-colour
+   wash, angle-specific overlay (trend stripes / evergreen glow / personal
+   gold), the first 2–3 words huge in **Anton** (sized in `cqw` to fit),
+   angle sticker, duration/`LIVE`/`POST`/`ISSUE` badge, platform glyph. Posted
+   stubs reuse the thumb desaturated with a green "Posted" sticker. Mobile:
+   thumb-left rows (YouTube list). Desktop ≥980px: decks stack and content is
+   a 2-up grid of stacked thumbs (`.moves.vgrid`), business a 2-up row grid.
+   Every emoji in the chrome is gone: niche glyphs (`i-niche-*`), feed lines
+   by kind (`FEED_ICON`), event DMs + reply chips (`CHOICE_ICON`), endings
+   (`END_ICON`), flags. The engine's emoji fields are still emitted, just not
+   rendered. `CREDITS.md` updated (OpenMoji stub removed; Anton/Space Grotesk
+   listed).
+
+Rejected from the second review: select-then-publish (slows a 10-minute game,
+needs engine staging), cash runway, a strictly semantic palette (that is the
+dashboard look), collapsing the channel card.
+
+**Follow-up pass (same day), from the second review's next five:**
+
+- **No duplicate completed actions.** A business move made this week hides
+  its disabled twin (`bizCards` filters on `weekLog[].id`); its `.posted`
+  stub carries a green check. **Engine (one line, `postCard`):** the
+  keep-the-topic-you-saw rule now skips topics in `S.usedTopics` for the
+  current week, so a just-posted topic is never re-dealt. Tests 58/58, sim
+  6/6 unchanged.
+- **Business collapses once the move is spent.** `noBiz` renders the done
+  stub plus a `<details class="bizmore">` ("Other business options · N · back
+  next week"); open state is UI-only (`bizMoreOpen`, reset in `advance()`).
+- **Phone header.** Followers is a two-line metric so the channel name gets
+  room (name clamps to 2 lines, niche line hidden on phones). Overhead is a
+  button (`#ovbtn`) that toggles the breakdown line (`.app.ovh`). Scrolling
+  past 56px adds `.app.compact` (smaller avatar, tighter padding); the
+  listener watches both `window` and `.tabbody` because on phones the
+  document scrolls, on desktop the panes do.
+- **Desktop.** `.chancard` capped at 250px so one platform doesn't balloon;
+  the Stats rail shows current values from week 1 ("Trend from week 2")
+  instead of an empty-state line.
+- **Action vs outcome colour.** Action chips (`.go`) are white-outlined,
+  hover is white; green is reserved for outcomes (Posted sticker, check,
+  followers, rep). "Open ▸" → "Add channel ▸". Posted stubs lost the green
+  left bar (quieter `--sf-line-2` border).
+- **Precision.** Float pops round to whole numbers (`roundFloat`) so they
+  agree with the in-place stub and the header.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
