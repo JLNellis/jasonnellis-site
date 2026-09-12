@@ -143,7 +143,11 @@
   .btn{font-family:var(--sf-sans);font-weight:700;cursor:pointer;border-radius:12px;border:2px solid transparent}
   .btn.primary{width:100%;padding:13px;font-size:15px;background:var(--sf-red);color:#fff;box-shadow:var(--sf-shadow)}
   .btn.primary:hover{transform:translate(-1px,-1px)}
+  .btn.ghost{width:100%;padding:12px;font-size:14px;background:transparent;border-color:var(--sf-line);color:var(--sf-fg-2)}
+  .btn.ghost:hover{border-color:var(--sf-fg-2);color:var(--sf-fg)}
+  .btn:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px}
   .waiting{background:var(--sf-card);border:2px dashed var(--sf-red);border-radius:13px;padding:20px 14px;text-align:center;color:var(--sf-fg-2);font-size:13px}
+  .waiting b{color:var(--sf-fg)} .waiting .go{color:var(--sf-red);font-family:var(--sf-mono)}
 
   /* ---------- Alerts: notifications ---------- */
   .feedlist{display:flex;flex-direction:column;gap:8px}
@@ -208,6 +212,9 @@
     .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
     #tab-inbox{flex:none;max-height:46%}
     #tab-stats{flex:1;border-top:2px solid var(--sf-line)}
+    /* a pending decision owns the rail so its reply chips are never clipped */
+    .rail.evt #tab-inbox{flex:1 1 auto;max-height:none}
+    .rail.evt #tab-stats{flex:0 0 auto;max-height:34%}
     .tabbar{display:none}
   }
 
@@ -242,9 +249,12 @@
   .endstat .k{font-family:var(--sf-mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--sf-fg-3)}
   .endstat .v{font-family:var(--sf-mono);font-size:16px;margin-top:2px}
   .lesson{font-size:12.5px;color:var(--sf-fg-2);font-style:italic;margin:12px 0;line-height:1.5}
-  .substack-cta{display:flex;flex-direction:column;gap:3px;background:var(--sf-card-2);border:2px solid var(--sf-edge);
-    border-radius:13px;padding:12px 13px;text-decoration:none;margin-bottom:14px;box-shadow:var(--sf-shadow)}
-  .sc-copy{font-size:12px;color:var(--sf-fg-2)} .sc-go{font-family:var(--sf-sans);font-weight:700;font-size:13.5px;color:var(--sf-edge)}
+  .substack-cta{display:flex;flex-direction:column;gap:4px;background:var(--sf-red);border:2px solid var(--sf-red);
+    border-radius:13px;padding:14px 15px;text-decoration:none;margin-bottom:10px;box-shadow:var(--sf-shadow);transition:transform .12s}
+  .substack-cta:hover{transform:translate(-1px,-1px)}
+  .substack-cta:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px}
+  .sc-go{font-family:var(--sf-sans);font-weight:700;font-size:15px;color:#fff}
+  .sc-copy{font-size:11.5px;color:rgba(255,255,255,.85);line-height:1.4}
 
   @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 
@@ -345,10 +355,10 @@
     <div class="endstats" id="endStats"></div>
     <p class="lesson" id="endLesson">—</p>
     <a class="substack-cta" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">
-      <span class="sc-copy">The real thing is harder than this. I write about it every week.</span>
       <span class="sc-go">Get “The Long Yes” →</span>
+      <span class="sc-copy">The real thing is harder than this. I write about it every week.</span>
     </a>
-    <button class="btn primary" id="againBtn" style="width:100%">Run it back</button>
+    <button class="btn ghost" id="againBtn">Run it back</button>
   </div>
 </div>
 
@@ -509,6 +519,7 @@
     $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     // ----- a pending event forces the Inbox tab -----
     if(S.phase==='event'&&S.event) tab='inbox';
+    document.querySelector('.rail').classList.toggle('evt', S.phase==='event');   // give the decision the rail (desktop)
     if(isWide()){
       // desktop console: every pane is on screen, so fill them all every render
       ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden=false; });
@@ -585,7 +596,11 @@
   function renderHomeWaiting(){
     $('stagetitle').textContent='Hold on.';
     $('slotpill').innerHTML='';
-    $('stagebody').innerHTML=`<div class="waiting"><b>Something's in your inbox.</b><br>Open it to get through the week.</div>`;
+    // On desktop the inbox is already open in the right rail, so point there
+    // instead of telling the player to "open" something that's visible.
+    $('stagebody').innerHTML = isWide()
+      ? `<div class="waiting"><b>Something needs an answer.</b><br>It's in your inbox — <span class="go">on the right →</span></div>`
+      : `<div class="waiting"><b>Something's in your inbox.</b><br>Open it to get through the week.</div>`;
   }
 
   // ---------- Alerts: the feed as notifications ----------
