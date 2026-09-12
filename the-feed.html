@@ -89,6 +89,7 @@
   @media(max-width:979px){
     .helpline{display:none} .app.ovh .helpline{display:block}
     .nichebadge{display:none}
+    .mname .mband{display:none}
     .who h1{white-space:normal;font-size:15px;line-height:1.1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
     .ovbtn .k::after{content:' ▾';color:var(--sf-fg-3)} .app.ovh .ovbtn .k::after{content:' ▴'}
     .hdr,.avatar,.who h1{transition:padding .2s,width .2s,height .2s,font-size .2s}
@@ -106,13 +107,55 @@
   .chanhead,.stagehead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:2px 0 9px}
   .chanhead h3{font-family:var(--sf-sans);font-size:13.5px;color:var(--sf-fg);margin:0;font-weight:700}
   .hint{font-size:11.5px;color:var(--sf-fg-2)}
-  .chanrow{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
-  .chancard{background:var(--sf-card);border:2px solid var(--sf-line);border-radius:14px;padding:9px;box-shadow:var(--sf-shadow);transition:border-color .25s}
+  /* ---------- channel strip: one card per platform, each in that platform's own format ---------- */
+  .chanstrip{padding:0} .chanstrip[hidden]{display:none}
+  .chanrow{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 15px 12px;margin:0 -15px;scrollbar-width:thin;scroll-padding-inline:15px}
+  .chancard{flex:0 0 262px;scroll-snap-align:start;background:var(--sf-card);border:2px solid var(--sf-line);border-radius:14px;overflow:hidden;
+    box-shadow:var(--sf-shadow);transition:border-color .25s;--pc:var(--sf-fg-2)}
   .chancard.up{border-color:var(--sf-edge)}
-  .chancard svg{display:block}
-  .chanmeta{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding:0 2px}
+  .cart{position:relative;height:84px;background:var(--pc);isolation:isolate;display:flex;align-items:center;gap:6px;padding:10px}
+  .cart::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,30,56,.55),rgba(11,30,56,.88));z-index:0}
+  .cart>*{position:relative;z-index:1}
+  .vw{font-family:var(--sf-thumb);color:#fff;text-transform:uppercase;line-height:.9;text-align:center;text-shadow:1px 1px 0 rgba(0,0,0,.7)}
+  .vv{position:absolute;right:3px;bottom:3px;font-family:var(--sf-mono);font-size:8.5px;line-height:1;padding:2px 4px;border-radius:3px;background:rgba(0,0,0,.8);color:#fff}
+  /* longform: a shelf of 16:9 videos */
+  .cart.longform .vid{flex:1;aspect-ratio:16/9;border-radius:5px;background:#0F172A;position:relative;overflow:hidden;display:grid;place-items:start center;container-type:inline-size;box-shadow:0 2px 0 rgba(0,0,0,.4)}
+  .cart.longform .vid .vw{font-size:19cqw;padding:3px 3px 0}
+  /* short video: a row of 9:16 clips */
+  .cart.shortform{justify-content:center}
+  .cart.shortform .clip{width:34px;aspect-ratio:9/16;border-radius:6px;background:#0F172A;position:relative;overflow:hidden;display:grid;place-items:center;container-type:inline-size;box-shadow:0 2px 0 rgba(0,0,0,.4)}
+  .cart.shortform .clip .vw{font-size:28cqw;padding:4px 2px 0;align-self:start}
+  .cart.longform .vid.none,.cart.shortform .clip.none{background:transparent;border:1.5px dashed rgba(255,255,255,.28);box-shadow:none}
+  /* microblog: the latest post, as a post */
+  .cart.micro{padding:8px 10px}
+  .mpost{width:100%;background:rgba(0,0,0,.38);border-radius:8px;padding:7px 9px;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .mh{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sf-fg-2);white-space:nowrap;overflow:hidden} .mh b{color:#fff} .mh svg{width:12px;height:12px;color:#fff;flex:none}
+  .mt2{font-size:12px;color:#fff;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .mm{font-family:var(--sf-mono);font-size:10px;color:var(--sf-fg-2)}
+  /* newsletter: an inbox of issues */
+  .cart.writing{flex-direction:column;align-items:stretch;justify-content:center;gap:4px;padding:8px 10px}
+  .issue{display:flex;align-items:center;gap:7px;font-size:11px;background:rgba(0,0,0,.38);border-radius:6px;padding:3px 8px;min-width:0;color:#fff}
+  .issue b{font-family:var(--sf-mono);font-weight:500;color:var(--sf-gold)} .issue .it{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .issue .iv{font-family:var(--sf-mono);font-size:10px;color:var(--sf-fg-2)} .issue.none{background:transparent;border:1.5px dashed rgba(255,255,255,.22);color:var(--sf-fg-3)}
+  /* live: the stream tile, on air or offline */
+  .cart.live{padding:8px 10px}
+  .stream{width:100%;height:100%;border-radius:8px;background:#000;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:8px 9px;min-width:0}
+  .lvpill{position:absolute;top:6px;left:6px;font-family:var(--sf-sans);font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.15);color:var(--sf-fg-2)}
+  .stream.on .lvpill{background:var(--sf-red);color:#fff;padding-left:14px}
+  .stream.on .lvpill::before{content:'';position:absolute;left:5px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#fff;animation:pip 1.2s infinite}
+  .st{font-size:12px;color:#fff;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .sv{font-family:var(--sf-mono);font-size:10px;color:var(--sf-fg-2)}
+  /* card body: name + tier, the number, progress to the next tier, what's going on */
+  .cbody{padding:8px 11px 9px;display:flex;flex-direction:column;gap:3px}
+  .cname{display:flex;align-items:center;gap:6px;font-size:12.5px} .cname b{font-family:var(--sf-sans)} .cname svg{width:14px;height:14px;flex:none}
+  .ctier{margin-left:auto;font-size:11px;font-weight:600;color:var(--pc);border:1.5px solid var(--pc);border-radius:999px;padding:1px 7px;white-space:nowrap}
+  .cfol{font-size:12px;color:var(--sf-fg-2)} .cfol b{font-size:18px;color:var(--sf-fg);font-weight:500;letter-spacing:-.01em;margin-right:5px;font-variant-numeric:tabular-nums}
+  .cprog{height:5px;border-radius:999px;background:var(--sf-bg-2);border:1.5px solid var(--sf-line);overflow:hidden}
+  .cprog i{display:block;height:100%;background:var(--pc);border-radius:999px;transition:width .35s}
+  .cnext{font-size:11px;color:var(--sf-fg-3)}
+  .cchips{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+  .cc{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:999px;border:1.5px solid var(--sf-line);color:var(--sf-fg-2)} .cc svg{width:11px;height:11px}
+  .cc.hot{color:var(--sf-red);border-color:var(--sf-red)} .cc.idle{color:var(--sf-red)} .cc.tired{color:var(--sf-gold)} .cc.ok{color:var(--sf-edge)} .cc.quiet{color:var(--sf-fg-3)}
   .tl{font-size:11.5px;color:var(--sf-fg-2)} .tl b{color:var(--sf-fg)}
-  .tierpill{font-size:10px;letter-spacing:2px}
 
   .stagehead h2{font-family:var(--sf-sans);font-size:17px;font-weight:700;margin:0;letter-spacing:-.01em}
   .slotpill{font-size:11.5px;color:var(--sf-fg-2);background:var(--sf-card);border:2px solid var(--sf-line);
@@ -300,7 +343,9 @@
        bars read as gauges, not stretched rails, with no dead centre */
     .meterrow{grid-template-columns:200px 200px auto auto;justify-content:start;column-gap:26px}
     /* the decision is the widest surface; feed + inbox/stats are rails */
-    .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;overflow:hidden;padding:0}
+    .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;grid-template-rows:auto minmax(0,1fr);overflow:hidden;padding:0}
+    .chanstrip{grid-column:1/-1;border-bottom:2px solid var(--sf-line);padding:12px 16px 0}
+    .chanrow{margin:0;padding:2px 0 12px;scroll-padding-inline:0} .chancard{flex:0 0 clamp(216px,calc((100% - 40px)/5),262px)}
     .tabbody>#tab-home,.tabbody>#tab-alerts,.rail>.tabpane{overflow-y:auto;min-height:0;padding:16px 16px 20px}
     #tab-home{border-right:2px solid var(--sf-line)}
     #tab-alerts{border-right:2px solid var(--sf-line);background:rgba(255,255,255,.02)}
@@ -310,8 +355,6 @@
     .moves.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
     .move.vcard,.posted.vcard{flex-direction:column;gap:9px}
     .move.vcard .thumb,.posted.vcard .thumb{width:100%}
-    /* channel strip goes horizontal so it doesn't eat vertical room */
-    .chanrow{flex-direction:row;flex-wrap:wrap} .chanrow>.chancard{flex:0 1 250px}
     /* "End the week" is always reachable, pinned flush to the column bottom */
     .tabbody>#tab-home{padding-bottom:0}
     .stagefoot{position:sticky;bottom:0;background:var(--sf-bg);border-top:2px solid var(--sf-line);padding:12px 0 16px;margin-top:12px}
@@ -349,6 +392,12 @@
   .pick.sel{border-color:var(--sf-edge)} .pick:hover{border-color:var(--sf-fg-2)}
   .pe{display:block;margin-bottom:4px;color:var(--sf-fg)} .pe svg{width:22px;height:22px} .pick.sel .pe{color:var(--sf-edge)}
   .pl{display:block;font-family:var(--sf-sans);font-weight:700;font-size:12.5px} .pm{display:block;font-size:11px;color:var(--sf-fg-2);margin-top:2px;line-height:1.3}
+  .startfoot{margin-top:14px;padding-top:12px;border-top:1px solid var(--sf-line-2);display:flex;flex-direction:column;gap:9px;font-size:12px;color:var(--sf-fg-2);line-height:1.45}
+  .startfoot a{color:var(--sf-fg)}
+  .startsub{display:flex;flex-direction:column;gap:2px;text-decoration:none;font-family:var(--sf-sans);font-weight:700;font-size:13px;color:var(--sf-fg);
+    border:2px solid var(--sf-line);border-radius:11px;padding:9px 12px;transition:border-color .2s}
+  .startsub small{font-weight:400;font-family:var(--sf-body);font-size:11.5px;color:var(--sf-fg-2)}
+  .startsub:hover{border-color:var(--sf-fg-2)} .startsub:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px}
   .endhero{display:flex;align-items:center;gap:12px;margin:6px 0 12px}
   .ee{flex:none;width:58px;height:58px;border-radius:14px;background:var(--sf-card);border:2px solid var(--sf-line);display:grid;place-items:center} .ee svg{width:30px;height:30px;fill:currentColor}
   .endstats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
@@ -430,9 +479,11 @@
   </header>
 
   <main class="tabbody">
-    <section class="tabpane" id="tab-home">
+    <section class="chanstrip" id="chanstrip">
       <div class="chanhead"><h3>Your Channels</h3><span class="hint" id="chanhint"></span></div>
       <div class="chanrow" id="chanrow"></div>
+    </section>
+    <section class="tabpane" id="tab-home">
       <div class="stagehead"><h2 id="stagetitle">This Week</h2><span class="slotpill" id="slotpill"></span></div>
       <div id="stagebody"></div>
     </section>
@@ -459,10 +510,14 @@
     <div class="kick">A year as a creator, in about ten minutes</div>
     <h1>Your first video is up. Forty people watched it. One of them was your mom.</h1>
     <p class="lede">Fifty-two weeks to turn that into a living. Every platform wants something different from you, the algorithm changes its mind without telling you, and the comments are about to get interesting. There are eight ways this ends.</p>
-    <div class="field"><label for="nameInput">What’s the channel called?</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
+    <div class="field"><label for="nameInput">Name your online persona</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
     <div class="field"><span class="flabel" id="nicheLabel">What do you make?</span><div class="pgrid" id="nichegrid" role="radiogroup" aria-labelledby="nicheLabel"></div></div>
     <div class="field"><span class="flabel" id="homeLabel">Where do you post first?</span><div class="pgrid" id="homegrid" role="radiogroup" aria-labelledby="homeLabel"></div></div>
     <button class="btn primary" id="startBtn" style="width:100%">Go live →</button>
+    <div class="startfoot">
+      <span>Made by <a href="https://jasonnellis.com" target="_blank" rel="noopener">Jason Nellis</a>. Play it as many times as you like; every run ends differently.</span>
+      <a class="startsub" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">Get “The Long Yes” →<small>The real thing is harder than this. I write about it every week.</small></a>
+    </div>
   </div>
 </div>
 
@@ -508,6 +563,7 @@
   let tab = 'home', seenFeedLen = 0, hist = [], lastRecap = null;   // hist + lastRecap are UI-only; never enter S/engine/sim/tests
   let weekLog = [];   // UI-only: what you did this week + what it did, rendered in place (#2/#4)
   let bizMoreOpen = false;   // UI-only: the collapsed business list after the week's move is spent
+  let postLog = {};   // UI-only: last 3 posts per platform {topic, views, week, hit} — feeds the channel cards
   function switchTab(t){ tab = t; SFX.play('click'); render(); }
   // Desktop console: >=980px shows every pane at once (no tab bar). Re-render
   // when we cross the breakpoint so panes fill/empty and hidden flags update.
@@ -555,7 +611,7 @@
     SFX.unlock(); SFX.play('level');
     S = E.newState(niche, home); S.name = name || 'untitled'; teamOpen = false;
     pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
-    hist = []; lastRecap = null; weekLog = []; snapshot(); tab = 'home';
+    hist = []; lastRecap = null; weekLog = []; postLog = {}; snapshot(); tab = 'home';
     E.buildHand(S); render(); openClose($('startOverlay'), false);
   }
 
@@ -590,6 +646,8 @@
   const BIZ_DONE = { engage:'Engaged the community', deal:'Took a brand deal', upgrade:'Upgraded', paid:'Launched membership' };
   function takeMove(i){ const m=S.hand[i]; if(!m||S.slots.content<=0)return;
     const v=moveView(m), b0=capture(), log=E.applyMove(S,m); applyLog(log);
+    if(m.topic && m.pkey && (m.kind==='post'||m.kind==='ride')){ const hit=((log&&log.feed)||[]).some(f=>/took off/.test(f.text));
+      (postLog[m.pkey]=postLog[m.pkey]||[]).unshift({ topic:m.topic, views:S.totalViews-b0.v, week:S.week, hit }); postLog[m.pkey].splice(3); }
     logResult(v.topic?'‘'+v.label+'’':v.label, thumbHTML(m, true), b0, log, false); E.buildHand(S); render(); }
   function bizDo(id, role){ const b0=capture(), log=E.biz[id](S, role); applyLog(log);
     const label = id==='hire' ? 'Hired '+(HIRES[role]?HIRES[role].label.toLowerCase():'help')
@@ -640,31 +698,50 @@
     return { ico:pf.emoji, label:m.topic, topic:true, desc:`${pf.name} · ${A.tag} · ${outlook}.`, flags };
   }
 
-  // ---------- channel SVG (levels up visually with tier) ----------
-  function channelSVG(p){
-    const pf=PLATFORMS[p.key], t=platTier(p), col=pf.color, id=p.key;
-    const banner = t>=2 ? `<rect x="0" y="0" width="224" height="40" fill="${col}" opacity="${0.14+0.05*t}"/><rect x="0" y="39" width="224" height="1.5" fill="${col}" opacity="0.5"/>`
-      : t>=1 ? `<rect x="0" y="0" width="224" height="40" fill="${col}" opacity="0.10"/>`
-      : `<rect x="0" y="0" width="224" height="40" fill="#0A2540"/>`;
-    const verified = t>=3 ? `<circle cx="150" cy="58" r="7" fill="${col}"/><path d="M146.4 58 l2.4 2.4 l4.7 -4.9" fill="none" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` : '';
-    const filled=clamp(t,0,3);
-    let thumbs=''; for(let i=0;i<3;i++){ const x=14+i*68; const on=i<filled;
-      thumbs+= on ? `<rect x="${x}" y="86" width="60" height="30" rx="5" fill="${col}" opacity="${0.22+0.10*t/4}"/><rect x="${x}" y="86" width="60" height="30" rx="5" fill="none" stroke="${col}" opacity="0.55"/>`
-                   : `<rect x="${x}" y="86" width="60" height="30" rx="5" fill="none" stroke="#334155" stroke-dasharray="4 4"/>`; }
-    const glow = t>=3?`filter="drop-shadow(0 0 8px ${col})"`:'';
-    return `<svg viewBox="0 0 224 126" width="100%" height="126" xmlns="http://www.w3.org/2000/svg" ${glow} id="cc-${id}">
-      <rect x="0.5" y="0.5" width="223" height="125" rx="10" fill="#0F172A" stroke="rgba(148,163,184,.14)"/>
-      <clipPath id="cl${id}"><rect x="0.5" y="0.5" width="223" height="125" rx="10"/></clipPath>
-      <g clip-path="url(#cl${id})">
-        ${banner}
-        <circle cx="40" cy="44" r="20" fill="#0A2540" stroke="${col}" stroke-width="${t>=2?2:1}"/>
-        <use href="#i-niche-${S.niche}" x="30" y="34" width="20" height="20" fill="#FFFFFF"/>
-        <text x="70" y="42" fill="#FFFFFF" font-family="DM Sans, sans-serif" font-weight="700" font-size="13">${pf.name}</text>
-        ${verified}
-        <text x="70" y="60" fill="${col}" font-family="DM Mono, monospace" font-weight="500" font-size="15">${fmt(p.followers)}</text>
-        <text x="128" y="60" fill="#94A3B8" font-family="DM Sans, sans-serif" font-size="10">followers</text>
-        ${thumbs}
-      </g></svg>`;
+  // ---------- channel cards: each platform in its own format, built from real state ----------
+  const PLAT_NOUN = { longform:'subscribers', shortform:'followers', micro:'followers', writing:'subscribers', live:'followers' };
+  const miniWords = t => bigWords(t).slice(0,2).join('<br>');
+  const handleOf = name => '@'+String(name).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  // The art strip: the platform's own artifact, filled with this channel's last three posts (UI-only postLog).
+  function channelArt(p){
+    const k=p.key, posts=postLog[k]||[];
+    if(k==='longform') return `<div class="cart longform">${[0,1,2].map(i=>{ const v=posts[i]; return v
+      ? `<span class="vid" title="${v.topic}"><span class="vw">${miniWords(v.topic)}</span><span class="vv">${fmt(v.views)}</span></span>`
+      : `<span class="vid none"></span>`; }).join('')}</div>`;
+    if(k==='shortform') return `<div class="cart shortform">${[0,1,2].map(i=>{ const v=posts[i]; return v
+      ? `<span class="clip" title="${v.topic}"><span class="vw">${miniWords(v.topic)}</span><span class="vv">${fmt(v.views)}</span></span>`
+      : `<span class="clip none"></span>`; }).join('')}</div>`;
+    if(k==='micro'){ const v=posts[0];
+      return `<div class="cart micro"><div class="mpost"><span class="mh">${nicheIcon(S.niche)}<b>${S.name}</b><span>${handleOf(S.name)}${v?' · wk '+v.week:''}</span></span>
+        <span class="mt2">${v?v.topic:'Nothing posted yet.'}</span>${v?`<span class="mm">${fmt(v.views)} views${v.hit?' · it ratio’d in your favour':''}</span>`:''}</div></div>`; }
+    if(k==='writing') return `<div class="cart writing">${[0,1,2].map(i=>{ const v=posts[i]; return v
+      ? `<span class="issue"><b>#${Math.max(1,p.posts-i)}</b><span class="it">${v.topic}</span><span class="iv">${fmt(v.views)} opens</span></span>`
+      : `<span class="issue none"><span class="it">${i===0&&!posts.length?'No issues sent yet':'Next issue'}</span></span>`; }).join('')}</div>`;
+    const v=posts[0], on=!!v&&v.week===S.week;
+    return `<div class="cart live"><div class="stream ${on?'on':''}"><span class="lvpill">${on?'LIVE':'OFFLINE'}</span>
+      <span class="st">${v?v.topic:'No streams yet.'}</span>${v?`<span class="sv">${fmt(v.views)} watched${on?'':' · last stream'}</span>`:''}</div></div>`;
+  }
+  function channelCard(p){
+    const pf=PLATFORMS[p.key], t=platTier(p), cut=E.TIERCUT, pol=E.platPolish(S,p);
+    const cur=cut[t], next=cut[t+1];
+    const pct = next ? Math.round(100*(pol-cur)/(next-cur)) : 100;
+    const need = next ? Math.max(1, Math.ceil((next-pol)/3)) : 0;
+    const nextTxt = next ? `${need} more post${need>1?'s':''} to ${TIERS[t+1]}` : 'Top tier';
+    const idleW = S.week - p.lastPost, chips=[];
+    if(p.heat>=52) chips.push(`<span class="cc hot">${icon('stress')}Hot right now</span>`);
+    if(idleW>=E.CONFIG.idleWeeks) chips.push(`<span class="cc idle">${icon('alerts')}Idle ${idleW}w · churning</span>`);
+    if(p.fatigue>=52) chips.push(`<span class="cc tired">${icon('moon')}Audience tired</span>`);
+    else if(p.proven && p.fatigue<45) chips.push(`<span class="cc ok">${icon('membership')}Proven</span>`);
+    if(!chips.length) chips.push('<span class="cc quiet">Steady</span>');
+    return `<div class="chancard ${bumped[p.key]?'up':''}" data-k="${p.key}" style="--pc:${pf.color}">
+      ${channelArt(p)}
+      <div class="cbody">
+        <div class="cname">${icon(PLAT_ICON[p.key],'',pf.color)}<b>${pf.name}</b><span class="ctier">${TIERS[t]}</span></div>
+        <div class="cfol"><b class="mono" id="cc-${p.key}">${fmt(p.followers)}</b>${PLAT_NOUN[p.key]}</div>
+        <div class="cprog" title="${nextTxt}"><i style="width:${clamp(pct,0,100)}%"></i></div>
+        <div class="cnext">${nextTxt}</div>
+        <div class="cchips">${chips.slice(0,2).join('')}</div>
+      </div></div>`;
   }
 
   // ---------- render ----------
@@ -687,7 +764,7 @@
     if(isWide()){
       // desktop console: every pane is on screen, so fill them all every render
       const evt = S.phase==='event' && S.event;
-      ['home','alerts','stats'].forEach(t=>{ $('tab-'+t).hidden=false; });
+      ['home','alerts','stats'].forEach(t=>{ $('tab-'+t).hidden=false; }); $('chanstrip').hidden=false;
       $('tab-inbox').hidden = evt;   // during an event the decision moves into the workspace; hide the rail copy
       $('badge-alerts').hidden=true; $('badge-inbox').hidden=true;   // nothing is hidden behind a tab
       seenFeedLen=(S.feed||[]).length;
@@ -697,7 +774,7 @@
       renderFeed(); if(!evt) renderInbox(); renderStats();
     } else {
       // mobile: one pane at a time, driven by the tab bar
-      ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); });
+      ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); }); $('chanstrip').hidden = (tab!=='home');
       document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
       const unseen=(S.feed||[]).length>seenFeedLen;
       $('badge-alerts').hidden = !(unseen && tab!=='alerts');
@@ -714,10 +791,7 @@
 
   function renderChannels(){ const row=$('chanrow'); const act=activePlats();
     $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet')+(E.hasStudio(S)?' · studio':'');
-    row.innerHTML=act.map(p=>{ const t=platTier(p);
-      return `<div class="chancard ${bumped[p.key]?'up':''}" data-k="${p.key}">${channelSVG(p)}
-        <div class="chanmeta"><span class="tl"><b>${TIERS[t]}</b> tier</span>
-        <span class="tierpill" style="color:${PLATFORMS[p.key].color}">${'●'.repeat(t+1)}${'○'.repeat(4-t)}</span></div></div>`; }).join('');
+    row.innerHTML=act.map(channelCard).join('');
     bumped={};
   }
 
@@ -908,7 +982,8 @@
   function buildStart(){
     const radio=(k,on,inner)=>`<button type="button" class="pick ${on?'sel':''}" role="radio" aria-checked="${on?'true':'false'}" tabindex="${on?0:-1}" data-k="${k}">${inner}</button>`;
     $('nichegrid').innerHTML=Object.entries(NICHES).map(([k,n])=>radio(k,k===selNiche,`<span class="pe">${nicheIcon(k,'big')}</span><span class="pl">${n.label}</span><span class="pm">${n.blurb}</span>`)).join('');
-    $('homegrid').innerHTML=PORDER.filter(k=>PLATFORMS[k].unlock===0).map(k=>{const p=PLATFORMS[k];
+    // You start on video (long, short or live); text and newsletter open up as expansions once you have an audience.
+    $('homegrid').innerHTML=['longform','shortform','live'].map(k=>{const p=PLATFORMS[k];
       return radio(k,k===selHome,`<span class="pe">${icon(PLAT_ICON[k],'big',p.color)}</span><span class="pl">${p.name}</span><span class="pm">${p.tag} · +${p.stress} stress</span>`);}).join('');
     // Roving-tabindex radio group: click or arrow keys select; Tab moves between groups.
     function wireGroup(grid, onPick){ const els=[...grid.querySelectorAll('.pick')];

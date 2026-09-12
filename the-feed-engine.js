@@ -193,7 +193,8 @@
   const totalFollowers = S => PORDER.reduce((s, k) => s + S.plats[k].followers, 0);
   const strongest = S => activePlats(S).sort((a, b) => b.followers - a.followers)[0];
   // Tier is cosmetic polish on the channel card: posts + gear.
-  function platTier(S, p) { const pol = p.posts * 3 + S.gear * 9; let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
+  function platPolish(S, p) { return p.posts * 3 + S.gear * 9; }   // what tiers are cut on (TIERCUT)
+  function platTier(S, p) { const pol = platPolish(S, p); let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
 
   // --- slots & stress ---
   function useSlot(S, kind) { if (S.slots[kind] <= 0) return false; S.slots[kind]--; return true; }
@@ -780,7 +781,7 @@
   return {
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
-    newState, activePlats, totalFollowers, strongest, platTier,
+    newState, activePlats, totalFollowers, strongest, platTier, platPolish,
     useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,

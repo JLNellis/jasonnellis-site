@@ -332,6 +332,46 @@ dashboard look), collapsing the channel card.
 - **Precision.** Float pops round to whole numbers (`roundFloat`) so they
   agree with the in-place stub and the header.
 
+## Shipped: channel strip — each platform in its own format
+
+Jason's note after the thumbnail pass: channels stacked in the left column
+pushed decisions down as platforms were added, and the tier "rectangles and
+dots" meant nothing. Both fixed, chrome-only plus one engine export.
+
+- **Layout.** `#chanstrip` is a full-width first row above the three desktop
+  columns (`.tabbody` gets `grid-template-rows:auto minmax(0,1fr)`; the strip
+  spans `1/-1`). On phones it's the same horizontal, snap-scrolling row at the
+  top of Home (`hidden` toggled with the tab). Decisions no longer move as
+  platforms are added.
+- **Cards are the platform's own artifact**, built from real state
+  (`channelCard` / `channelArt`): Longform = a shelf of three 16:9 videos;
+  Short Video = three 9:16 clips; Microblog = the latest post as a post with
+  @handle; Newsletter = an inbox of numbered issues with "opens"; Live = a
+  stream tile that reads LIVE (pulsing) the week you stream, OFFLINE after.
+  Each tile shows that post's topic (Anton big words, `cqw`-sized) and views.
+  Empty slots are dashed placeholders with platform-specific empty copy.
+- **Data.** A UI-only `postLog[pkey]` (last 3 `{topic, views, week, hit}`
+  per platform, written in `takeMove`, reset in `newGame`) feeds the art.
+  Never enters `S`/engine/sim/tests.
+- **Rectangles + dots replaced by things that mean something:** followers
+  with the platform's noun (subscribers / followers), the tier as a text
+  badge, a **progress bar to the next tier** with "N more posts to X" (tiers
+  cut on `platPolish` = posts×3 + gear×9 — now exported from the engine so
+  the UI doesn't duplicate the formula), and up to two status chips that
+  drive decisions: **Hot right now** (heat ≥52), **Audience tired**
+  (fatigue ≥52), **Idle Nw · churning** (≥ `CONFIG.idleWeeks`), **Proven**,
+  else Steady.
+- `channelSVG` and the `.chanmeta`/`.tierpill` CSS are gone. Float anchor
+  `cc-<key>` is now the followers number in each card.
+
+**Start screen (same day):** the name field is "Name your online persona"
+(you end up with several channels); the first-platform picker is video only
+(Longform · Short · Live — `['longform','shortform','live']` in `buildStart`,
+no longer filtered on `unlock===0`; Microblog and Newsletter arrive as
+expansions). A `.startfoot` under "Go live" credits Jason with a link, invites
+replay ("every run ends differently") and carries a second "Get The Long Yes"
+Substack link, same target as the end screen.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
