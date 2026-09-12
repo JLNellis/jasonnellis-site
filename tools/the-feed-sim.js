@@ -97,8 +97,10 @@ const PERSONAS = {
   // Plays well: rides hits, manages stress, hires everyone, buys the Studio. Target: Star/GOAT.
   'The Optimizer': { home: 'longform', eventPref: ['repair', 'neutral', 'escalate'], act(S) {
     if (content(S)) {
-      const budget = S.stress >= 80 ? 0 : S.stress >= 60 ? 1 : 2;
-      if (CONFIG.slotsContent - S.slots.content < budget) {
+      // fill up to the week's capacity (3 once the Studio is leased), backing off under stress
+      const cap = E.contentSlots(S);
+      const budget = S.stress >= 80 ? 0 : S.stress >= 60 ? 1 : cap;
+      if (cap - S.slots.content < budget) {
         const r = H.ride(S); if (r >= 0) return { card: r };
         const x = H.cross(S); if (x >= 0) return { card: x };
         const st = H.start(S); if (st >= 0 && activePlats(S).length < 4) return { card: st };

@@ -33,7 +33,12 @@
   // To rebalance: edit here, run `npm run sim`. Both game and sim read this block.
   const CONFIG = {
     startCash: 900, startStress: 20,
-    slotsContent: 2, slotsBusiness: 1,
+    // A solo creator ships 2 content + 1 business a week. The Studio (tier 4) is
+    // the "you're an operation now" tier — a real space + room for a full team —
+    // so it also buys a 3rd content slot: the team finally raises throughput, not
+    // just quality. Kept to 3 (not more) so the forced "which posts?" scarcity —
+    // the whole point of the game — survives.
+    slotsContent: 2, slotsContentStudio: 3, slotsBusiness: 1,
     // stress: recovery per week, extra per empty content slot, band thresholds
     // Tuned so two heavy posts (longform ×2 = 26) net +3/week over stressRecover — sustained max
     // output redlines ~w16 and burns out ~w18 — while one empty slot (23 + 18 − 13) nets −28.
@@ -59,10 +64,10 @@
     memberNewConv: 0.025, memberChurn: 0.04, memberChurnIdle: 0.12,
     // gear: tiers 1-3 are kit, tier 4 is the Studio
     gearCost: [0, 350, 800, 1700, 12000], gearViewsMult: 1.10,
-    studioUnlockFollowers: 25000, studioViewsMult: 2.8, studioStressRelief: 6,
+    studioUnlockFollowers: 25000, studioViewsMult: 2.3, studioStressRelief: 6,
     hireCapBase: 2, hireCapStudio: 4,
     // endings
-    goatAt: 200000, starAt: 70000, legendAt: 37000, legendRep: 55,
+    goatAt: 320000, starAt: 70000, legendAt: 37000, legendRep: 55,
     sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
     eventChance: 0.55,
     // event deck: phase bands (weeks) + tax rate on gross earned since last tax event
@@ -202,6 +207,8 @@
 
   // --- team, overhead ---
   const hasStudio = S => S.gear >= 4;
+  // The Studio raises weekly content capacity from 2 to 3 (see CONFIG note).
+  const contentSlots = S => hasStudio(S) ? CONFIG.slotsContentStudio : CONFIG.slotsContent;
   const hireCount = S => HORDER.filter(k => S.hires[k]).length;
   const hireCap = S => hasStudio(S) ? CONFIG.hireCapStudio : CONFIG.hireCapBase;
   const payroll = S => HORDER.reduce((s, k) => s + (S.hires[k] ? HIRES[k].weekly : 0), 0);
@@ -377,7 +384,7 @@
     upgrade(S) { const u = upgradeInfo(S); if (!u.ok || !useSlot(S, 'business')) return L();
       S.cash -= u.cost; S.gear = u.next;
       const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(u.cost), tone: 'loss' }); log.bump = PORDER.slice();
-      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. Every post gets bigger. Every week costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
+      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. Every post gets bigger, and you can ship a third thing every week now. Every week also costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
       else log.feed.push({ emoji: '🛠️', text: `New kit, tier ${u.next}. Everything looks a little more expensive now.`, kind: 'good' });
       return log; },
     paid(S) { if (S.members > 0 || totalFollowers(S) < CONFIG.paidUnlock || !useSlot(S, 'business')) return L();
@@ -734,7 +741,7 @@
     return ev;
   }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
-  function advanceWeek(S) { S.week++; S.slots = { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness }; }
+  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; }
 
   function checkEndings(S) {
     const tot = totalFollowers(S); let key = null;
@@ -773,7 +780,7 @@
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier,
-    useSlot, addStress, stressBand, hasStudio, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
+    useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText,

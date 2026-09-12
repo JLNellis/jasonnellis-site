@@ -195,6 +195,21 @@
   .statk b{font-family:var(--sf-mono);font-size:14px;font-variant-numeric:tabular-nums}
   .spark{display:block;width:100%;height:40px} .nodata{color:var(--sf-fg-3)}
 
+  /* ---------- Studio: desktop rail panel ---------- */
+  .studio{display:flex;flex-direction:column;gap:11px}
+  .scard{background:var(--sf-card);border:2px solid var(--sf-line);border-radius:13px;padding:11px 12px}
+  .scard .sk{font-family:var(--sf-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--sf-fg-3);margin-bottom:6px}
+  .scard .sv{font-family:var(--sf-sans);font-weight:700;font-size:14px;color:var(--sf-fg)}
+  .scard .ss{font-size:11px;color:var(--sf-fg-2);line-height:1.4;margin-top:3px}
+  .steam{display:flex;flex-wrap:wrap;gap:6px}
+  .stm{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--sf-fg);
+    background:var(--sf-card-2);border:1.5px solid var(--sf-line);border-radius:999px;padding:4px 9px}
+  .stm .ic{width:14px;height:14px} .stm.solo{color:var(--sf-fg-3);font-weight:400}
+  .sol{display:flex;align-items:baseline;justify-content:space-between;font-size:11.5px;color:var(--sf-fg-2);padding:2px 0}
+  .sol b{font-family:var(--sf-mono);color:var(--sf-fg);font-variant-numeric:tabular-nums}
+  .scap{font-family:var(--sf-mono);font-size:11px;color:var(--sf-fg-3);text-align:center;padding:2px 0}
+  .scap b{color:var(--sf-edge)}
+
   /* ---------- bottom tab bar ---------- */
   .tabbar{display:flex;border-top:2px solid var(--sf-line);background:var(--sf-bg);
     padding:8px 6px calc(8px + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:5}
@@ -591,7 +606,7 @@
       {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked until 1K total.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
       up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
-        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'Views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
+        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'A third post every week, views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['+1 content slot','up'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
         :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel (+10% views).':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+quality','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' total.',on:canPaid&&!noBiz,f:[['+members','up']]},
@@ -606,7 +621,7 @@
           ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}
       <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot.</div></div>`;
     $('stagebody').innerHTML=`<div class="decks">
-        <div class="deck"><div class="movelabel">Content · pick up to ${E.CONFIG.slotsContent} · angles are bets, not grades</div>
+        <div class="deck"><div class="movelabel">Content · pick up to ${E.contentSlots(S)} · angles are bets, not grades</div>
           <div class="moves">${moveHTML}</div></div>
         <div class="deck"><div class="movelabel">Business · one move a week</div>
           <div class="moves">${bizHTML}</div>${teamHTML}</div>
@@ -657,7 +672,37 @@
   // ---------- Inbox: events arrive as DMs ----------
   function renderInbox(){
     if(S.phase==='event'&&S.event){ renderEventDM($('inboxbody')); return; }
+    // On desktop the rail's event copy moves into the workspace, so this box would
+    // always read "No messages". Give it a job instead: the operation you've built.
+    if(isWide()){ renderStudio($('inboxbody')); return; }
     $('inboxbody').innerHTML='<p class="empty">No messages. Events land here as they happen.</p>';
+  }
+  // ---------- Studio: the desktop rail panel — team, gear, overhead, capacity ----------
+  function renderStudio(target){
+    const ob=E.overheadBreakdown(S), studio=E.hasStudio(S), cap=E.contentSlots(S);
+    const roster=HORDER.filter(r=>S.hires[r]);
+    const team=roster.length
+      ? roster.map(r=>`<span class="stm">${icon(HIRE_ICON[r]||'team')}${HIRES[r].label}</span>`).join('')
+      : '<span class="stm solo">Working solo</span>';
+    const oline=(k,v)=>`<div class="sol"><span>${k}</span><b>${v}</b></div>`;
+    target.innerHTML=`<div class="studio">
+      <div class="scard">
+        <div class="sk">${studio?'🏢 Studio':'Setup'}</div>
+        <div class="sv">${studio?'Leased · ×'+E.CONFIG.studioViewsMult+' views':'Kit tier '+S.gear+' / 3'}</div>
+        <div class="ss">${studio
+          ? cap+' content slots a week · −'+E.CONFIG.studioStressRelief+' stress per post'
+          : 'The Studio adds a 3rd content slot — unlocks at '+fmt(E.CONFIG.studioUnlockFollowers)+' followers.'}</div>
+      </div>
+      <div class="scard">
+        <div class="sk">Team · ${E.hireCount(S)}/${E.hireCap(S)}</div>
+        <div class="steam">${team}</div>
+      </div>
+      <div class="scard">
+        <div class="sk">Overhead · ${money(ob.total)}/wk</div>
+        ${oline('Living',money(ob.base))}${oline('Platforms',money(ob.platforms))}${ob.payroll?oline('Payroll',money(ob.payroll)):''}${ob.lease?oline('Studio lease',money(ob.lease)):''}
+      </div>
+      <div class="scap">This week · <b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business left</div>
+    </div>`;
   }
   // Renders the pending-decision DM into `target` — the rail inbox on mobile,
   // or the wide workspace on desktop so the forced choice gets the prime space.

@@ -37,7 +37,8 @@ the deferred leaderboard.
 
 ## The game, mechanically (after sub-project A)
 
-- **52 weeks.** Each week: **2 content slots + 1 business slot**. Leaving a
+- **52 weeks.** Each week: **2 content slots + 1 business slot** (the Studio
+  raises content to **3** — see "Studio 3rd content slot" below). Leaving a
   slot empty is how you rest.
 - **Stress** (0–100) replaces energy. Bands: <50 normal · 50–69 running hot ·
   70–89 on fumes (views −15%) · ≥90 redline. Three redline weeks = Burnout.
@@ -58,15 +59,16 @@ the deferred leaderboard.
 - **Business** (one/week): Engage · Brand deal (base $150, scales with
   followers and rep, pays more at high rep; a Manager adds ×1.3) · Upgrade
   gear (3 tiers, +10% views each) · **The Studio** (tier 4: $12,000 up front +
-  $3,000/wk lease, views ×2.8, −6 stress/post, needed for >2 hires; unlocks at
-  tier 3 + 25K followers) · Launch membership ($4/member/week, 2.5% new-
+  $3,000/wk lease, views ×2.3, −6 stress/post, +1 content slot (2→3), needed
+  for >2 hires; unlocks at tier 3 + 25K followers) · Launch membership ($4/member/week, 2.5% new-
   follower conversion, 4% churn — 12% in a week you post nothing; recomputed
   weekly) · **Team** (Editor / Manager / Mod / Designer; hire & fire; weekly
   payroll).
 - **Overhead** = $60 + $10/platform + payroll + lease. No hidden creep.
 - Eight endings. Bankrupt floor is −$2,500. The growth endings read their
   thresholds from `CONFIG`: Niche Legend at 37K followers (rep ≥55), Viral
-  Star at 70K, G.O.A.T. at 200K.
+  Star at 70K, G.O.A.T. at 320K (raised from 200K when the Studio 3rd slot
+  lifted late-game output — see below).
 
 ### When ready to launch publicly
 1. Remove `<meta name="robots" content="noindex">` from `the-feed.html`.
@@ -220,6 +222,44 @@ untouched, tests stay 58/58, sim 6/6):
   with"). The n≥2 template is unchanged (the test still asserts "Feeding 2
   platforms").
 
+## Shipped: Studio 3rd content slot + Team/Studio rail panel
+
+Two linked changes so a built-out operation *feels* like one.
+
+**Studio unlocks a 3rd content slot (2→3).** Previously the whole game was
+locked to 2 content + 1 business no matter how much you'd built — a full
+studio + four staff shipped the same two posts as a broke beginner, which
+broke the fiction. Now the Studio (tier 4) is the capacity gate: it already
+raised the hire cap 2→4, so it also raises weekly content 2→3. Business stays
+1. Capped at 3 (not more) so the forced "which posts?" scarcity — the point of
+the game — survives; the 3rd post still costs (reduced) stress, so it's a real
+decision, not free output.
+
+- Engine (`the-feed-engine.js`): `CONFIG.slotsContentStudio: 3`, a
+  `contentSlots(S)` helper (`hasStudio(S) ? 3 : 2`), used by `advanceWeek` and
+  exported. Studio purchase feed line now mentions the extra slot.
+- Balance: the 3rd slot ~doubled studio-player output (growth is **super-**
+  linear at that scale, not near-linear as the old note assumed), sending
+  Optimizer GOAT 21→61%. Re-tuned two knobs: `studioViewsMult` 2.8→2.3 (studio
+  still a clear net boost — Optimizer median 129K→**203K** — via volume) and
+  `goatAt` 200K→**320K** (if creators produce more, "biggest on the planet" is
+  a higher bar). Final: **all 6 `npm run sim` targets green across seeds
+  7/42/123/999 + unseeded**; Optimizer GOAT 17–22%, Star ~70%. Non-studio
+  paths untouched (Sustainable Legend 56%, Grinder burnout 15w). Engine tests
+  58/58.
+- Sim: The Optimizer persona now fills up to `E.contentSlots(S)` (was hardcoded
+  to 2) — without this the sim wouldn't exercise the 3rd slot at all.
+- UI (`the-feed.html`, chrome only): content deck label + slot pill read from
+  `contentSlots(S)`; studio purchase card advertises "+1 content slot".
+
+**Team/Studio rail panel replaces the dead desktop Inbox box.** After the
+console rework, the rail Inbox could never show anything on desktop (events
+render into the workspace, so it always read "No messages"). `renderInbox()`
+now renders a live **Studio panel** (`renderStudio`) when wide + no event:
+setup/studio status (incl. the slot count it buys), team roster + payroll,
+overhead breakdown, and the week's remaining capacity. Mobile Inbox tab
+unchanged (events still land there). Verified both states live in the browser.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
@@ -246,9 +286,10 @@ when C ships.
 
 Notes from the latest balance pass, not yet actioned:
 
-- The Star → GOAT gap is only ~2.9× because growth is near-linear. (B's growth
-  cards were tuned down specifically to keep Optimizer GOAT ≤25% — the near-
-  linear growth is sensitive to any large follower injection.)
+- Growth is **super-linear** at studio scale (confirmed while balancing the
+  Studio 3rd slot — a ~50% output bump nearly doubled follower totals and sent
+  GOAT 21→61% before re-tuning). Any large late-game follower injection still
+  balloons GOAT; `goatAt` (now 320K) is the release valve.
 - The Optimizer persona spreads across four platforms, which the engine
   currently punishes.
 - Grinder median survival sits exactly on the 15-week target floor.
