@@ -180,13 +180,22 @@ tests untouched), verified both widths:
   half the header; now a left-aligned instrument cluster (200px gauges +
   Bank/Overhead), no dead centre. Mobile unchanged.
 
-Two review findings **still open** (not yet actioned):
-- **#4 feed repetition.** Evergreen tails repeat the same headline 3–4× ("…is
-  still getting found. +672 views"). Group a tail into one card. `renderFeed`.
-- **#6 burnout ending copy.** `endingText` burnout blurb reads "Feeding N
-  platforms at once…" (spread-too-thin) but fires at 1 platform, where it's
-  singular-awkward and logically backwards. Needs a low-count variant. Lives
-  in `the-feed-engine.js` (copy only).
+Two more review findings, now also shipped (engine text only — mechanics
+untouched, tests stay 58/58, sim 6/6):
+- **#4 feed repetition (fixed).** A post's evergreen tail earns for 4 weeks, so
+  its "still getting found" line stacked in the feed. Two-part fix: the engine
+  now emits **one summary line per week** for all tails (`settleWeek` —
+  "‘topic’ is still getting found" for one, "N older posts are still earning"
+  for several) instead of one per tail; and `renderFeed` keeps only the **most
+  recent** tail line in the view, so the same headline never stacks across
+  weeks. Mechanics identical (each tail still pays out).
+- **#6 burnout ending copy (fixed).** The burnout blurb read "Feeding N
+  platform(s) at once…" (spread-too-thin) but fired at 1 platform, where it was
+  singular-awkward and logically backwards. Added a `blurb1` variant on the
+  burnout ending; `endingText` uses it when `activePlats === 1` ("You kept
+  posting through it, week after week, until there was nothing left to post
+  with"). The n≥2 template is unchanged (the test still asserts "Feeding 2
+  platforms").
 
 ## Priority item — ending → essay CTA (blocked on content)
 

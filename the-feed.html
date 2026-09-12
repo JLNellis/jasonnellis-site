@@ -622,7 +622,10 @@
   const HANDLES=['@lurkr','@no_context','@fyp_ghost','@ratioed','@doomscroll','@chronically_on','@subtweet','@main_char','@rentfree','@touch_grass','@the_algorithm','@replyguy','@stan_acct','@notif_gremlin'];
   function handleFor(i,txt){ return HANDLES[(txt.length + i*7) % HANDLES.length]; }
   function renderFeed(){
-    const items=(S.feed||[]);
+    // #4: a post's tail earns for 4 weeks, so its "still getting found" line
+    // stacks in the buffer. Keep only the most recent tail line in the view.
+    let seenTail=false;
+    const items=(S.feed||[]).filter(f=>{ if(/still getting found|still earning/.test(f.t)){ if(seenTail) return false; seenTail=true; } return true; });
     const feedHTML = items.length ? items.map((f,i)=>{
       const kind = f.k==='big'?'hype':f.k==='good'?'like':f.k==='bad'?'warn':'note';
       return `<div class="notif ${kind}"><span class="nglyph">${f.e}</span>

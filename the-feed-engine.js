@@ -675,13 +675,18 @@
   function settleWeek(S) {
     const log = L();
     let passive = 0;
-    // evergreen tails keep earning
+    // evergreen tails keep earning — one summary line/week, not one per tail,
+    // so the feed doesn't stutter the same headline 3–4 times (mechanics same)
+    let tailViews = 0; const tailCount = S.tails.length;
     S.tails.forEach(t => {
       const pf = PLATFORMS[t.pkey], p = S.plats[t.pkey];
       const v = Math.round(t.views * CONFIG.tailRate), g = Math.round(v * CONFIG.baseConv * pf.loyal * ANGLES.evergreen.conv);
       p.followers += g; S.newFollowers += g; S.totalViews += v; passive += v * pf.rpm; t.weeksLeft--;
-      log.feed.push({ emoji: '🌲', text: `‘${t.topic}’ is still getting found. +${fmt(v)} views this week.`, kind: '' });
+      tailViews += v;
     });
+    if (tailCount > 0) log.feed.push({ emoji: '🌲', kind: '', text: tailCount === 1
+      ? `‘${S.tails[0].topic}’ is still getting found. +${fmt(tailViews)} views this week.`
+      : `${tailCount} older posts are still earning — +${fmt(tailViews)} views this week.` });
     S.tails = S.tails.filter(t => t.weeksLeft > 0);
     // membership: recomputed every week
     if (S.members > 0) {
@@ -750,7 +755,7 @@
   const ENDINGS = {
     cancelled: { emoji: '📛', kicker: 'Cancelled', title: 'The internet turned on you.', blurb: 'Reputation hit zero. Sponsors ghosted, fans left, and your name is trending for all the wrong reasons.', lesson: 'Followers came fast. Trust left faster. Nobody screenshots the apology.' },
     bankrupt: { emoji: '💸', kicker: 'Broke', title: 'You ran out of runway.', blurb: "The overdraft won. Overhead doesn't care how good last week's video was. You got a day job.", lesson: "An audience isn't an income. Reach pays rent the day somebody chooses to pay you." },
-    burnout: { emoji: '🕯️', kicker: 'Burnout', title: 'You burned all the way out.', blurb: 'The stress redlined and stayed there. Feeding {n} platform{s} at once, you stopped being able to make anything at all.', lesson: 'You can feed every platform, or you can last. The ones still here took the week off.' },
+    burnout: { emoji: '🕯️', kicker: 'Burnout', title: 'You burned all the way out.', blurb: 'The stress redlined and stayed there. Feeding {n} platform{s} at once, you stopped being able to make anything at all.', blurb1: 'The stress redlined and stayed there. You kept posting through it, week after week, until there was nothing left to post with.', lesson: 'You can feed every platform, or you can last. The ones still here took the week off.' },
     sellout: { emoji: '🤑', kicker: 'Sold out', title: 'You became an ad in human form.', blurb: 'The bag got too tempting, too often. Rich and technically famous, but nobody remembers what you actually make.', lesson: 'Every deal was a withdrawal from trust. You overdrew, and the only product left was you.' },
     star: { emoji: '🌟', kicker: 'Viral star', title: 'You went fully mainstream.', blurb: '{star}-plus and climbing across platforms. Brands, press, maybe a Netflix producer in your DMs.', lesson: 'You did the work, then the algorithm did you a favor. Talent loads the dice. Luck rolls them.' },
     goat: { emoji: '👑', kicker: 'G.O.A.T.', title: 'Biggest creator on the planet.', blurb: '{goat}-plus followers and a footprint on every surface. You didn\'t win the game. You became it.', lesson: 'Stamina, taste, and an absurd amount of luck. Almost nobody gets here. Run it again and watch it not happen.' },
@@ -759,7 +764,10 @@
   };
 
   // Ending copy with the run's numbers filled in.
-  function endingText(S, key) { const e = ENDINGS[key]; const n = activePlats(S).length; return Object.assign({}, e, { blurb: e.blurb.replace('{n}', n).replace('{s}', n === 1 ? '' : 's').replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)) }); }
+  function endingText(S, key) { const e = ENDINGS[key]; const n = activePlats(S).length;
+    // "feeding N platforms at once" only makes sense at 2+; use the singular variant at 1
+    const raw = (n === 1 && e.blurb1) ? e.blurb1 : e.blurb;
+    return Object.assign({}, e, { blurb: raw.replace('{n}', n).replace('{s}', n === 1 ? '' : 's').replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)) }); }
 
   return {
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
