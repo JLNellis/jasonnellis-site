@@ -157,6 +157,37 @@ How it's wired, for future edits (`the-feed.html` only):
 - A `wideMQ` change listener re-renders when you cross the breakpoint.
 - Start/end overlays stay phone-width centered dialogs at all sizes.
 
+## Shipped: experience polish pass
+
+A design/UX review after the console. Four fixes, all chrome-only (engine/sim/
+tests untouched), verified both widths:
+
+- **End-screen CTA hierarchy (#1).** The essay/Substack CTA is now the primary
+  red action (value prop + arrow); "Run it back" is a `.btn.ghost`. The one
+  action the game exists for finally wins the eye. Added `.btn.ghost` +
+  `:focus-visible` rings. Sets up the blocked ending→essay link cleanly.
+- **Desktop event moment (#2).** The left column no longer says "open your
+  inbox" while the inbox is visible in the rail — on desktop it points right
+  ("…on the right →"). A pending decision gets `.rail.evt`, which expands the
+  inbox so its reply chips are never clipped by the old 46% cap (Stats shrink
+  below). `render()` toggles `.evt` on `S.phase==='event'`.
+- **Week-recap payoff (#3).** After each settle, a line pins to the top of the
+  Live Feed — `WEEK N · WRAPPED · +X followers · +$Y · stress A→B`. Deltas from
+  the UI-only `hist` snapshots via new `lastRecap`/`computeRecap()`;
+  `recapCard()` prepends it in `renderFeed`. Desktop feed column + mobile
+  Alerts tab.
+- **Header meters (#5).** On wide desktop the Stress/Reputation bars stretched
+  half the header; now a left-aligned instrument cluster (200px gauges +
+  Bank/Overhead), no dead centre. Mobile unchanged.
+
+Two review findings **still open** (not yet actioned):
+- **#4 feed repetition.** Evergreen tails repeat the same headline 3–4× ("…is
+  still getting found. +672 views"). Group a tail into one card. `renderFeed`.
+- **#6 burnout ending copy.** `endingText` burnout blurb reads "Feeding N
+  platforms at once…" (spread-too-thin) but fires at 1 platform, where it's
+  singular-awkward and logically backwards. Needs a low-count variant. Lives
+  in `the-feed-engine.js` (copy only).
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
