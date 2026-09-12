@@ -157,6 +157,19 @@ How it's wired, for future edits (`the-feed.html` only):
 - A `wideMQ` change listener re-renders when you cross the breakpoint.
 - Start/end overlays stay phone-width centered dialogs at all sizes.
 
+**Follow-up — decision-first rebalance.** The first console gave the *feed* the
+widest column and squeezed the *decision* (content + business + end-week) into
+the narrow 296px left lane: measured 1,407px of content in a 643px viewport,
+with the "End the week" button 744px below the fold. Inverted IA — the thing
+you interact with every turn had the least room. Reworked (desktop only): the
+decision is now the widest column with **content and business side by side**
+(`.decks`, an auto-fit 2-col grid inside `#tab-home`), the channel strip goes
+horizontal (`.chanrow` row), and **"End the week" is a sticky footer**
+(`.stagefoot`) so it's always visible. Feed + inbox/stats became rails
+(`minmax(0,1fr) 320px 300px`). Scroll dropped from ~764px to ~264px and the
+end button never leaves view. Mobile unchanged (decks are plain stacked blocks,
+footer static). `.rail.evt` event handling still applies in the 300px rail.
+
 ## Shipped: experience polish pass
 
 A design/UX review after the console. Four fixes, all chrome-only (engine/sim/

@@ -215,10 +215,18 @@
     /* #5: cap the meters into a tidy left-aligned instrument cluster so the
        bars read as gauges, not stretched rails, with no dead centre */
     .meterrow{grid-template-columns:200px 200px auto auto;justify-content:start;column-gap:26px}
-    .tabbody{display:grid;grid-template-columns:296px minmax(0,1fr) 340px;overflow:hidden;padding:0}
+    /* the decision is the widest surface; feed + inbox/stats are rails */
+    .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;overflow:hidden;padding:0}
     .tabbody>#tab-home,.tabbody>#tab-alerts,.rail>.tabpane{overflow-y:auto;min-height:0;padding:16px 16px 20px}
     #tab-home{border-right:2px solid var(--sf-line)}
     #tab-alerts{border-right:2px solid var(--sf-line);background:rgba(255,255,255,.02)}
+    /* content + business side by side (auto-fit to one column when narrow) */
+    .decks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 16px;align-items:start}
+    /* channel strip goes horizontal so it doesn't eat vertical room */
+    .chanrow{flex-direction:row;flex-wrap:wrap} .chanrow>.chancard{flex:1 1 210px}
+    /* "End the week" is always reachable, pinned flush to the column bottom */
+    .tabbody>#tab-home{padding-bottom:0}
+    .stagefoot{position:sticky;bottom:0;background:var(--sf-bg);border-top:2px solid var(--sf-line);padding:12px 0 16px;margin-top:12px}
     .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
     #tab-inbox{flex:none;max-height:46%}
     #tab-stats{flex:1;border-top:2px solid var(--sf-line)}
@@ -595,10 +603,12 @@
           <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
           ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}
       <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot.</div></div>`;
-    $('stagebody').innerHTML=`<div class="movelabel">Content · pick up to ${E.CONFIG.slotsContent} · angles are bets, not grades</div>
-      <div class="moves">${moveHTML}</div>
-      <div class="movelabel">Business · one move a week</div>
-      <div class="moves">${bizHTML}</div>${teamHTML}
+    $('stagebody').innerHTML=`<div class="decks">
+        <div class="deck"><div class="movelabel">Content · pick up to ${E.CONFIG.slotsContent} · angles are bets, not grades</div>
+          <div class="moves">${moveHTML}</div></div>
+        <div class="deck"><div class="movelabel">Business · one move a week</div>
+          <div class="moves">${bizHTML}</div>${teamHTML}</div>
+      </div>
       <div class="stagefoot"><button class="btn primary" id="endWeekBtn">End the week ▸</button></div>`;
     $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
     $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; if(b.dataset.biz==='team'){ teamOpen=!teamOpen; SFX.play('click'); render(); return; } bizDo(b.dataset.biz); });
