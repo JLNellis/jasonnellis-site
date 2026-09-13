@@ -815,7 +815,7 @@
       : `<span class="clip none"></span>`; }).join('')}</div>`;
     if(k==='micro'){ const v=posts[0];
       return `<div class="cart micro"><div class="mpost"><span class="mh">${nicheIcon(S.niche)}<b>${S.name}</b><span>${handleOf(S.name)}${v?' · wk '+v.week:''}</span></span>
-        <span class="mt2">${v?v.topic:'Nothing posted yet.'}</span>${v?`<span class="mm">${fmt(v.views)} views${v.hit?' · it ratio’d in your favour':''}</span>`:''}</div></div>`; }
+        <span class="mt2">${v?v.topic:'Nothing posted yet. The algorithm has no opinion of you.'}</span>${v?`<span class="mm">${fmt(v.views)} views${v.hit?' · it ratio’d in your favour':''}</span>`:''}</div></div>`; }
     if(k==='writing') return `<div class="cart writing">${[0,1,2].map(i=>{ const v=posts[i]; return v
       ? `<span class="issue"><b>#${Math.max(1,p.posts-i)}</b><span class="it">${v.topic}</span><span class="iv">${fmt(v.views)} opens</span></span>`
       : `<span class="issue none"><span class="it">${i===0&&!posts.length?'No issues sent yet':'Next issue'}</span></span>`; }).join('')}</div>`;
@@ -924,14 +924,14 @@
     const loopHint = S.week<=1 ? `<div class="loophint"><b>Tapping a card posts it right away.</b> Up to ${E.contentSlots(S)} posts and one business move a week. Leave a post slot empty and you rest (−${E.CONFIG.stressRecoverPerEmptySlot} stress).</div>` : '';
     const canDeal=totalFollowers()>=1000, up=E.upgradeInfo(S), canPaid=S.members===0&&totalFollowers()>=E.CONFIG.paidUnlock;
     const biz=[
-      {id:'engage',ic:'💬',t:'Engage the community',d:'Build reputation and a little buzz everywhere.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
+      {id:'engage',ic:'💬',t:'Engage the community',d:'Answer the comments. Reputation up. Nobody will thank you.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked until 1K total.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
-      up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
+      up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy, which has never stopped anyone.',on:false,f:[]}
         :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'A third post every week, views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['+1 content slot','up'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
         :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel. Views ×'+kitMult(S.gear).toFixed(2)+' → ×'+kitMult(S.gear+1).toFixed(2)+'.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['×'+kitMult(S.gear+1).toFixed(2)+' views','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
-        :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' total.',on:canPaid&&!noBiz,f:[['+members','up']]},
-      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Everyone on the list costs you every week.',on:true,f:[],go:'Manage ▸'},
+        :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Charge the true fans. They said they would pay. Find out.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' total.',on:canPaid&&!noBiz,f:[['+members','up']]},
+      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. They want paying whether or not anyone watched.',on:true,f:[],go:'Manage ▸'},
     ];
     // a move already made this week is shown once, as its result — not again as a disabled twin
     const bizCards=biz.filter(b=>!weekLog.some(e=>e.biz&&e.id===b.id));
@@ -941,7 +941,7 @@
     // End the week is an informed choice (#5): say what's unused; go filled only once the work is out.
     const unused=[]; if(S.slots.content) unused.push(S.slots.content+(S.slots.content>1?' posts':' post')); if(S.slots.business) unused.push('1 business move');
     const ready=!unused.length;
-    const endSub = ready ? 'Everything’s out. See what it did.' : unused.join(' and ')+' unused · an empty post slot is a rest';
+    const endSub = ready ? 'Everything’s out. Time to find out.' : unused.join(' and ')+' unused · an empty post slot is a rest';
     $('stagebody').innerHTML=`${loopHint}<div class="decks">
         <div class="deck"><div class="movelabel">Content <span>· tap to post · ${S.slots.content} of ${E.contentSlots(S)} left · angles are bets, not grades</span></div>
           <div class="moves vgrid">${postedHTML}${moveHTML}</div></div>
@@ -963,7 +963,7 @@
     // workspace (see render()), so this "check the inbox tab" nudge never shows.
     $('stagetitle').textContent='Hold on.';
     $('slotpill').innerHTML='';
-    $('stagebody').innerHTML=`<div class="waiting"><b>Something's in your inbox.</b><br>Open it to get through the week.</div>`;
+    $('stagebody').innerHTML=`<div class="waiting"><b>Something's in your inbox.</b><br>It is not going to answer itself.</div>`;
   }
 
   // ---------- Alerts: the feed as notifications ----------
@@ -999,7 +999,7 @@
     // On desktop the rail's event copy moves into the workspace, so this box would
     // always read "No messages". Give it a job instead: the operation you've built.
     if(isWide()){ renderStudio($('inboxbody')); return; }
-    $('inboxbody').innerHTML='<p class="empty">No messages. Events land here as they happen.</p>';
+    $('inboxbody').innerHTML='<p class="empty">No messages. This is temporary.</p>';
   }
   // ---------- team dialog: hire / let go, opened from the Team business card ----------
   const teamDlg=$('teamDlg');
