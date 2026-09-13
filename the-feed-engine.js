@@ -38,7 +38,7 @@
     // so it also buys a 3rd content slot: the team finally raises throughput, not
     // just quality. Kept to 3 (not more) so the forced "which posts?" scarcity —
     // the whole point of the game — survives.
-    slotsContent: 2, slotsContentStudio: 3, slotsBusiness: 1,
+    slotsContent: 2, slotsBusiness: 1,   // studio tiers set content capacity (STUDIOS.slots)
     // stress: recovery per week, extra per empty content slot, band thresholds
     // Tuned so two heavy posts (longform ×2 = 26) net +3/week over stressRecover — sustained max
     // output redlines ~w16 and burns out ~w18 — while one empty slot (23 + 18 − 13) nets −28.
@@ -49,7 +49,7 @@
     bandHot: 50, bandFumes: 70, bandRedline: 90, fumesViewsMult: 0.85,
     burnoutStreak: 3,
     // overhead (replaces rent): flat + per platform + payroll + studio lease
-    overheadBase: 60, overheadPerPlatform: 10, studioLease: 3000,
+    overheadBase: 60, overheadPerPlatform: 10,   // studio lease comes from STUDIOS[tier].lease
     // lifestyle creep: living cost steps up with PEAK followers and never steps back down.
     // A recurring late sink that scales with exactly the players who hoard. [[peakFollowers, $/wk], ...]
     livingSteps: [[15000, 150], [25000, 400], [50000, 800], [100000, 1500]],
@@ -78,11 +78,12 @@
     dealBase: 150, dealScale: 0.018, dealRepBase: 0.6,
     paidUnlock: 1500, memberRate: 4, memberConvMin: 0.02, memberConvMax: 0.045,
     memberNewConv: 0.025, memberChurn: 0.04, memberChurnIdle: 0.12,
-    // gear: tiers 1-3 are kit, tier 4 is the Studio
-    gearCost: [0, 350, 800, 1700, 12000], gearViewsMult: 1.10,
-    studioUnlockFollowers: 25000, studioViewsMult: 2.3, studioStressRelief: 6,
-    studioUnlockViews: null,   // if set, lifetime views ≥ this ALSO unlocks the Studio (experiment knob; null = followers only)
-    hireCapBase: 2, hireCapStudio: 4,
+    // gear: tiers 1-3 are kit (+10% views each, compounding); tiers 4-6 are studios (STUDIOS below).
+    gearCost: [0, 350, 800, 1700, 3000, 12000, 35000], gearViewsMult: 1.10,
+    // A studio is a commitment, not a reward: no follower gate. What gates it is money — the deposit plus
+    // studioRunwayWeeks of the NEW weekly overhead in the bank (the landlord's guarantee).
+    studioRunwayWeeks: 3,
+    hireCapBase: 2,
     // endings
     goatAt: 340000, starAt: 70000, legendAt: 37000, legendRep: 55,   // goatAt 320K→340K when cross-posting stopped costing a slot (+~10% Optimizer output)
     sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
@@ -135,8 +136,20 @@
     manager:  { label: 'Manager',       emoji: '📞', sign: 500, weekly: 90,  blurb: 'Better deals, less of the sellout smell.' },
     mod:      { label: 'Community mod', emoji: '🛡️', sign: 400, weekly: 60,  blurb: 'Keeps the comments from becoming the story.' },
     designer: { label: 'Designer',      emoji: '🎨', sign: 800, weekly: 140, blurb: 'Packaging and thumbnails. More clicks everywhere.' },
+    producer: { label: 'Producer',      emoji: '🎬', sign: 900, weekly: 160, blurb: 'Runs the back catalogue. Evergreen posts keep earning two weeks longer.' },
+    analyst:  { label: 'Analyst',       emoji: '📊', sign: 1000, weekly: 180, blurb: 'Reads the numbers so you don’t have to. Heat fades slower.' },
   };
-  const HORDER = ['editor', 'manager', 'mod', 'designer'];
+  const HORDER = ['editor', 'manager', 'mod', 'designer', 'producer', 'analyst'];
+  // Studios: sequential steps after the kit (gear 4/5/6). views multiplies ON TOP of the kit's ×1.33.
+  // slots is weekly content capacity (capped at 3 — the scarcity is the game), cap is team size.
+  const STUDIOS = {
+    4: { key: 'room',     name: 'The spare room', lease: 600,  views: 1.5, slots: 2, cap: 3, stress: 3,
+         blurb: 'A door that closes, a light that isn’t the window, a rent that isn’t nothing.' },
+    5: { key: 'lease',    name: 'The lease',      lease: 3000, views: 2.3, slots: 3, cap: 4, stress: 6,
+         blurb: 'A real space. A third post every week, room for a team, and a landlord who wants it monthly.' },
+    6: { key: 'building', name: 'The building',   lease: 8000, views: 3.3, slots: 3, cap: 6, stress: 10,
+         blurb: 'Your name on the door and a fixed cost that does not care what kind of month you had.' },
+  };
   // Content angles. Multipliers on the post math; the trade-offs are the lesson.
   //   views: reach multiplier · conv: follower conversion · heatHit: heat gain on a hit
   //   stress: extra stress · rep: passive rep gain · badChance/badRep: chance + size of a rep hit
@@ -235,11 +248,12 @@
   }
 
   // --- team, overhead ---
+  const studio = S => STUDIOS[S.gear] || null;
   const hasStudio = S => S.gear >= 4;
-  // The Studio raises weekly content capacity from 2 to 3 (see CONFIG note).
-  const contentSlots = S => hasStudio(S) ? CONFIG.slotsContentStudio : CONFIG.slotsContent;
+  // Weekly content capacity comes from the studio tier (2 without one; the lease and the building give 3).
+  const contentSlots = S => { const st = studio(S); return st ? st.slots : CONFIG.slotsContent; };
   const hireCount = S => HORDER.filter(k => S.hires[k]).length;
-  const hireCap = S => hasStudio(S) ? CONFIG.hireCapStudio : CONFIG.hireCapBase;
+  const hireCap = S => { const st = studio(S); return st ? st.cap : CONFIG.hireCapBase; };
   const payroll = S => HORDER.reduce((s, k) => s + (S.hires[k] ? HIRES[k].weekly : 0), 0);
   // lifestyle creep: which step of CONFIG.livingSteps the run has reached (0 = base), and the $/wk it costs
   function livingStep(S) { let i = 0; CONFIG.livingSteps.forEach((st, k) => { if ((S.peakFollowers || 0) >= st[0]) i = k + 1; }); return i; }
@@ -247,14 +261,15 @@
   // tax accrued since the last tax event — what the next bill would be today (read-only; taxBill settles it)
   const taxOwed = S => Math.round(Math.max(0, S.grossEarned - S.taxedThrough) * CONFIG.taxRate);
   function overheadBreakdown(S) {
-    const b = { base: livingCost(S), livingStep: livingStep(S), platforms: activePlats(S).length * CONFIG.overheadPerPlatform, payroll: payroll(S), lease: hasStudio(S) ? CONFIG.studioLease : 0 };
+    const st = studio(S);
+    const b = { base: livingCost(S), livingStep: livingStep(S), platforms: activePlats(S).length * CONFIG.overheadPerPlatform, payroll: payroll(S), lease: st ? st.lease : 0 };
     b.total = b.base + b.platforms + b.payroll + b.lease; return b;
   }
   const overhead = S => overheadBreakdown(S).total;
   function hireInfo(S, role) {
     const h = HIRES[role];
     if (S.hires[role]) return { ok: false, reason: 'Already on the team.' };
-    if (hireCount(S) >= hireCap(S)) return { ok: false, reason: hasStudio(S) ? 'Team is full.' : 'No room. You need the Studio to hold more than two people.' };
+    if (hireCount(S) >= hireCap(S)) return { ok: false, reason: S.gear >= 6 ? 'Team is full.' : 'No room. A bigger space holds more people.' };
     if (S.cash < h.sign) return { ok: false, reason: 'Signing costs ' + money(h.sign) + '.' };
     if (S.slots.business <= 0) return { ok: false, reason: 'No business slot left this week.' };
     return { ok: true, reason: '' };
@@ -263,7 +278,7 @@
   // --- multipliers: every hire/gear/stress effect on output lives here ---
   function viewsMult(S, pkey) {
     let m = Math.pow(CONFIG.gearViewsMult, Math.min(S.gear, 3));
-    if (hasStudio(S)) m *= CONFIG.studioViewsMult;
+    const st = studio(S); if (st) m *= st.views;
     if (S.hires.designer) m *= 1.15;
     if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) m *= 1.05;
     const band = stressBand(S); if (band === 'fumes' || band === 'redline') m *= CONFIG.fumesViewsMult;
@@ -272,19 +287,21 @@
   function stressCost(S, pkey, angleKey) {
     let c = PLATFORMS[pkey].stress + (ANGLES[angleKey] ? ANGLES[angleKey].stress : 0);
     if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) c -= 8;
-    if (hasStudio(S)) c -= CONFIG.studioStressRelief;
+    const st = studio(S); if (st) c -= st.stress;
     return Math.max(1, c);
   }
+  // Weekly overhead as it WOULD be at studio tier g (used for the runway gate and the UI's affordability read).
+  function overheadAt(S, g) { const st = STUDIOS[g]; return livingCost(S) + activePlats(S).length * CONFIG.overheadPerPlatform + payroll(S) + (st ? st.lease : 0); }
   function upgradeInfo(S) {
     const nx = S.gear + 1;
-    if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio. Nothing left to buy.' };
-    const cost = CONFIG.gearCost[nx];
-    // nx === 4 only when S.gear === 3 — the Studio needs the full kit first.
-    const studioOpen = totalFollowers(S) >= CONFIG.studioUnlockFollowers || (CONFIG.studioUnlockViews != null && S.totalViews >= CONFIG.studioUnlockViews);
-    if (nx === 4 && !studioOpen) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers' + (CONFIG.studioUnlockViews != null ? ' or ' + fmt(CONFIG.studioUnlockViews) + ' lifetime views' : '') + '.' };
-    if (S.cash < cost) return { next: nx, cost, ok: false, reason: 'Costs ' + money(cost) + '.' };
-    if (S.slots.business <= 0) return { next: nx, cost, ok: false, reason: 'No business slot left this week.' };
-    return { next: nx, cost, ok: true, reason: '' };
+    if (nx > 6) return { next: null, cost: 0, ok: false, reason: 'Full rig, the building, your name on the door. Nothing left to buy.' };
+    const cost = CONFIG.gearCost[nx], st = STUDIOS[nx] || null;
+    // a studio needs the deposit plus a few weeks of the new overhead in the bank — the landlord's guarantee
+    const runway = st ? CONFIG.studioRunwayWeeks * overheadAt(S, nx) : 0, need = cost + runway;
+    const info = { next: nx, cost, studio: st, runway, need, weeklyAfter: st ? overheadAt(S, nx) : overheadAt(S, S.gear), ok: false, reason: '' };
+    if (S.cash < need) { info.reason = st ? `${money(cost)} down plus ${CONFIG.studioRunwayWeeks} weeks of the new overhead (${money(runway)}) in the bank. You have ${money(S.cash)}.` : 'Costs ' + money(cost) + '.'; return info; }
+    if (S.slots.business <= 0) { info.reason = 'No business slot left this week.'; return info; }
+    info.ok = true; return info;
   }
 
   // --- damage helpers used by events; the community mod softens both ---
@@ -368,7 +385,7 @@
     if (A.rep) S.rep = clamp(S.rep + rint(A.rep[0], A.rep[1]), 0, 100);
     let repHit = 0;
     if (A.badChance && chance(A.badChance)) { repHit = rint(A.badRep[0], A.badRep[1]); S.rep = clamp(S.rep - repHit, 0, 100); }
-    if (A.tail) S.tails.push({ pkey: k, topic, views, weeksLeft: CONFIG.tailWeeks });
+    if (A.tail) S.tails.push({ pkey: k, topic, views, weeksLeft: CONFIG.tailWeeks + (S.hires.producer ? 2 : 0) });
     S.usedTopics.push({ topic, week: S.week });
 
     const log = L();
@@ -432,7 +449,10 @@
     upgrade(S) { const u = upgradeInfo(S); if (!u.ok || !useSlot(S, 'business')) return L();
       S.cash -= u.cost; S.gear = u.next;
       const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(u.cost), tone: 'loss' }); log.bump = PORDER.slice();
-      if (u.next === 4) log.feed.push({ emoji: '🏢', text: `You signed the lease. Every post gets bigger, and you can ship a third thing every week now. Every week also costs ${money(CONFIG.studioLease)} more. No pressure.`, kind: 'big' });
+      const st = STUDIOS[u.next];
+      if (u.next === 4) log.feed.push({ emoji: '🚪', text: `You signed for the spare room. A door that closes and ${money(st.lease)} a week that doesn’t. This is you deciding it’s the job.`, kind: 'big' });
+      else if (u.next === 5) log.feed.push({ emoji: '🏢', text: `You signed the lease. Every post gets bigger, and you can ship a third thing every week now. Every week also costs ${money(st.lease)} more. No pressure.`, kind: 'big' });
+      else if (u.next === 6) log.feed.push({ emoji: '🏗️', text: `You signed for the building. Your name is on the door and ${money(st.lease)} a week is on the calendar, whatever kind of month it is.`, kind: 'big' });
       else log.feed.push({ emoji: '🛠️', text: `New kit, tier ${u.next}. Your videos look more expensive. So does your bank statement.`, kind: 'good' });
       return log; },
     paid(S) { if (S.members > 0 || totalFollowers(S) < CONFIG.paidUnlock || !useSlot(S, 'business')) return L();
@@ -710,6 +730,22 @@
         { t: 'escalate', ci: '💬', label: 'Push for more money', desc: 'Negotiate hard. They might walk.',
           apply: S => { if (chance(.5)) { const amt = Math.round((400 + totalFollowers(S) * 0.02) * 1.6); S.grossEarned += amt; return gift(S, '💬', `They blinked. +${money(amt)}.`, amt, 'big'); } return fed('💬', 'You pushed too hard and they walked. The email said “circle back”. They will not.', ''); } },
       ] },
+    { id: 'rent-hike', kind: 'neutral', emoji: '📈', title: 'The landlord raised the rent.', badge: 'Fixed costs', cond: S => S.gear >= 6, minWeek: 8,
+      text: 'Market rate, apparently. The building you put your name on now costs more to keep your name on.',
+      choices: [
+        { t: 'repair', ci: '💳', label: 'Pay the increase', desc: 'Four weeks of the bump, up front.',
+          apply: S => { const amt = bite(S, STUDIOS[6].lease * 0.15 * 4, 0.5); addStress(S, 4); return spend(S, '📈', `Paid the bump: −${money(amt)}. The door still has your name on it.`, amt); } },
+        { t: 'escalate', ci: '🚪', label: 'Threaten to walk', desc: 'Call the bluff. Coin flip.',
+          apply: S => { if (chance(.5)) return fed('🤝', 'They blinked. Rent stays where it was, and now they know you read the lease.', 'good'); const amt = bite(S, STUDIOS[6].lease * 0.15 * 6, 0.6); addStress(S, 8); return spend(S, '📉', `They didn’t blink. Six weeks of the bump plus a very polite letter: −${money(amt)}.`, amt); } },
+      ] },
+    { id: 'building-outage', kind: 'neutral', emoji: '🔌', title: 'The building’s internet died mid-stream.', badge: 'Infrastructure', cond: S => S.gear >= 6, repeatable: true,
+      text: 'Everything you make runs through a box in a cupboard, and the box is off.',
+      choices: [
+        { t: 'repair', ci: '🛠️', label: 'Get your own line put in', desc: 'Pay for redundancy. Never again.',
+          apply: S => { const amt = bite(S, 1500, 0.4); return spend(S, '🔌', `Installed a second line: −${money(amt)}. Boring, and worth it.`, amt, ''); } },
+        { t: 'escalate', ci: '📵', label: 'Wait for the landlord', desc: 'It’s their problem. It’s your week.',
+          apply: S => { activePlats(S).forEach(p => p.heat = clamp(p.heat - 12, 0, 100)); addStress(S, 8); return fed('📵', 'Three days dark. Reach cooled everywhere and the landlord sent a thumbs-up emoji.', 'bad'); } },
+      ] },
     { id: 'community-milestone', kind: 'neutral', emoji: '🎉', title: 'You just hit a follower milestone.', badge: 'Milestone', cond: S => totalFollowers(S) > 10000,
       text: 'A round number rolled over. The comments are full of people who have been here a while.',
       choices: [
@@ -786,7 +822,8 @@
       else log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
     }
     // heat / fatigue decay
-    PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); p.fatigue = clamp(p.fatigue - CONFIG.repeatDecay, 0, 100); });
+    const heatKeep = S.hires.analyst ? 0.9 : 0.82;
+    PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * heatKeep) - 2, 0, 100); p.fatigue = clamp(p.fatigue - CONFIG.repeatDecay, 0, 100); });
     // stress: judge the band + burnout streak on the stress you ended the week's work at,
     // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
     const band = stressBand(S);
@@ -844,11 +881,11 @@
   // How you get there, in one line each. {legend}/{star}/{goat}/{floor}/{deals}/{rep} are filled from CONFIG.
   const ENDING_HINT = {
     cancelled: 'Reputation at zero. Escalate every pile-on, take the crypto bag, deny everything.',
-    bankrupt: 'Cash below {floor}. A studio lease with nothing coming in gets you there fastest.',
+    bankrupt: 'Cash below {floor}. Sign for a space you can’t fill yet and wait.',
     burnout: 'Three redline weeks in a row. Fill every slot, every week, and never leave one empty.',
     sellout: '{deals} brand deals with reputation under {rep} and money in the bank. Rich, technically.',
     star: '{star} followers by week 52. Ride every hit, chase the trends, hire the designer.',
-    goat: '{goat} followers. The Studio, a full team, three posts a week, and an absurd amount of luck.',
+    goat: '{goat} followers. The building, a full team, three posts a week, and an absurd amount of luck.',
     legend: '{legend} followers with reputation {lrep} or better. Evergreen, engage, rest, don’t sell.',
     faded: 'Make it to week 52 without going broke, burning out, selling out or blowing up. Most people do. It’s the honest one.',
   };
@@ -860,10 +897,10 @@
     return Object.assign({}, e, { blurb: raw.replace('{n}', n).replace('{s}', n === 1 ? '' : 's').replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)) }); }
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, STUDIOS, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
-    useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo, livingStep, livingCost, taxOwed,
+    useSlot, addStress, stressBand, hasStudio, studio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, overheadAt, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, postCard, buildHand, applyMove, doPost, startPlatform, crosspost, crossOptions, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText, endingHint,

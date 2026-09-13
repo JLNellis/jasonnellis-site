@@ -62,12 +62,14 @@ the deferred leaderboard.
   events cost followers.
 - **Business** (one/week): Engage · Brand deal (base $150, scales with
   followers and rep, pays more at high rep; a Manager adds ×1.3) · Upgrade
-  gear (3 tiers, +10% views each) · **The Studio** (tier 4: $12,000 up front +
-  $3,000/wk lease, views ×2.3, −6 stress/post, +1 content slot (2→3), needed
-  for >2 hires; unlocks at tier 3 + 25K followers) · Launch membership ($4/member/week, 2.5% new-
+  gear (3 tiers, +10% views each) · **Studios** (three sequential steps after
+  the kit — the spare room $3K down + $600/wk ×1.5, the lease $12K + $3K/wk
+  ×2.3 with a 3rd content slot, the building $35K + $8K/wk ×3.3 with room for
+  six; **no follower gate** — each step needs the deposit plus 3 weeks of the
+  new overhead in the bank) · Launch membership ($4/member/week, 2.5% new-
   follower conversion, 4% churn — 12% in a week you post nothing; recomputed
-  weekly) · **Team** (Editor / Manager / Mod / Designer; hire & fire; weekly
-  payroll).
+  weekly) · **Team** (Editor / Manager / Mod / Designer / Producer / Analyst;
+  hire & fire; weekly payroll; cap 2, or 3/4/6 by studio).
 - **Overhead** = $60 + $10/platform + payroll + lease. No hidden creep.
 - Eight endings. Bankrupt floor is −$2,500. The growth endings read their
   thresholds from `CONFIG`: Niche Legend at 37K followers (rep ≥55), Viral
@@ -594,6 +596,49 @@ opens for. If views should matter to the Studio decision, the honest route is
 to make views matter to *money* first (brand deals priced on reach, like real
 CPM sponsorships) so a reach-heavy creator can afford the lease the normal
 way — that's a separate rebalance. Knob left in CONFIG, off.
+
+## Shipped: studio tiers + runway gate, two more hires (2026-09-13)
+
+Jason: a studio IRL is the creator deciding this is the job, often before the
+numbers justify it — a follower gate had the audience deciding instead. So:
+
+- **No follower gate.** `upgradeInfo` gates a studio step on money only: the
+  deposit plus `studioRunwayWeeks` (3) of the *new* weekly overhead in the bank
+  (`overheadAt(S, tier)` — living + platforms + payroll + the new lease). The
+  reason string says exactly what's short. The `studioUnlockViews` experiment
+  knob is gone with the gate it modified.
+- **Three studio tiers** (`STUDIOS`, gear 4/5/6, sequential after the kit):
+
+  | Step | Down | Weekly | Views | Slots | Team | Stress relief |
+  |---|---|---|---|---|---|---|
+  | The spare room | $3,000 | $600 | ×1.5 | 2 | 3 | −3 |
+  | The lease (the old Studio) | $12,000 | $3,000 | ×2.3 | 3 | 4 | −6 |
+  | The building | $35,000 | $8,000 | ×3.3 | 3 | 6 | −10 |
+
+  Content stays capped at 3 (the slot analysis stands). "Falling apart" is
+  mostly emergent (a big lease turns any bad-money event into a countdown)
+  plus two building-only events: `rent-hike` and `building-outage`.
+- **Two new hires** to fill the building: **Producer** (evergreen tails earn
+  2 weeks longer; one site, `doPost`) and **Analyst** (heat keeps 0.9/wk
+  instead of 0.82; one site, `settleWeek`).
+- **UI.** The upgrade card names the step, shows deposit + weekly, and an
+  **affordability read** from `hist` gross deltas ("You've averaged $X/wk
+  over the last 4 weeks. This costs $Y/wk all-in. Runway after signing: N
+  weeks."). The Setup ladder shows Tier 0–3 + "Studios ×1.5–3.3" before a
+  studio, then Kit + room/lease/building. Studio art maps room→`studio-tier-
+  room`, lease→the existing `studio-tier-4`, building→`studio-tier-building`,
+  with `onerror` fallback to the nearest existing scene until the new ones
+  are generated. Hire portraits for producer/analyst fall back to glyphs the
+  same way.
+- **Balance.** Sim 6/6 on seeds 7/42/123 at 600 with **no retune**: the
+  Optimizer signs its first space at week 21 (was 25 under the follower
+  gate), tops out at the lease in the median run and reaches the building in
+  a minority (its GOAT path), 18–22% GOAT; the random persona signs far more
+  often (48→80%) and goes Broke *less* (34→15%) because the runway gate stops
+  it signing what it can't carry. Tests 68/68.
+- **Assets still needed** (see the session notes / prompts doc): two hire
+  portraits (`avatar-hire-producer`, `avatar-hire-analyst`) and two Setup
+  scenes (`studio-tier-room`, `studio-tier-building`).
 
 ## Priority item — ending → essay CTA (blocked on content)
 

@@ -560,5 +560,59 @@
     "height": 1254,
     "bytes": 2440196,
     "sha256": "71276aff5846595c31d118ae8a97768110238738a095fa4ed11c741fbc1a65e2"
+  },
+  {
+    "name": "avatar-hire-producer",
+    "group": "avatars",
+    "origin": "v2-studio-tiers",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a brisk adult woman of Latina descent in her thirties, dark hair in a high ponytail, over-ear headphones pushed back, cream utility vest over a navy tee, a clipboard-sized tablet held against her shoulder, the calm of someone who knows what publishes Thursday. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-producer.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2312512,
+    "sha256": "68f69f20f7e174e0ea09df379c89b4381ec0a65c3b1174aeaf6bf35cf874d16d",
+    "role": "producer",
+    "label": "Producer"
+  },
+  {
+    "name": "avatar-hire-analyst",
+    "group": "avatars",
+    "origin": "v2-studio-tiers",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a wiry adult man of Middle Eastern descent, late twenties, close-cropped dark hair, thin mint-framed glasses, navy quarter-zip, one small coral sticky note stuck to the frame of the glasses, the half-smile of someone who has already seen next week's numbers. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-analyst.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2218923,
+    "sha256": "5f47c9e0d1e79048a8a5e9c75dc58391084bd34b6b87fb78facf4d769a74ea49",
+    "role": "analyst",
+    "label": "Analyst"
+  },
+  {
+    "name": "studio-tier-room",
+    "group": "studio",
+    "origin": "v2-studio-tiers",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Same template as the studio-tier scenes. Subject: \"the spare room\": a small converted bedroom or box",
+    "file": "studio/studio-tier-room.png",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 3053011,
+    "sha256": "00c9f5c6f13ec9c37cb213d0b191f57cf2257dfd58c5921003362afa273fcab1",
+    "gear": 4
+  },
+  {
+    "name": "studio-tier-building",
+    "group": "studio",
+    "origin": "v2-studio-tiers",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Same template as the studio-tier scenes. Subject: \"the building\": a whole floor of a small",
+    "file": "studio/studio-tier-building.png",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 3132651,
+    "sha256": "105be4160b11aa5df6d7219fbb24990c384b3190732d1e6e7547741880647a1b",
+    "gear": 6
   }
 ]

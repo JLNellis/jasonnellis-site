@@ -173,7 +173,7 @@ test('overhead is flat + per-platform + payroll + lease, and breakdown sums', ()
   S.gear = 4;
   const b = E.overheadBreakdown(S);
   assert.strictEqual(b.base, E.CONFIG.overheadBase); assert.strictEqual(b.platforms, E.CONFIG.overheadPerPlatform * 2);
-  assert.strictEqual(b.payroll, E.HIRES.editor.weekly); assert.strictEqual(b.lease, E.CONFIG.studioLease);
+  assert.strictEqual(b.payroll, E.HIRES.editor.weekly); assert.strictEqual(b.lease, E.STUDIOS[4].lease);
   assert.strictEqual(b.total, E.overhead(S));
   assert.strictEqual(b.total, b.base + b.platforms + b.payroll + b.lease);
 });
@@ -188,7 +188,7 @@ test('hire cap is 2 without studio, 4 with', () => {
   assert.strictEqual(S.hires.designer, false, 'third hire refused without studio');
   assert.strictEqual(S.cash, before, 'refused hire costs nothing');
   assert.strictEqual(S.slots.business, 1, 'refused hire keeps the slot');
-  S.gear = 4; assert.strictEqual(E.hireCap(S), E.CONFIG.hireCapStudio);
+  S.gear = 4; assert.strictEqual(E.hireCap(S), E.STUDIOS[4].cap); S.gear = 6; assert.strictEqual(E.hireCap(S), E.STUDIOS[6].cap);
   E.biz.hire(S, 'designer');
   assert.strictEqual(S.hires.designer, true);
 });
@@ -217,7 +217,9 @@ test('hireInfo explains refusals', () => {
   assert.match(E.hireInfo(S, 'mod').reason, /\$/);
   S.cash = 5000; assert.strictEqual(E.hireInfo(S, 'mod').ok, true);
   S.hires.editor = S.hires.manager = true;
-  assert.match(E.hireInfo(S, 'mod').reason, /studio/i);
+  assert.match(E.hireInfo(S, 'mod').reason, /bigger space/i);
+  S.gear = 6; S.hires.mod = S.hires.designer = S.hires.producer = S.hires.analyst = true;
+  assert.match(E.hireInfo(S, 'editor').reason, /already/i); assert.strictEqual(E.hireCount(S), 6);
 });
 
 // ---------------------------------------------------------------- gear + studio + multipliers
@@ -225,7 +227,8 @@ test('viewsMult stacks gear, studio, designer, editor(longform/live), fumes', ()
   const S = mk();
   assert.strictEqual(E.viewsMult(S, 'longform'), 1);
   S.gear = 2; assert.ok(Math.abs(E.viewsMult(S, 'micro') - E.CONFIG.gearViewsMult * E.CONFIG.gearViewsMult) < 1e-9);
-  S.gear = 4; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.CONFIG.studioViewsMult) < 1e-9);
+  S.gear = 4; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.STUDIOS[4].views) < 1e-9);
+  S.gear = 6; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.STUDIOS[6].views) < 1e-9);
   S.gear = 0; S.hires.designer = true; assert.ok(Math.abs(E.viewsMult(S, 'micro') - 1.15) < 1e-9);
   S.hires.designer = false; S.hires.editor = true;
   assert.ok(Math.abs(E.viewsMult(S, 'longform') - 1.05) < 1e-9);
@@ -238,7 +241,8 @@ test('stressCost: platform + angle − editor − studio, min 1', () => {
   assert.strictEqual(E.stressCost(S, 'longform', 'personal'), E.PLATFORMS.longform.stress + E.ANGLES.personal.stress);
   S.hires.editor = true; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress - 8, 'editor takes 8 off longform');
   assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress, 'editor does not touch micro');
-  S.gear = 4; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), 1, 'floors at 1');
+  S.gear = 4; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress - E.STUDIOS[4].stress, 'spare room takes its relief off');
+  S.gear = 6; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), 1, 'floors at 1');
 });
 test('upgrade tiers 1-3 cost cash and a business slot', () => {
   const S = mk(); S.cash = 5000;
@@ -246,16 +250,28 @@ test('upgrade tiers 1-3 cost cash and a business slot', () => {
   E.biz.upgrade(S); assert.strictEqual(S.gear, 1, 'no slot → refused');
   S.slots.business = 1; E.biz.upgrade(S); assert.strictEqual(S.gear, 2);
 });
-test('studio requires tier 3, 25K followers and $12K', () => {
-  const S = mk(); S.gear = 3; S.cash = 20000; S.plats.longform.followers = 1000;
-  assert.strictEqual(E.upgradeInfo(S).ok, false); assert.match(E.upgradeInfo(S).reason, /25K/);
-  E.biz.upgrade(S); assert.strictEqual(S.gear, 3);
-  S.plats.longform.followers = 30000;
-  assert.strictEqual(E.upgradeInfo(S).ok, true); assert.strictEqual(E.upgradeInfo(S).cost, E.CONFIG.gearCost[4]);
-  const log = E.biz.upgrade(S);
-  assert.strictEqual(S.gear, 4); assert.strictEqual(S.cash, 20000 - E.CONFIG.gearCost[4]);
-  assert.ok(log.feed.some(f => f.kind === 'big'));
+test('studios: no follower gate; deposit + runway of the NEW overhead; sequential tiers; nothing left after the building', () => {
+  const C = E.CONFIG; const S = mk(); S.gear = 3; S.plats.longform.followers = 500;   // tiny audience on purpose
+  const need4 = C.gearCost[4] + C.studioRunwayWeeks * E.overheadAt(S, 4);
+  S.cash = need4 - 1; const u0 = E.upgradeInfo(S);
+  assert.strictEqual(u0.ok, false); assert.match(u0.reason, /weeks of the new overhead/); assert.strictEqual(u0.need, need4);
+  E.biz.upgrade(S); assert.strictEqual(S.gear, 3, 'refused');
+  S.cash = need4; assert.strictEqual(E.upgradeInfo(S).ok, true, 'money, not followers, opens it');
+  const log = E.biz.upgrade(S); assert.strictEqual(S.gear, 4); assert.strictEqual(S.cash, need4 - C.gearCost[4]); assert.ok(log.feed.some(f => f.kind === 'big'));
+  assert.strictEqual(E.contentSlots(S), 2, 'the spare room does not add a slot'); assert.strictEqual(E.hireCap(S), 3);
+  assert.strictEqual(E.overheadBreakdown(S).lease, E.STUDIOS[4].lease);
+  S.cash = 1e6; E.advanceWeek(S); E.biz.upgrade(S); assert.strictEqual(S.gear, 5); assert.strictEqual(E.contentSlots(S), 3); assert.strictEqual(E.hireCap(S), 4);
+  E.advanceWeek(S); E.biz.upgrade(S); assert.strictEqual(S.gear, 6); assert.strictEqual(E.contentSlots(S), 3, 'capped at 3'); assert.strictEqual(E.hireCap(S), 6);
+  assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(C.gearViewsMult, 3) * E.STUDIOS[6].views) < 1e-9);
   assert.strictEqual(E.upgradeInfo(S).next, null, 'nothing left to buy');
+});
+test('producer keeps evergreen tails two weeks longer; analyst slows heat decay', () => {
+  E.setRng(seeded(3)); const S = mk(); S.plats.longform.followers = 2000;
+  E.doPost(S, 'longform', 'evergreen', 'a', 1); assert.strictEqual(S.tails[0].weeksLeft, E.CONFIG.tailWeeks);
+  S.hires.producer = true; E.doPost(S, 'longform', 'evergreen', 'b', 1); assert.strictEqual(S.tails[1].weeksLeft, E.CONFIG.tailWeeks + 2);
+  const A = mk(); A.cash = 50000; A.plats.longform.heat = 60; A.plats.longform.lastPost = A.week; E.settleWeek(A);
+  const B = mk(); B.cash = 50000; B.plats.longform.heat = 60; B.plats.longform.lastPost = B.week; B.hires.analyst = true; E.settleWeek(B);
+  assert.ok(B.plats.longform.heat > A.plats.longform.heat, 'analyst keeps more heat');
 });
 
 // ---------------------------------------------------------------- angles, topics, hand

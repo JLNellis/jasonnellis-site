@@ -41,7 +41,7 @@ const H = {
   canDeal(S)          { return totalFollowers(S) >= 1000; },
   nextHire(S, order)  { return order.find(r => !S.hires[r] && E.hireInfo(S, r).ok && S.cash > E.HIRES[r].sign * 4) || null; },
   upgradeOk(S, mult)  { const u = E.upgradeInfo(S); return u.ok && u.next <= 3 && S.cash > u.cost * mult; },
-  studioOk(S, cash)   { const u = E.upgradeInfo(S); return u.ok && u.next === 4 && S.cash > cash; },
+  studioOk(S, mult)   { const u = E.upgradeInfo(S); return u.ok && u.next >= 4 && S.cash > u.need * mult; },   // next studio step, with a cushion over the runway gate
 };
 const content = S => S.slots.content > 0, business = S => S.slots.business > 0;
 
@@ -110,8 +110,8 @@ const PERSONAS = {
     if (business(S)) {
       if (H.canPaid(S)) return { biz: 'paid' };
       if (S.cash < 300 && H.canDeal(S)) return { biz: 'deal' };
-      if (H.studioOk(S, 20000)) return { biz: 'upgrade' };
-      const h = H.nextHire(S, ['editor', 'designer', 'manager', 'mod']); if (h) return { hire: h };
+      if (H.studioOk(S, 1.5)) return { biz: 'upgrade' };
+      const h = H.nextHire(S, ['editor', 'designer', 'manager', 'mod', 'producer', 'analyst']); if (h) return { hire: h };
       if (H.upgradeOk(S, 2.5)) return { biz: 'upgrade' };
       if (S.rep < 50) return { biz: 'engage' };
       // fire the most expensive hire if the lease is drowning us
@@ -130,7 +130,7 @@ function resolveEvent(S, ev, persona) {
   E.applyEventChoice(S, ev, idx);
 }
 function playWeek(S, persona) {
-  if (S._unlockProbe == null && totalFollowers(S) >= CONFIG.studioUnlockFollowers) S._unlockProbe = { week: S.week, views: S.totalViews };
+  if (S._unlockProbe == null && S.gear >= 4) S._unlockProbe = { week: S.week, views: S.totalViews };   // first studio signed
   E.buildHand(S);
   for (let t = 0; t < 8; t++) {
     const a = persona.act(S);
@@ -159,7 +159,7 @@ function playGame(persona) {
   const weeks = Math.min(S.week - 1, CONFIG.years);
   return { end: S.endKey || 'faded', week: weeks, followers: totalFollowers(S), views: S.totalViews, viewsPerWeek: Math.round(S.totalViews / Math.max(1, weeks)),
            cash: S.cash, rep: Math.round(S.rep), deals: S.deals, platforms: activePlats(S).length, members: S.members,
-           hires: E.hireCount(S), studio: E.hasStudio(S), peakOverhead: S.peakOverhead,
+           hires: E.hireCount(S), studio: E.hasStudio(S), gear: S.gear, peakOverhead: S.peakOverhead,
            unlockViews: S._unlockProbe ? S._unlockProbe.views : null, unlockWeek: S._unlockProbe ? S._unlockProbe.week : null };
 }
 
@@ -182,7 +182,8 @@ function runSuite(N) {
       medRep: median(runs.map(r => r.rep)), medPlatforms: median(runs.map(r => r.platforms)), medViewsWk: median(runs.map(r => r.viewsPerWeek)),
       medHires: median(runs.map(r => r.hires)), studioPct: pct(runs.filter(r => r.studio).length, N),
       unlockPct: pct(runs.filter(r => r.unlockViews != null).length, N),
-      medUnlockViews: median(runs.filter(r => r.unlockViews != null).map(r => r.unlockViews)), medUnlockWeek: median(runs.filter(r => r.unlockWeek != null).map(r => r.unlockWeek)) };
+      medUnlockViews: median(runs.filter(r => r.unlockViews != null).map(r => r.unlockViews)), medUnlockWeek: median(runs.filter(r => r.unlockWeek != null).map(r => r.unlockWeek)),
+      medTopGear: median(runs.map(r => r.gear)) };
   }
   return results;
 }
@@ -195,7 +196,7 @@ function printReport(results, N) {
   for (const [name, r] of Object.entries(results)) {
     console.log(`\n▓ ${name}`);
     console.log(`  median: ${fmt(r.medFollowers)} followers · ${fmt(r.medViewsWk)} views/wk · $${r.medCash.toLocaleString()} · rep ${r.medRep} · ${r.medPlatforms} plat · ${r.medHires} hires · studio ${r.studioPct.toFixed(0)}% · ${r.medWeek}w`);
-    if (r.unlockPct > 0) console.log(`  studio threshold (${fmt(CONFIG.studioUnlockFollowers)} followers) reached in ${r.unlockPct.toFixed(0)}% of runs · median week ${r.medUnlockWeek} · median lifetime views at that moment ${fmt(r.medUnlockViews)}`);
+    if (r.unlockPct > 0) console.log(`  first studio signed in ${r.unlockPct.toFixed(0)}% of runs · median week ${r.medUnlockWeek} · median lifetime views at signing ${fmt(r.medUnlockViews)} · median top gear ${r.medTopGear}`);
     ENDING_ORDER.forEach(k => { const p = pct(r.dist[k], N); if (p > 0) console.log(`    ${ENDING_LABEL[k].padEnd(16)} ${bar(p)} ${p.toFixed(1)}%`); });
   }
   console.log('\n' + '-'.repeat(78));

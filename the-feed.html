@@ -665,7 +665,7 @@
   const PLAT_ICON = { longform:'longform', shortform:'short', micro:'micro', writing:'newsletter', live:'live' };
   const ANGLE_ICON = { trend:'trend', evergreen:'evergreen', personal:'personal' };
   const BIZ_ICON = { engage:'engage', deal:'deal', upgrade:'upgrade', paid:'membership', team:'team' };
-  const HIRE_ICON = { editor:'upgrade', manager:'deal', mod:'team', designer:'membership' };
+  const HIRE_ICON = { editor:'upgrade', manager:'deal', mod:'team', designer:'membership', producer:'expand', analyst:'stats' };
   const nicheIcon = (k, cls) => icon('niche-'+k, cls);
   // Niche illustrations (the-feed-assets/imgs, see CREDITS.md). Add files here as the library grows.
   const IMG = '/the-feed-assets/imgs/';
@@ -673,7 +673,11 @@
   const NICHE_VARIANTS = 3;   // thumbnail-<niche>-01..03 exist; 01 is the category default
   const art = (k, w, v) => NICHE_ART[k] ? `${IMG}${NICHE_ART[k]}-${String(v||1).padStart(2,'0')}-${w}.webp` : '';
   const endingArt = (key, w) => E.ENDINGS && E.ENDINGS[key] ? `${IMG}ending-${key}-${w}.webp` : '';
-  const studioArt = (gear, w) => `${IMG}studio-tier-${clamp(gear,0,4)}-${w}.webp`;
+  // Setup art by gear: kit tiers 0–3 have their own scenes; studios map room→(new), lease→the old tier-4 scene,
+  // building→(new). Until the new scenes exist the <img> falls back to the nearest existing one (onerror).
+  const STUDIO_ART = { 4:['studio-tier-room','studio-tier-3'], 5:['studio-tier-4','studio-tier-4'], 6:['studio-tier-building','studio-tier-4'] };
+  const studioArt = (gear, w) => `${IMG}${STUDIO_ART[gear]?STUDIO_ART[gear][0]:'studio-tier-'+clamp(gear,0,3)}-${w}.webp`;
+  const studioArtFallback = (gear, w) => `${IMG}${STUDIO_ART[gear]?STUDIO_ART[gear][1]:'studio-tier-'+clamp(gear,0,3)}-${w}.webp`;
   // Six recurring feed identities have portraits; the other handles get a letter tile.
   const AVATAR = { '@the_algorithm':'the-algorithm', '@replyguy':'replyguy', '@stan_acct':'stan-acct', '@notif_gremlin':'notif-gremlin', '@lurkr':'lurkr', '@chronically_on':'chronically-on' };
   const avatarHTML = h => AVATAR[h]
@@ -725,7 +729,7 @@
   document.addEventListener('pointerdown', ()=>SFX.unlock(), { once:true });
   // pick the most salient sound implied by an effect-log
   function logSound(log){ if(!log)return null; const f=log.floats||[], fe=log.feed||[];
-    if(fe.some(x=>/leveled up|signed the lease/.test(x.text))) return 'level';
+    if(fe.some(x=>/leveled up|signed the lease|signed for/.test(x.text))) return 'level';
     if(f.some(x=>x.tone==='hit')||fe.some(x=>x.kind==='big')) return 'hit';
     if(fe.some(x=>x.kind==='bad')) return 'bad';
     if(f.some(x=>x.tone==='cash')) return 'cash';
@@ -797,7 +801,7 @@
   function bizDo(id, role){ const b0=capture(), log=E.biz[id](S, role); applyLog(log);
     const label = id==='hire' ? 'Hired '+(HIRES[role]?HIRES[role].label.toLowerCase():'help')
                 : id==='fire' ? 'Let go '+(HIRES[role]?HIRES[role].label.toLowerCase():'someone')
-                : id==='upgrade' ? (S.gear>=4?'Signed the studio lease':'Upgraded gear') : BIZ_DONE[id]||id;
+                : id==='upgrade' ? (E.studio(S)?'Signed for '+E.studio(S).name.toLowerCase():'Upgraded gear') : BIZ_DONE[id]||id;
     logResult(label, icon(id==='hire'||id==='fire'?'team':(BIZ_ICON[id]||'engage')), b0, log, true, id); E.buildHand(S); render(); }
   function endWeek(){ applyLog(E.settleWeek(S)); const ev=E.rollEvent(S);
     if(ev){ S.event=ev; S.phase='event'; evtThisWeek=true; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
@@ -938,7 +942,7 @@
   function setMeter(k,v){ $('b-'+k).style.width=clamp(v,0,100)+'%'; $('v-'+k).textContent=Math.round(v); }
 
   function renderChannels(){ const row=$('chanrow'); const act=activePlats();
-    $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet')+(E.hasStudio(S)?' · studio':'');
+    $('chanhint').textContent=act.length+' active · '+(S.members>0?fmt(S.members)+' paid members':'no paid tier yet')+(E.studio(S)?' · '+E.studio(S).name.toLowerCase():'');
     row.innerHTML=act.map(channelCard).join('');
     bumped={};
   }
@@ -972,9 +976,10 @@
     const biz=[
       {id:'engage',ic:'💬',t:'Engage the community',d:'Answer the comments. Reputation up. Nobody will thank you.',on:!noBiz,f:[['+'+E.CONFIG.engageStress+' stress','en'],['+rep','up']]},
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked until 1K total.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
-      up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy, which has never stopped anyone.',on:false,f:[]}
-        :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'A third post every week, views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['+1 content slot','up'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
-        :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel. Views ×'+kitMult(S.gear).toFixed(2)+' → ×'+kitMult(S.gear+1).toFixed(2)+'.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['×'+kitMult(S.gear+1).toFixed(2)+' views','up']]},
+      up.next===null?{id:'upgrade',ic:'🏢',t:'The building is yours',d:'Full rig, the building, your name on the door. Nothing left to buy, which has never stopped anyone.',on:false,f:[]}
+        :up.studio?{id:'upgrade',ic:'🏢',t:'Sign for '+up.studio.name.toLowerCase()+' ('+money(up.cost)+' down)',d:(up.ok?up.studio.blurb:up.reason)+' '+affordRead(up),on:up.ok,
+            f:[['-'+money(up.cost),'dn'],['+'+money(up.studio.lease)+'/wk','dn'],['×'+up.studio.views+' views','up']].concat(up.studio.slots>E.contentSlots(S)?[['+1 content slot','up']]:[]).concat([['team of '+up.studio.cap,'up']])}
+        :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel. Views ×'+kitMult(S.gear).toFixed(2)+' → ×'+kitMult(S.gear+1).toFixed(2)+'.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['×'+kitMult(up.next).toFixed(2)+' views','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Charge the true fans. They said they would pay. Find out.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' total.',on:canPaid&&!noBiz,f:[['+members','up']]},
       {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. They want paying whether or not anyone watched.',on:true,f:[],go:'Manage ▸'},
@@ -1056,7 +1061,7 @@
         return `<div class="trow"><span class="te">${hireAvatarHTML(r)}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
           <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
           ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}</div>
-      <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot${noBiz?' — yours is spent this week':''}.</div>`; }
+      <div class="tnote">Room for ${E.hireCap(S)}${E.hireCap(S)<6?' · a bigger space holds more':''}. Hiring and letting go each take your business slot${noBiz?' — yours is spent this week':''}.</div>`; }
   function openTeam(){ if(!S) return; SFX.play('click');
     $('teamDlgSub').textContent=`${E.hireCount(S)} of ${E.hireCap(S)} seats · payroll ${money(E.payroll(S))}/wk`;
     $('teamDlgBody').innerHTML=teamRowsHTML();
@@ -1096,10 +1101,16 @@
   $('chanDlgClose').onclick=closeChanPicker;
   chanDlg.addEventListener('click',e=>{ if(e.target===chanDlg) closeChanPicker(); });
   // reach multiplier from the kit alone (tiers 0–3 compound, the Studio multiplies on top)
-  const kitMult = g => Math.pow(E.CONFIG.gearViewsMult, Math.min(g,3)) * (g>=4 ? E.CONFIG.studioViewsMult : 1);
+  const kitMult = g => Math.pow(E.CONFIG.gearViewsMult, Math.min(g,3)) * (E.STUDIOS[g] ? E.STUDIOS[g].views : 1);
+  // affordability read for a studio step: recent earnings vs the new all-in weekly cost (UI-only, from hist)
+  function affordRead(up){ if(!up||!up.studio) return '';
+    const n=Math.min(4,hist.length-1); const avg=n>0?Math.round((hist[hist.length-1].gross-hist[hist.length-1-n].gross)/n):0;
+    const gap=up.weeklyAfter-avg; const after=S.cash-up.cost;
+    const runway=gap>0?Math.max(0,Math.floor(after/gap)):null;
+    return (n>0?`You’ve averaged ${money(avg)}/wk over the last ${n} week${n>1?'s':''}. `:'')+`This costs ${money(up.weeklyAfter)}/wk all-in.`+(runway===null?' Covered at your current pace.':` Runway after signing: ${runway} week${runway===1?'':'s'}.`); }
   // ---------- Studio: the desktop rail panel — team, gear, overhead, capacity ----------
   function renderStudio(target){
-    const ob=E.overheadBreakdown(S), studio=E.hasStudio(S), cap=E.contentSlots(S), up=E.upgradeInfo(S);
+    const ob=E.overheadBreakdown(S), studio=E.studio(S), cap=E.contentSlots(S), up=E.upgradeInfo(S);
     const roster=HORDER.filter(r=>S.hires[r]);
     const team=roster.length
       ? roster.map(r=>`<span class="stm">${hireAvatarHTML(r)}${HIRES[r].label}</span>`).join('')
@@ -1107,16 +1118,19 @@
     const oline=(k,v)=>`<div class="sol"><span>${k}</span><b>${v}</b></div>`;
     target.innerHTML=`<div class="studio">
       <div class="scard hasart">
-        <img class="studio-art" src="${studioArt(S.gear,640)}" srcset="${studioArt(S.gear,320)} 320w, ${studioArt(S.gear,640)} 640w" sizes="300px" width="1536" height="1024" alt="" loading="lazy" decoding="async">
-        <div class="sk">${studio?'Studio':'Setup · kit tier '+S.gear+' of 3'}</div>
+        <img class="studio-art" src="${studioArt(S.gear,640)}" srcset="${studioArt(S.gear,320)} 320w, ${studioArt(S.gear,640)} 640w" sizes="300px" width="1536" height="1024" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.srcset='${studioArtFallback(S.gear,320)} 320w, ${studioArtFallback(S.gear,640)} 640w';this.src='${studioArtFallback(S.gear,640)}';}">
+        <div class="sk">${studio?studio.name:'Setup · kit tier '+S.gear+' of 3'}</div>
         <div class="sv">Views ×${kitMult(S.gear).toFixed(2)}${S.hires.designer?' <small style="font-weight:400;color:var(--sf-fg-2)">· Designer ×1.15 on top</small>':''}</div>
-        <ol class="ladder">${[0,1,2,3,4].map(g=>`<li class="${g<S.gear?'done':g===S.gear?'on':g===S.gear+1?'next':''}"><b>×${kitMult(g).toFixed(2)}</b>${g===4?'Studio':'Tier '+g}</li>`).join('')}</ol>
+        <ol class="ladder">${(S.gear<=3
+            ? [0,1,2,3].map(g=>({g,lab:'Tier '+g,m:'×'+kitMult(g).toFixed(2)})).concat([{g:4,lab:'Studios',m:'×'+kitMult(4).toFixed(1)+'–'+kitMult(6).toFixed(1)}])
+            : [{g:3,lab:'Kit',m:'×'+kitMult(3).toFixed(2)}].concat([4,5,6].map(g=>({g,lab:E.STUDIOS[g].name.replace('The ',''),m:'×'+kitMult(g).toFixed(2)}))))
+          .map(x=>`<li class="${x.g<S.gear?'done':x.g===S.gear?'on':x.g===S.gear+1?'next':''}"><b>${x.m}</b>${x.lab}</li>`).join('')}</ol>
         <div class="lnext">${up.next===null ? 'Nothing left to buy.'
-          : up.next===4 ? (totalFollowers()>=E.CONFIG.studioUnlockFollowers ? 'Next: the Studio · <b>'+money(up.cost)+'</b> + '+money(E.CONFIG.studioLease)+'/wk' : 'Next: the Studio · unlocks at <b>'+fmt(E.CONFIG.studioUnlockFollowers)+'</b> followers')
+          : up.studio ? 'Next: '+up.studio.name.toLowerCase()+' · <b>'+money(up.cost)+'</b> down + '+money(up.studio.lease)+'/wk'+(up.ok?'':' · needs <b>'+money(up.need)+'</b> in the bank')
           : 'Next: tier '+up.next+' · <b>'+money(up.cost)+'</b>'}</div>
         <div class="ss">${studio
-          ? cap+' content slots a week · −'+E.CONFIG.studioStressRelief+' stress per post'
-          : 'The Studio adds a 3rd content slot and −'+E.CONFIG.studioStressRelief+' stress per post.'}</div>
+          ? cap+' content slots a week · −'+studio.stress+' stress per post · room for '+studio.cap
+          : 'A studio is a commitment, not a reward. No follower gate: the deposit plus '+E.CONFIG.studioRunwayWeeks+' weeks of the new overhead opens it.'}</div>
       </div>
       <div class="scard">
         <div class="sk">Team · ${E.hireCount(S)}/${E.hireCap(S)}</div>
