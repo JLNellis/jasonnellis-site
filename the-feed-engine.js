@@ -81,6 +81,7 @@
     // gear: tiers 1-3 are kit, tier 4 is the Studio
     gearCost: [0, 350, 800, 1700, 12000], gearViewsMult: 1.10,
     studioUnlockFollowers: 25000, studioViewsMult: 2.3, studioStressRelief: 6,
+    studioUnlockViews: null,   // if set, lifetime views ≥ this ALSO unlocks the Studio (experiment knob; null = followers only)
     hireCapBase: 2, hireCapStudio: 4,
     // endings
     goatAt: 340000, starAt: 70000, legendAt: 37000, legendRep: 55,   // goatAt 320K→340K when cross-posting stopped costing a slot (+~10% Optimizer output)
@@ -279,7 +280,8 @@
     if (nx > 4) return { next: null, cost: 0, ok: false, reason: 'Full rig and a studio. Nothing left to buy.' };
     const cost = CONFIG.gearCost[nx];
     // nx === 4 only when S.gear === 3 — the Studio needs the full kit first.
-    if (nx === 4 && totalFollowers(S) < CONFIG.studioUnlockFollowers) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers.' };
+    const studioOpen = totalFollowers(S) >= CONFIG.studioUnlockFollowers || (CONFIG.studioUnlockViews != null && S.totalViews >= CONFIG.studioUnlockViews);
+    if (nx === 4 && !studioOpen) return { next: nx, cost, ok: false, reason: 'The Studio unlocks at ' + fmt(CONFIG.studioUnlockFollowers) + ' followers' + (CONFIG.studioUnlockViews != null ? ' or ' + fmt(CONFIG.studioUnlockViews) + ' lifetime views' : '') + '.' };
     if (S.cash < cost) return { next: nx, cost, ok: false, reason: 'Costs ' + money(cost) + '.' };
     if (S.slots.business <= 0) return { next: nx, cost, ok: false, reason: 'No business slot left this week.' };
     return { next: nx, cost, ok: true, reason: '' };
@@ -848,7 +850,7 @@
     star: '{star} followers by week 52. Ride every hit, chase the trends, hire the designer.',
     goat: '{goat} followers. The Studio, a full team, three posts a week, and an absurd amount of luck.',
     legend: '{legend} followers with reputation {lrep} or better. Evergreen, engage, rest, don’t sell.',
-    faded: 'Reach week 52 without any of the above. Most people do. It’s the honest one.',
+    faded: 'Make it to week 52 without going broke, burning out, selling out or blowing up. Most people do. It’s the honest one.',
   };
   function endingHint(key) { return (ENDING_HINT[key] || '').replace('{floor}', money(CONFIG.bankruptFloor)).replace('{deals}', CONFIG.sellDeals).replace('{rep}', CONFIG.sellRepUnder)
     .replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)).replace('{legend}', fmt(CONFIG.legendAt)).replace('{lrep}', CONFIG.legendRep); }

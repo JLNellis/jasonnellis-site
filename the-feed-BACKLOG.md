@@ -566,6 +566,35 @@ keeps the rest decision *and* a reason to buy the Studio.
   from CONFIG). Found endings persist per browser in
   `localStorage.thefeed_endings`. This replaces the leaderboard idea.
 
+## Assessed, not adopted — Studio unlock by lifetime views (2026-09-13)
+
+Question: should a comparable number of lifetime views open the Studio, in
+addition to (or instead of) 25K followers? Instrumented the sim
+(`unlockViews`/`unlockWeek` probe, printed per persona) to measure "comparable":
+
+| Persona (home) | Reaches 25K | Median week | Lifetime views at that moment |
+|---|---|---|---|
+| Optimizer (longform) | 100% | 25 | ~960K |
+| Sustainable (longform) | 99% | 28 | ~1.1M |
+| Diversifier (5 platforms) | 75% | 38 | ~310K |
+| Minimalist (micro) | <1% | — | ~1.4M by week 52 at ~10K followers |
+
+Views per follower is platform-shaped: ~44 on longform, ~140 on microblog.
+So an OR rule at ~1M views opens the Studio at ~7–10K followers for a
+micro/short creator versus ~23K for longform. Ran the OR rule at 1M and 500K
+(`CONFIG.studioUnlockViews`, an engine knob, `null` = off): all six targets
+unchanged; the only movement is the Chaos Gremlin buying the Studio a little
+more (48→55%) and going Broke a little more (34→37%).
+
+Why not adopt it: the Studio is a $3,000/wk lease and the creators the rule
+would help are exactly the ones who can't pay it — microblog rpm is $0.0003
+(1.4M lifetime views ≈ $400 of ad revenue all year) and deals scale on
+followers, not views. A views-based unlock is a trap for the archetype it
+opens for. If views should matter to the Studio decision, the honest route is
+to make views matter to *money* first (brand deals priced on reach, like real
+CPM sponsorships) so a reach-heavy creator can afford the lease the normal
+way — that's a separate rebalance. Knob left in CONFIG, off.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
