@@ -68,7 +68,9 @@
     // What is: (a) a second post on the same platform in the same week competes with the first,
     // (b) repeating the same ANGLE on a platform tires the audience (the literature's actual cause),
     // (c) Newsletter is the one platform where over-sending measurably loses subscribers.
-    sameWeekDilution: 0.8,                                   // views × this per extra post on the platform that week
+    sameWeekDilution: 0.8,
+    // cross-posting: once a week, no slot, half the lift a real post would give the destination
+    crossLift: [0.01, 0.03], crossHeat: 6, crossStress: 2,                                   // views × this per extra post on the platform that week
     repeatAngleGain: 20, repeatAngleRelief: 20, repeatDecay: 8, tiredAt: 52, tiredViewsMult: 0.7,
     newsletterOverSendChurn: 0.03, newsletterOverSendMemberChurn: 0.04,
     // money
@@ -81,7 +83,7 @@
     studioUnlockFollowers: 25000, studioViewsMult: 2.3, studioStressRelief: 6,
     hireCapBase: 2, hireCapStudio: 4,
     // endings
-    goatAt: 320000, starAt: 70000, legendAt: 37000, legendRep: 55,
+    goatAt: 340000, starAt: 70000, legendAt: 37000, legendRep: 55,   // goatAt 320K→340K when cross-posting stopped costing a slot (+~10% Optimizer output)
     sellDeals: 6, sellRepUnder: 45, sellCashOver: 1800,
     eventChance: 0.55,
     // event deck: phase bands (weeks) + tax rate on gross earned since last tax event
@@ -195,7 +197,7 @@
       slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
       hires: { editor: false, manager: false, mod: false, designer: false },
       tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
-      seenEvents: [], grossEarned: 0, taxedThrough: 0, peakFollowers: 0,
+      seenEvents: [], grossEarned: 0, taxedThrough: 0, peakFollowers: 0, crossUsed: false,
       lastHit: null, over: false, endKey: null, plats: {}, hand: [],
     };
     PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9, lastAngle: null, weekPosts: 0 }; });
@@ -331,14 +333,10 @@
       const have = hand.find(c => c.pkey === top.key);
       hand.push(postCard(S, top, have.angle === 'trend' ? 'evergreen' : 'trend', false));
     }
-    if (act.length >= 2) {
-      const src = act.slice().sort((a, b) => b.followers - a.followers)[0];
-      const dst = act.slice().sort((a, b) => a.followers - b.followers)[0];
-      if (src.key !== dst.key && src.followers > 500 && src.heat > 25)
-        hand.push({ kind: 'crosspost', src: src.key, dst: dst.key, special: true, stress: 4 });
-    }
-    const locked = PORDER.map(k => S.plats[k]).filter(p => !p.active && totalFollowers(S) >= PLATFORMS[p.key].unlock);
-    if (locked.length) hand.push({ kind: 'start', pkey: locked[0].key, special: true, stress: 8 });
+    // Expansion: one card, the player chooses which platform (options = every inactive platform whose
+    // follower threshold is met). pkey is filled in by the chooser; applyMove falls back to options[0].
+    const openable = PORDER.filter(k => !S.plats[k].active && totalFollowers(S) >= PLATFORMS[k].unlock);
+    if (openable.length) hand.push({ kind: 'start', pkey: null, options: openable, special: true, stress: 8 });
     S.hand = hand;
     return hand;
   }
@@ -389,10 +387,21 @@
     log.feed.push({ emoji: '✨', text: `${pf.name} is live. Current audience: you, refreshing.`, kind: 'good' });
     return log;
   }
+  // Cross-posting is repackaging something you already posted this week for another channel you run.
+  // It costs no content slot (once a week, +crossStress), moves a smaller slice of the source audience
+  // than a real post would earn, warms the destination a little, and resets its idle clock.
+  function crossOptions(S) {
+    if (S.crossUsed) return [];
+    const act = activePlats(S), out = [];
+    act.filter(p => p.lastPost === S.week && p.posts > 0).forEach(src => act.forEach(dst => { if (dst.key !== src.key) out.push({ src: src.key, dst: dst.key }); }));
+    return out;
+  }
   function crosspost(S, sk, dk) {
+    if (!crossOptions(S).some(o => o.src === sk && o.dst === dk)) return L();
     const src = S.plats[sk], dst = S.plats[dk];
-    const moved = Math.round(src.followers * rnd(.02, .06) * (1 + src.heat / 100));
-    dst.followers += moved; dst.heat = clamp(dst.heat + 12, 0, 100); dst.lastPost = S.week;
+    S.crossUsed = true; addStress(S, CONFIG.crossStress);
+    const moved = Math.round(src.followers * rnd(CONFIG.crossLift[0], CONFIG.crossLift[1]) * (1 + src.heat / 100));
+    dst.followers += moved; dst.heat = clamp(dst.heat + CONFIG.crossHeat, 0, 100); dst.lastPost = S.week;
     S.newFollowers += moved;
     const log = L(); log.bump.push(dk);
     log.floats.push({ anchor: 'plat:' + dk, text: '+' + fmt(moved), tone: 'gain' });
@@ -402,8 +411,7 @@
   function applyMove(S, m) {
     if (!useSlot(S, 'content')) return L();
     addStress(S, m.stress);
-    if (m.kind === 'start') return startPlatform(S, m.pkey);
-    if (m.kind === 'crosspost') return crosspost(S, m.src, m.dst);
+    if (m.kind === 'start') { const k = m.pkey && m.options && m.options.includes(m.pkey) ? m.pkey : (m.options || [m.pkey])[0]; return startPlatform(S, k); }
     return doPost(S, m.pkey, m.angle, m.topic, m.mod);
   }
 
@@ -801,7 +809,7 @@
     return ev;
   }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
-  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
+  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; S.crossUsed = false; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
 
   function checkEndings(S) {
     const tot = totalFollowers(S); let key = null;
@@ -831,6 +839,19 @@
   };
 
   // Ending copy with the run's numbers filled in.
+  // How you get there, in one line each. {legend}/{star}/{goat}/{floor}/{deals}/{rep} are filled from CONFIG.
+  const ENDING_HINT = {
+    cancelled: 'Reputation at zero. Escalate every pile-on, take the crypto bag, deny everything.',
+    bankrupt: 'Cash below {floor}. A studio lease with nothing coming in gets you there fastest.',
+    burnout: 'Three redline weeks in a row. Fill every slot, every week, and never leave one empty.',
+    sellout: '{deals} brand deals with reputation under {rep} and money in the bank. Rich, technically.',
+    star: '{star} followers by week 52. Ride every hit, chase the trends, hire the designer.',
+    goat: '{goat} followers. The Studio, a full team, three posts a week, and an absurd amount of luck.',
+    legend: '{legend} followers with reputation {lrep} or better. Evergreen, engage, rest, don’t sell.',
+    faded: 'Reach week 52 without any of the above. Most people do. It’s the honest one.',
+  };
+  function endingHint(key) { return (ENDING_HINT[key] || '').replace('{floor}', money(CONFIG.bankruptFloor)).replace('{deals}', CONFIG.sellDeals).replace('{rep}', CONFIG.sellRepUnder)
+    .replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)).replace('{legend}', fmt(CONFIG.legendAt)).replace('{lrep}', CONFIG.legendRep); }
   function endingText(S, key) { const e = ENDINGS[key]; const n = activePlats(S).length;
     // "feeding N platforms at once" only makes sense at 2+; use the singular variant at 1
     const raw = (n === 1 && e.blurb1) ? e.blurb1 : e.blurb;
@@ -842,7 +863,7 @@
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
     useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
-    pickTopic, postCard, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
-    settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText,
+    pickTopic, postCard, buildHand, applyMove, doPost, startPlatform, crosspost, crossOptions, biz,
+    settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText, endingHint,
   };
 });

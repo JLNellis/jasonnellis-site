@@ -537,6 +537,35 @@ make "post everything" the default; without the Studio's third slot the top
 ending is effectively unreachable. The current split is the only one that
 keeps the rest decision *and* a reason to buy the Studio.
 
+## Shipped: views + money, platform picker, free cross-post, endings gallery (2026-09-13)
+
+- **Lifetime views** is a header metric beside Followers, in the week-recap
+  line, and a fifth desktop trend cell (weekly bars). **Money** replaces the
+  Overhead card: earned this week so far (live), last week's earned + net,
+  then overhead and its breakdown, then tax owed. The Bank trend cell is now
+  weekly net bars. UI only — `hist` snapshots carry `views` and `gross`.
+- **Platform picker.** `buildHand` deals ONE expansion card with
+  `options` (every inactive platform whose follower threshold is met) and
+  `pkey:null`; the card opens `#chanDlg`, which lists all five platforms
+  with a plain-words personality line (reach/loyalty/pays/stress from
+  `PLATFORMS`) and a **niche fit line** (`NICHE_FIT`, two per niche, words
+  only, no mechanics), locked ones greyed with their unlock number.
+  `takeMove(i, pkey)` fills the choice; `applyMove` falls back to
+  `options[0]` so the sim's old behaviour is unchanged.
+- **Cross-posting is a free follow-up**, not a card: after a post, its stub
+  offers "Cross-post to <platform>" chips (`E.crossOptions`), once a week
+  (`S.crossUsed`, reset in `advanceWeek`), +2 stress, lift halved
+  (`crossLift` 1–3% of the source × heat), destination heat +6 and its idle
+  clock reset. The Optimizer persona uses it every week it can; the runner
+  treats `{cross}` as slot-free. That added ~10% to Optimizer output, so
+  `goatAt` 320K→**340K**. Sim 6/6 on seeds 7/42/123 at 600; tests 67/67.
+- **Endings gallery** on the end screen: "There are 7 other endings. You've
+  found N of 8", eight tiles in a fixed order (faded → cancelled), the run's
+  ending marked, previously found ones showing their art, every tile carrying
+  an honest one-line hint (`ENDING_HINT` / `E.endingHint`, thresholds filled
+  from CONFIG). Found endings persist per browser in
+  `localStorage.thefeed_endings`. This replaces the leaderboard idea.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's
@@ -545,7 +574,11 @@ etc.). **Blocked until the essays exist.** When they do: add an `essay` URL
 per `ENDINGS` entry in the engine and swap the end-screen CTA copy/link.
 This is the whole reason the game exists — do not let it slip.
 
-## Deferred — high-score leaderboard (Netlify Blobs)
+## Dropped — high-score leaderboard (Netlify Blobs)
+
+Replaced by the endings gallery (2026-09-13): the end screen now sells the
+other seven endings with hints instead of a score. Original notes kept below
+in case a board ever comes back.
 
 Defer until after C. Client-submitted scores are spoofable (acceptable for a
 toy board with clamping + rate-limits). Score should be a composite (followers,

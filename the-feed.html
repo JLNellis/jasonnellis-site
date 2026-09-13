@@ -86,6 +86,27 @@
   .metric .v{font-family:var(--sf-mono);font-size:13px;font-variant-numeric:tabular-nums}
   .metric .v.pos{color:var(--sf-edge)} .metric .v.neg{color:var(--sf-red)}
   .metric.fol .v{font-size:14px;font-weight:500;color:var(--sf-fg)}
+  .metric.views .v{font-size:13px;color:var(--sf-fg)}
+  /* cross-post follow-up chips on a posted stub */
+  .xrow{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px;font-size:11.5px;color:var(--sf-fg-2)}
+  .xbtn{font-family:var(--sf-sans);font-weight:700;font-size:11px;color:var(--sf-fg);background:transparent;border:1.5px solid var(--sf-fg-2);border-radius:999px;padding:2px 8px;cursor:pointer}
+  .xbtn:hover{border-color:var(--sf-fg);background:rgba(255,255,255,.06)}
+  /* platform picker rows */
+  .prow{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--sf-line-2)}
+  .prow:last-of-type{border-bottom:0} .prow.locked{opacity:.55}
+  .prow .pi2{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--sf-bg-2);color:var(--pc)} .prow .pi2 svg{width:18px;height:18px;fill:currentColor}
+  .prow .pt{min-width:0} .prow .pt b{font-family:var(--sf-sans);font-size:13.5px;display:block} .prow .pt span{display:block;font-size:11.5px;color:var(--sf-fg-2);line-height:1.35}
+  .prow .pt .fit{color:var(--sf-edge)} .prow .pt .pstats{font-family:var(--sf-mono);font-size:10.5px;color:var(--sf-fg-3);margin-top:2px}
+  .prow .tbtn{grid-column:3}
+  /* endings gallery */
+  .endgal{margin:14px 0 6px} .endgal .gk{font-size:12.5px;color:var(--sf-fg-2);margin-bottom:8px} .endgal .gk b{color:var(--sf-fg)}
+  .egrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .etile{background:var(--sf-card);border:2px solid var(--sf-line);border-radius:11px;overflow:hidden}
+  .etile .ea{aspect-ratio:3/2;background:var(--sf-bg-2);display:grid;place-items:center;color:var(--sf-fg-3);position:relative} .etile .ea img{width:100%;height:100%;object-fit:cover;display:block} .etile .ea svg{width:26px;height:26px;fill:currentColor}
+  .etile .eb{padding:7px 9px 9px} .etile .eb b{font-family:var(--sf-sans);font-size:12.5px;display:block} .etile .eb span{display:block;font-size:11px;color:var(--sf-fg-2);line-height:1.35;margin-top:2px}
+  .etile.now{border-color:var(--sf-red)} .etile.now .eb b{color:var(--sf-red)}
+  .etile.got{border-color:var(--sf-edge)} .etile.locked .ea{filter:none} .etile.locked .eb b{color:var(--sf-fg-2)}
+  .etile .ea .badge2{position:absolute;top:5px;left:5px;font-family:var(--sf-sans);font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--sf-edge);color:#06231a} .etile.now .ea .badge2{background:var(--sf-red);color:#fff}
   .ovbtn{cursor:pointer}
   .ovbtn:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px;border-radius:6px}
   /* phone: the overhead breakdown is a tap-to-open detail, and the header tightens once you scroll */
@@ -384,7 +405,7 @@
     /* #5: cap the meters into a tidy left-aligned instrument cluster so the
        bars read as gauges, not stretched rails, with no dead centre */
     .meterrow{grid-template-columns:200px 200px auto auto;justify-content:start;column-gap:26px}
-    .trendrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px;max-width:760px}
+    .trendrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px;max-width:920px}
     #tab-stats{display:none}
     /* the decision is the widest surface; feed + inbox/stats are rails */
     .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;grid-template-rows:auto minmax(0,1fr);overflow:hidden;padding:0}
@@ -532,6 +553,7 @@
         <div><h1 id="channame">Your Channel</h1><span class="nichebadge" id="nichebadge">—</span></div></div>
       <div class="hright">
         <span class="metric fol"><span class="v mono" id="totfollow">0</span><span class="k">followers</span></span>
+        <span class="metric views"><span class="v mono" id="totviews">0</span><span class="k">views</span></span>
         <button class="soundbtn" id="soundBtn" type="button" aria-label="Toggle sound"></button>
         <span class="weekchip" id="weekchip">WK 01 / 52</span>
       </div>
@@ -574,6 +596,10 @@
 
 <div class="floats" id="floats"></div>
 
+<dialog class="teamdlg" id="chanDlg" aria-labelledby="chanDlgTitle">
+  <div class="dhead"><h2 id="chanDlgTitle">Add a channel <span id="chanDlgSub"></span></h2><button class="dclose" type="button" id="chanDlgClose" aria-label="Close">×</button></div>
+  <div id="chanDlgBody"></div>
+</dialog>
 <dialog class="teamdlg" id="teamDlg" aria-labelledby="teamDlgTitle">
   <div class="dhead"><h2 id="teamDlgTitle">Your team <span id="teamDlgSub"></span></h2><button class="dclose" type="button" id="teamDlgClose" aria-label="Close">×</button></div>
   <div id="teamDlgBody"></div>
@@ -615,6 +641,7 @@
     <p class="lede" id="endBlurb">—</p>
     <div class="endstats" id="endStats"></div>
     <p class="lesson" id="endLesson">—</p>
+    <div class="endgal" id="endGal"></div>
     <a class="substack-cta" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">
       <span class="sc-go">Get “The Long Yes” →</span>
       <span class="sc-copy">The real thing is harder than this. I write about it every week.</span>
@@ -673,7 +700,7 @@
   const wideMQ = window.matchMedia('(min-width:980px)');
   const isWide = () => wideMQ.matches;
   wideMQ.addEventListener('change', ()=>{ if(S) render(); });
-  function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep), evt:evtThisWeek }); evtThisWeek=false; }
+  function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), views:S.totalViews, gross:S.grossEarned, cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep), evt:evtThisWeek }); evtThisWeek=false; }
 
   // ---------- sound (Pixabay Content License set, via Web Audio — see the-feed-assets/CREDITS.md) ----------
   const SFX = (function(){
@@ -713,7 +740,7 @@
 
   function newGame(name, niche, home){
     SFX.unlock(); SFX.play('level');
-    S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam();
+    S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam(); closeChanPicker();
     paintBackdrop();
     pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
     hist = []; lastRecap = null; weekLog = []; postLog = {}; snapshot(); tab = 'home';
@@ -757,11 +784,16 @@
     const hit=((log&&log.feed)||[]).some(f=>/took off/.test(f.text));
     weekLog.push({ label, ico, d, hit, biz:!!biz, id }); }
   const BIZ_DONE = { engage:'Engaged the community', deal:'Took a brand deal', upgrade:'Upgraded', paid:'Launched membership' };
-  function takeMove(i){ const m=S.hand[i]; if(!m||S.slots.content<=0)return;
+  function takeMove(i, pkey){ const m0=S.hand[i]; if(!m0||S.slots.content<=0)return; const m=pkey?Object.assign({},m0,{pkey}):m0;
     const v=moveView(m), b0=capture(), log=E.applyMove(S,m); applyLog(log);
     if(m.topic && m.pkey && (m.kind==='post'||m.kind==='ride')){ const hit=((log&&log.feed)||[]).some(f=>/took off/.test(f.text));
       (postLog[m.pkey]=postLog[m.pkey]||[]).unshift({ topic:m.topic, views:S.totalViews-b0.v, week:S.week, hit }); postLog[m.pkey].splice(3); }
-    logResult(v.topic?'‘'+v.label+'’':v.label, thumbHTML(m, true), b0, log, false); E.buildHand(S); render(); }
+    logResult(v.topic?'‘'+v.label+'’':v.label, thumbHTML(m, true), b0, log, false);
+    if((m.kind==='post'||m.kind==='ride')&&weekLog.length) weekLog[weekLog.length-1].pkey=m.pkey;   // lets the stub offer a cross-post
+    E.buildHand(S); render(); }
+  // cross-post: a free once-a-week follow-up on something already posted this week
+  function crossDo(src,dst){ const b0=capture(), log=E.crosspost(S,src,dst); applyLog(log);
+    logResult('Cross-posted to '+PLATFORMS[dst].name, thumbHTML({kind:'crosspost',dst}, true), b0, log, false); E.buildHand(S); render(); }
   function bizDo(id, role){ const b0=capture(), log=E.biz[id](S, role); applyLog(log);
     const label = id==='hire' ? 'Hired '+(HIRES[role]?HIRES[role].label.toLowerCase():'help')
                 : id==='fire' ? 'Let go '+(HIRES[role]?HIRES[role].label.toLowerCase():'someone')
@@ -774,7 +806,7 @@
   // Week-recap payoff (#3): deltas between the two latest UI snapshots = the week just played.
   function computeRecap(){ if(hist.length<2){ lastRecap=null; return; }
     const a=hist[hist.length-2], b=hist[hist.length-1];
-    lastRecap={ week:a.week, dFollowers:b.followers-a.followers, dCash:b.cash-a.cash, stressFrom:a.stress, stressTo:b.stress }; }
+    lastRecap={ week:a.week, dFollowers:b.followers-a.followers, dViews:b.views-a.views, dCash:b.cash-a.cash, stressFrom:a.stress, stressTo:b.stress }; }
   function chooseEvent(i){ if(!S.event) return; applyLog(E.applyEventChoice(S, S.event, i)); S.event=null; $('inboxbody').innerHTML=''; advance(); }
 
   // ---------- move display (presentation of the engine's hand) ----------
@@ -785,8 +817,8 @@
     for(const x of w){ if(out.length>=3||(out.length&&len+x.length>15)) break; out.push(x); len+=x.length; } return out.length?out:['POST']; }
   function thumbHTML(m, posted){
     const done = posted ? `<span class="tag done">${icon('check')}Posted</span>` : '';
-    if(m.kind==='start'||m.kind==='crosspost'){ const pk=m.kind==='start'?m.pkey:m.dst, pf=PLATFORMS[pk];
-      return `<span class="thumb sp ${posted?'posted':''}" style="--pc:${pf.color}"><span class="tw">${m.kind==='start'?'NEW':'CROSS<br>POST'}</span>${done}<span class="pi">${icon(PLAT_ICON[pk])}</span></span>`; }
+    if(m.kind==='start'||m.kind==='crosspost'){ const pk=m.kind==='start'?m.pkey:m.dst, pf=pk?PLATFORMS[pk]:{color:'var(--sf-blue)'};
+      return `<span class="thumb sp ${posted?'posted':''}" style="--pc:${pf.color}"><span class="tw">${m.kind==='start'?'NEW':'CROSS<br>POST'}</span>${done}<span class="pi">${icon(pk?PLAT_ICON[pk]:'expand')}</span></span>`; }
     const pf=PLATFORMS[m.pkey], words=bigWords(m.topic), longest=Math.max(...words.map(w=>w.length));
     const fs=Math.max(11, Math.min(21, Math.round(92/(longest*0.5))));   // cqw: fit the longest word to the thumb width (Anton ≈ .5em/char)
     const meta=THUMB_META[m.pkey]||{}, seed=(String(m.topic).length*7+m.pkey.length)%50;
@@ -794,8 +826,9 @@
     return `<span class="thumb ${m.angle} ${posted?'posted':''}" style="--pc:${pf.color}"><span class="tw" style="font-size:${fs}cqw">${words.join('<br>')}</span>
       ${posted?done:`<span class="tag">${ANGLES[m.angle].label}</span>`}<span class="dur ${meta.live?'live':''}">${dur}</span><span class="pi">${icon(PLAT_ICON[m.pkey])}</span></span>`; }
   function moveView(m){
-    if(m.kind==='start'){ const pf=PLATFORMS[m.pkey];
-      return { ico:'✨', label:'Expand to '+pf.name, desc:`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, one more mouth to feed.`,
+    if(m.kind==='start'){ const pf=m.pkey?PLATFORMS[m.pkey]:null, n=(m.options||[]).length;
+      return { ico:'✨', label:pf?'Expand to '+pf.name:'Add a channel', desc:pf?`Open a ${activePlats().length===1?'second':'new'} front (${pf.tag}). More reach, one more mouth to feed.`
+          :`Open a ${activePlats().length===1?'second':'new'} front. ${n} platform${n===1?'':'s'} to choose from. More reach, one more mouth to feed.`,
         flags:[['+platform','up'],['+'+m.stress+' stress','en']] }; }
     if(m.kind==='crosspost'){
       return { ico:'🔗', label:`Cross-post ${PLATFORMS[m.src].name} → ${PLATFORMS[m.dst].name}`,
@@ -865,14 +898,14 @@
     // ----- header (bindings unchanged; float-anchor ids preserved) -----
     $('channame').textContent=S.name; $('avatar').innerHTML=nicheIcon(S.niche);
     $('nichebadge').textContent=N().label+' · '+N().blurb;
-    $('totfollow').textContent=fmt(totalFollowers());
+    $('totfollow').textContent=fmt(totalFollowers()); $('totviews').textContent=fmt(S.totalViews);
     $('weekchip').textContent='WK '+String(Math.min(S.week,52)).padStart(2,'0')+' / 52';
     const band=E.stressBand(S);
     setMeter('stress',S.stress); $('b-stress').className='fill-stress '+band; $('v-band').className='mband '+band; $('v-band').textContent=BAND_LABEL[band]?'· '+BAND_LABEL[band]:'';
     setMeter('rep',S.rep);
     const c=$('v-cash'); c.textContent=money(S.cash); c.className='v mono '+(S.cash<0?'neg':'pos');
     const ob=E.overheadBreakdown(S); $('v-rent').textContent='-'+money(ob.total);
-    $('helpline').textContent=`Overhead ${money(ob.base)} living + ${money(ob.platforms)} platforms`+(ob.payroll?` + ${money(ob.payroll)} payroll`:'')+(ob.lease?` + ${money(ob.lease)} studio`:'')+'.'+(E.taxOwed(S)>0?` Tax owed so far: ${money(E.taxOwed(S))}.`:'');
+    $('helpline').textContent=`Overhead ${money(ob.base)} living + ${money(ob.platforms)} platforms`+(ob.payroll?` + ${money(ob.payroll)} payroll`:'')+(ob.lease?` + ${money(ob.lease)} studio`:'')+'.'+` Earned this week so far: ${money(S.grossEarned-((hist[hist.length-1]||{}).gross||0))}.`+(E.taxOwed(S)>0?` Tax owed so far: ${money(E.taxOwed(S))}.`:'');
     $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     // ----- a pending event forces the Inbox tab -----
     if(S.phase==='event'&&S.event) tab='inbox';
@@ -914,7 +947,7 @@
     $('stagetitle').textContent='Week '+Math.min(S.week,52)+'. What are you making?';
     const noContent=S.slots.content<=0, noBiz=S.slots.business<=0;
     const moveHTML=S.hand.map((m,i)=>{ const v=moveView(m);
-      const verb = m.kind==='start' ? 'Add channel ▸' : m.kind==='crosspost' ? 'Cross-post ▸' : 'Post ▸';
+      const verb = m.kind==='start' ? 'Choose ▸' : 'Post ▸';
       // the angle already reads off the thumbnail sticker, so it leaves the flag row
       const flags=v.flags.filter(f=>f[1].indexOf('angle ')!==0).map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('');
       return `<button class="move vcard ${m.special?'special':''}" data-i="${i}" ${noContent?'disabled':''}>
@@ -930,7 +963,9 @@
       if(d.members) p.push(`<b class="up">${fmt(d.members)}</b> members`);
       if(d.stress) p.push(`<b class="mo">${sg(d.stress)}${Math.abs(d.stress)}</b> stress`);
       return p.join(' · ')||'Done.'; };
-    const stub=e=>`<div class="posted ${e.biz?'':'vcard'}">${e.biz?`<span class="ico">${icon('check')}</span>`:e.ico}<span class="mbody"><span class="topic">${e.label}</span><span class="pr">${e.hit?'It took off. ':''}${fmtD(e.d)}</span></span></div>`;
+    const xopts=e=>(!e.biz&&e.pkey)?E.crossOptions(S).filter(o=>o.src===e.pkey):[];
+    const stub=e=>{ const xo=xopts(e); const xrow=xo.length?`<span class="xrow">Cross-post to ${xo.map(o=>`<button class="xbtn" data-xs="${o.src}" data-xd="${o.dst}">${PLATFORMS[o.dst].name}</button>`).join('')}<small>· free, once a week</small></span>`:'';
+      return `<div class="posted ${e.biz?'':'vcard'}">${e.biz?`<span class="ico">${icon('check')}</span>`:e.ico}<span class="mbody"><span class="topic">${e.label}</span><span class="pr">${e.hit?'It took off. ':''}${fmtD(e.d)}</span>${xrow}</span></div>`; };
     const postedHTML=weekLog.filter(e=>!e.biz).map(stub).join(''), bizDoneHTML=weekLog.filter(e=>e.biz).map(stub).join('');
     const loopHint = S.week<=1 ? `<div class="loophint"><b>Tapping a card posts it right away.</b> Up to ${E.contentSlots(S)} posts and one business move a week. Leave a post slot empty and you rest (−${E.CONFIG.stressRecoverPerEmptySlot} stress).</div>` : '';
     const canDeal=totalFollowers()>=1000, up=E.upgradeInfo(S), canPaid=S.members===0&&totalFollowers()>=E.CONFIG.paidUnlock;
@@ -962,7 +997,8 @@
             : `<div class="moves bgrid">${bizDoneHTML}${bizHTML}</div>`}</div>
       </div>
       <div class="stagefoot"><button class="btn primary ${ready?'':'idle'}" id="endWeekBtn"><span class="bl">End the week ▸</span><span class="bs">${endSub}</span></button></div>`;
-    $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
+    $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; const m=S.hand[+b.dataset.i]; if(m&&m.kind==='start'&&!m.pkey){ openChanPicker(+b.dataset.i); return; } takeMove(+b.dataset.i); });
+    $('stagebody').querySelectorAll('[data-xs]').forEach(b=>b.onclick=()=>crossDo(b.dataset.xs, b.dataset.xd));
     $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; if(b.dataset.biz==='team'){ openTeam(); return; } bizDo(b.dataset.biz); });
     $('endWeekBtn').onclick=endWeek;
     const more=$('stagebody').querySelector('.bizmore'); if(more) more.addEventListener('toggle',()=>{ bizMoreOpen=more.open; });
@@ -998,10 +1034,11 @@
     if(!lastRecap) return '';
     const r=lastRecap, cls=n=>n>0?'up':n<0?'dn':'flat', s=n=>(n>0?'+':n<0?'−':'');
     const fol=`<b class="${cls(r.dFollowers)}">${s(r.dFollowers)}${fmt(Math.abs(r.dFollowers))}</b> followers`;
+    const vw=`<b class="${cls(r.dViews)}">${s(r.dViews)}${fmt(Math.abs(r.dViews))}</b> views`;
     const cash=`<b class="${cls(r.dCash)}">${s(r.dCash)}${money(Math.abs(r.dCash))}</b>`;
     const st=`stress <b>${r.stressFrom}→${r.stressTo}</b>`;
     return `<div class="recap"><span class="rk">Week ${r.week} · wrapped</span>
-      <span class="rd">${fol} · ${cash} · ${st}</span></div>`;
+      <span class="rd">${fol} · ${vw} · ${cash} · ${st}</span></div>`;
   }
 
   // ---------- Inbox: events arrive as DMs ----------
@@ -1030,6 +1067,34 @@
   $('teamDlgClose').onclick=closeTeam;
   teamDlg.addEventListener('click',e=>{ if(e.target===teamDlg) closeTeam(); });   // click the backdrop to dismiss
 
+  // ---------- platform picker: the expansion card opens this; the player chooses where to expand ----------
+  const chanDlg=$('chanDlg');
+  // fit-as-words: which platforms each niche's audience actually lives on (no mechanics behind it)
+  const NICHE_FIT = {
+    gaming:  { live:'Gaming lives on stream. Your audience is already here.', shortform:'Clips travel. This is where gaming goes viral.' },
+    beauty:  { shortform:'Beauty is a vertical-video genre. Tutorials and dupes live here.', writing:'Product picks in a newsletter is where beauty money gets serious.' },
+    edu:     { longform:'Explainers need room. This is the home format.', writing:'People who learn from you will pay to read you.' },
+    comedy:  { shortform:'The bit is 20 seconds long. Post it where 20 seconds wins.', micro:'Comedy is text-native. One line, quote-tweeted forever.' },
+    fitness: { shortform:'Form checks and routines are short by nature.', live:'A live class is a class. Fitness converts on stream.' },
+    music:   { live:'Sessions and premieres. Music is a live medium.', shortform:'Sounds trend here first. Your hook will be someone else\'s dance.' },
+  };
+  const PLAT_FIT_DEFAULT = { longform:'Slow to grow, best paid per view, the loyalest audience.', shortform:'Fastest reach, lowest loyalty, pays almost nothing.', micro:'Cheap and quick. Reach without much revenue.', writing:'Slow, loyal, and the best paid. Subscribers open email.', live:'Expensive per stream, but a live crowd is a loyal one.' };
+  const bucket=(v,hi,lo,words)=>v>=hi?words[0]:v<=lo?words[2]:words[1];
+  function platStats(k){ const p=PLATFORMS[k];
+    return `reach ${bucket(p.viral,1.2,0.9,['high','mid','low'])} · loyalty ${bucket(p.loyal,1.25,0.8,['high','mid','low'])} · pays ${bucket(p.rpm,0.004,0.0006,['well','some','barely'])} · ${p.stress} stress/post`; }
+  function openChanPicker(i){ const m=S.hand[i]; if(!m||m.kind!=='start') return; SFX.play('click');
+    const inactive=PORDER.filter(k=>!S.plats[k].active), tot=totalFollowers();
+    $('chanDlgSub').textContent=`+${m.stress} stress · one more mouth to feed · ${money(E.CONFIG.overheadPerPlatform)}/wk`;
+    $('chanDlgBody').innerHTML=`<div class="team">${inactive.map(k=>{ const p=PLATFORMS[k], ok=(m.options||[]).includes(k), fit=(NICHE_FIT[S.niche]||{})[k];
+      return `<div class="prow ${ok?'':'locked'}"><span class="pi2" style="--pc:${p.color}">${icon(PLAT_ICON[k])}</span>
+        <span class="pt"><b>${p.name}</b><span class="${fit?'fit':''}">${fit||PLAT_FIT_DEFAULT[k]}</span><span class="pstats">${platStats(k)}</span></span>
+        ${ok?`<button class="tbtn hire" data-open="${k}">Open</button>`:`<button class="tbtn" disabled>Unlocks at ${fmt(p.unlock)}</button>`}</div>`; }).join('')}</div>
+      <div class="tnote">Every platform wants something different from you. Nothing stops you from running all five, except you.</div>`;
+    $('chanDlgBody').querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{ closeChanPicker(); takeMove(i, b.dataset.open); });
+    if(!chanDlg.open) chanDlg.showModal(); }
+  function closeChanPicker(){ if(chanDlg.open) chanDlg.close(); }
+  $('chanDlgClose').onclick=closeChanPicker;
+  chanDlg.addEventListener('click',e=>{ if(e.target===chanDlg) closeChanPicker(); });
   // reach multiplier from the kit alone (tiers 0–3 compound, the Studio multiplies on top)
   const kitMult = g => Math.pow(E.CONFIG.gearViewsMult, Math.min(g,3)) * (g>=4 ? E.CONFIG.studioViewsMult : 1);
   // ---------- Studio: the desktop rail panel — team, gear, overhead, capacity ----------
@@ -1058,7 +1123,12 @@
         <div class="steam">${team}</div>
       </div>
       <div class="scard">
-        <div class="sk">Overhead · ${money(ob.total)}/wk</div>
+        <div class="sk">Money</div>
+        ${(()=>{ const L=hist[hist.length-1]||{gross:0,cash:S.cash}, P=hist[hist.length-2]; const sofar=S.grossEarned-(L.gross||0);
+          const lastE=P?L.gross-P.gross:null, lastN=P?L.cash-P.cash:null;
+          return `<div class="sol"><span>Earned this week so far</span><b class="${sofar>0?'pos':''}" style="${sofar>0?'color:var(--sf-edge)':''}">${money(sofar)}</b></div>`
+            + (P?`<div class="sol"><span>Last week <small>· earned ${money(lastE)}</small></span><b style="color:${lastN>=0?'var(--sf-edge)':'var(--sf-red)'}">net ${lastN>=0?'+':'−'}${money(Math.abs(lastN))}</b></div>`:'')
+            + `<div class="sol" style="margin-top:4px"><span><b style="color:var(--sf-fg-2);font-family:inherit;font-weight:600">Overhead</b></span><b>${money(ob.total)}/wk</b></div>`; })()}
         ${oline(ob.livingStep?'Living <small>· lifestyle '+ob.livingStep+'</small>':'Living',money(ob.base))}${oline('Platforms',money(ob.platforms))}${ob.payroll?oline('Payroll',money(ob.payroll)):''}${ob.lease?oline('Studio lease',money(ob.lease)):''}
         <div class="sol tax"><span>Owed in tax <small>· accruing, billed later</small></span><b>${money(E.taxOwed(S))}</b></div>
       </div>
@@ -1099,7 +1169,8 @@
     const first=hist[0], last=hist[hist.length-1], n=hist.length;
     const rows=[
       ['Followers · weekly', null, hist.map(h=>h.followers), 'var(--sf-edge)', last.followers-first.followers, x=>fmt(x), true],
-      ['Bank', 'line', hist.map(h=>h.cash), 'var(--sf-gold)', last.cash-first.cash, x=>money(x), true],
+      ['Views · weekly', null, hist.map(h=>h.views), 'var(--sf-edge)', last.views-first.views, x=>fmt(x), true],
+      ['Net · weekly', null, hist.map(h=>h.cash), 'var(--sf-gold)', last.cash-first.cash, x=>money(x), true],
       ['Stress', 'line', hist.map(h=>h.stress), stressCol, last.stress-first.stress, x=>String(x), false],
       ['Reputation', 'line', hist.map(h=>h.rep), 'var(--sf-blue)', last.rep-first.rep, x=>String(x), true],
     ];
@@ -1132,9 +1203,21 @@
     $('endStats').innerHTML=[['Followers',fmt(totalFollowers())],['Total views',fmt(S.totalViews)],['Weeks',Math.min(S.week-1,52)+' / 52'],
       ['Platforms run',activePlats().length],['Bank',money(S.cash)],['Peak overhead',money(S.peakOverhead)+'/wk']].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
     const ea=$('endArt'); ea.src=endingArt(key,768)||art(S.niche,640); ea.srcset=endingArt(key,1280)?endingArt(key,1280)+' 2x':''; ea.hidden=!ea.src;
+    renderEndGallery(key);
     render(); openClose($('endOverlay'),true);
   }
   function openClose(el,show){ el.classList.toggle('hidden',!show); }
+  // "Here's the ending you got. There are seven others." Found endings persist per browser (no score, no server).
+  const END_ORDER=['faded','legend','star','goat','burnout','bankrupt','sellout','cancelled'];
+  function foundEndings(){ try{ return JSON.parse(localStorage.getItem('thefeed_endings')||'[]'); }catch(e){ return []; } }
+  function renderEndGallery(key){
+    let found=foundEndings(); if(!found.includes(key)) found.push(key); try{ localStorage.setItem('thefeed_endings',JSON.stringify(found)); }catch(e){}
+    const total=END_ORDER.length, n=found.length;
+    $('endGal').innerHTML=`<div class="gk">There are <b>${total-1} other endings</b>. You've found <b>${n} of ${total}</b>.${n<total?' The hints are honest.':' All of them. Now go make something.'}</div>
+      <div class="egrid">${END_ORDER.map(k=>{ const e=E.ENDINGS[k], got=found.includes(k), now=k===key, ic=END_ICON[k]||['alerts','var(--sf-fg-2)'];
+        const artSrc=got?endingArt(k,768):''; 
+        return `<div class="etile ${now?'now':got?'got':'locked'}"><div class="ea">${artSrc?`<img src="${artSrc}" alt="" loading="lazy" decoding="async">`:icon(ic[0],'',ic[1])}${now?'<span class="badge2">This run</span>':got?'<span class="badge2">Found</span>':''}</div>
+          <div class="eb"><b>${e.kicker}</b><span>${E.endingHint(k)}</span></div></div>`; }).join('')}</div>`; }
 
   // ---------- start wiring ----------
   function buildStart(){

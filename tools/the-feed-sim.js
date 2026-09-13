@@ -26,11 +26,11 @@ if (process.env.SEED) { let s = parseInt(process.env.SEED, 10) >>> 0; E.setRng((
 // ======================= persona helpers =======================
 // A persona's act(S) returns ONE action per call; the runner keeps calling until
 // the persona returns {end:true}, a slot runs out, or an action is refused.
-//   {card:i} | {biz:'engage'|'deal'|'upgrade'|'paid'} | {hire:'editor'} | {fire:'editor'} | {end:true}
+//   {card:i} | {biz:'engage'|'deal'|'upgrade'|'paid'} | {hire:'editor'} | {fire:'editor'} | {cross:{src,dst}} | {end:true}
 const H = {
   posts(S)            { return S.hand.map((c, i) => ({ c, i })).filter(x => x.c.kind === 'post' || x.c.kind === 'ride'); },
   ride(S)             { return S.hand.findIndex(c => c.kind === 'ride'); },
-  cross(S)            { return S.hand.findIndex(c => c.kind === 'crosspost'); },
+  cross(S)            { const o = E.crossOptions(S); if (!o.length) return null; const best = o.slice().sort((a, b) => S.plats[b.src].followers - S.plats[a.src].followers)[0]; return best; },   // {src,dst} or null
   start(S)            { return S.hand.findIndex(c => c.kind === 'start'); },
   byAngle(S, a)       { const x = H.posts(S).find(x => x.c.angle === a); return x ? x.i : -1; },
   heaviest(S)         { const x = H.posts(S).sort((a, b) => b.c.stress - a.c.stress)[0]; return x ? x.i : -1; },
@@ -102,11 +102,11 @@ const PERSONAS = {
       const budget = S.stress >= 80 ? 0 : S.stress >= 60 ? 1 : cap;
       if (cap - S.slots.content < budget) {
         const r = H.ride(S); if (r >= 0) return { card: r };
-        const x = H.cross(S); if (x >= 0) return { card: x };
         const st = H.start(S); if (st >= 0 && activePlats(S).length < 4) return { card: st };
         const i = H.bestMod(S); if (i >= 0) return { card: i };
       }
     }
+    { const xo = H.cross(S); if (xo) return { cross: xo }; }   // free once-a-week follow-up on something already posted
     if (business(S)) {
       if (H.canPaid(S)) return { biz: 'paid' };
       if (S.cash < 300 && H.canDeal(S)) return { biz: 'deal' };
@@ -134,6 +134,7 @@ function playWeek(S, persona) {
   for (let t = 0; t < 8; t++) {
     const a = persona.act(S);
     if (!a || a.end) break;
+    if (a.cross) { E.crosspost(S, a.cross.src, a.cross.dst); E.buildHand(S); continue; }   // uses no slot
     const before = S.slots.content + S.slots.business;
     if (a.card != null) { const c = S.hand[a.card]; if (!c) break; E.applyMove(S, c); }
     else if (a.biz) E.biz[a.biz](S);

@@ -301,11 +301,35 @@ test('buildHand keeps the same topic for the same platform+angle within a week',
   const b = E.buildHand(S).find(c => c.kind === 'post' && c.angle === 'evergreen').topic;
   assert.strictEqual(a, b);
 });
-test('buildHand still deals cross-post and launch cards', () => {
+test('buildHand deals ONE expansion card carrying every openable platform; no cross-post card', () => {
   const S = mk(); S.plats.longform.followers = 3000; S.plats.longform.heat = 40; S.plats.shortform.active = true; S.plats.shortform.followers = 100;
   const hand = E.buildHand(S);
-  const x = hand.find(c => c.kind === 'crosspost'); assert.ok(x && x.src === 'longform' && x.dst === 'shortform' && x.stress === 4);
-  const st = hand.find(c => c.kind === 'start'); assert.ok(st && st.pkey === 'micro' && st.stress === 8);
+  assert.ok(!hand.some(c => c.kind === 'crosspost'), 'cross-post is no longer a card');
+  const st = hand.filter(c => c.kind === 'start'); assert.strictEqual(st.length, 1);
+  assert.deepStrictEqual(st[0].options, ['micro', 'writing', 'live'], 'every inactive platform under its threshold-met list, in PORDER');
+  assert.strictEqual(st[0].pkey, null); assert.strictEqual(st[0].stress, 8);
+  // the chooser fills pkey; an unset/invalid pkey falls back to the first option (keeps the sim's old behaviour)
+  const T = mk(); T.plats.longform.followers = 3000; const card = E.buildHand(T).find(c => c.kind === 'start');
+  E.applyMove(T, Object.assign({}, card, { pkey: 'writing' })); assert.ok(T.plats.writing.active && !T.plats.shortform.active);
+  const U = mk(); U.plats.longform.followers = 3000; E.applyMove(U, E.buildHand(U).find(c => c.kind === 'start')); assert.ok(U.plats.shortform.active, 'fallback = first option');
+});
+test('cross-post: free once-a-week follow-up on a post made this week; half lift; resets destination idle clock', () => {
+  const C = E.CONFIG; E.setRng(() => 0.5);
+  const S = mk(); S.plats.longform.followers = 10000; S.plats.shortform.active = true; S.plats.shortform.followers = 100; S.plats.shortform.lastPost = S.week - 5;
+  assert.deepStrictEqual(E.crossOptions(S), [], 'nothing posted this week yet');
+  E.doPost(S, 'longform', 'evergreen', 'x', 1);
+  assert.deepStrictEqual(E.crossOptions(S), [{ src: 'longform', dst: 'shortform' }]);
+  const slots = S.slots.content, st = S.stress, f0 = S.plats.shortform.followers;
+  const log = E.crosspost(S, 'longform', 'shortform');
+  assert.strictEqual(S.slots.content, slots, 'no content slot used'); assert.strictEqual(S.stress, st + C.crossStress);
+  const moved = S.plats.shortform.followers - f0; assert.ok(moved > 0 && moved <= Math.round(10000 * C.crossLift[1] * 2), 'small lift: ' + moved);
+  assert.strictEqual(S.plats.shortform.lastPost, S.week, 'destination no longer idle'); assert.ok(log.feed.some(f => /Cross-posted/.test(f.text)));
+  assert.deepStrictEqual(E.crossOptions(S), [], 'once a week'); assert.strictEqual(E.crosspost(S, 'longform', 'shortform').feed.length, 0, 'refused');
+  E.advanceWeek(S); assert.strictEqual(S.crossUsed, false);
+});
+test('endingHint fills thresholds from CONFIG for every ending', () => {
+  Object.keys(E.ENDINGS).forEach(k => { const h = E.endingHint(k); assert.ok(h.length > 20, k); assert.ok(!/\{\w+\}/.test(h), 'no unfilled placeholder in ' + k); });
+  assert.ok(E.endingHint('goat').includes(E.fmt(E.CONFIG.goatAt)));
 });
 test('applyMove consumes a content slot, adds stress, refuses at zero', () => {
   const S = mk(); const card = E.buildHand(S).find(c => c.kind === 'post');
