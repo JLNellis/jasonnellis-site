@@ -372,6 +372,51 @@ expansions). A `.startfoot` under "Go live" credits Jason with a link, invites
 replay ("every run ends differently") and carries a second "Get The Long Yes"
 Substack link, same target as the end screen.
 
+## Shipped: first art package (illustrations)
+
+Seven editorial illustrations (OpenAI image gen, 2026-09-13, prompts in
+`the-feed-assets/imgs/prompts.json`, credited in `CREDITS.md`): an opening
+scene plus one per niche. Jason's call: **art stays off the content cards**
+(the generated Anton thumbnails are the signature; six niche images would
+repeat on every card of a run). Used instead where one image per run fits:
+
+- **Start screen** — `.card.intro` is two-column at ≥900px (opening scene
+  fills the left 46%, form on the right, max 940px); on phones a 150px 16:9
+  banner at `object-position:58% 40%`, hidden below 700px viewport height.
+  `<picture>` serves `opening-creator-1280/768.webp`.
+- **Niche picker** — tiles are `.pick.art` with the 320px niche image under a
+  bottom scrim; square on phones (<480px) so the art shows above the caption.
+- **Header** — `.hdr::before` paints the run's niche image at 20% opacity
+  behind a left-to-right scrim (`--niche-art` set on `.app` in `newGame`).
+- **Ending** — `#endArt` banner (16:6, masked fade) above the year-in-review.
+- Overlay fix that came out of this: `.overlay` is flex + `.card{margin:auto}`
+  so a card taller than the viewport top-aligns instead of clipping its top.
+- Chip fix: a never-posted platform no longer reads "Idle 10w" at week 1.
+
+Only WebP derivatives load (thumbs 9–41 KB, opening 66/137 KB); PNG originals
+are archival. `NICHE_ART` in `the-feed.html` maps niche → file; more variants
+are coming, so extend that table (and `art(k,w)`) rather than hard-coding.
+
+**v2 library (same day, 38 images):** the PNG originals live in
+`the-feed-assets/the-feed-art-library-v2/` — **gitignored and not deployed**
+(`.eleventy.js` now passes through only `the-feed-assets/imgs`, `sfx` and
+`CREDITS.md`; the v1 PNG duplicates in `imgs/` were hash-checked against the
+library and removed). `imgs/manifest.json` (from the library, home paths
+scrubbed) is the provenance record; the v1 `prompts.json` is gone. Derivatives
+in `imgs/`: `thumbnail-<niche>-01..03-{320,640}`, `ending-<key>-{768,1280}`,
+`studio-tier-0..4-{320,640}`, `avatar-<slug>-{64,128}`, opening 768/1280.
+Wired in (`IMG`, `endingArt`, `studioArt`, `AVATAR`/`avatarHTML` in the
+game file): **endings** — the end card banner is the ending's own scene
+(3:2, niche art as fallback); **studio** — the desktop rail Setup card shows
+`studio-tier-<S.gear>` (swaps on up/downgrade; `height:auto` matters because
+the `<img height>` attribute otherwise beats `aspect-ratio`); **avatars** —
+feed lines use a portrait for the six illustrated handles and a mono
+letter tile for the other eight (kind colour stays on the left border; the
+kind glyph is gone); **header backdrop rotates by phase** — `paintBackdrop()`
+picks `thumbnail-<niche>-01/02/03` for early / mid / late (`CONFIG.phases`,
+i.e. switches at weeks 18 and 36), so a run visibly ages. Jason chose this over
+putting the variants on content cards (art stays off the Anton thumbnails).
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's

@@ -30,6 +30,19 @@ use. CC0 requires no attribution; it is credited here anyway as good practice.
   Sourced via the CC0 re-pack at
   [github.com/Calinou/kenney-interface-sounds](https://github.com/Calinou/kenney-interface-sounds).
 
+## Illustrations
+
+- **38 illustrations** — generated September 13, 2026 with OpenAI's
+  image-generation tool, directed by Jason Nellis: the opening scene, three
+  per niche (18), one per ending (8), five workspace/gear tiers, and six
+  portraits for the recurring feed handles. Exact prompts, dimensions and
+  checksums: `the-feed-assets/imgs/manifest.json`. PNG originals live in
+  `the-feed-assets/the-feed-art-library-v2/` (not committed, not deployed);
+  the game loads only the WebP derivatives in `the-feed-assets/imgs/`.
+  Used for the start screen, the niche picker, the header backdrop, the
+  ending screen, the desktop Setup card and feed avatars. Platform, action
+  and status icons remain the bespoke SVG sprite.
+
 ## Typography
 
 - **DM Sans** and **DM Mono** by Colophon Foundry / Jonny Pinhorn —
