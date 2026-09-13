@@ -42,7 +42,9 @@ use. CC0 requires no attribution; it is credited here anyway as good practice.
   the game loads only the WebP derivatives in `the-feed-assets/imgs/`.
   Used for the start screen, the niche picker, the header backdrop, the
   ending screen, the desktop Setup card and feed avatars. Platform, action
-  and status icons remain the bespoke SVG sprite.
+  and status icons remain the bespoke SVG sprite. The social share cards
+  (`og-the-feed.jpg`, `og-the-feed-square.jpg`) are composed from the opening
+  scene plus the game's own type (sources in `tools/the-feed-og/`).
 
 ## Typography
 
