@@ -504,5 +504,61 @@
     "height": 1254,
     "bytes": 2356784,
     "sha256": "46327500df4d264b52c3bb9977741bb3e6bc099e4d86a7e00b4338d8812ccdbb"
+  },
+  {
+    "name": "avatar-hire-editor",
+    "role": "editor",
+    "label": "Editor",
+    "group": "avatars",
+    "origin": "v2-hires",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a tired but sharp adult man of East Asian descent in his late twenties, black hair pushed back, over-ear headphones around his neck, cream hoodie, faint dark circles, the small satisfied smile of someone who just fixed a cut, one coral highlight on the headphone cup. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-editor.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2746668,
+    "sha256": "8e9d515581e9f49a59c91aabde298d64cd25b2e07f54c2f887190b91ec45ff1a"
+  },
+  {
+    "name": "avatar-hire-manager",
+    "role": "manager",
+    "label": "Manager",
+    "group": "avatars",
+    "origin": "v2-hires",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a confident adult woman of South Asian descent in her forties, dark hair in a low bun, mint blazer over a cream top, small gold hoop earrings, phone earbud in one ear, an expression that has already negotiated your rate and is waiting for you to catch up. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-manager.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2182142,
+    "sha256": "68ec556aef2866b274897852a68b4fbd9ce1ab9fefb93ba3fc866d943a4f80c6"
+  },
+  {
+    "name": "avatar-hire-mod",
+    "role": "mod",
+    "label": "Community mod",
+    "group": "avatars",
+    "origin": "v2-hires",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a calm adult non-binary person with light olive skin, short bleached hair with a coral tint at the tips, round glasses, dark navy crewneck with a small cream shield patch on the shoulder, gentle unbothered half-smile, the look of someone who has read the comments so you don't have to. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-mod.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2436055,
+    "sha256": "d5bd2859d8411994fbd2b2e5b4aa24cfeef0d09098f4d54ba2d96f1b44872bd0"
+  },
+  {
+    "name": "avatar-hire-designer",
+    "role": "designer",
+    "label": "Designer",
+    "group": "avatars",
+    "origin": "v2-hires",
+    "source": "generated 2026-09-13 (Jason Nellis, OpenAI image gen) from docs/the-feed-hire-avatar-prompts.md",
+    "prompt": "Use case: illustration-story. Create ONE finished standalone illustration for The Feed browser game. Style reference is the supplied image, match its tactile editorial screen-print texture, slightly imperfect ink shapes, rich midnight navy shadows, warm cream, coral and selective mint light. Art directed adult indie game mood, expressive and humane, not corporate clipart, not photorealistic, not glossy 3D. NO words, letters, numbers, logos, watermarks, panel borders or baked-in UI. Square 1:1 illustrated social-feed avatar. Head and shoulders portrait of a stylish adult Black man in his thirties with a short fade and a neat beard, cream beanie, coral-framed glasses, mint paint smudge on one cheek, a pencil behind the ear, head tilted slightly, looking pleased with a thumbnail only they can see. Extreme simplicity compared to reference: broad flat graphic shapes with subtle print grain, plain solid navy background, high silhouette contrast, centered within the middle 75% for circular cropping, face large enough to read at 32px. No hands, no scene, no frame, no text, no logo. Reference style only, do not reproduce its creator.",
+    "file": "avatars/avatar-hire-designer.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2440196,
+    "sha256": "71276aff5846595c31d118ae8a97768110238738a095fa4ed11c741fbc1a65e2"
   }
 ]

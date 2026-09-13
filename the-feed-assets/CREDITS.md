@@ -31,10 +31,11 @@ use. CC0 requires no attribution; it is credited here anyway as good practice.
 
 ## Illustrations
 
-- **38 illustrations** — generated September 13, 2026 with OpenAI's
+- **42 illustrations** — generated September 13, 2026 with OpenAI's
   image-generation tool, directed by Jason Nellis: the opening scene, three
-  per niche (18), one per ending (8), five workspace/gear tiers, and six
-  portraits for the recurring feed handles. Exact prompts, dimensions and
+  per niche (18), one per ending (8), five workspace/gear tiers, six
+  portraits for the recurring feed handles, and four portraits for the
+  hireable team (editor, manager, community mod, designer). Exact prompts, dimensions and
   checksums: `the-feed-assets/imgs/manifest.json`. PNG originals live in
   `the-feed-assets/the-feed-art-library-v2/` (not committed, not deployed);
   the game loads only the WebP derivatives in `the-feed-assets/imgs/`.
