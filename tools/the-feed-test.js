@@ -414,6 +414,25 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
   assert.ok(log2.feed.some(f => /people left/.test(f.text)), 'idle churn is loud');
 });
+test('idle churn ramps with each account-wide silent week and caps; a neglected platform alone stays flat', () => {
+  const C = E.CONFIG;
+  const at = w => { const S = mk(); S.week = 20; S.plats.longform.lastPost = 20 - w; return E.idleChurnRate(S, S.plats.longform); };
+  // two platforms: longform silent 8 weeks, micro posted this week → longform pays the flat idle rate
+  const M = mk(); M.week = 20; M.plats.micro.active = true; M.plats.micro.lastPost = 20; M.plats.longform.lastPost = 12;
+  assert.strictEqual(E.idleChurnRate(M, M.plats.longform), C.churnIdle, 'still posting elsewhere: flat');
+  assert.strictEqual(E.idleChurnRate(M, M.plats.micro), 0);
+  assert.strictEqual(at(0), 0); assert.strictEqual(at(C.idleWeeks - 1), 0, 'not idle yet');
+  assert.strictEqual(at(C.idleWeeks), C.churnIdle);
+  assert.ok(Math.abs(at(C.idleWeeks + 1) - (C.churnIdle + C.churnIdleRamp)) < 1e-9, 'one extra silent week adds the ramp');
+  assert.ok(Math.abs(at(C.idleWeeks + 2) - (C.churnIdle + 2 * C.churnIdleRamp)) < 1e-9);
+  assert.strictEqual(at(30), C.churnIdleCap, 'capped');
+  const N = mk(); N.week = 6; assert.strictEqual(E.silentWeeks(N, N.plats.longform), 5, 'never posted counts from week 1');
+  // settleWeek applies the ramped rate to both cohorts
+  const S = mk(); S.week = 20; S.plats.longform.followers = 10000; S.plats.longform.trendFollowers = 2000; S.plats.longform.lastPost = 20 - (C.idleWeeks + 2);
+  const r = E.idleChurnRate(S, S.plats.longform); const log = E.settleWeek(S);
+  assert.strictEqual(S.plats.longform.followers, 10000 - Math.round(2000 * r) - Math.round(8000 * r));
+  assert.ok(log.feed.some(f => /forgot you exist/.test(f.text)), 'long silence gets the sharper line');
+});
 test('stress: band + redline streak judged before recovery; recovery is stressRecover + stressRecoverPerEmptySlot per empty slot', () => {
   const S = mk(); S.stress = 60; S.slots.content = 2;
   let log = E.settleWeek(S);

@@ -53,7 +53,11 @@
     // post math
     viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 6,
     // churn
-    churnBase: 0.006, churnTrend: 0.012, churnIdle: 0.02, idleWeeks: 3,
+    // Silence compounds. An idle platform (idleWeeks+ without a post) churns churnIdle flat — so
+    // spreading across platforms stays viable — but once the WHOLE account has been silent that long,
+    // every further silent week adds churnIdleRamp, capped at churnIdleCap: weeks 3/4/5/6/7+ of
+    // posting nothing anywhere → 2/4.5/7/9.5/12% on every platform.
+    churnBase: 0.006, churnTrend: 0.012, churnIdle: 0.02, idleWeeks: 3, churnIdleRamp: 0.025, churnIdleCap: 0.12,
     // evergreen tail
     tailWeeks: 4, tailRate: 0.15,
     topicCooldown: 8,
@@ -190,6 +194,17 @@
     return S;
   }
   const activePlats = S => PORDER.map(k => S.plats[k]).filter(p => p.active);
+  // Weeks since this platform last posted (a never-posted platform counts from week 1).
+  const silentWeeks = (S, p) => p.lastPost < 0 ? S.week - 1 : S.week - p.lastPost;
+  // Weeks since the creator posted anywhere at all.
+  const silentWeeksAll = S => Math.min(...activePlats(S).map(p => silentWeeks(S, p)));
+  // Weekly churn rate an idle platform pays this week; 0 when it isn't idle. Flat per platform,
+  // ramping only with account-wide silence (see CONFIG churn note).
+  function idleChurnRate(S, p) {
+    if (silentWeeks(S, p) < CONFIG.idleWeeks) return 0;
+    const all = silentWeeksAll(S);
+    return Math.min(CONFIG.churnIdleCap, CONFIG.churnIdle + CONFIG.churnIdleRamp * Math.max(0, all - CONFIG.idleWeeks));
+  }
   const totalFollowers = S => PORDER.reduce((s, k) => s + S.plats[k].followers, 0);
   const strongest = S => activePlats(S).sort((a, b) => b.followers - a.followers)[0];
   // Tier is cosmetic polish on the channel card: posts + gear.
@@ -707,16 +722,19 @@
     const passiveR = Math.round(passive); S.cash += passiveR; S.grossEarned += passiveR;
     S.cash -= oh; S.peakOverhead = Math.max(S.peakOverhead, oh);
     // churn
-    let lost = 0;
+    let lost = 0, worstIdle = 0;
     activePlats(S).forEach(p => {
-      const idle = S.week - p.lastPost >= CONFIG.idleWeeks;
-      const trendLoss = Math.round(p.trendFollowers * (idle ? CONFIG.churnIdle : CONFIG.churnTrend));
-      const baseLoss = Math.round((p.followers - p.trendFollowers) * (idle ? CONFIG.churnIdle : CONFIG.churnBase));
+      const idleRate = idleChurnRate(S, p); worstIdle = Math.max(worstIdle, idleRate);
+      const trendLoss = Math.round(p.trendFollowers * (idleRate || CONFIG.churnTrend));
+      const baseLoss = Math.round((p.followers - p.trendFollowers) * (idleRate || CONFIG.churnBase));
       p.trendFollowers = Math.max(0, p.trendFollowers - trendLoss);
       p.followers = Math.max(0, p.followers - trendLoss - baseLoss);
       lost += trendLoss + baseLoss;
     });
-    if (lost > totalFollowers(S) * 0.01) log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
+    if (lost > totalFollowers(S) * 0.01) {
+      if (worstIdle >= 0.07) log.feed.push({ emoji: '🫥', text: `${fmt(lost)} people left this week. They didn't unfollow in protest. They forgot you exist.`, kind: 'bad' });
+      else log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
+    }
     // heat / fatigue decay
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
     // stress: judge the band + burnout streak on the stress you ended the week's work at,
@@ -781,7 +799,7 @@
   return {
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
-    newState, activePlats, totalFollowers, strongest, platTier, platPolish,
+    newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
     useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
