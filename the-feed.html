@@ -665,20 +665,21 @@
   wideMQ.addEventListener('change', ()=>{ if(S) render(); });
   function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep), evt:evtThisWeek }); evtThisWeek=false; }
 
-  // ---------- sound (Kenney CC0 interface pack, via Web Audio) ----------
+  // ---------- sound (Pixabay Content License set, via Web Audio — see the-feed-assets/CREDITS.md) ----------
   const SFX = (function(){
-    const NAMES = ['click','post','hit','cash','level','bad','event','week','win','lose'];
-    const VOL = { click:.45, post:.55, hit:.8, cash:.6, level:.75, bad:.6, event:.55, week:.35, win:.85, lose:.8 };
+    const NAMES = ['click','post','hit','cash','bad','event','win','lose'];
+    const ALIAS = { level:'hit', week:'post' };   // fewer, better sounds: two old cues share a file
+    const VOL = { click:.5, post:.5, hit:.8, cash:.65, bad:.6, event:.6, win:.85, lose:.75 };
     let ctx=null, master=null, buffers={}, loaded=false, muted=false;
     try{ muted = localStorage.getItem('thefeed_muted')==='1'; }catch(e){}
     function init(){ if(ctx)return; try{ ctx=new (window.AudioContext||window.webkitAudioContext)();
       master=ctx.createGain(); master.gain.value=muted?0:0.55; master.connect(ctx.destination);
-      if(!loaded){ loaded=true; NAMES.forEach(n=>fetch('/the-feed-assets/sfx/'+n+'.wav')
+      if(!loaded){ loaded=true; NAMES.forEach(n=>fetch('/the-feed-assets/sfx/'+n+'.mp3')
         .then(r=>r.arrayBuffer()).then(a=>ctx.decodeAudioData(a)).then(b=>{buffers[n]=b;}).catch(()=>{})); }
     }catch(e){} }
     return {
       unlock(){ init(); if(ctx&&ctx.state==='suspended')ctx.resume(); },
-      play(n){ if(!n||!ctx||muted||!buffers[n])return; try{ const s=ctx.createBufferSource(); s.buffer=buffers[n];
+      play(n){ n=ALIAS[n]||n; if(!n||!ctx||muted||!buffers[n])return; try{ const s=ctx.createBufferSource(); s.buffer=buffers[n];
         const g=ctx.createGain(); g.gain.value=VOL[n]||0.6; s.connect(g); g.connect(master); s.start(0); }catch(e){} },
       toggleMute(){ muted=!muted; try{localStorage.setItem('thefeed_muted',muted?'1':'0');}catch(e){} if(master)master.gain.value=muted?0:0.55; return muted; },
       isMuted(){ return muted; },

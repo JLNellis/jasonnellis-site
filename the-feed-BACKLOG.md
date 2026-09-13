@@ -30,7 +30,8 @@ the deferred leaderboard.
   Its **⚑ BALANCE TARGETS** block encodes the spec's six exit criteria and the
   process exits non-zero if any fail. **To rebalance: edit `CONFIG`, re-run.**
 - **`tools/the-feed-test.js`** — deterministic engine tests. `npm test`.
-- **Sound** — Kenney CC0 pack in `the-feed-assets/sfx/`, mute persisted.
+- **Sound** — eight Pixabay-licensed MP3 cues in `the-feed-assets/sfx/` (see
+  `CREDITS.md`), mute persisted. Two old cue names alias onto shared files.
 - **Capture** — end-screen CTA links to Substack; no email touches the game.
 - **Analytics** — Plausible, inline snippet (page doesn't load `nav.js`).
 - **Assets/licenses** — `the-feed-assets/CREDITS.md`.
@@ -416,6 +417,42 @@ kind glyph is gone); **header backdrop rotates by phase** — `paintBackdrop()`
 picks `thumbnail-<niche>-01/02/03` for early / mid / late (`CONFIG.phases`,
 i.e. switches at weeks 18 and 36), so a run visibly ages. Jason chose this over
 putting the variants on content cards (art stays off the Anton thumbnails).
+
+## Shipped: feedback round (2026-09-13)
+
+Six playtest notes from Jason, spec in
+`docs/superpowers/specs/2026-09-13-the-feed-feedback-round-design.md`:
+
+1. **Idle churn ramps (engine).** A platform idle 3+ weeks still churns a
+   flat 2%, but once *nothing* has been posted anywhere for that long each
+   further silent week adds `churnIdleRamp` (2.5 pts), capped at
+   `churnIdleCap` (12%): weeks 3/4/5/6/7+ → 2/4.5/7/9.5/12%. Eight silent
+   weeks now takes 10K → ~6K (was ~8.7K). Keyed on **account-wide** silence
+   deliberately — a per-platform ramp sank the Optimizer's GOAT rate 22→10%
+   and pushed the Diversifier to 95% Faded, because both spread across four
+   platforms. New exports `silentWeeks`, `silentWeeksAll`, `idleChurnRate`;
+   a sharper feed line past 7%; channel chip reads `Idle Nw · bleeding N%`
+   from 5%. Tests 59/59; sim 6/6 on seeds 7/123 and identical to baseline on
+   42 (Grinder 14w there is pre-existing).
+2. **Stats rail → header trend row (desktop).** The four sparklines live
+   under the meters (`.trendrow`, ≥980px only); followers is a weekly
+   net-change bar chart with gold ticks on event weeks (`hist[].evt`, set
+   from a UI-only `evtThisWeek` flag). `#tab-stats` is `display:none` on
+   desktop and the rail is the Setup/Team panel alone. Mobile Stats tab
+   unchanged.
+3. **Team is a dialog.** The Team card carries a `Manage ▸` chip and opens
+   `<dialog id="teamDlg">` (centred on desktop, bottom sheet on phones).
+   Hire/fire closes it and renders the stub as before. `teamOpen` is gone.
+4. **Copy pass.** ~50 strings rewritten deadpan/specific (event outcomes,
+   business results, band messages, card blurbs, empty states). No numbers
+   changed; every phrase a test or the UI matches on is preserved.
+5. **Kit multiplier ladder.** The Setup card headline is the live reach
+   multiplier (`kitMult`: 1.1^tier, Studio ×2.3 on top) with a 5-step
+   ladder and the next step's cost/unlock; the upgrade card reads
+   "Views ×a → ×b".
+6. **Sounds.** Kenney set replaced by eight Pixabay cues (see `CREDITS.md`),
+   mono MP3, peak-normalised; `level`/`week` alias onto `hit`/`post`.
+   Chosen on duration/loudness/author cohesion, not by ear — audition them.
 
 ## Priority item — ending → essay CTA (blocked on content)
 

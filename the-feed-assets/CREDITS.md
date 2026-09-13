@@ -9,26 +9,25 @@ use. CC0 requires no attribution; it is credited here anyway as good practice.
 
 ## Sound effects
 
-- **Kenney — Interface Sounds** — [kenney.nl/assets/interface-sounds](https://kenney.nl/assets/interface-sounds)
-  License: **CC0 1.0 Universal** (public domain, no attribution required).
-  A curated subset is used, renamed to game events and stored in
-  `the-feed-assets/sfx/`:
+- **Pixabay** — eight short cues, each under the
+  [Pixabay Content License](https://pixabay.com/service/license-summary/)
+  (free for commercial use, no attribution required; credited here anyway).
+  Downloaded 2026-09-13, converted to mono MP3, trimmed and peak-normalised
+  (`ffmpeg`), stored in `the-feed-assets/sfx/`. Two old cues share a file
+  (`level` → `hit`, `week` → `post`; see `ALIAS` in the game's sound module).
 
-  | In-game event            | File          | Kenney source            |
-  |--------------------------|---------------|--------------------------|
-  | UI click / pick          | `click.wav`   | `click_001`              |
-  | Post published           | `post.wav`    | `pluck_001`              |
-  | A post pops off (viral)  | `hit.wav`     | `confirmation_003`       |
-  | Money in                 | `cash.wav`    | `pluck_002`              |
-  | Channel levels up        | `level.wav`   | `maximize_003`           |
-  | Bad / hostile event      | `bad.wav`     | `error_003`              |
-  | An event appears         | `event.wav`   | `question_001`           |
-  | Week resolves            | `week.wav`    | `scroll_002`             |
-  | Winning ending           | `win.wav`     | `confirmation_002`       |
-  | Losing ending            | `lose.wav`    | `bong_001`               |
+  | In-game event                 | File        | Source (author)                                                                                                    |
+  |-------------------------------|-------------|--------------------------------------------------------------------------------------------------------------------|
+  | UI click / pick               | `click.mp3` | [UI Tap Soft Short](https://pixabay.com/sound-effects/film-special-effects-ui-tap-soft-short-514599/) (SoundShelfStudio) |
+  | Post published · week resolves | `post.mp3`  | [Quick Air Swipe Sound](https://pixabay.com/sound-effects/film-special-effects-quick-air-swipe-sound-561932/) (biww)   |
+  | An event appears              | `event.mp3` | [Soft Notification](https://pixabay.com/sound-effects/film-special-effects-soft-notification-124468/) (Universfield)   |
+  | Money in                      | `cash.mp3`  | [Coin Drop](https://pixabay.com/sound-effects/film-special-effects-coin-drop-355977/) (KoiRoylers)                    |
+  | A post pops off · level up    | `hit.mp3`   | [Positive Notification](https://pixabay.com/sound-effects/film-special-effects-positive-notification-351299/) (Universfield) |
+  | Bad / hostile outcome         | `bad.mp3`   | [Error Notification](https://pixabay.com/sound-effects/film-special-effects-error-notification-352286/) (Universfield) |
+  | Winning ending                | `win.mp3`   | [Victory Bell Success Fanfare](https://pixabay.com/sound-effects/musical-victory-bell-success-fanfare-576275/) (Emand_Edroff) |
+  | Losing ending                 | `lose.mp3`  | [fail](https://pixabay.com/sound-effects/film-special-effects-fail-234710/) (u_8g40a9z0la)                            |
 
-  Sourced via the CC0 re-pack at
-  [github.com/Calinou/kenney-interface-sounds](https://github.com/Calinou/kenney-interface-sounds).
+  The previous set (Kenney Interface Sounds, CC0) was removed in this pass.
 
 ## Illustrations
 
