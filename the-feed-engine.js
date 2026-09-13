@@ -50,6 +50,9 @@
     burnoutStreak: 3,
     // overhead (replaces rent): flat + per platform + payroll + studio lease
     overheadBase: 60, overheadPerPlatform: 10, studioLease: 3000,
+    // lifestyle creep: living cost steps up with PEAK followers and never steps back down.
+    // A recurring late sink that scales with exactly the players who hoard. [[peakFollowers, $/wk], ...]
+    livingSteps: [[15000, 150], [25000, 400], [50000, 800], [100000, 1500]],
     // post math
     viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 6,
     // churn
@@ -185,7 +188,7 @@
       slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
       hires: { editor: false, manager: false, mod: false, designer: false },
       tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
-      seenEvents: [], grossEarned: 0, taxedThrough: 0,
+      seenEvents: [], grossEarned: 0, taxedThrough: 0, peakFollowers: 0,
       lastHit: null, over: false, endKey: null, plats: {}, hand: [],
     };
     PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9 }; });
@@ -228,8 +231,13 @@
   const hireCount = S => HORDER.filter(k => S.hires[k]).length;
   const hireCap = S => hasStudio(S) ? CONFIG.hireCapStudio : CONFIG.hireCapBase;
   const payroll = S => HORDER.reduce((s, k) => s + (S.hires[k] ? HIRES[k].weekly : 0), 0);
+  // lifestyle creep: which step of CONFIG.livingSteps the run has reached (0 = base), and the $/wk it costs
+  function livingStep(S) { let i = 0; CONFIG.livingSteps.forEach((st, k) => { if ((S.peakFollowers || 0) >= st[0]) i = k + 1; }); return i; }
+  const livingCost = S => { const i = livingStep(S); return i ? CONFIG.livingSteps[i - 1][1] : CONFIG.overheadBase; };
+  // tax accrued since the last tax event — what the next bill would be today (read-only; taxBill settles it)
+  const taxOwed = S => Math.round(Math.max(0, S.grossEarned - S.taxedThrough) * CONFIG.taxRate);
   function overheadBreakdown(S) {
-    const b = { base: CONFIG.overheadBase, platforms: activePlats(S).length * CONFIG.overheadPerPlatform, payroll: payroll(S), lease: hasStudio(S) ? CONFIG.studioLease : 0 };
+    const b = { base: livingCost(S), livingStep: livingStep(S), platforms: activePlats(S).length * CONFIG.overheadPerPlatform, payroll: payroll(S), lease: hasStudio(S) ? CONFIG.studioLease : 0 };
     b.total = b.base + b.platforms + b.payroll + b.lease; return b;
   }
   const overhead = S => overheadBreakdown(S).total;
@@ -690,6 +698,13 @@
   ];
 
   // ======================= weekly orchestration =======================
+  // one line per lifestyle step, in order of CONFIG.livingSteps
+  const LIFESTYLE_MSG = [
+    'You moved somewhere with a door that closes. Living is {cost} a week now. It felt earned.',
+    'Nicer place, nicer chair, a gym you visit twice. Living is {cost} a week now, and it is not going back down.',
+    'You have a car you don’t drive and a kitchen you don’t cook in. Living is {cost} a week now.',
+    'Two homes, an accountant, and a friend who is also an employee. Living is {cost} a week now. Nobody made you.',
+  ];
   const BAND_MSG = {
     normal:  { emoji: '😮‍💨', text: 'Stress is back under control. You remembered you have a body.', kind: 'good' },
     hot:     { emoji: '🌡️', text: 'Running hot. Fine for a week or two. Not a month.', kind: '' },
@@ -718,6 +733,10 @@
       S.members = Math.max(0, Math.round(S.members + S.newFollowers * CONFIG.memberNewConv - S.members * (posted ? CONFIG.memberChurn : CONFIG.memberChurnIdle)));
       passive += S.members * CONFIG.memberRate;
     }
+    // lifestyle creep: the step is judged on peak followers before this week's churn
+    const stepBefore = livingStep(S); S.peakFollowers = Math.max(S.peakFollowers || 0, totalFollowers(S));
+    const stepNow = livingStep(S);
+    if (stepNow > stepBefore) log.feed.push({ emoji: '🏠', kind: 'bad', text: LIFESTYLE_MSG[stepNow - 1].replace('{cost}', money(livingCost(S))) });
     const oh = overhead(S);
     const passiveR = Math.round(passive); S.cash += passiveR; S.grossEarned += passiveR;
     S.cash -= oh; S.peakOverhead = Math.max(S.peakOverhead, oh);
@@ -800,7 +819,7 @@
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, HIRES, HORDER, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
-    useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo,
+    useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText,

@@ -241,7 +241,12 @@
   .bizmore>summary span{color:var(--sf-fg-3)} .bizmore>summary:hover{border-color:var(--sf-fg-2);color:var(--sf-fg)} .bizmore>.moves{margin-top:9px}
   .bizmore>summary:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px}
   .team{margin-top:10px;background:var(--sf-bg-2);border:2px solid var(--sf-line);border-radius:13px;padding:11px}
-  .trow{display:grid;grid-template-columns:26px 1fr auto;gap:9px;align-items:center;padding:7px 0;border-bottom:1px solid var(--sf-line-2)}
+  .trow{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--sf-line-2)}
+  /* hire portraits: the image sits over the glyph and hides itself if the file isn't there yet */
+  .hav{position:relative;width:40px;height:40px;border-radius:50%;overflow:hidden;background:var(--sf-card-2);border:1.5px solid var(--sf-line);display:grid;place-items:center;color:var(--sf-fg-2);flex:none}
+  .hav img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover} .hav img[hidden]{display:none}
+  .hav svg{width:18px;height:18px;fill:currentColor}
+  .stm .hav{width:20px;height:20px;border-width:1px;margin-left:-3px} .stm .hav svg{width:11px;height:11px}
   .trow:last-of-type{border-bottom:0}
   .te{grid-column:1;grid-row:1/3;display:grid;place-items:center;color:var(--sf-fg-2)} .te svg{width:18px;height:18px}
   .tt{grid-column:2;grid-row:1;min-width:0}
@@ -354,6 +359,8 @@
   .stm .ic{width:14px;height:14px} .stm.solo{color:var(--sf-fg-3);font-weight:400}
   .sol{display:flex;align-items:baseline;justify-content:space-between;font-size:12.5px;color:var(--sf-fg-2);padding:2px 0}
   .sol b{font-family:var(--sf-mono);color:var(--sf-fg);font-variant-numeric:tabular-nums}
+  .sol.tax{border-top:1px dashed var(--sf-line-2);margin-top:4px;padding-top:6px;color:var(--sf-fg-3)} .sol.tax b{color:var(--sf-gold)}
+  .sol span small{color:var(--sf-fg-3)}
   .scap{font-size:12px;color:var(--sf-fg-3);text-align:center;padding:2px 0}
   .scap b{color:var(--sf-edge);font-family:var(--sf-mono)}
 
@@ -645,6 +652,9 @@
   const avatarHTML = h => AVATAR[h]
     ? `<img class="nav" src="${IMG}avatar-${AVATAR[h]}-64.webp" srcset="${IMG}avatar-${AVATAR[h]}-128.webp 2x" width="64" height="64" alt="" loading="lazy" decoding="async">`
     : `<span class="nav letter">${h.charAt(1).toUpperCase()}</span>`;
+  // Team portraits: avatar-hire-<role>-{64,128}.webp (see docs/the-feed-hire-avatar-prompts.md). Until a file
+  // exists the <img> errors, hides itself, and the role glyph underneath shows — nothing to toggle later.
+  const hireAvatarHTML = r => `<span class="hav"><img src="${IMG}avatar-hire-${r}-64.webp" srcset="${IMG}avatar-hire-${r}-128.webp 2x" width="64" height="64" alt="" loading="lazy" decoding="async" onerror="this.hidden=true">${icon(HIRE_ICON[r]||'team')}</span>`;
   // feed lines / event DMs / endings all speak the same glyph set — no emoji anywhere in the chrome
   const FEED_ICON = { big:'trend', good:'rep', bad:'stress', '':'alerts' };
   const CHOICE_ICON = { repair:'rep', neutral:'inbox', escalate:'stress' };
@@ -862,7 +872,7 @@
     setMeter('rep',S.rep);
     const c=$('v-cash'); c.textContent=money(S.cash); c.className='v mono '+(S.cash<0?'neg':'pos');
     const ob=E.overheadBreakdown(S); $('v-rent').textContent='-'+money(ob.total);
-    $('helpline').textContent=`Overhead ${money(ob.base)} living + ${money(ob.platforms)} platforms`+(ob.payroll?` + ${money(ob.payroll)} payroll`:'')+(ob.lease?` + ${money(ob.lease)} studio`:'')+'.';
+    $('helpline').textContent=`Overhead ${money(ob.base)} living + ${money(ob.platforms)} platforms`+(ob.payroll?` + ${money(ob.payroll)} payroll`:'')+(ob.lease?` + ${money(ob.lease)} studio`:'')+'.'+(E.taxOwed(S)>0?` Tax owed so far: ${money(E.taxOwed(S))}.`:'');
     $('slotpill').innerHTML=`<b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business`;
     // ----- a pending event forces the Inbox tab -----
     if(S.phase==='event'&&S.event) tab='inbox';
@@ -1006,7 +1016,7 @@
   const teamDlg=$('teamDlg');
   function teamRowsHTML(){ const noBiz=S.slots.business<=0;
     return `<div class="team">${HORDER.map(r=>{ const h=HIRES[r], info=E.hireInfo(S,r), have=S.hires[r];
-        return `<div class="trow"><span class="te">${icon(HIRE_ICON[r]||'team')}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
+        return `<div class="trow"><span class="te">${hireAvatarHTML(r)}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
           <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
           ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}</div>
       <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot${noBiz?' — yours is spent this week':''}.</div>`; }
@@ -1027,7 +1037,7 @@
     const ob=E.overheadBreakdown(S), studio=E.hasStudio(S), cap=E.contentSlots(S), up=E.upgradeInfo(S);
     const roster=HORDER.filter(r=>S.hires[r]);
     const team=roster.length
-      ? roster.map(r=>`<span class="stm">${icon(HIRE_ICON[r]||'team')}${HIRES[r].label}</span>`).join('')
+      ? roster.map(r=>`<span class="stm">${hireAvatarHTML(r)}${HIRES[r].label}</span>`).join('')
       : '<span class="stm solo">Working solo</span>';
     const oline=(k,v)=>`<div class="sol"><span>${k}</span><b>${v}</b></div>`;
     target.innerHTML=`<div class="studio">
@@ -1049,7 +1059,8 @@
       </div>
       <div class="scard">
         <div class="sk">Overhead · ${money(ob.total)}/wk</div>
-        ${oline('Living',money(ob.base))}${oline('Platforms',money(ob.platforms))}${ob.payroll?oline('Payroll',money(ob.payroll)):''}${ob.lease?oline('Studio lease',money(ob.lease)):''}
+        ${oline(ob.livingStep?'Living <small>· lifestyle '+ob.livingStep+'</small>':'Living',money(ob.base))}${oline('Platforms',money(ob.platforms))}${ob.payroll?oline('Payroll',money(ob.payroll)):''}${ob.lease?oline('Studio lease',money(ob.lease)):''}
+        <div class="sol tax"><span>Owed in tax <small>· accruing, billed later</small></span><b>${money(E.taxOwed(S))}</b></div>
       </div>
       <div class="scap">This week · <b>${S.slots.content}</b> content · <b>${S.slots.business}</b> business left</div>
     </div>`;

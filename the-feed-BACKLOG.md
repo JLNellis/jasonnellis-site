@@ -454,6 +454,35 @@ Six playtest notes from Jason, spec in
    mono MP3, peak-normalised; `level`/`week` alias onto `hit`/`post`.
    Chosen on duration/loudness/author cohesion, not by ear — audition them.
 
+## Shipped: lifestyle creep + tax accrual + team portrait slots (2026-09-13)
+
+Follow-ups from Jason's read of the Overhead card and the Team card:
+
+- **Lifestyle creep (engine).** `CONFIG.livingSteps` = `[[15000,150],
+  [25000,400],[50000,800],[100000,1500]]`: living cost steps up with **peak**
+  followers (`S.peakFollowers`, judged in `settleWeek` before churn) and never
+  steps back down; each step is announced once (`LIFESTYLE_MSG`). This is the
+  recurring late sink the "meaningless cash" note asked for: median end cash
+  Sustainable $82K→$67K, Optimizer $133K→$84K, Diversifier $66K→$59K; the
+  Minimalist (peak ~8K) is untouched. Tuning notes: a gentler ladder
+  (120/250/500 at 10/50/100K) barely moved the hoard; the steeper ladder with
+  a 10K first step tipped the Grinder to 14w on every seed (the few Grinder
+  runs that cross 10K went Broke before Burnout), so the first step sits at
+  15K. Sim 6/6 on seeds 7/123, seed 42 identical to baseline. Tests 61/61.
+  New exports `livingStep`, `livingCost`, `taxOwed`; `overheadBreakdown`
+  carries `livingStep`.
+- **Tax accrual (UI).** The Overhead card and the phone helpline show "Owed in
+  tax" = `taxOwed(S)` (35% of gross since the last tax event) so the bill is
+  watched, not sprung. Read-only; the tax events still settle it.
+- **Team portraits.** `hireAvatarHTML(role)` renders
+  `avatar-hire-<role>-{64,128}.webp` in a 40px circle in the Team dialog and
+  a 20px one on the Setup card roster chips; the `<img>` hides itself on error
+  so the role glyph shows until the files exist (expect four 404s in the
+  console until then). Prompts for the four images:
+  `docs/the-feed-hire-avatar-prompts.md`. When the PNGs land in
+  `the-feed-art-library-v2/avatars/`, derive 64/128 WebPs into `imgs/` and
+  add them to `manifest.json`.
+
 ## Priority item — ending → essay CTA (blocked on content)
 
 Each ending's Substack CTA should link to a specific essay on that ending's

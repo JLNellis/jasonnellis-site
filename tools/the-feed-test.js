@@ -414,6 +414,20 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
   assert.ok(log2.feed.some(f => /people left/.test(f.text)), 'idle churn is loud');
 });
+test('lifestyle creep: living steps up with peak followers, never down, announced once per step', () => {
+  const C = E.CONFIG; const S = mk(); S.cash = 50000; S.plats.longform.lastPost = S.week;
+  assert.strictEqual(E.livingStep(S), 0); assert.strictEqual(E.overheadBreakdown(S).base, C.overheadBase);
+  S.plats.longform.followers = C.livingSteps[0][0] + 5; const log = E.settleWeek(S);
+  assert.strictEqual(E.livingStep(S), 1); assert.strictEqual(E.livingCost(S), C.livingSteps[0][1]);
+  assert.ok(log.feed.some(f => /Living is/.test(f.text)), 'step announced');
+  S.plats.longform.followers = 100; const log2 = E.settleWeek(S);   // audience collapses: lifestyle doesn't
+  assert.strictEqual(E.livingCost(S), C.livingSteps[0][1]); assert.ok(!log2.feed.some(f => /Living is/.test(f.text)), 'announced only once');
+  S.plats.longform.followers = C.livingSteps[2][0]; E.settleWeek(S); assert.strictEqual(E.livingCost(S), C.livingSteps[2][1]);
+});
+test('taxOwed reads the accrued bill without settling it', () => {
+  const S = mk(); S.grossEarned = 1000; S.taxedThrough = 200;
+  assert.strictEqual(E.taxOwed(S), Math.round(800 * E.CONFIG.taxRate)); assert.strictEqual(S.taxedThrough, 200);
+});
 test('idle churn ramps with each account-wide silent week and caps; a neglected platform alone stays flat', () => {
   const C = E.CONFIG;
   const at = w => { const S = mk(); S.week = 20; S.plats.longform.lastPost = 20 - w; return E.idleChurnRate(S, S.plats.longform); };
