@@ -103,6 +103,14 @@
     .app.compact .meterrow{margin-top:7px}
   }
   .helpline{margin-top:9px;font-size:12px;color:var(--sf-fg-2);line-height:1.4}
+  /* desktop trend row: the four Stats series as compact instruments under the meters */
+  .trendrow{display:none}
+  .tcell{background:rgba(255,255,255,.03);border:1.5px solid var(--sf-line-2);border-radius:10px;padding:6px 9px 5px;min-width:0}
+  .tcell .tk{display:flex;align-items:baseline;justify-content:space-between;gap:6px;font-size:11px;font-weight:600;color:var(--sf-fg-2);white-space:nowrap}
+  .tcell .tk b{font-family:var(--sf-mono);font-weight:500;font-size:11px;font-variant-numeric:tabular-nums;color:var(--sf-fg)}
+  .tcell .tk b.up{color:var(--sf-edge)} .tcell .tk b.dn{color:var(--sf-red)}
+  .tcell .spark{height:30px;margin-top:3px}
+  .tcell .nodata{display:block;height:30px;margin-top:3px;font-size:11px;color:var(--sf-fg-3);line-height:30px}
 
   /* ---------- tab body / panes ---------- */
   .tabbody{flex:1;overflow-y:auto;padding:14px 15px 18px;-webkit-overflow-scrolling:touch}
@@ -244,6 +252,25 @@
   .tbtn.hire{background:var(--sf-edge);color:#06231a;border-color:var(--sf-edge);font-weight:600}
   .tbtn:disabled{opacity:.4;cursor:not-allowed}
   .tnote{margin-top:8px;font-size:11.5px;color:var(--sf-fg-3)}
+  /* team management is a dialog: centred on desktop, a bottom sheet on phones */
+  .teamdlg{width:min(100% - 32px,520px);background:var(--sf-bg);color:var(--sf-fg);border:2px solid var(--sf-line);border-radius:20px;
+    padding:0;box-shadow:var(--sf-shadow);font-family:var(--sf-body)}
+  .teamdlg::backdrop{background:rgba(5,12,24,.7);backdrop-filter:blur(3px)}
+  .teamdlg .dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 10px;border-bottom:2px solid var(--sf-line)}
+  .teamdlg .dhead h2{font-family:var(--sf-sans);font-size:16px;margin:0} .teamdlg .dhead span{font-size:12px;color:var(--sf-fg-2);display:block;font-weight:400}
+  .teamdlg .dclose{width:32px;height:32px;border-radius:9px;background:var(--sf-card);border:2px solid var(--sf-line);color:var(--sf-fg-2);cursor:pointer;font-size:16px;line-height:1}
+  .teamdlg .dclose:hover{border-color:var(--sf-fg);color:var(--sf-fg)}
+  .teamdlg .team{margin:0;border:0;border-radius:0;background:transparent;padding:6px 16px 14px}
+  .teamdlg .tnote{padding:0 16px 14px;margin:0}
+  @media(max-width:979px){.teamdlg{margin:auto 0 0;width:100%;max-width:none;border-radius:20px 20px 0 0;border-bottom:0}}
+  .ladder{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+  .ladder li{text-align:center;border:1.5px solid var(--sf-line-2);border-radius:8px;padding:5px 2px 4px;font-size:10.5px;color:var(--sf-fg-3);line-height:1.2}
+  .ladder li b{display:block;font-family:var(--sf-mono);font-weight:500;font-size:12px;color:var(--sf-fg-2);font-variant-numeric:tabular-nums}
+  .ladder li.done{border-color:var(--sf-line);color:var(--sf-fg-2)} .ladder li.done b{color:var(--sf-fg)}
+  .ladder li.on{border-color:var(--sf-edge);background:rgba(0,230,118,.08);color:var(--sf-fg)} .ladder li.on b{color:var(--sf-edge)}
+  .ladder li.next{border-style:dashed}
+  .lnext{font-size:11.5px;color:var(--sf-fg-2);margin-top:6px} .lnext b{font-family:var(--sf-mono);font-weight:500;color:var(--sf-fg)}
+  .cc.bleed{color:var(--sf-red);border-color:var(--sf-red)}
 
   .stagefoot{margin-top:16px}
   .btn{font-family:var(--sf-sans);font-weight:700;cursor:pointer;border-radius:12px;border:2px solid transparent}
@@ -350,6 +377,8 @@
     /* #5: cap the meters into a tidy left-aligned instrument cluster so the
        bars read as gauges, not stretched rails, with no dead centre */
     .meterrow{grid-template-columns:200px 200px auto auto;justify-content:start;column-gap:26px}
+    .trendrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px;max-width:760px}
+    #tab-stats{display:none}
     /* the decision is the widest surface; feed + inbox/stats are rails */
     .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;grid-template-rows:auto minmax(0,1fr);overflow:hidden;padding:0}
     .chanstrip{grid-column:1/-1;border-bottom:2px solid var(--sf-line);padding:12px 16px 0}
@@ -367,8 +396,7 @@
     .tabbody>#tab-home{padding-bottom:0}
     .stagefoot{position:sticky;bottom:0;background:var(--sf-bg);border-top:2px solid var(--sf-line);padding:12px 0 16px;margin-top:12px}
     .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-    #tab-inbox{flex:none;max-height:46%}
-    #tab-stats{flex:1;border-top:2px solid var(--sf-line)}
+    #tab-inbox{flex:1}
     /* during an event the decision renders in the workspace — keep it chat-width */
     #stagebody .dm{max-width:460px}
     .tabbar{display:none}
@@ -509,6 +537,7 @@
       <div class="metric"><span class="k">Bank</span><span class="v mono pos" id="v-cash">$900</span></div>
       <div class="metric ovbtn" id="ovbtn" role="button" tabindex="0" aria-expanded="false" aria-controls="helpline"><span class="k">Overhead</span><span class="v mono neg" id="v-rent">-$70</span></div>
     </div>
+    <div class="trendrow" id="trendrow"></div>
     <div class="helpline" id="helpline"></div>
   </header>
 
@@ -537,6 +566,11 @@
 </div>
 
 <div class="floats" id="floats"></div>
+
+<dialog class="teamdlg" id="teamDlg" aria-labelledby="teamDlgTitle">
+  <div class="dhead"><h2 id="teamDlgTitle">Your team <span id="teamDlgSub"></span></h2><button class="dclose" type="button" id="teamDlgClose" aria-label="Close">×</button></div>
+  <div id="teamDlgBody"></div>
+</dialog>
 
 <!-- START -->
 <div class="overlay" id="startOverlay">
@@ -617,7 +651,8 @@
   const END_ICON = { cancelled:['ban','var(--sf-red)'], bankrupt:['dollar','var(--sf-red)'], burnout:['stress','var(--sf-red)'], sellout:['dollar','var(--sf-gold)'],
                      star:['membership','var(--sf-gold)'], goat:['crown','var(--sf-gold)'], legend:['trophy','var(--sf-gold)'], faded:['fog','var(--sf-fg-3)'] };
 
-  let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {}, teamOpen = false;
+  let S = null, selNiche = 'gaming', selHome = 'longform', bumped = {};
+  let evtThisWeek = false;   // UI-only: did an event land this week (marked on the followers trend)
   let tab = 'home', seenFeedLen = 0, hist = [], lastRecap = null;   // hist + lastRecap are UI-only; never enter S/engine/sim/tests
   let weekLog = [];   // UI-only: what you did this week + what it did, rendered in place (#2/#4)
   let bizMoreOpen = false;   // UI-only: the collapsed business list after the week's move is spent
@@ -628,7 +663,7 @@
   const wideMQ = window.matchMedia('(min-width:980px)');
   const isWide = () => wideMQ.matches;
   wideMQ.addEventListener('change', ()=>{ if(S) render(); });
-  function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep) }); }
+  function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep), evt:evtThisWeek }); evtThisWeek=false; }
 
   // ---------- sound (Kenney CC0 interface pack, via Web Audio) ----------
   const SFX = (function(){
@@ -667,7 +702,7 @@
 
   function newGame(name, niche, home){
     SFX.unlock(); SFX.play('level');
-    S = E.newState(niche, home); S.name = name || 'untitled'; teamOpen = false;
+    S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam();
     paintBackdrop();
     pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
     hist = []; lastRecap = null; weekLog = []; postLog = {}; snapshot(); tab = 'home';
@@ -722,7 +757,7 @@
                 : id==='upgrade' ? (S.gear>=4?'Signed the studio lease':'Upgraded gear') : BIZ_DONE[id]||id;
     logResult(label, icon(id==='hire'||id==='fire'?'team':(BIZ_ICON[id]||'engage')), b0, log, true, id); E.buildHand(S); render(); }
   function endWeek(){ applyLog(E.settleWeek(S)); const ev=E.rollEvent(S);
-    if(ev){ S.event=ev; S.phase='event'; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
+    if(ev){ S.event=ev; S.phase='event'; evtThisWeek=true; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
   function advance(){ tab='home'; weekLog=[]; bizMoreOpen=false; E.advanceWeek(S); if(E.checkEndings(S)){ snapshot(); endGame(S.endKey); return; }
     snapshot(); computeRecap(); S.phase='play'; E.buildHand(S); render(); }
   // Week-recap payoff (#3): deltas between the two latest UI snapshots = the week just played.
@@ -796,7 +831,9 @@
     const nextTxt = next ? `${need} more post${need>1?'s':''} to ${TIERS[t+1]}` : 'Top tier';
     const idleW = p.lastPost < 0 ? S.week - 1 : S.week - p.lastPost, chips=[];
     if(p.heat>=52) chips.push(`<span class="cc hot">${icon('stress')}Hot right now</span>`);
-    if(idleW>=E.CONFIG.idleWeeks) chips.push(`<span class="cc idle">${icon('alerts')}Idle ${idleW}w · churning</span>`);
+    const idleRate=E.idleChurnRate(S,p);
+    if(idleRate>=0.05) chips.push(`<span class="cc bleed">${icon('alerts')}Idle ${idleW}w · bleeding ${Math.round(idleRate*100)}%</span>`);
+    else if(idleW>=E.CONFIG.idleWeeks) chips.push(`<span class="cc idle">${icon('alerts')}Idle ${idleW}w · churning</span>`);
     if(p.fatigue>=52) chips.push(`<span class="cc tired">${icon('moon')}Audience tired</span>`);
     else if(p.proven && p.fatigue<45) chips.push(`<span class="cc ok">${icon('membership')}Proven</span>`);
     if(!chips.length) chips.push('<span class="cc quiet">Steady</span>');
@@ -832,13 +869,13 @@
       // desktop console: every pane is on screen, so fill them all every render
       const evt = S.phase==='event' && S.event;
       ['home','alerts','stats'].forEach(t=>{ $('tab-'+t).hidden=false; }); $('chanstrip').hidden=false;
-      $('tab-inbox').hidden = evt;   // during an event the decision moves into the workspace; hide the rail copy
+      $('tab-inbox').hidden = false;   // during an event the decision moves into the workspace; the rail keeps the Studio panel
       $('badge-alerts').hidden=true; $('badge-inbox').hidden=true;   // nothing is hidden behind a tab
       seenFeedLen=(S.feed||[]).length;
       renderChannels();
       if(evt){ $('stagetitle').textContent='Your call.'; $('slotpill').innerHTML=''; renderEventDM($('stagebody')); }
       else renderMoves();
-      renderFeed(); if(!evt) renderInbox(); renderStats();
+      renderFeed(); renderStudio($('inboxbody')); renderTrends();
     } else {
       // mobile: one pane at a time, driven by the tab bar
       ['home','alerts','inbox','stats'].forEach(t=>{ $('tab-'+t).hidden = (t!==tab); }); $('chanstrip').hidden = (tab!=='home');
@@ -891,21 +928,16 @@
       {id:'deal',ic:'🤝',t:'Take a brand deal',d:canDeal?'Cash today, reputation tomorrow. Pays more when your rep is high.':'Locked until 1K total.',on:canDeal&&!noBiz,f:[['+'+E.CONFIG.dealStress+' stress','en'],['+$$','mo'],['-rep','dn']]},
       up.next===null?{id:'upgrade',ic:'🏢',t:'Studio owned',d:'Full rig, real space, full team. Nothing left to buy.',on:false,f:[]}
         :up.next===4?{id:'upgrade',ic:'🏢',t:'Sign a studio lease ('+money(up.cost)+')',d:up.ok?'A third post every week, views ×'+E.CONFIG.studioViewsMult+', −'+E.CONFIG.studioStressRelief+' stress per post, room for a full team. Also '+money(E.CONFIG.studioLease)+' a week, forever.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+'+money(E.CONFIG.studioLease)+'/wk','dn'],['+1 content slot','up'],['×'+E.CONFIG.studioViewsMult+' views','up']]}
-        :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel (+10% views).':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['+quality','up']]},
+        :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel. Views ×'+kitMult(S.gear).toFixed(2)+' → ×'+kitMult(S.gear+1).toFixed(2)+'.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['×'+kitMult(S.gear+1).toFixed(2)+' views','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Convert true fans into recurring income.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' total.',on:canPaid&&!noBiz,f:[['+members','up']]},
-      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Everyone on the list costs you every week.',on:true,f:[]},
+      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. Everyone on the list costs you every week.',on:true,f:[],go:'Manage ▸'},
     ];
     // a move already made this week is shown once, as its result — not again as a disabled twin
     const bizCards=biz.filter(b=>!weekLog.some(e=>e.biz&&e.id===b.id));
-    const bizHTML=bizCards.map(b=>`<button class="move ${b.id==='team'&&teamOpen?'special':''}" data-biz="${b.id}" ${b.on?'':'disabled'}>
+    const bizHTML=bizCards.map(b=>`<button class="move" data-biz="${b.id}" ${b.on?'':'disabled'}>
       <span class="ico">${icon(BIZ_ICON[b.id]||'engage')}</span><span class="mbody"><span class="mt">${b.t}</span><span class="md">${b.d}</span>
-      <span class="flags">${b.f.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span></button>`).join('');
-    const teamHTML = !teamOpen ? '' : `<div class="team">${HORDER.map(r=>{ const h=HIRES[r], info=E.hireInfo(S,r), have=S.hires[r];
-        return `<div class="trow"><span class="te">${icon(HIRE_ICON[r]||'team')}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
-          <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
-          ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}
-      <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot.</div></div>`;
+      <span class="flags">${b.f.map(f=>`<span class="flag ${f[1]}">${f[0]}</span>`).join('')}</span></span>${b.go?`<span class="go">${b.go}</span>`:''}</button>`).join('');
     // End the week is an informed choice (#5): say what's unused; go filled only once the work is out.
     const unused=[]; if(S.slots.content) unused.push(S.slots.content+(S.slots.content>1?' posts':' post')); if(S.slots.business) unused.push('1 business move');
     const ready=!unused.length;
@@ -915,14 +947,12 @@
           <div class="moves vgrid">${postedHTML}${moveHTML}</div></div>
         <div class="deck"><div class="movelabel">Business <span>· one move a week${S.slots.business?'':' · done'}</span></div>
           ${noBiz
-            ? `<div class="moves bgrid">${bizDoneHTML}</div><details class="bizmore" ${bizMoreOpen?'open':''}><summary>Other business options <span>· ${bizCards.length} · back next week</span></summary><div class="moves bgrid">${bizHTML}</div>${teamHTML}</details>`
-            : `<div class="moves bgrid">${bizDoneHTML}${bizHTML}</div>${teamHTML}`}</div>
+            ? `<div class="moves bgrid">${bizDoneHTML}</div><details class="bizmore" ${bizMoreOpen?'open':''}><summary>Other business options <span>· ${bizCards.length} · back next week</span></summary><div class="moves bgrid">${bizHTML}</div></details>`
+            : `<div class="moves bgrid">${bizDoneHTML}${bizHTML}</div>`}</div>
       </div>
       <div class="stagefoot"><button class="btn primary ${ready?'':'idle'}" id="endWeekBtn"><span class="bl">End the week ▸</span><span class="bs">${endSub}</span></button></div>`;
     $('stagebody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ if(!b.disabled)takeMove(+b.dataset.i); });
-    $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; if(b.dataset.biz==='team'){ teamOpen=!teamOpen; SFX.play('click'); render(); return; } bizDo(b.dataset.biz); });
-    $('stagebody').querySelectorAll('[data-hire]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo('hire', b.dataset.hire); });
-    $('stagebody').querySelectorAll('[data-fire]').forEach(b=>b.onclick=()=>{ if(!b.disabled)bizDo('fire', b.dataset.fire); });
+    $('stagebody').querySelectorAll('[data-biz]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; if(b.dataset.biz==='team'){ openTeam(); return; } bizDo(b.dataset.biz); });
     $('endWeekBtn').onclick=endWeek;
     const more=$('stagebody').querySelector('.bizmore'); if(more) more.addEventListener('toggle',()=>{ bizMoreOpen=more.open; });
   }
@@ -971,9 +1001,29 @@
     if(isWide()){ renderStudio($('inboxbody')); return; }
     $('inboxbody').innerHTML='<p class="empty">No messages. Events land here as they happen.</p>';
   }
+  // ---------- team dialog: hire / let go, opened from the Team business card ----------
+  const teamDlg=$('teamDlg');
+  function teamRowsHTML(){ const noBiz=S.slots.business<=0;
+    return `<div class="team">${HORDER.map(r=>{ const h=HIRES[r], info=E.hireInfo(S,r), have=S.hires[r];
+        return `<div class="trow"><span class="te">${icon(HIRE_ICON[r]||'team')}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
+          <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
+          ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}</div>
+      <div class="tnote">${E.hasStudio(S)?'Studio: room for four.':'Two people max until you have a Studio.'} Hiring and letting go each take your business slot${noBiz?' — yours is spent this week':''}.</div>`; }
+  function openTeam(){ if(!S) return; SFX.play('click');
+    $('teamDlgSub').textContent=`${E.hireCount(S)} of ${E.hireCap(S)} seats · payroll ${money(E.payroll(S))}/wk`;
+    $('teamDlgBody').innerHTML=teamRowsHTML();
+    $('teamDlgBody').querySelectorAll('[data-hire]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; closeTeam(); bizDo('hire', b.dataset.hire); });
+    $('teamDlgBody').querySelectorAll('[data-fire]').forEach(b=>b.onclick=()=>{ if(b.disabled)return; closeTeam(); bizDo('fire', b.dataset.fire); });
+    if(!teamDlg.open) teamDlg.showModal(); }
+  function closeTeam(){ if(teamDlg.open) teamDlg.close(); }
+  $('teamDlgClose').onclick=closeTeam;
+  teamDlg.addEventListener('click',e=>{ if(e.target===teamDlg) closeTeam(); });   // click the backdrop to dismiss
+
+  // reach multiplier from the kit alone (tiers 0–3 compound, the Studio multiplies on top)
+  const kitMult = g => Math.pow(E.CONFIG.gearViewsMult, Math.min(g,3)) * (g>=4 ? E.CONFIG.studioViewsMult : 1);
   // ---------- Studio: the desktop rail panel — team, gear, overhead, capacity ----------
   function renderStudio(target){
-    const ob=E.overheadBreakdown(S), studio=E.hasStudio(S), cap=E.contentSlots(S);
+    const ob=E.overheadBreakdown(S), studio=E.hasStudio(S), cap=E.contentSlots(S), up=E.upgradeInfo(S);
     const roster=HORDER.filter(r=>S.hires[r]);
     const team=roster.length
       ? roster.map(r=>`<span class="stm">${icon(HIRE_ICON[r]||'team')}${HIRES[r].label}</span>`).join('')
@@ -982,11 +1032,15 @@
     target.innerHTML=`<div class="studio">
       <div class="scard hasart">
         <img class="studio-art" src="${studioArt(S.gear,640)}" srcset="${studioArt(S.gear,320)} 320w, ${studioArt(S.gear,640)} 640w" sizes="300px" width="1536" height="1024" alt="" loading="lazy" decoding="async">
-        <div class="sk">${studio?'Studio':'Setup'}</div>
-        <div class="sv">${studio?'Leased · ×'+E.CONFIG.studioViewsMult+' views':'Kit tier '+S.gear+' / 3'}</div>
+        <div class="sk">${studio?'Studio':'Setup · kit tier '+S.gear+' of 3'}</div>
+        <div class="sv">Views ×${kitMult(S.gear).toFixed(2)}${S.hires.designer?' <small style="font-weight:400;color:var(--sf-fg-2)">· Designer ×1.15 on top</small>':''}</div>
+        <ol class="ladder">${[0,1,2,3,4].map(g=>`<li class="${g<S.gear?'done':g===S.gear?'on':g===S.gear+1?'next':''}"><b>×${kitMult(g).toFixed(2)}</b>${g===4?'Studio':'Tier '+g}</li>`).join('')}</ol>
+        <div class="lnext">${up.next===null ? 'Nothing left to buy.'
+          : up.next===4 ? (totalFollowers()>=E.CONFIG.studioUnlockFollowers ? 'Next: the Studio · <b>'+money(up.cost)+'</b> + '+money(E.CONFIG.studioLease)+'/wk' : 'Next: the Studio · unlocks at <b>'+fmt(E.CONFIG.studioUnlockFollowers)+'</b> followers')
+          : 'Next: tier '+up.next+' · <b>'+money(up.cost)+'</b>'}</div>
         <div class="ss">${studio
           ? cap+' content slots a week · −'+E.CONFIG.studioStressRelief+' stress per post'
-          : 'The Studio adds a 3rd content slot — unlocks at '+fmt(E.CONFIG.studioUnlockFollowers)+' followers.'}</div>
+          : 'The Studio adds a 3rd content slot and −'+E.CONFIG.studioStressRelief+' stress per post.'}</div>
       </div>
       <div class="scard">
         <div class="sk">Team · ${E.hireCount(S)}/${E.hireCap(S)}</div>
@@ -1019,6 +1073,28 @@
     const lx=x(vals.length-1).toFixed(1), ly=y(vals[vals.length-1]).toFixed(1);
     return `<svg viewBox="0 0 ${w} ${h}" class="spark" preserveAspectRatio="none"><polyline fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/><circle cx="${lx}" cy="${ly}" r="3" fill="${color}"/></svg>`;
   }
+  // weekly net-change bars (green up / red down) with a tick on weeks an event landed
+  function bars(vals, evts){ if(vals.length<2) return '<span class="nodata">From week 2</span>';
+    const w=200,h=30,pad=2,d=vals.slice(1).map((v,i)=>v-vals[i]), mx=Math.max(...d.map(Math.abs))||1, n=d.length;
+    const bw=Math.max(1.5,(w-2*pad)/n-1.5), mid=h/2;
+    const rects=d.map((v,i)=>{ const x=pad+i*((w-2*pad)/n), bh=Math.max(1,Math.abs(v)/mx*(mid-4));
+      const y=v>=0?mid-bh:mid; const col=v>=0?'var(--sf-edge)':'var(--sf-red)';
+      const tick=evts&&evts[i+1]?`<rect x="${(x+bw/2-1).toFixed(1)}" y="1" width="2" height="3" fill="var(--sf-gold)"/>`:'';
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1" fill="${col}"/>${tick}`; }).join('');
+    return `<svg viewBox="0 0 ${w} ${h}" class="spark" preserveAspectRatio="none"><line x1="0" y1="${mid}" x2="${w}" y2="${mid}" stroke="var(--sf-line)" stroke-width="1"/>${rects}</svg>`; }
+  function renderTrends(){ const el=$('trendrow'); if(!hist.length){ el.innerHTML=''; return; }
+    const band=E.stressBand(S), stressCol=(band==='fumes'||band==='redline')?'var(--sf-red)':'var(--sf-gold)';
+    const first=hist[0], last=hist[hist.length-1], n=hist.length;
+    const rows=[
+      ['Followers · weekly', null, hist.map(h=>h.followers), 'var(--sf-edge)', last.followers-first.followers, x=>fmt(x), true],
+      ['Bank', 'line', hist.map(h=>h.cash), 'var(--sf-gold)', last.cash-first.cash, x=>money(x), true],
+      ['Stress', 'line', hist.map(h=>h.stress), stressCol, last.stress-first.stress, x=>String(x), false],
+      ['Reputation', 'line', hist.map(h=>h.rep), 'var(--sf-blue)', last.rep-first.rep, x=>String(x), true],
+    ];
+    el.innerHTML=rows.map(([k,kind,vals,col,d,f,upGood])=>{
+      const cls=d===0?'':((d>0)===upGood?'up':'dn'), sign=d>0?'+':d<0?'−':'';
+      const delta = n<2 ? '' : `<b class="${cls}" title="since week 1">${sign}${f(Math.abs(d))}</b>`;
+      return `<div class="tcell"><div class="tk"><span>${k}</span>${delta}</div>${kind==='line'?spark(vals,col):bars(vals,hist.map(h=>h.evt))}</div>`; }).join(''); }
   function renderStats(){
     if(!hist.length){ $('statsbody').innerHTML=''; return; }
     const band=E.stressBand(S), stressCol=(band==='fumes'||band==='redline')?'var(--sf-red)':'var(--sf-gold)';
