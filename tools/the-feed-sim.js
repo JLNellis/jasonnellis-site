@@ -35,7 +35,7 @@ const H = {
   byAngle(S, a)       { const x = H.posts(S).find(x => x.c.angle === a); return x ? x.i : -1; },
   heaviest(S)         { const x = H.posts(S).sort((a, b) => b.c.stress - a.c.stress)[0]; return x ? x.i : -1; },
   lightest(S)         { const x = H.posts(S).sort((a, b) => a.c.stress - b.c.stress)[0]; return x ? x.i : -1; },
-  bestMod(S)          { const x = H.posts(S).sort((a, b) => (b.c.mod * (1 - b.c.fatigue / 200)) - (a.c.mod * (1 - a.c.fatigue / 200)))[0]; return x ? x.i : -1; },
+  bestMod(S)          { const x = H.posts(S).sort((a, b) => b.c.mod - a.c.mod)[0]; return x ? x.i : -1; },
   coldest(S)          { const x = H.posts(S).sort((a, b) => a.c.heat - b.c.heat)[0]; return x ? x.i : -1; },
   canPaid(S)          { return S.members === 0 && totalFollowers(S) >= CONFIG.paidUnlock; },
   canDeal(S)          { return totalFollowers(S) >= 1000; },

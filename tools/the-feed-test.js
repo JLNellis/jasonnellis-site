@@ -414,6 +414,34 @@ test('churn: base, trend cohort at 2x, idle at churnIdle, feed line only when >1
   assert.strictEqual(T.plats.longform.followers, 10000 - Math.round(10000 * E.CONFIG.churnIdle));
   assert.ok(log2.feed.some(f => /people left/.test(f.text)), 'idle churn is loud');
 });
+test('cadence is not punished: alternating angles weekly never tires the audience', () => {
+  E.setRng(seeded(5)); const S = mk('edu', 'longform'); S.plats.longform.followers = 5000;
+  for (let w = 0; w < 8; w++) { E.doPost(S, 'longform', 'evergreen', 'a' + w, 1); E.doPost(S, 'longform', 'trend', 'b' + w, 1); E.settleWeek(S); E.advanceWeek(S); }
+  assert.ok(S.plats.longform.fatigue < E.CONFIG.tiredAt, 'fatigue stays low: ' + S.plats.longform.fatigue);
+  assert.ok(!E.postCard(S, S.plats.longform, 'evergreen', false).tired);
+});
+test('repetition tires the audience of THAT angle only; switching angles relieves it', () => {
+  const C = E.CONFIG; E.setRng(seeded(5)); const S = mk('edu', 'longform'); S.plats.longform.followers = 5000;
+  let log; for (let i = 0; i < 4; i++) { log = E.doPost(S, 'longform', 'trend', 't' + i, 1); }
+  assert.ok(S.plats.longform.fatigue >= C.tiredAt, 'tired after repeats');
+  assert.ok(log.feed.some(f => /see the pattern/.test(f.text)), 'announced when it crosses');
+  const same = E.postCard(S, S.plats.longform, 'trend', false), other = E.postCard(S, S.plats.longform, 'evergreen', false);
+  assert.ok(same.tired && !other.tired);
+  assert.ok(Math.abs(same.mod / other.mod - C.tiredViewsMult) < 1e-9 || same.mod < other.mod, 'same-angle card is penalised');
+  E.doPost(S, 'longform', 'evergreen', 'e', 1); assert.ok(S.plats.longform.fatigue < C.tiredAt + 1 - C.repeatAngleRelief + C.repeatAngleGain, 'relief on switch');
+});
+test('a second post on the same platform in the same week is diluted; the counter resets weekly', () => {
+  const C = E.CONFIG; const views = (pre) => { E.setRng(() => 0.5); const S = mk('edu', 'longform'); S.plats.longform.followers = 5000; S.plats.longform.weekPosts = pre; const v0 = S.totalViews; E.doPost(S, 'longform', 'evergreen', 'x', 1); return S.totalViews - v0; };
+  const a = views(0), b = views(1);
+  assert.ok(Math.abs(b / a - C.sameWeekDilution) < 0.02, `dilution ratio ${b / a}`);
+  E.setRng(seeded(1)); const S = mk(); E.doPost(S, 'longform', 'evergreen', 'x', 1); assert.strictEqual(S.plats.longform.weekPosts, 1); E.advanceWeek(S); assert.strictEqual(S.plats.longform.weekPosts, 0);
+});
+test('newsletter over-send: two issues in a week churn readers and members', () => {
+  const C = E.CONFIG; const S = mk(); S.cash = 50000; S.plats.writing.active = true; S.plats.writing.followers = 1000; S.plats.writing.weekPosts = 2; S.plats.writing.lastPost = S.week; S.members = 100; S.plats.longform.lastPost = S.week;
+  const log = E.settleWeek(S);
+  assert.ok(S.plats.writing.followers <= 1000 - Math.round(1000 * C.newsletterOverSendChurn), 'readers lost');
+  assert.ok(log.feed.some(f => /one was plenty/.test(f.text)));
+});
 test('lifestyle creep: living steps up with peak followers, never down, announced once per step', () => {
   const C = E.CONFIG; const S = mk(); S.cash = 50000; S.plats.longform.lastPost = S.week;
   assert.strictEqual(E.livingStep(S), 0); assert.strictEqual(E.overheadBreakdown(S).base, C.overheadBase);

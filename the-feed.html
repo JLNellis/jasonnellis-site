@@ -804,10 +804,10 @@
     const pf=PLATFORMS[m.pkey], A=ANGLES[m.angle], flags=[[A.label, 'angle '+m.angle]];
     if(m.ride) flags.push([icon('stress')+'Ride the wave','hot']);
     else if(m.heat>=52) flags.push([icon('stress')+'Hot','hot']);
-    if(m.proven && m.fatigue<45) flags.push([icon('membership')+'Proven','up']);
-    if(m.fatigue>=52) flags.push([icon('moon')+'Fatigued','dn']);
+    if(m.proven && m.fatigue<E.CONFIG.tiredAt) flags.push([icon('membership')+'Proven','up']);
+    if(m.tired) flags.push([icon('moon')+'Same angle again','dn']);
     flags.push(['+'+m.stress+' stress','en']);
-    const outlook = (m.mod||1)>=1.4?'primed to pop':(m.mod||1)>=1.05?'in a good spot':(m.mod||1)<=0.7?'this audience is tired':'steady';
+    const outlook = (m.mod||1)>=1.4?'primed to pop':(m.mod||1)>=1.05?'in a good spot':(m.mod||1)<=0.7?'they’ve seen this angle a lot lately':'steady';
     return { ico:pf.emoji, label:m.topic, topic:true, desc:`${pf.name} · ${A.tag} · ${outlook}.`, flags };
   }
 
@@ -845,8 +845,8 @@
     const idleRate=E.idleChurnRate(S,p);
     if(idleRate>=0.05) chips.push(`<span class="cc bleed">${icon('alerts')}Idle ${idleW}w · bleeding ${Math.round(idleRate*100)}%</span>`);
     else if(idleW>=E.CONFIG.idleWeeks) chips.push(`<span class="cc idle">${icon('alerts')}Idle ${idleW}w · churning</span>`);
-    if(p.fatigue>=52) chips.push(`<span class="cc tired">${icon('moon')}Audience tired</span>`);
-    else if(p.proven && p.fatigue<45) chips.push(`<span class="cc ok">${icon('membership')}Proven</span>`);
+    if(p.fatigue>=E.CONFIG.tiredAt) chips.push(`<span class="cc tired">${icon('moon')}Tired of ${p.lastAngle||'the'} posts</span>`);
+    else if(p.proven && p.fatigue<E.CONFIG.tiredAt) chips.push(`<span class="cc ok">${icon('membership')}Proven</span>`);
     if(!chips.length) chips.push('<span class="cc quiet">Steady</span>');
     return `<div class="chancard ${bumped[p.key]?'up':''}" data-k="${p.key}" style="--pc:${pf.color}">
       ${channelArt(p)}

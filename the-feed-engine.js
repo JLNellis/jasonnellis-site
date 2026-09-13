@@ -54,7 +54,7 @@
     // A recurring late sink that scales with exactly the players who hoard. [[peakFollowers, $/wk], ...]
     livingSteps: [[15000, 150], [25000, 400], [50000, 800], [100000, 1500]],
     // post math
-    viewsK: 160, baseConv: 0.02, sizeSat: 55000, sizeMax: 6,
+    viewsK: 70, baseConv: 0.02, sizeSat: 55000, sizeMax: 6,   // viewsK 160→70 when cadence fatigue was removed (it had been scaling views ×0.3–0.5 for focused players)
     // churn
     // Silence compounds. An idle platform (idleWeeks+ without a post) churns churnIdle flat — so
     // spreading across platforms stays viable — but once the WHOLE account has been silent that long,
@@ -64,6 +64,13 @@
     // evergreen tail
     tailWeeks: 4, tailRate: 0.15,
     topicCooldown: 8,
+    // Cadence is NOT punished (real-world data: more posting = more reach, consistency beats bursts).
+    // What is: (a) a second post on the same platform in the same week competes with the first,
+    // (b) repeating the same ANGLE on a platform tires the audience (the literature's actual cause),
+    // (c) Newsletter is the one platform where over-sending measurably loses subscribers.
+    sameWeekDilution: 0.8,                                   // views × this per extra post on the platform that week
+    repeatAngleGain: 20, repeatAngleRelief: 20, repeatDecay: 8, tiredAt: 52, tiredViewsMult: 0.7,
+    newsletterOverSendChurn: 0.03, newsletterOverSendMemberChurn: 0.04,
     // money
     bankruptFloor: -2500,
     dealBase: 150, dealScale: 0.018, dealRepBase: 0.6,
@@ -191,7 +198,7 @@
       seenEvents: [], grossEarned: 0, taxedThrough: 0, peakFollowers: 0,
       lastHit: null, over: false, endKey: null, plats: {}, hand: [],
     };
-    PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9 }; });
+    PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9, lastAngle: null, weekPosts: 0 }; });
     S.plats[home].active = true;
     S.plats[home].followers = 40;
     return S;
@@ -298,14 +305,15 @@
   function postCard(S, p, angleKey, ride) {
     let mod = 1;
     if (p.heat >= 52) mod *= 1.35;
-    if (p.proven && p.fatigue < 45) mod *= 1.12;
-    if (p.fatigue >= 52) mod *= 0.55;
+    const tired = p.fatigue >= CONFIG.tiredAt && angleKey === p.lastAngle;   // the audience is tired of THIS angle, not of you
+    if (p.proven && p.fatigue < CONFIG.tiredAt) mod *= 1.12;
+    if (tired) mod *= CONFIG.tiredViewsMult;
     if (ride) mod *= 1.6;
     // keep the topic the player already saw this week for this platform+angle — unless they just posted it
     const usedNow = new Set(S.usedTopics.filter(u => u.week === S.week).map(u => u.topic));
     const prev = (S.hand || []).find(c => c.pkey === p.key && c.angle === angleKey && c.topic && !usedNow.has(c.topic));
     return { kind: ride ? 'ride' : 'post', pkey: p.key, angle: angleKey, topic: prev ? prev.topic : pickTopic(S, angleKey),
-             mod, stress: stressCost(S, p.key, angleKey), special: !!ride, ride: !!ride, heat: p.heat, fatigue: p.fatigue, proven: p.proven };
+             mod, stress: stressCost(S, p.key, angleKey), special: !!ride, ride: !!ride, heat: p.heat, fatigue: p.fatigue, tired, proven: p.proven };
   }
   function buildHand(S) {
     const hand = [], act = activePlats(S);
@@ -344,12 +352,16 @@
     const heatF = 1 + p.heat / 45, luck = rnd(.55, 1.6);
     const sizeF = 1 + CONFIG.sizeMax * p.followers / (p.followers + CONFIG.sizeSat); // saturating, no runaway
     const views = Math.max(1, Math.round(q * heatF * sizeF * pf.viral * NICHES[S.niche].viral * A.views * (mod ?? 1)
-                  * clamp(1 - p.fatigue / 160, .5, 1) * luck * CONFIG.viewsK * viewsMult(S, k)));
+                  * Math.pow(CONFIG.sameWeekDilution, p.weekPosts) * luck * CONFIG.viewsK * viewsMult(S, k)));
     const gain = Math.round(views * CONFIG.baseConv * pf.loyal * A.conv);
     const rev = Math.round(views * pf.rpm);
     p.followers += gain; if (A.cohort) p.trendFollowers += gain;
     S.newFollowers += gain; S.totalViews += views; S.cash += rev; S.grossEarned += rev;
-    p.posts++; p.lastPost = S.week; p.fatigue = clamp(p.fatigue + rint(10, 20), 0, 100);
+    p.posts++; p.lastPost = S.week; p.weekPosts++;
+    // repetition meter: same angle again on this platform builds it, switching angles relieves it
+    const tiredBefore = p.fatigue >= CONFIG.tiredAt;
+    p.fatigue = clamp(p.fatigue + (angleKey === p.lastAngle ? CONFIG.repeatAngleGain : -CONFIG.repeatAngleRelief), 0, 100);
+    const nowTired = !tiredBefore && p.fatigue >= CONFIG.tiredAt; p.lastAngle = angleKey;
     const hit = luck > 1.12;
     p.heat = clamp(p.heat + (hit ? rint(A.heatHit[0], A.heatHit[1]) : -rint(0, 3)), 0, 100);
     if (hit) { p.proven = true; S.lastHit = { key: k, week: S.week }; }
@@ -367,6 +379,7 @@
     if (repHit) { log.floats.push({ anchor: 'rep', text: '-' + repHit, tone: 'loss' }); log.feed.push({ emoji: '😬', text: `‘${topic}’ ${A.bad} Rep −${repHit}.`, kind: 'bad' }); }
     log.bump.push(k);
     if (platTier(S, p) > before) log.feed.push({ emoji: '📈', text: `${pf.name} is ${TIERS[platTier(S, p)]} tier now. The channel looks like it belongs to someone with a plan.`, kind: 'good' });
+    if (nowTired) log.feed.push({ emoji: '🥱', text: `Another ${A.label.toLowerCase()} post on ${pf.name}. The regulars can see the pattern, and they're starting to skip it.`, kind: 'bad' });
     return log;
   }
   function startPlatform(S, k) {
@@ -733,6 +746,14 @@
       S.members = Math.max(0, Math.round(S.members + S.newFollowers * CONFIG.memberNewConv - S.members * (posted ? CONFIG.memberChurn : CONFIG.memberChurnIdle)));
       passive += S.members * CONFIG.memberRate;
     }
+    // Newsletter over-send: two issues in one week and some readers decide one was plenty
+    const nl = S.plats.writing;
+    if (nl.active && nl.weekPosts >= 2) {
+      const n = Math.round(nl.followers * CONFIG.newsletterOverSendChurn); nl.followers = Math.max(0, nl.followers - n);
+      const m = S.members > 0 ? Math.round(S.members * CONFIG.newsletterOverSendMemberChurn) : 0; S.members = Math.max(0, S.members - m);
+      log.feed.push({ emoji: '📭', text: `Two issues in one week. ${fmt(n)} readers${m ? ' and ' + fmt(m) + ' paying members' : ''} decided one was plenty.`, kind: 'bad' });
+      if (n) log.floats.push({ anchor: 'plat:writing', text: '-' + fmt(n), tone: 'loss' });
+    }
     // lifestyle creep: the step is judged on peak followers before this week's churn
     const stepBefore = livingStep(S); S.peakFollowers = Math.max(S.peakFollowers || 0, totalFollowers(S));
     const stepNow = livingStep(S);
@@ -755,7 +776,7 @@
       else log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
     }
     // heat / fatigue decay
-    PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); if (p.lastPost < S.week) p.fatigue = clamp(p.fatigue - 14, 0, 100); });
+    PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * 0.82) - 2, 0, 100); p.fatigue = clamp(p.fatigue - CONFIG.repeatDecay, 0, 100); });
     // stress: judge the band + burnout streak on the stress you ended the week's work at,
     // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
     const band = stressBand(S);
@@ -780,7 +801,7 @@
     return ev;
   }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
-  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; }
+  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
 
   function checkEndings(S) {
     const tot = totalFollowers(S); let key = null;
@@ -821,7 +842,7 @@
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
     useSlot, addStress, stressBand, hasStudio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
-    pickTopic, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
+    pickTopic, postCard, buildHand, applyMove, doPost, startPlatform, crosspost, biz,
     settleWeek, drawEvent, rollEvent, applyEventChoice, advanceWeek, checkEndings, endingText,
   };
 });

@@ -52,7 +52,10 @@ the deferred leaderboard.
   line (`TOPICS` in the engine, 5 per niche per angle, 8-week cooldown).
   Angles: **Trend** (×1.6 views, ×0.5 conversion, cohort churns 2×, may age
   badly) · **Evergreen** (×0.8 views, ×1.3 conversion, 4-week tail of 15%
-  views/week) · **Personal** (+rep, +6 stress, may overshare).
+  views/week) · **Personal** (+rep, +6 stress, may overshare). Cadence is
+  never punished; repeating the same angle on a platform is (see "cadence
+  fatigue removed" below), and a second post on one platform in a week is
+  diluted ×0.8.
 - **Views → followers → money.** Posts produce views; followers = views ×
   conversion; ad revenue = views × per-view RPM. Followers **churn** (0.6%/wk
   base, trend cohort 1.2%, 2% when a platform is idle 3+ weeks) and hostile
@@ -359,8 +362,8 @@ dots" meant nothing. Both fixed, chrome-only plus one engine export.
   badge, a **progress bar to the next tier** with "N more posts to X" (tiers
   cut on `platPolish` = posts×3 + gear×9 — now exported from the engine so
   the UI doesn't duplicate the formula), and up to two status chips that
-  drive decisions: **Hot right now** (heat ≥52), **Audience tired**
-  (fatigue ≥52), **Idle Nw · churning** (≥ `CONFIG.idleWeeks`), **Proven**,
+  drive decisions: **Hot right now** (heat ≥52), **Tired of <angle> posts**
+  (angle repetition ≥ `tiredAt`), **Idle Nw · churning** (≥ `CONFIG.idleWeeks`), **Proven**,
   else Steady.
 - `channelSVG` and the `.chanmeta`/`.tierpill` CSS are gone. Float anchor
   `cc-<key>` is now the followers number in each card.
@@ -482,6 +485,57 @@ Follow-ups from Jason's read of the Overhead card and the Team card:
   `docs/the-feed-hire-avatar-prompts.md`. When the PNGs land in
   `the-feed-art-library-v2/avatars/`, derive 64/128 WebPs into `imgs/` and
   add them to `manifest.json`.
+
+## Shipped: cadence fatigue removed (2026-09-13) — and the slot question
+
+Jason's note: "platform fatigue with regards to content generation isn't
+really a thing." Researched platform guidance + large-sample data (YouTube,
+TikTok, Instagram/Mosseri, Twitch, newsletter benchmarks, Buffer/Socialinsider):
+more posting → more total reach and growth; consistency beats bursts; a
+missed week underperforms baseline; the only measured *audience* cost of
+frequency is newsletter unsubscribes; "audience fatigue" in the literature
+is about repetitive topics, not cadence. The old mechanic (fatigue +10–20 per
+post, decaying only in weeks you didn't post, ×0.55 card mod past 52 plus a
+views scale toward ×0.5) punished two posts a week on one platform at ~×0.28
+from week 4 on — the opposite of the evidence, and a duplicate of stress.
+
+Replaced with three things the data does support (`CONFIG` block
+"Cadence is NOT punished"):
+- **Same-week dilution** — each extra post on the same platform in the same
+  week multiplies views by `sameWeekDilution` (0.8). `p.weekPosts` counts,
+  reset in `advanceWeek`.
+- **Repetition meter** — `p.fatigue` is now *angle repetition*: same angle
+  as `p.lastAngle` on that platform +20, a different angle −20, every
+  platform decays 8/week regardless of posting. Past `tiredAt` (52) only the
+  same-angle card is ×`tiredViewsMult` (0.7) and carries `tired`; the feed
+  announces the crossing once. Chip reads "Tired of trend posts"; card flag
+  "Same angle again". Proven bonus is off while tired.
+- **Newsletter over-send** — two issues in one week churn
+  `newsletterOverSendChurn` (3%) of readers and
+  `newsletterOverSendMemberChurn` (4%) of members, with a feed line.
+
+Retune: removing the penalty tripled growth (Sustainable 60K→140K, Optimizer
+190K→650K). `viewsK` 160→**70** restores the old curve almost exactly
+(Sustainable 61K, Optimizer 187–203K, cash ≈ before) — sweep at 70/85/100/115
+showed 70 is the only value where all six targets hold. **Sim 6/6 on seeds
+7/42/123 at 600** (the seed-42 Grinder now makes 15w too). Tests 65/65. Side
+effect worth knowing: focus is now rewarded over spread (Diversifier 43K→31K,
+Chaos Gremlin studio rate 75%→47%) — that is the real-world shape.
+
+**Slots: keep 2 content + 1 business, 3 content with the Studio.** Tested the
+alternatives at viewsK 70, seed 7, 400 games:
+
+| Variant | Result |
+|---|---|
+| 2 base · 3 Studio (current) | 6/6 |
+| 3 base · 4 Studio | Grinder burns out at **5w** (3 heavy posts = 39 stress vs 23 recovery); Sustainable drifts to Star (Legend 33%); GOAT 49% |
+| 3 base · 3 Studio | same Grinder/Sustainable failures; Studio loses its capacity identity |
+| 2 base · 2 Studio | GOAT **3%** (need 10–25); Optimizer cash halves — the Studio stops paying for itself |
+
+A third base slot would need the whole stress economy re-derived and would
+make "post everything" the default; without the Studio's third slot the top
+ending is effectively unreachable. The current split is the only one that
+keeps the rest decision *and* a reason to buy the Studio.
 
 ## Priority item — ending → essay CTA (blocked on content)
 
