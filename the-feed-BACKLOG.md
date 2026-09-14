@@ -347,7 +347,8 @@ dots" meant nothing. Both fixed, chrome-only plus one engine export.
 
 - **Layout.** `#chanstrip` is a full-width first row above the three desktop
   columns (`.tabbody` gets `grid-template-rows:auto minmax(0,1fr)`; the strip
-  spans `1/-1`). On phones it's the same horizontal, snap-scrolling row at the
+  spans `1/-1`). *(Superseded 2026-09-14 — the strip now sits at the top of
+  the right rail; see "laptop console" below.)* On phones it's the same horizontal, snap-scrolling row at the
   top of Home (`hidden` toggled with the tab). Decisions no longer move as
   platforms are added.
 - **Cards are the platform's own artifact**, built from real state
@@ -640,6 +641,33 @@ numbers justify it — a follower gate had the audience deciding instead. So:
 - **Assets still needed** (see the session notes / prompts doc): two hire
   portraits (`avatar-hire-producer`, `avatar-hire-analyst`) and two Setup
   scenes (`studio-tier-room`, `studio-tier-building`).
+
+## Shipped: laptop console — channels into the rail (2026-09-14)
+
+External playtest on a laptop (viewport ≈ 1440×790), spec in
+`docs/superpowers/specs/2026-09-14-the-feed-laptop-console-design.md`. The
+tester's three layout notes — "didn't know what action to take, it's behind
+a scroll", "Channels feels like wasted space", "the bottom-left panel is where
+everything happens but it's tiny" — had one cause: the full-width channel
+strip. Measured: header 226px + strip 272px = 498px before the decision
+column started, leaving it 253px (93 of that the sticky footer) for ~1,220px
+of content; on week 1 the cards were entirely below the fold.
+
+Fix (chrome only, `the-feed.html`): at ≥980px the strip is the **top of the
+right rail**, above Setup/Team, and the rail scrolls as one column. Channel
+cards keep their artifact format, stacked at the rail width. The `.tabbody`
+grid is a single row again. `placeStrip()` moves the `#chanstrip` node into
+`.rail` when wide and back before `#tab-home` when narrow (on load and on the
+980px `matchMedia` change), so the phone DOM/CSS is exactly as before.
+Result at 1440×790: workspace 253 → 524px, week-1 prompt + both content
+cards visible above End the week; at 1280×650 workspace 384px with the first
+card row still visible. Mobile 375px verified unchanged. Engine tests 68/68.
+
+Two other notes from the same tester, no change: the Team card staying
+clickable while broke (they retracted — seeing the cost is the point, and a
+brief overdraft to hire is allowed); "Setup could go in the top row" (skipped,
+the header is the one area already tight and the multiplier is on the upgrade
+card when it matters).
 
 ## Priority item — ending → essay CTA (blocked on content)
 

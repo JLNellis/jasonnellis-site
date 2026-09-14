@@ -431,10 +431,14 @@
     .trendrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px;max-width:920px}
     #tab-stats{display:none}
     /* the decision is the widest surface; feed + inbox/stats are rails */
-    .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;grid-template-rows:auto minmax(0,1fr);overflow:hidden;padding:0}
-    .chanstrip{grid-column:1/-1;border-bottom:2px solid var(--sf-line);padding:12px 16px 0}
-    .chanrow{margin:0;padding:2px 0 12px;scroll-padding-inline:0} .chancard{flex:0 0 clamp(216px,calc((100% - 40px)/5),262px)}
-    .tabbody>#tab-home,.tabbody>#tab-alerts,.rail>.tabpane{overflow-y:auto;min-height:0;padding:16px 16px 20px}
+    .tabbody{display:grid;grid-template-columns:minmax(0,1fr) 320px 300px;grid-template-rows:minmax(0,1fr);overflow:hidden;padding:0}
+    /* channels sit at the top of the right rail (placeStrip() moves the node there
+       on wide screens): a full-width strip cost a third of a laptop's height before
+       the week's decision even started */
+    .chanstrip{border-bottom:2px solid var(--sf-line);padding:14px 16px 2px}
+    .chanrow{flex-direction:column;gap:12px;margin:0;padding:2px 0 12px;overflow:visible;scroll-snap-type:none} .chancard{flex:0 0 auto;width:100%}
+    .tabbody>#tab-home,.tabbody>#tab-alerts{overflow-y:auto;min-height:0;padding:16px 16px 20px}
+    .rail>.tabpane{padding:16px 16px 20px}
     #tab-home{border-right:2px solid var(--sf-line)}
     #tab-alerts{border-right:2px solid var(--sf-line);background:rgba(255,255,255,.02)}
     /* content + business side by side (auto-fit to one column when narrow) */
@@ -446,8 +450,8 @@
     /* "End the week" is always reachable, pinned flush to the column bottom */
     .tabbody>#tab-home{padding-bottom:0}
     .stagefoot{position:sticky;bottom:0;background:var(--sf-bg);border-top:2px solid var(--sf-line);padding:12px 0 16px;margin-top:12px}
-    .rail{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-    #tab-inbox{flex:1}
+    /* the rail (channels + setup/team) scrolls as one column */
+    .rail{display:flex;flex-direction:column;min-height:0;overflow-y:auto}
     /* during an event the decision renders in the workspace — keep it chat-width */
     #stagebody .dm{max-width:460px}
     .tabbar{display:none}
@@ -726,7 +730,13 @@
   // when we cross the breakpoint so panes fill/empty and hidden flags update.
   const wideMQ = window.matchMedia('(min-width:980px)');
   const isWide = () => wideMQ.matches;
-  wideMQ.addEventListener('change', ()=>{ if(S) render(); });
+  // Desktop: the channel strip lives at the top of the right rail; phones keep it
+  // above Home. Moving the node (not duplicating it) keeps the phone DOM as it was.
+  const placeStrip = () => { const s=document.getElementById('chanstrip');
+    if(isWide()) document.querySelector('.rail').prepend(s);
+    else document.querySelector('.tabbody').insertBefore(s, document.getElementById('tab-home')); };
+  placeStrip();
+  wideMQ.addEventListener('change', ()=>{ placeStrip(); if(S) render(); });
   function snapshot(){ hist.push({ week:Math.min(S.week,52), followers:totalFollowers(), views:S.totalViews, gross:S.grossEarned, cash:S.cash, stress:Math.round(S.stress), rep:Math.round(S.rep), evt:evtThisWeek }); evtThisWeek=false; }
 
   // ---------- sound (Pixabay Content License set, via Web Audio — see the-feed-assets/CREDITS.md) ----------
