@@ -32,6 +32,13 @@
   .kit-photo figcaption { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--fg-3); display: flex; align-items: center; gap: 8px; line-height: 1.5; }
 
   .kit-section { padding: 56px 0; border-top: 1px solid var(--border-subtle); }
+
+  .photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 340px)); gap: 24px; align-items: start; }
+  .kit-headshot { margin: 0; }
+  .kit-headshot img { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border-subtle); }
+  .kit-headshot figcaption { margin-top: 14px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .kit-headshot .photo-meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--fg-3); display: flex; align-items: center; gap: 8px; line-height: 1.5; }
+  .photo-note { max-width: 720px; font-size: 14px; line-height: 1.6; color: var(--fg-3); margin: 24px 0 0; }
   .kit-section h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 24px; }
 
   .bio-card { max-width: 720px; }
@@ -67,6 +74,7 @@
 
   @media (max-width: 700px) {
     .av-grid { grid-template-columns: 1fr; }
+    .photo-grid { grid-template-columns: 1fr; max-width: 340px; }
   }
 </style>
 <script src="nav.js"></script>
@@ -96,9 +104,32 @@
       <figcaption><span class="live-dot"></span>IFA 2026 · Berlin · &ldquo;AI Tools Powering the Next Generation of Content Creation&rdquo;</figcaption>
     </figure>
 
+    <!-- PHOTOS -->
+    <section class="kit-section">
+      <div class="section-eyebrow"><span class="num">02</span> Photos</div>
+      <h2>Headshots</h2>
+      <div class="photo-grid">
+        <figure class="kit-headshot">
+          <img src="jason-nellis-headshot-stage.jpg" alt="Jason Nellis speaking on a panel at IFA 2026 in Berlin, microphone in hand" width="1199" height="1200" loading="lazy">
+          <figcaption>
+            <span class="photo-meta"><span class="live-dot"></span>On stage &middot; IFA 2026 &middot; Square</span>
+            <a href="/jason-nellis-headshot-stage-2400.jpg" class="btn ghost" download>Download (2400 px)</a>
+          </figcaption>
+        </figure>
+        <figure class="kit-headshot">
+          <img src="jason-headshot.jpg" alt="Jason Nellis, seated portrait" width="900" height="1200" loading="lazy">
+          <figcaption>
+            <span class="photo-meta"><span class="live-dot"></span>Portrait &middot; Cannes 2026 &middot; 3:4</span>
+            <a href="/jason-headshot.jpg" class="btn ghost" download>Download (1200 px)</a>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="photo-note">The square stage shot is sized for speaker cards and social tiles; the portrait suits program books and press. Both may be used for event pages, programs, and promotion of a confirmed booking.</p>
+    </section>
+
     <!-- SHORT BIO -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">02</span> Short bio</div>
+      <div class="section-eyebrow"><span class="num">03</span> Short bio</div>
       <h2>~50 words</h2>
       <div class="card bio-card">
         <span class="label label--accent bio-label">For programs, intros, and social posts</span>
@@ -108,7 +139,7 @@
 
     <!-- LONG BIO -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">03</span> Long bio</div>
+      <div class="section-eyebrow"><span class="num">04</span> Long bio</div>
       <h2>~180 words</h2>
       <div class="card bio-card">
         <span class="label label--accent bio-label">For speaker pages, program books, and press</span>
@@ -121,7 +152,7 @@
 
     <!-- EVENT INTRO SCRIPT -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">04</span> Event introduction script</div>
+      <div class="section-eyebrow"><span class="num">05</span> Event introduction script</div>
       <h2>For MC use</h2>
       <div class="card script-card">
         <span class="runtime">Approximate read time: 90 seconds</span>
@@ -134,7 +165,7 @@
 
     <!-- AV REQUIREMENTS -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">05</span> AV / technical requirements</div>
+      <div class="section-eyebrow"><span class="num">06</span> AV / technical requirements</div>
       <h2>What to plan for</h2>
       <div class="av-grid">
         <div class="card av-card">
@@ -160,7 +191,7 @@
 
     <!-- ONE-PAGE SUMMARY -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">06</span> One-page summary</div>
+      <div class="section-eyebrow"><span class="num">07</span> One-page summary</div>
       <h2>The leave-behind</h2>
       <div class="card onepager-card">
         <p class="kicker">Jason Nellis — Strategist. Operator. Speaker.</p>

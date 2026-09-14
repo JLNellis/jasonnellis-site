@@ -129,14 +129,14 @@ c.setFont("DMMono", 7.5); c.setFillColor(FG3)
 c.drawString(M + 38, y(top + 30), "jasonnellis.com  ·  hello@jasonnellis.com  ·  Cannes, FR", charSpace=0.4)
 
 # headshot, top right
-img_w, img_h = 108, 144
+img_w, img_h = 120, 120
 ix, iy_top = W - M - img_w, 52
-c.drawImage(str(REPO / "jason-headshot.jpg"), ix, y(iy_top + img_h), img_w, img_h,
+c.drawImage(str(REPO / "jason-nellis-headshot-stage.jpg"), ix, y(iy_top + img_h), img_w, img_h,
             preserveAspectRatio=True, anchor="c", mask="auto")
 c.setStrokeColor(BORDER); c.setLineWidth(1)
 c.rect(ix, y(iy_top + img_h), img_w, img_h, stroke=1, fill=0)
 c.setFont("DMMono", 6.5); c.setFillColor(FG3)
-c.drawRightString(W - M, y(iy_top + img_h + 12), "JN · CANNES, FR", charSpace=1)
+c.drawRightString(W - M, y(iy_top + img_h + 12), "JN · IFA BERLIN 2026", charSpace=1)
 
 # ---- positioning + bio (left of headshot) -----------------------------------
 text_w = CW - img_w - 26
