@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0A2540;--deep:#0F172A;--card:#1E293B;--edge:#00E676;--warn:#FFCA4B;--hot:#FF3B5C;--fg:#fff;--fg2:#94A3B8;--fg3:#8892AA;--line:rgba(148,163,184,.18)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--fg);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1200px;height:630px;overflow:hidden;background:
+  radial-gradient(ellipse 60% 50% at 12% 0%,rgba(0,230,118,.10),transparent 60%),
+  radial-gradient(ellipse 55% 55% at 95% 100%,rgba(15,77,140,.55),transparent 60%),var(--bg)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(148,163,184,.13) 1.5px,transparent 1.5px);background-size:26px 26px;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)}
+.frame{position:absolute;inset:16px;border:1px solid var(--line);border-radius:18px}
+.left{position:absolute;left:64px;top:60px;bottom:60px;width:620px;display:flex;flex-direction:column;justify-content:space-between}
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:'DM Mono',monospace;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg2)}
+.eyebrow::before{content:'';width:34px;height:2px;background:var(--edge)}
+h1{font-size:70px;font-weight:700;line-height:1.02;letter-spacing:-.03em;margin-top:22px;max-width:9.2ch}
+h1 span{color:var(--edge)}
+.sub{font-size:24px;line-height:1.35;color:var(--fg2);margin-top:20px;max-width:26ch}
+.sub b{color:#fff;font-weight:500}
+.url{font-family:'DM Mono',monospace;font-size:20px;color:var(--fg3);letter-spacing:.04em}
+.url b{color:#fff;font-weight:500}
+.sc{position:absolute;right:64px;top:92px;width:452px;background:var(--deep);border:1px solid rgba(255,202,75,.5);border-radius:16px;padding:32px 34px;box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.sc::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse 70% 60% at 100% 0%,rgba(255,202,75,.10),transparent 60%);pointer-events:none}
+.sc .t{font-family:'DM Mono',monospace;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--edge)}
+.sc .f{font-size:21px;color:var(--fg2);margin-top:12px}
+.sc .f b{color:#fff;font-weight:600}
+.sc .big{display:flex;align-items:baseline;gap:12px;margin-top:20px}
+.sc .big b{font-size:84px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--warn);font-variant-numeric:tabular-nums}
+.sc .big span{font-size:19px;color:var(--fg2);line-height:1.25;max-width:12ch}
+.sc .band{font-size:42px;font-weight:700;letter-spacing:-.02em;color:var(--warn);margin-top:14px}
+.sc .m{font-family:'DM Mono',monospace;font-size:17px;color:var(--fg2);margin-top:14px;line-height:1.5}
+.sc .foot{display:flex;justify-content:space-between;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-family:'DM Mono',monospace;font-size:13px;color:var(--fg3);letter-spacing:.06em}
+.bar{display:flex;height:10px;border-radius:999px;overflow:hidden;margin-top:18px;background:#0A2540;border:1px solid var(--line)}
+.bar i{display:block;height:100%}
+</style></head><body><div class="card"><div class="dots"></div><div class="frame"></div>
+<div class="left">
+  <div>
+    <div class="eyebrow">Burn Rate · a free calculator</div>
+    <h1>Can you afford your own <span>upload schedule?</span></h1>
+    <p class="sub">Pick a format and a platform. Get the hours, the verdict, and <b>what to cut first.</b></p>
+  </div>
+  <div class="url"><b>jasonnellis.com</b>/burn-rate &nbsp;·&nbsp; free, no login</div>
+</div>
+<div class="sc">
+  <div class="t">Burn Rate</div>
+  <div class="f"><b>Talking head</b> on YouTube long-form</div>
+  <div class="big"><b>10</b><span>hours a week needed · 8 available</span></div>
+  <div class="bar"><i style="width:10%;background:#00E676"></i><i style="width:20%;background:#5AA9FF"></i><i style="width:15%;background:#FFCA4B"></i><i style="width:40%;background:#FF3B5C"></i><i style="width:10%;background:#C084FC"></i><i style="width:5%;background:#8892AA"></i></div>
+  <div class="band">Running hot</div>
+  <div class="m">10 h per upload × 1 a week = 10 h/wk.<br>Runway: 20 weeks.</div>
+  <div class="foot"><span>14 SEPT 2026</span><span>jasonnellis.com/burn-rate</span></div>
+</div>
+</div></body></html>
