@@ -10,11 +10,14 @@ eleventyExcludeFromCollections: true
   <url><loc>https://jasonnellis.com/speaking</loc></url>
   <url><loc>https://jasonnellis.com/building-value</loc></url>
   <url><loc>https://jasonnellis.com/advisory</loc></url>
-  <url><loc>https://jasonnellis.com/lens</loc></url>
+  <url><loc>https://jasonnellis.com/tools</loc></url>
   <url><loc>https://jasonnellis.com/contact</loc></url>
   <url><loc>https://jasonnellis.com/privacy</loc></url>
 {%- for essay in collections.essays %}
   <url><loc>https://jasonnellis.com{{ essay.url }}</loc><lastmod>{{ essay.data.date | w3cDate }}</lastmod></url>
+{%- endfor %}
+{%- for tool in collections.tools %}
+  <url><loc>https://jasonnellis.com{{ tool.data.url }}</loc></url>
 {%- endfor %}
 {%- for talk in collections.talks %}
   <url><loc>https://jasonnellis.com{{ talk.url }}</loc><lastmod>{{ talk.date | w3cDate }}</lastmod></url>

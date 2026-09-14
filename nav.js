@@ -40,6 +40,7 @@ const NAV_LINKS = [
   { href: '/',         label: 'Home'     },
   { href: '/about',    label: 'About'    },
   { href: '/blog',     label: 'Writing'  },
+  { href: '/tools',    label: 'Tools'    },
   { href: '/speaking', label: 'Speaking' },
   { href: '/building-value', label: 'Podcast' },
   { href: '/advisory', label: 'Advisory' },

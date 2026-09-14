@@ -5,8 +5,9 @@ working memory for it: what's done, what's deferred, and enough detail to pick
 the deferred work back up without re-deriving anything. (Not built by Eleventy —
 listed in `.eleventyignore`.)
 
-Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Currently `noindex`
-and not in the nav (deliberately unlisted while in progress).
+Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Indexed and listed
+on the `/tools` page (via `tool-index/the-feed.md`) and the homepage Tools
+teaser since 2026-09-14; not a top-level nav item itself.
 
 The rework was three sub-projects, specced in `docs/superpowers/specs/` — all
 shipped: **A. core loop** · **B. event deck** · **C. social-app reskin** (see
@@ -76,10 +77,10 @@ the deferred leaderboard.
   Star at 70K, G.O.A.T. at 320K (raised from 200K when the Studio 3rd slot
   lifted late-game output — see below).
 
-### When ready to launch publicly
-1. Remove `<meta name="robots" content="noindex">` from `the-feed.html`.
-2. Add a nav entry (`NAV_LINKS` in `nav.js`) or link it from a tools page.
-3. Consider adding it to `sitemap.njk`.
+### Launched publicly (2026-09-14)
+`noindex` removed, listed on `/tools` and the homepage Tools teaser, in
+`sitemap.xml` via the `tools` collection. The start screen's footer links
+back to `jasonnellis.com/tools`.
 
 ---
 

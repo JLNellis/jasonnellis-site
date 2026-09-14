@@ -60,6 +60,10 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
   eleventyConfig.addPassthroughCopy("404.html");
 
+  // tools/ is the scripts folder (sim, tests, OG-image sources) — its README.md
+  // files must not render as pages under /tools/ next to the Tools index.
+  eleventyConfig.ignores.add("tools/**");
+
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return new Date(dateObj).toLocaleDateString("en-US", {
       year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
@@ -99,6 +103,15 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addCollection("talks", (collectionApi) => {
     return collectionApi.getFilteredByGlob("talks/*.md").sort(
+      (a, b) => a.data.order - b.data.order
+    );
+  });
+
+  // Tools index (/tools + homepage teaser). One tool-index/<slug>.md per
+  // tool; the tool pages themselves are standalone HTML, so the collection
+  // emits no pages (permalink: false in tool-index/tool-index.json).
+  eleventyConfig.addCollection("tools", (collectionApi) => {
+    return collectionApi.getFilteredByGlob("tool-index/*.md").sort(
       (a, b) => a.data.order - b.data.order
     );
   });

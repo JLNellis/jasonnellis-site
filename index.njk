@@ -441,6 +441,35 @@
     </div>
   </section>
 
+  <!-- TOOLS TEASER -->
+  <section class="block" id="tools" style="padding-top: 0">
+    <div class="page-wrap">
+      <div class="block-head">
+        <div>
+          <div class="section-eyebrow"><span class="num">05</span> Tools</div>
+          <h2>Play with the argument. A year as a creator, the cost of a schedule, three questions before a deal.</h2>
+        </div>
+        <a href="/tools" class="btn ghost">All tools
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="tool-grid">
+        {%- for tool in collections.tools %}
+        <a class="tool-card" href="{{ tool.data.url }}">
+          <span class="kind">{{ tool.data.kind }}</span>
+          <h3>{{ tool.data.title }}</h3>
+          <p class="tagline">{{ tool.data.tagline }}</p>
+          <div class="foot">
+            <span class="meta">{{ tool.data.time }}</span>
+            <span class="go">{{ tool.data.cta }} →</span>
+          </div>
+        </a>
+        {%- endfor %}
+      </div>
+    </div>
+  </section>
+
   <!-- PODCAST -->
   <section class="block" id="podcast" style="padding-top: 0">
     <div class="page-wrap">
@@ -449,7 +478,7 @@
           <img src="building-value-header.jpg" alt="Building Value with Jason Nellis — How creative work becomes a business" width="1672" height="941">
         </a>
         <div class="podcast-copy">
-          <div class="section-eyebrow"><span class="num">05</span> The podcast</div>
+          <div class="section-eyebrow"><span class="num">06</span> The podcast</div>
           <span class="live-pill"><span class="live-dot"></span>Relaunching soon</span>
           <h2>Building Value is coming back.</h2>
           <p class="tagline">How creative work becomes a business.</p>

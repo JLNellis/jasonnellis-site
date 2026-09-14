@@ -1,0 +1,110 @@
+---
+permalink: /tools/index.html
+eleventyExcludeFromCollections: true
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools — Jason Nellis</title>
+<meta name="description" content="Free tools for people who make content and the people who pay them: a creator life sim, an upload-schedule calculator, and a three-question framework for reading a creator. No login.">
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jasonnellis.com/tools">
+<meta property="og:title" content="Tools — Jason Nellis">
+<meta property="og:description" content="Free tools for people who make content and the people who pay them. A creator life sim, an upload-schedule calculator, a three-question framework. No login.">
+<meta property="og:image" content="https://jasonnellis.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tools — Jason Nellis">
+<meta name="twitter:description" content="Free tools for people who make content and the people who pay them. A creator life sim, an upload-schedule calculator, a three-question framework. No login.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
+<link rel="canonical" href="https://jasonnellis.com/tools">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="/site.css">
+<style>
+  .tools-hero { padding: 80px 0 40px; max-width: 720px; }
+  .tools-hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 16px; }
+  .tools-hero .lede { font-size: 18px; line-height: 1.6; color: var(--fg-2); margin: 0; }
+  .tools-hero .lede + .lede { margin-top: 12px; }
+  .tools-count { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+  .tools-count .l { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-2); }
+  .tools-count .n { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); }
+  .tools-why { margin: 64px 0 0; max-width: 640px; }
+  .tools-why h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin: 14px 0 12px; }
+  .tools-why p { font-size: 15px; line-height: 1.7; color: var(--fg-2); margin: 0 0 14px; }
+  .tools-why a { color: var(--fg-1); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--border-strong); }
+  .tools-why a:hover { color: var(--color-accent-vivid); border-bottom-color: var(--color-accent-vivid); }
+  @media (max-width: 880px) {
+    .tools-hero { padding-top: 56px; }
+  }
+</style>
+<script src="/nav.js"></script>
+</head>
+<body class="bolt-os">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<site-header></site-header>
+
+<main class="atmos" data-screen-label="tools" id="main">
+  <section>
+    <div class="page-wrap">
+      <div class="tools-hero">
+        <div class="section-eyebrow"><span class="num">Tools</span> Free · No login</div>
+        <h1>Play with the argument.</h1>
+        <p class="lede">The essays make a case about the creator economy. These let you test it: a year as a creator, the real cost of an upload schedule, three questions to ask before you sign a deal.</p>
+        <p class="lede">Everything runs in your browser. Nothing to install, nothing to hand over.</p>
+      </div>
+
+      <div class="tools-count">
+        <span class="l">All tools</span>
+        <span class="n">{{ collections.tools.length }} and counting</span>
+      </div>
+
+      <div class="tool-grid">
+        {%- for tool in collections.tools %}
+        <a class="tool-card" href="{{ tool.data.url }}">
+          <span class="kind">{{ tool.data.kind }}</span>
+          <h3>{{ tool.data.title }}</h3>
+          <p class="tagline">{{ tool.data.tagline }}</p>
+          <div class="desc">{{ tool.templateContent | safe }}</div>
+          <div class="foot">
+            <span class="meta">{{ tool.data.time }}</span>
+            <span class="go">{{ tool.data.cta }} →</span>
+          </div>
+        </a>
+        {%- endfor %}
+      </div>
+
+      <div class="tools-why">
+        <div class="section-eyebrow">Why these exist</div>
+        <h2>A spreadsheet never changed anyone's mind.</h2>
+        <p>Most of what I write comes down to one claim: the platforms reward things they don't say they reward, and the bill lands on the people making the content. A game or a calculator makes that felt in ten minutes in a way an essay can't.</p>
+        <p>New ones show up here as I build them. If you want to know when, <a href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">The Long Yes</a> is where I say so. If you want one built for your team or your event, <a href="/contact">get in touch</a>.</p>
+      </div>
+
+      <!-- SUBSTACK SUBSCRIBE BANNER -->
+      <div class="subscribe-banner" style="margin-top: 56px">
+        <div class="sub-content">
+          <span class="sub-eyebrow">Newsletter</span>
+          <p class="sub-headline">Get <em>The Long Yes</em> in your inbox.</p>
+          <p class="sub-body">The thinking behind the tools, once a week: what platforms reward, what they say they reward, and what it costs the people making the content.</p>
+          <form class="sub-form" action="https://jasonnellis.substack.com/subscribe" method="get" target="_blank">
+            <input type="email" name="email" placeholder="your@email.com" required class="sub-input" autocomplete="email">
+            <button type="submit" class="btn primary sub-btn">Subscribe</button>
+          </form>
+          <p class="sub-note">Powered by Substack &middot; Unsubscribe anytime</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<site-footer></site-footer>
+
+</body>
+</html>
