@@ -57,6 +57,10 @@ single file: **`nav.js`**, using Web Components (`<site-header>` and
   a `SITE_CONFIG` object, both at the top of the file.
 - **To add/remove/reorder a nav item: edit `NAV_LINKS` in `nav.js` only.**
   Do not add header/footer markup to individual HTML files.
+- **Legal/utility links (privacy policy, future terms, etc.) live in
+  `LEGAL_LINKS` in `nav.js`** and render in the footer bottom bar next to the
+  copyright line. Every page that includes `nav.js` gets them automatically;
+  never hand-link `/privacy` in page markup.
 - `SITE_CONFIG` holds: Substack handle, "last updated" date, LinkedIn,
   Twitter/X, podcast link, contact email. Update these in one place.
 - Active-page highlighting (`aria-current="page"`) is computed automatically
@@ -147,28 +151,34 @@ needs to be touched by hand.
 
 ---
 
-## Analytics — REQUIRED ON EVERY PAGE
+## Analytics & privacy — READ BEFORE ADDING ANY THIRD-PARTY SCRIPT
 
-Every page's `<head>`, immediately after the opening `<head>` tag and before
-`<meta charset="utf-8">`, must include the Google Analytics (gtag.js)
-snippet:
+Analytics is **Plausible** (cookieless, EU-hosted, no consent banner
+needed). It is loaded once from the top of `nav.js`, so every page that
+includes `nav.js` gets it for free. Standalone pages that don't load
+`nav.js` (`the-feed.html`, `ascii.html`, `burn-rate.html`) carry the same
+snippet inline in their own `<head>`. There is **no Google Analytics** on
+the site — don't add it back.
 
-```html
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP4FTXFZRX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+The privacy policy at `/privacy` (`privacy.html`) describes exactly what the
+site does. Keep it true. Conventions that keep it true:
 
-  gtag('config', 'G-PP4FTXFZRX');
-</script>
-```
-
-Any new page must include this snippet. Don't change the tracking ID
-(`G-PP4FTXFZRX`) without explicit instruction from Jason.
-
----
+- **YouTube embeds use `https://www.youtube-nocookie.com/embed/<id>`**,
+  never `youtube.com/embed/`. Privacy-enhanced mode sets no cookie until the
+  visitor presses play, which is what the policy promises.
+- **No Google Fonts CDN, no third-party CSS/JS CDNs.** Fonts are self-hosted
+  in `/fonts` with `@font-face` declarations (`colors_and_type.css` for the
+  site faces; `the-feed.html` inline for its own Space Grotesk / Anton).
+- **Nothing sets a cookie before user action.** Adding anything that does
+  (an ad pixel, a chat widget, a non-Plausible analytics tag) means adding a
+  consent banner *and* updating `/privacy` — so don't, without asking Jason.
+- Forms: the contact form is Netlify Forms; the newsletter form posts
+  straight to Substack. If a new form appears anywhere, the policy's
+  "What I collect" section needs a matching entry.
+- `localStorage` is fine for on-device state (games, mute, unlock flags).
+  It never leaves the browser and the policy already covers it.
+- When any of the above changes, update the "Last updated" date in the
+  `/privacy` hero eyebrow.
 
 ## Pages
 
@@ -176,11 +186,12 @@ Any new page must include this snippet. Don't change the tracking ID
 |---|---|---|---|
 | `index.njk` | `/` | Homepage | Nunjucks-templated (the "recent writing" teaser pulls from the essay collection); still emits `/index.html`. Otherwise plain hand-authored HTML. |
 | `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has Substack subscribe banner (email capture form). Essays are LinkedIn reposts turned into permanent pages. |
-| `speaking.html` + `talks/*.md` | `/speaking`, `/speaking/<slug>` | Speaking/media page + per-talk pages | Aspirational — positioning + "book me" CTA, not a list of past gigs. Has a "Where I'll be" strip (section 05) listing upcoming markets/events Jason will attend — one `.where-row` per event, hand-maintained; remove rows once the event has passed (MIPCOM 2026, 12–15 Oct, is the first). The homepage `.offer-note` pill repeats the same event and needs the same cleanup. Media section has 4 embedded Building Value YouTube clips (Chef Mike Haracz, Betina Chan-Martin, Ken Bolido, Jacklyn Dallas). Individual talk pages are Eleventy-generated from `talks/*.md` via `_includes/talk-layout.njk`. |
+| `speaking.html` + `talks/*.md` | `/speaking`, `/speaking/<slug>` | Speaking/media page + per-talk pages | Aspirational — positioning + "book me" CTA, not a list of past gigs. Has a "Where I'll be" strip (section 05) listing upcoming markets/events Jason will attend — one `.where-row` per event, hand-maintained; remove rows once the event has passed (MIPCOM 2026, 12–15 Oct, is the first). The homepage `.offer-note` pill repeats the same event and needs the same cleanup. Media section embeds Building Value YouTube clips via `youtube-nocookie.com` (see "Analytics & privacy"). Individual talk pages are Eleventy-generated from `talks/*.md` via `_includes/talk-layout.njk`. |
 | `advisory.html` | `/advisory` | Advisory / contract work | Three named engagements (The Read, The 90-Day Sprint, Retainer) with "from" pricing, who-it's-for, how-I-work terms, case-study links, and a CTA that prefills the contact form with `?topic=advisory`. Prices live only in this file — change them here. |
 | `press-kit.html` | `/press-kit` | Speaker press kit | Bios (short/long), MC intro script, AV requirements, one-pager + PDF download. `noindex` (deliberately kept out of the sitemap). Linked from `/speaking`. The downloadable `jason-nellis-speaker-kit.pdf` is generated by `tools/build-speaker-kit.py` (deps: `pip3 install reportlab fonttools brotli`) — edit the copy in that script and rerun it to regenerate; never hand-edit the PDF. |
 | `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". Portrait is `officeheadshot.jpg`. |
 | `contact.html` | `/contact` | Contact page | |
+| `privacy.html` | `/privacy` | Privacy policy + French legal notice | GDPR policy in Jason's voice, eight numbered sections, processors table, CNIL details, LCEN legal notice at the end. Linked from the footer bottom bar via `LEGAL_LINKS` in `nav.js` (not `NAV_LINKS`) and from the contact form meta row. See "Analytics & privacy" above for the conventions that keep it accurate. |
 | `ascii.html` | `/ascii` | Hidden ASCII art easter egg | Linked via a near-invisible `.` link on the homepage. |
 
 `cv.html` was **removed** — all "see my background" / CV links now point to
@@ -236,7 +247,8 @@ backlog (leaderboard + OpenMoji, both deferred) live in
   stat. See `the-feed-BACKLOG.md` for the full mechanical summary.
 - `the-feed.html` is standalone (does NOT load `nav.js`) — so its Plausible
   snippet is inline, and it's styled via Bolt OS tokens from
-  `colors_and_type.css`.
+  `colors_and_type.css`. Its Space Grotesk / Anton faces are self-hosted
+  from `/fonts` via inline `@font-face` (no Google Fonts CDN).
 - Live at `/the-feed` and `thefeed.jasonnellis.com`; currently `noindex` and
   not in the nav (unlisted on purpose).
 

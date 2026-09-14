@@ -9,7 +9,9 @@
 /advisory.html   /advisory  301!
 /lens.html       /lens      301!
 /the-feed.html   /the-feed  301!
+/burn-rate.html  /burn-rate 301!
 /building-value.html /building-value 301!
+/privacy.html    /privacy   301!
 
 # Convenience alias
 /podcast         /building-value 301
@@ -28,6 +30,7 @@
 /advisory   /advisory.html   200
 /lens       /lens.html       200
 /the-feed   /the-feed.html   200
+/burn-rate  /burn-rate.html  200
 
 # The Feed on its own subdomain: serve the game at thefeed.jasonnellis.com root.
 # Only the exact root is rewritten, so /the-feed-engine.js and /the-feed-assets/*
@@ -35,3 +38,4 @@
 # + a CNAME `thefeed` -> <site>.netlify.app in GoDaddy first.)
 https://thefeed.jasonnellis.com/   /the-feed.html   200!
 /building-value  /building-value.html  200
+/privacy         /privacy.html         200

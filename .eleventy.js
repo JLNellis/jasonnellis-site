@@ -42,6 +42,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("advisory.html");
   eleventyConfig.addPassthroughCopy("lens.html");
   eleventyConfig.addPassthroughCopy("the-feed.html");
+  eleventyConfig.addPassthroughCopy("burn-rate.html");
   eleventyConfig.addPassthroughCopy("the-feed-engine.js");
   // The Feed assets: only the WebP derivatives, sounds and credits ship. The PNG art library
   // (the-feed-assets/the-feed-art-library-v2, ~95 MB of originals) is gitignored and not deployed.
@@ -49,6 +50,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("the-feed-assets/sfx");
   eleventyConfig.addPassthroughCopy("the-feed-assets/CREDITS.md");
   eleventyConfig.addPassthroughCopy("building-value.html");
+  eleventyConfig.addPassthroughCopy("privacy.html");
   eleventyConfig.addPassthroughCopy("building-value-header.jpg");
   eleventyConfig.addPassthroughCopy("speaking-ifa.jpg");
   eleventyConfig.addPassthroughCopy("og-speaking-ifa.jpg");

@@ -3,7 +3,9 @@
 //  Single source of truth for navigation and footer.
 //  This file renders <site-header> and <site-footer> on every page.
 //
-//  TO ADD A PAGE: add one entry to NAV_LINKS.
+//  TO ADD A PAGE: add one entry to NAV_LINKS (header nav + footer "Site" column).
+//  TO ADD A LEGAL/UTILITY LINK (privacy, terms…): add one entry to LEGAL_LINKS
+//  (footer bottom bar). Both lists render on every page that includes this file.
 //  TO UPDATE FOOTER DETAILS: edit SITE_CONFIG.
 //  No other files need to change.
 // ============================================================
@@ -42,6 +44,12 @@ const NAV_LINKS = [
   { href: '/building-value', label: 'Podcast' },
   { href: '/advisory', label: 'Advisory' },
   { href: '/contact',  label: 'Contact'  },
+];
+
+// Footer bottom bar, next to the copyright line. Every page that renders
+// <site-footer> gets these automatically — never hand-link them elsewhere.
+const LEGAL_LINKS = [
+  { href: '/privacy', label: 'Privacy &amp; legal' },
 ];
 
 // Resolve current path (handles trailing slash → "/")
@@ -97,6 +105,9 @@ class SiteFooter extends HTMLElement {
     const siteLinks = NAV_LINKS.map(({ href, label }) =>
       `<a href="${href}">${label}</a>`
     ).join('\n      ');
+    const legalLinks = LEGAL_LINKS.map(({ href, label }) =>
+      `<a href="${href}">${label}</a>`
+    ).join('\n      ');
 
     this.outerHTML = `
 <footer class="site-footer" data-screen-label="footer">
@@ -129,6 +140,9 @@ class SiteFooter extends HTMLElement {
   </div>
   <div class="site-footer__bottom">
     <span>© 2026 Jason Nellis</span>
+    <nav class="site-footer__legal" aria-label="Legal">
+      ${legalLinks}
+    </nav>
   </div>
 </footer>`;
   }
