@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Work in progress — remove the next line when you want this indexed by search engines. -->
+<meta name="robots" content="noindex">
+<title>Burn Rate — how many hours a week does your channel actually cost?</title>
+<meta name="description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login, nothing leaves your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jason Nellis">
+<meta property="og:url" content="https://jasonnellis.com/burn-rate">
+<meta property="og:title" content="Burn Rate: can you afford your own upload schedule?">
+<meta property="og:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login.">
+<meta property="og:image" content="https://jasonnellis.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Burn Rate: can you afford your own upload schedule?">
+<meta name="twitter:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
+<link rel="canonical" href="https://jasonnellis.com/burn-rate">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="site.css">
+<script src="nav.js"></script>
+<style>
+  :root{ --br-warn:#FFCA4B; --br-hot:#FF3B5C; --br-ok:var(--color-accent-vivid); }
+  .br-wrap{ max-width: 1040px; margin: 0 auto; }
+
+  /* ---- hero ---- */
+  .br-hero{ padding: 72px 0 36px; }
+  .br-hero h1{ font-size: clamp(38px, 5.4vw, 60px); font-weight:700; line-height:1.05; letter-spacing:-.025em; margin:14px 0 20px; max-width:18ch; text-wrap:balance; }
+  .br-hero h1 .accent{ color: var(--color-accent-vivid); }
+  .br-hero .lede{ font-size:19px; line-height:1.6; color:var(--fg-2); margin:0; max-width:36em; }
+  .br-hero .lede strong{ color:var(--fg-1); font-weight:500; }
+  .br-hero .meta{ display:flex; gap:18px; flex-wrap:wrap; margin-top:22px; font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3); }
+
+  /* ---- calculator ---- */
+  .br-calc{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start; padding-bottom:48px; }
+  .br-panel{ padding:26px 26px 22px; }
+  .br-panel h2{ font-size:13px; font-family:var(--font-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-vivid); margin:0 0 16px; font-weight:400; }
+  .field{ display:grid; gap:6px; margin-bottom:16px; }
+  .field label{ font-size:13.5px; font-weight:500; color:var(--fg-1); }
+  .field .hint{ font-size:12.5px; color:var(--fg-3); line-height:1.45; }
+  .field .hint b{ color:var(--fg-2); font-weight:500; }
+  select, input[type=number]{ width:100%; font:inherit; font-size:15px; color:var(--fg-1); background:var(--bg-deep); border:1px solid var(--border-strong); border-radius:6px; padding:10px 12px; }
+  select:focus, input:focus{ outline:2px solid var(--color-accent-vivid); outline-offset:1px; border-color:var(--color-accent-vivid); }
+  input[type=number]{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .stages{ display:grid; gap:8px; margin-top:4px; }
+  .stage{ display:grid; grid-template-columns: 1fr 96px; gap:10px; align-items:center; }
+  .stage label{ font-size:13.5px; color:var(--fg-1); display:flex; flex-direction:column; }
+  .stage label small{ font-size:11.5px; color:var(--fg-3); }
+  .stage input{ padding:8px 10px; font-size:14px; text-align:right; }
+  .stage-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin:22px 0 8px; }
+  .stage-head label{ font-size:13.5px; font-weight:500; }
+  .chip{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3); border:1px solid var(--border-subtle); border-radius:999px; padding:3px 8px; }
+  .chip.edited{ color:var(--br-warn); border-color:rgba(255,202,75,.4); }
+  .linkbtn{ background:none; border:0; padding:0; font:inherit; font-size:12.5px; color:var(--fg-2); cursor:pointer; border-bottom:1px solid var(--border-strong); }
+  .linkbtn:hover{ color:var(--color-accent-vivid); border-color:var(--color-accent-vivid); }
+  .stagebar{ display:flex; height:10px; border-radius:999px; overflow:hidden; background:var(--bg-deep); border:1px solid var(--border-subtle); margin-top:14px; }
+  .stagebar i{ display:block; height:100%; min-width:0; transition:width .25s ease; }
+  .stagekey{ display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; font-family:var(--font-mono); font-size:10.5px; color:var(--fg-3); }
+  .stagekey i{ display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+
+  /* ---- results ---- */
+  .br-results{ position:sticky; top:84px; display:grid; gap:14px; }
+  .verdict{ padding:24px 26px; border-color:rgba(0,230,118,.3); }
+  .verdict .k{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg-3); }
+  .verdict .big{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:6px 0 2px; }
+  .verdict .big b{ font-size:clamp(40px,6vw,56px); font-weight:700; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
+  .verdict .big span{ font-size:15px; color:var(--fg-2); }
+  .verdict .band{ font-size:22px; font-weight:700; letter-spacing:-.01em; margin-top:10px; }
+  .verdict .pov{ font-size:15px; line-height:1.6; color:var(--fg-2); margin:8px 0 0; }
+  .verdict.ok{ border-color:rgba(0,230,118,.45); } .verdict.ok .band, .verdict.ok .big b{ color:var(--br-ok); }
+  .verdict.warn{ border-color:rgba(255,202,75,.45); } .verdict.warn .band, .verdict.warn .big b{ color:var(--br-warn); }
+  .verdict.hot{ border-color:rgba(255,59,92,.5); } .verdict.hot .band, .verdict.hot .big b{ color:var(--br-hot); }
+  .statgrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat{ padding:14px 16px; }
+  .stat .k{ font-size:11.5px; color:var(--fg-3); line-height:1.35; }
+  .stat .v{ font-family:var(--font-mono); font-size:20px; font-weight:500; color:var(--fg-1); margin-top:4px; font-variant-numeric:tabular-nums; }
+  .stat .v small{ font-size:12px; color:var(--fg-3); font-family:var(--font-sans); }
+  .stat .n{ font-size:12px; color:var(--fg-2); margin-top:4px; line-height:1.4; }
+
+  /* ---- share card ---- */
+  .sharecard{ background:#0F172A; border:1px solid var(--border-strong); border-radius:12px; padding:22px 24px; position:relative; overflow:hidden; }
+  .sharecard::before{ content:""; position:absolute; inset:0; background:radial-gradient(ellipse 60% 60% at 100% 0%, rgba(0,230,118,.12), transparent 60%); pointer-events:none; }
+  .sharecard .t{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-vivid); }
+  .sharecard .f{ font-size:15px; color:var(--fg-2); margin-top:8px; }
+  .sharecard .f b{ color:var(--fg-1); font-weight:600; }
+  .sharecard .b{ font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-top:10px; }
+  .sharecard .m{ font-family:var(--font-mono); font-size:13px; color:var(--fg-2); margin-top:10px; font-variant-numeric:tabular-nums; }
+  .sharecard .foot{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; font-family:var(--font-mono); font-size:10.5px; color:var(--fg-3); letter-spacing:.06em; }
+  .sharecard.ok .b{ color:var(--br-ok);} .sharecard.warn .b{ color:var(--br-warn);} .sharecard.hot .b{ color:var(--br-hot);}
+  .sharerow{ display:flex; gap:8px; flex-wrap:wrap; }
+  .sharerow .btn{ font-size:13px; padding:9px 14px; }
+  .toast{ font-family:var(--font-mono); font-size:11.5px; color:var(--color-accent-vivid); min-height:16px; }
+
+  /* ---- plan (soft gate) ---- */
+  .br-plan{ padding-bottom:64px; }
+  .br-plan .card{ padding:28px; }
+  .br-plan h2{ font-size:26px; font-weight:700; letter-spacing:-.015em; margin:0 0 6px; }
+  .br-plan .sub{ color:var(--fg-2); font-size:15px; margin:0 0 18px; line-height:1.6; }
+  .gate{ position:relative; }
+  .gate .content{ transition:filter .3s; }
+  .gate.locked .content{ filter:blur(7px); pointer-events:none; user-select:none; }
+  .gate .lock{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:20px; }
+  .gate.locked .lock{ display:flex; } .gate .lock{ display:none; }
+  .gate .lock p{ margin:0; max-width:34em; color:var(--fg-2); font-size:15px; line-height:1.55; }
+  .gate .lock p b{ color:var(--fg-1); }
+  .plan-list{ display:grid; gap:14px; margin:0; padding:0; list-style:none; }
+  .plan-list li{ display:grid; grid-template-columns:34px 1fr; gap:12px; align-items:start; }
+  .plan-list .n{ font-family:var(--font-mono); font-size:13px; color:var(--color-accent-vivid); border:1px solid rgba(0,230,118,.35); border-radius:6px; width:30px; height:30px; display:grid; place-items:center; }
+  .plan-list b{ display:block; color:var(--fg-1); font-size:15.5px; font-weight:600; }
+  .plan-list span{ display:block; color:var(--fg-2); font-size:14.5px; line-height:1.6; margin-top:3px; }
+  .plan-list .save{ font-family:var(--font-mono); font-size:12px; color:var(--color-accent-vivid); margin-top:4px; display:block; }
+
+  /* ---- methodology ---- */
+  .br-method{ padding:64px 0; border-top:1px solid var(--border-subtle); background:var(--bg-deep); }
+  .br-method h2{ font-size:28px; font-weight:700; letter-spacing:-.015em; margin:0 0 14px; }
+  .br-method p{ font-size:16.5px; line-height:1.7; color:var(--fg-2); max-width:66ch; margin:0 0 16px; }
+  .br-method p strong{ color:var(--fg-1); font-weight:500; }
+  .br-method h3{ font-size:18px; font-weight:600; margin:36px 0 10px; }
+  .tablewrap{ overflow-x:auto; border:1px solid var(--border-subtle); border-radius:8px; }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:640px; }
+  th, td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--border-subtle); vertical-align:top; }
+  th{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-3); font-weight:400; background:rgba(15,23,42,.5); }
+  td{ color:var(--fg-2); } td:first-child{ color:var(--fg-1); }
+  td.num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .conf{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; }
+  .conf.hi{ color:var(--br-ok);} .conf.med{ color:var(--br-warn);} .conf.lo{ color:var(--br-hot);}
+  .src{ font-size:13px; color:var(--fg-3); line-height:1.7; }
+  .src a{ color:var(--fg-2); border-bottom:1px solid var(--border-strong); }
+  .src a:hover{ color:var(--color-accent-vivid); border-color:var(--color-accent-vivid); }
+
+  /* ---- CTA band ---- */
+  .br-cta{ padding:64px 0; border-top:1px solid var(--border-subtle); }
+  .br-cta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .br-cta-grid .card{ padding:30px; display:flex; flex-direction:column; gap:12px; }
+  .br-cta-grid .card.lead{ border-color:rgba(0,230,118,.35); background:linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,.05) 170%); }
+  .br-cta-grid .kind{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-vivid); }
+  .br-cta-grid h3{ font-size:21px; font-weight:700; letter-spacing:-.01em; margin:0; }
+  .br-cta-grid p{ font-size:14.5px; color:var(--fg-2); line-height:1.65; margin:0; }
+  .br-cta-grid .btn{ align-self:flex-start; margin-top:auto; }
+
+  @media (max-width: 860px){
+    .br-calc{ grid-template-columns:1fr; }
+    .br-results{ position:static; }
+    .br-cta-grid{ grid-template-columns:1fr; }
+    .br-hero{ padding-top:48px; }
+  }
+  @media (max-width: 520px){
+    .statgrid{ grid-template-columns:1fr 1fr; }
+    .br-panel{ padding:20px 18px; }
+    .row2{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body class="bolt-os">
+<a class="skip-link" href="#main">Skip to content</a>
+<site-header></site-header>
+
+<main class="atmos" id="main">
+  <div class="page-wrap">
+    <div class="br-wrap">
+
+      <section class="br-hero">
+        <div class="section-eyebrow">Burn Rate · a free calculator</div>
+        <h1>How many hours a week does your channel <span class="accent">actually cost?</span></h1>
+        <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs, whether you can afford it, and what to cut.</strong> No login. Nothing leaves your browser.</p>
+        <div class="meta"><span>2 minutes</span><span>Numbers dated 14 Sept 2026</span><span>Deterministic, no AI</span></div>
+      </section>
+
+      <section class="br-calc" aria-label="Calculator">
+        <div class="card br-panel">
+          <h2>Your channel</h2>
+
+          <div class="field">
+            <label for="platform">Platform</label>
+            <select id="platform"></select>
+            <div class="hint" id="platformHint"></div>
+          </div>
+
+          <div class="field">
+            <label for="cadence">Uploads per week the platform rewards</label>
+            <input type="number" id="cadence" min="0.25" max="21" step="0.25">
+            <div class="hint" id="cadenceHint"></div>
+          </div>
+
+          <div class="field">
+            <label for="format">Format</label>
+            <select id="format"></select>
+            <div class="hint" id="formatHint"></div>
+          </div>
+
+          <div class="stage-head">
+            <label>Hours per upload, by stage</label>
+            <span><span class="chip" id="stageChip">Estimate</span> &nbsp;<button class="linkbtn" id="resetStages" type="button">Reset</button></span>
+          </div>
+          <div class="stages" id="stages"></div>
+          <div class="stagebar" id="stagebar" aria-hidden="true"></div>
+          <div class="stagekey" id="stagekey" aria-hidden="true"></div>
+
+          <div class="field" style="margin-top:22px">
+            <label for="avail">Hours a week you can actually give this</label>
+            <input type="number" id="avail" min="0.5" max="100" step="0.5" value="8">
+            <div class="hint">Be honest. Count the hours you have <b>every</b> week, not your best week.</div>
+          </div>
+        </div>
+
+        <div class="br-results">
+          <div class="card verdict" id="verdict">
+            <div class="k">Your burn rate</div>
+            <div class="big"><b id="needH">10</b><span>hours a week needed · <span id="availH">8</span> available</span></div>
+            <div class="band" id="band">Running hot</div>
+            <p class="pov" id="pov"></p>
+          </div>
+
+          <div class="statgrid">
+            <div class="card stat"><div class="k">Hours per upload</div><div class="v" id="hpp">10</div><div class="n" id="hppN"></div></div>
+            <div class="card stat"><div class="k">Format debt per week</div><div class="v" id="debt">2</div><div class="n" id="debtN"></div></div>
+            <div class="card stat"><div class="k">Cadence you can afford</div><div class="v" id="afford">3</div><div class="n" id="affordN"></div></div>
+            <div class="card stat"><div class="k">Weeks until 12 uploads</div><div class="v" id="profile">15</div><div class="n">About how many the algorithm needs before it can place a new channel.</div></div>
+            <div class="card stat"><div class="k">Idea + packaging share</div><div class="v" id="mix">20%</div><div class="n" id="mixN"></div></div>
+            <div class="card stat"><div class="k">Runway</div><div class="v" id="runway">20 wk</div><div class="n" id="runwayN"></div></div>
+          </div>
+
+          <div class="sharecard" id="sharecard">
+            <div class="t">Burn Rate</div>
+            <div class="f" id="scFormat"></div>
+            <div class="b" id="scBand"></div>
+            <div class="m" id="scMath"></div>
+            <div class="foot"><span id="scDate"></span><span>jasonnellis.com/burn-rate</span></div>
+          </div>
+          <div class="sharerow">
+            <button class="btn primary" id="shareBtn" type="button">Share this result</button>
+            <button class="btn ghost" id="copyBtn" type="button">Copy as text</button>
+          </div>
+          <div class="toast" id="toast" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="br-plan" aria-label="What to cut first">
+        <div class="card">
+          <h2>What to cut first</h2>
+          <p class="sub">A plan built from your numbers: which stage is eating your week, what to change, and what it saves. Also the formats you could afford at this cadence, and the cadence you could afford with this format.</p>
+          <div class="gate locked" id="gate">
+            <div class="content">
+              <ol class="plan-list" id="plan"></ol>
+            </div>
+            <div class="lock">
+              <p><b>Free to unlock.</b> Subscribe to The Long Yes, my weekly letter on the creator economy. The button opens Substack in a new tab and unlocks the plan here.</p>
+              <a class="btn primary" id="unlockBtn" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">Subscribe and unlock</a>
+              <button class="linkbtn" id="alreadyBtn" type="button">Already subscribed? Show it.</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <section class="br-method" id="method">
+    <div class="page-wrap"><div class="br-wrap">
+      <div class="section-eyebrow">Methodology</div>
+      <h2>Where the numbers come from, and the argument behind them</h2>
+      <p><strong>No platform will tell you it sets your cadence.</strong> YouTube says each video is judged on its own and that it tries to re-surface creators after a break. Instagram lists watch time, likes and sends as its signals and never mentions frequency. TikTok is the only one that publishes a number, and it is one to four posts a day.</p>
+      <p><strong>What channels that break out actually do is different.</strong> In the largest studies available, breakout long-form YouTube channels post about 1.6 times a week, breakout Shorts channels about 5.4 times a week, and a silent week underperforms your own baseline on every platform. That is the cadence the platform rewards. It is observed, not decreed, and it is real whether or not anyone admits it.</p>
+      <p><strong>The thesis of this tool</strong> is that early channels rarely die from bad content. They die because the creator picked a format whose production load cannot be sustained at that cadence, on top of a life. The math never got done. Burn Rate does the math.</p>
+
+      <h3>Cadence breakout channels post at</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Platform</th><th>Default</th><th>Range shown</th><th>Confidence</th><th>Basis</th></tr></thead>
+        <tbody id="cadTable"></tbody>
+      </table></div>
+
+      <h3>Hours per upload, by format and stage</h3>
+      <p>Defaults are creator-reported estimates built from editor rate cards (20 to 60 minutes of editing per finished minute for most YouTube formats, one to two hours for motion-heavy work) and self-reports. Editing is usually 40 to 60 percent of the total. Cooking and product review have no surveyed numbers anywhere, so those rows are inferred and marked. Every field is editable. Your numbers beat mine.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Format</th><th>Idea</th><th>Script</th><th>Shoot</th><th>Edit</th><th>Package</th><th>Community</th><th>Total</th><th>Sourced range</th></tr></thead>
+        <tbody id="hrsTable"></tbody>
+      </table></div>
+
+      <h3>How the verdict is computed</h3>
+      <p>Burn rate is hours per upload multiplied by the rewarded cadence, compared with the hours you said you have. Under 60 percent of your time is idling. 60 to 90 is sustainable. 90 to 125 is running hot. 125 to 175 is burning. Above that is a flameout. Format debt is the weekly shortfall. Runway assumes most people can borrow about 40 hours from sleep and weekends before something breaks, and counts the weeks until that debt is spent. The idea-and-packaging share is compared with the roughly 30 percent that top channels spend on ideas, titles and thumbnails, against about 5 percent for most small channels.</p>
+
+      <h3>Privacy</h3>
+      <p>Everything is computed in your browser. Nothing you type is stored or sent anywhere. The site's privacy-friendly analytics record an anonymous count of which format, platform and verdict came up, so I can publish "how long an upload really takes" once there are enough results to say something. Refreshed yearly.</p>
+
+      <h3>Sources</h3>
+      <p class="src">
+        <a href="https://air.io/en/audience-growth/does-posting-more-on-youtube-help-we-studied-18000-channels-to-find-out" target="_blank" rel="noopener">AIR Media-Tech, 18,000 YouTube channels</a> ·
+        <a href="https://www.overseeros.com/blog/youtube-upload-frequency" target="_blank" rel="noopener">OverseerOS, 168 breakout channels</a> ·
+        <a href="https://buffer.com/resources/social-media-frequency-guide/" target="_blank" rel="noopener">Buffer posting-frequency guide</a> ·
+        <a href="https://buffer.com/resources/state-of-social-media-engagement-2026/" target="_blank" rel="noopener">Buffer, 52M posts (silent-week effect)</a> ·
+        <a href="https://www.socialinsider.io/social-media-benchmarks/tiktok" target="_blank" rel="noopener">Socialinsider TikTok benchmarks</a> ·
+        <a href="https://www.tiktok.com/creator-academy/en/article/posting-cadence-best-practices-publishers" target="_blank" rel="noopener">TikTok Creator Academy</a> ·
+        <a href="https://www.buzzsprout.com/stats" target="_blank" rel="noopener">Buzzsprout podcast stats</a> ·
+        <a href="https://www.beehiiv.com/blog/2025-state-of-email-newsletters-by-beehiiv" target="_blank" rel="noopener">beehiiv 2025 newsletter report</a> ·
+        <a href="https://www.streamscheme.com/how-often-you-should-stream-on-twitch/" target="_blank" rel="noopener">StreamScheme</a> ·
+        <a href="https://reel-rate.com/how-long-to-edit-a-video" target="_blank" rel="noopener">ReelRate editing times</a> ·
+        <a href="https://editvideo.io/how-long-does-it-take-to-edit-a-youtube-video/" target="_blank" rel="noopener">EditVideo.io</a> ·
+        <a href="https://davidnebinski.substack.com/p/how-much-time-does-it-take-per-episode" target="_blank" rel="noopener">Nebinski, hours per podcast episode</a> ·
+        <a href="https://www.colinandsamir.com/resources/the-new-rules-of-youtube-from-paddy-galloway" target="_blank" rel="noopener">Paddy Galloway via Colin &amp; Samir (packaging share)</a> ·
+        <a href="https://www.videomaker.com/news/youtube-is-working-to-fix-creator-burnout-on-its-platform/" target="_blank" rel="noopener">YouTube on breaks and burnout</a>
+      </p>
+    </div></div>
+  </section>
+
+  <section class="br-cta">
+    <div class="page-wrap"><div class="br-wrap">
+      <div class="br-cta-grid">
+        <div class="card lead">
+          <div class="kind">The Long Yes</div>
+          <h3>The letter behind the calculator</h3>
+          <p>Once a week on the creator economy: what platforms reward, what they say they reward, and what it costs the people making the content. Free.</p>
+          <a class="btn primary" href="https://jasonnellis.substack.com/subscribe" target="_blank" rel="noopener">Subscribe</a>
+        </div>
+        <div class="card">
+          <div class="kind">The Feed</div>
+          <h3>Now play the year</h3>
+          <p>A creator life sim. Five platforms, one stress meter, eight endings, about ten minutes. The same math, with consequences.</p>
+          <a class="btn ghost" href="/the-feed">Play free</a>
+        </div>
+      </div>
+    </div></div>
+  </section>
+</main>
+
+<site-footer></site-footer>
+
+<script>
+(function(){
+  'use strict';
+  // ---------------- data (dated 2026-09-14; refresh yearly) ----------------
+  const PLATFORMS = [
+    { id:'yt',     name:'YouTube long-form',  def:1,  lo:0.5, hi:2,  conf:'hi',  range:'2 a month to 2 a week', basis:'Three large observational datasets agree: breakout channels post about 1.6 a week; over-posting is penalised.' },
+    { id:'shorts', name:'YouTube Shorts',     def:5,  lo:3,   hi:7,  conf:'med', range:'3 to 7 a week',          basis:'Breakout Shorts channels median 5.4 a week. Buffer says 1 to 3 is enough. They disagree.' },
+    { id:'tiktok', name:'TikTok',             def:5,  lo:3,   hi:7,  conf:'med', range:'3 to 7 a week, ramping to daily', basis:'TikTok itself says 1 to 4 a day. Benchmarks show engagement peaks at 3 to 5 a week; follower growth favours volume.' },
+    { id:'reels',  name:'Instagram Reels',    def:3,  lo:2,   hi:4,  conf:'lo',  range:'2 to 4 Reels a week',    basis:'Benchmarks are brand-account behaviour, not causal. Treat as a floor.' },
+    { id:'twitch', name:'Twitch / live',      def:4,  lo:3,   hi:5,  conf:'lo',  range:'3 to 5 streams a week',  basis:'Every guide repeats it; one survey; no Twitch statement. Only 28% of growth-focused streamers manage 4+ days.' },
+    { id:'podcast',name:'Podcast',            def:1,  lo:0.5, hi:1,  conf:'hi',  range:'weekly or every other week', basis:'Platform data from 120,000 shows: 34% weekly, 37% every other week. No growth-by-cadence data exists.' },
+    { id:'news',   name:'Newsletter',         def:1,  lo:1,   hi:2,  conf:'hi',  range:'1 to 2 a week',          basis:'65.6% of 52,809 newsletters send weekly. Click rates are best at 1 to 2 a week.' },
+  ];
+  const STAGES = [
+    { id:'idea',    name:'Idea and research', small:'Topic, angle, notes',          color:'#00E676' },
+    { id:'script',  name:'Script',            small:'Outline or full script',       color:'#5AA9FF' },
+    { id:'shoot',   name:'Shoot or record',   small:'Setup, takes, capture',        color:'#FFCA4B' },
+    { id:'edit',    name:'Edit',              small:'Cut, sound, graphics, export', color:'#FF3B5C' },
+    { id:'pack',    name:'Package',           small:'Title, thumbnail, description, upload', color:'#C084FC' },
+    { id:'comm',    name:'Community',         small:'Comments, promo, cross-posts', color:'#8892AA' },
+  ];
+  // hours: [idea, script, shoot, edit, pack, comm]
+  const FORMATS = [
+    { id:'talk',     name:'Talking head / educational (10 min)', plat:'yt',      h:[1,2,1.5,4,1,0.5],       range:'6 to 14 h',   est:false },
+    { id:'vlog',     name:'Vlog (15 min)',                        plat:'yt',      h:[0.5,0.5,4,6,1,0.5],     range:'8 to 20 h',   est:false },
+    { id:'essay',    name:'Video essay (20 min)',                 plat:'yt',      h:[4,12,3,16,2,1],         range:'25 to 80 h',  est:false },
+    { id:'gaming',   name:"Gaming let's-play (30 min)",           plat:'yt',      h:[0.25,0,1,2,0.5,0.25],   range:'2 to 6 h',    est:false },
+    { id:'cooking',  name:'Cooking / recipe (10 min)',            plat:'yt',      h:[1,0.5,4,3,1,0.5],       range:'6 to 12 h',   est:true },
+    { id:'review',   name:'Product / tech review (12 min)',       plat:'yt',      h:[1,2,3,5,1,0.5],         range:'8 to 16 h',   est:true },
+    { id:'podv',     name:'Interview podcast, video (60 min)',    plat:'podcast', h:[3,1,1.5,5,2,1],         range:'8 to 15 h',   est:false },
+    { id:'poda',     name:'Interview podcast, audio (60 min)',    plat:'podcast', h:[3,1,1.5,3,1,0.5],       range:'6 to 10 h',   est:false },
+    { id:'short',    name:'Short-form, original (45 s)',          plat:'tiktok',  h:[0.5,0.25,0.5,1,0.25,0.25], range:'0.5 to 3 h', est:false },
+    { id:'clip',     name:'Short-form, clipped from long-form',   plat:'shorts',  h:[0.1,0,0,0.3,0.1,0],     range:'0.3 to 0.5 h', est:false },
+    { id:'faceless', name:'Faceless / automation (8 min, manual)',plat:'yt',      h:[0.5,0.5,0.25,1.5,0.5,0.25], range:'3 to 6 h', est:false },
+    { id:'live',     name:'Live stream (3 h)',                    plat:'twitch',  h:[0.25,0,3,0.5,0.25,0.25], range:'3 to 5 h',   est:false },
+  ];
+  const BANDS = [
+    { max:0.60, cls:'ok',   name:'Idling',       pov:"You have headroom. Most creators in this spot post less than they could and call it balance. Spend the spare hours on the idea and the packaging, not on a second format." },
+    { max:0.90, cls:'ok',   name:'Sustainable',  pov:"This is the zone. Tight enough to keep you honest, loose enough to survive a bad week. Protect it. The temptation will be to add something. Don't." },
+    { max:1.25, cls:'warn', name:'Running hot',  pov:"Every week is a sprint. One sick day, one trip, one edit that fights you, and you miss. Missing is what kills channels, not posting less. Cut something now while it's a choice." },
+    { max:1.75, cls:'hot',  name:'Burning',      pov:"The math doesn't work. You'll hold this for a month or two on sleep and weekends, then you'll miss, then you'll feel like you failed. You didn't. The format did. Change it or change the cadence." },
+    { max:1e9,  cls:'hot',  name:'Flameout',     pov:"This isn't a schedule, it's a dare. Nobody sustains this on top of a life, and the ones who look like they do have an editor. Change the format today, before the channel teaches you the lesson the slow way." },
+  ];
+  const DEBT_TOLERANCE = 40;   // hours you can borrow from sleep and weekends before something breaks
+  const PROFILE_UPLOADS = 12;  // uploads before the algorithm can place a new channel
+
+  // ---------------- dom ----------------
+  const $ = id => document.getElementById(id);
+  const platformSel = $('platform'), formatSel = $('format'), cadenceIn = $('cadence'), availIn = $('avail');
+  const stagesEl = $('stages');
+  const stageInputs = [];
+
+  PLATFORMS.forEach(p => platformSel.add(new Option(p.name, p.id)));
+  FORMATS.forEach(f => formatSel.add(new Option(f.name, f.id)));
+  STAGES.forEach((s, i) => {
+    const row = document.createElement('div'); row.className = 'stage';
+    row.innerHTML = `<label for="st_${s.id}">${s.name}<small>${s.small}</small></label><input type="number" id="st_${s.id}" min="0" max="200" step="0.25" inputmode="decimal">`;
+    stagesEl.appendChild(row);
+    const inp = row.querySelector('input'); stageInputs.push(inp);
+    inp.addEventListener('input', () => { stagesEdited = true; render(); });
+  });
+  $('stagekey').innerHTML = STAGES.map(s => `<span><i style="background:${s.color}"></i>${s.name}</span>`).join('');
+
+  // methodology tables
+  $('cadTable').innerHTML = PLATFORMS.map(p => `<tr><td>${p.name}</td><td class="num">${fmtCad(p.def)}</td><td>${p.range}</td><td><span class="conf ${p.conf}">${({hi:'High',med:'Medium',lo:'Low'})[p.conf]}</span></td><td>${p.basis}</td></tr>`).join('');
+  $('hrsTable').innerHTML = FORMATS.map(f => `<tr><td>${f.name}${f.est?' <span class="conf lo">inferred</span>':''}</td>${f.h.map(x=>`<td class="num">${x}</td>`).join('')}<td class="num">${sum(f.h)}</td><td>${f.range}</td></tr>`).join('');
+
+  let stagesEdited = false;
+  const plat = () => PLATFORMS.find(p => p.id === platformSel.value);
+  const fmt  = () => FORMATS.find(f => f.id === formatSel.value);
+
+  function sum(a){ return a.reduce((x,y)=>x+(+y||0),0); }
+  function r1(x){ return Math.round(x*10)/10; }
+  function fmtCad(perWeek){
+    if (perWeek >= 1) return (Math.round(perWeek*2)/2) + ' a week';
+    const pm = Math.round(perWeek*4.33*2)/2;
+    if (pm < 0.5) return 'under 1 a month';
+    return pm + ' a month';
+  }
+  function fmtH(x){ return (Math.round(x*4)/4).toString().replace(/\.0+$/,''); }
+
+  function setPlatform(id){ platformSel.value = id; cadenceIn.value = plat().def; }
+  function setFormat(id){ formatSel.value = id; fmt().h.forEach((h,i)=> stageInputs[i].value = h); stagesEdited = false; }
+
+  platformSel.addEventListener('change', () => { cadenceIn.value = plat().def; render(); });
+  formatSel.addEventListener('change', () => { const f = fmt(); setFormat(f.id); setPlatform(f.plat); render(); });
+  cadenceIn.addEventListener('input', render);
+  availIn.addEventListener('input', render);
+  $('resetStages').addEventListener('click', () => { setFormat(formatSel.value); render(); });
+
+  // ---------------- compute ----------------
+  function compute(){
+    const p = plat(), f = fmt();
+    const hrs = stageInputs.map(i => Math.max(0, +i.value || 0));
+    const hpp = sum(hrs);
+    const cad = Math.max(0.25, +cadenceIn.value || p.def);
+    const avail = Math.max(0.5, +availIn.value || 8);
+    const need = hpp * cad;
+    const ratio = need / avail;
+    const band = BANDS.find(b => ratio <= b.max);
+    const debt = need - avail;
+    const affordPerWeek = hpp > 0 ? avail / hpp : 0;
+    const usedCad = Math.min(cad, affordPerWeek);
+    const weeksToProfile = usedCad > 0 ? PROFILE_UPLOADS / usedCad : Infinity;
+    const mix = hpp > 0 ? (hrs[0] + hrs[4]) / hpp : 0;
+    const runway = debt > 0 ? DEBT_TOLERANCE / debt : Infinity;
+    return { p, f, hrs, hpp, cad, avail, need, ratio, band, debt, affordPerWeek, weeksToProfile, mix, runway };
+  }
+
+  // ---------------- render ----------------
+  let lastKey = '';
+  function render(){
+    const s = compute();
+    // hints
+    $('platformHint').innerHTML = `${s.p.basis}`;
+    $('cadenceHint').innerHTML = `Breakout channels here post <b>${s.p.range}</b>. Confidence: <b>${({hi:'high',med:'medium',lo:'low'})[s.p.conf]}</b>. Change it if you know better.`;
+    $('formatHint').innerHTML = s.f.est ? `Sourced range: <b>${s.f.range}</b>. Nobody has surveyed this format, so the defaults are inferred from editing rate cards.` : `Sourced range: <b>${s.f.range}</b>, from editor rate cards and creator self-reports.`;
+    $('stageChip').textContent = stagesEdited ? 'Your numbers' : 'Estimate';
+    $('stageChip').className = 'chip' + (stagesEdited ? ' edited' : '');
+    // stage bar
+    $('stagebar').innerHTML = STAGES.map((st,i) => `<i style="width:${s.hpp?100*s.hrs[i]/s.hpp:0}%;background:${st.color}" title="${st.name}: ${fmtH(s.hrs[i])} h"></i>`).join('');
+    // verdict
+    const v = $('verdict'); v.className = 'card verdict ' + s.band.cls;
+    $('needH').textContent = fmtH(s.need);
+    $('availH').textContent = fmtH(s.avail);
+    $('band').textContent = s.band.name;
+    $('pov').textContent = s.band.pov;
+    // stats
+    $('hpp').textContent = fmtH(s.hpp) + ' h';
+    $('hppN').textContent = `At ${fmtCad(s.cad)}, that is ${fmtH(s.need)} hours a week. ${Math.round(100*s.ratio)}% of the time you have.`;
+    const debtEl = $('debt');
+    if (s.debt > 0){ debtEl.textContent = fmtH(s.debt) + ' h'; debtEl.style.color = 'var(--br-hot)'; $('debtN').textContent = 'Hours a week you are borrowing from sleep, weekends or people who miss you.'; }
+    else { debtEl.textContent = fmtH(-s.debt) + ' h spare'; debtEl.style.color = 'var(--br-ok)'; $('debtN').textContent = 'Hours a week left over. Put them into the idea and the packaging before anything else.'; }
+    $('afford').textContent = fmtCad(s.affordPerWeek);
+    $('affordN').textContent = s.affordPerWeek >= s.cad ? 'You can afford the rewarded cadence with this format.' : `The platform rewards ${fmtCad(s.cad)}. With this format you can afford ${fmtCad(s.affordPerWeek)}. That gap is the whole problem.`;
+    $('profile').textContent = isFinite(s.weeksToProfile) ? Math.ceil(s.weeksToProfile) + ' wk' : '—';
+    $('mix').textContent = Math.round(100*s.mix) + '%';
+    $('mixN').textContent = s.mix >= 0.28 ? 'Top channels spend about 30% here. You are in that range.' : s.mix >= 0.15 ? 'Top channels spend about 30% on ideas, titles and thumbnails. Most small channels spend 5%. You are in between.' : 'Top channels spend about 30% on ideas, titles and thumbnails. Most small channels spend 5%. This is the cheapest hour you can add.';
+    $('runway').textContent = isFinite(s.runway) ? (s.runway < 1 ? '< 1 wk' : Math.floor(s.runway) + ' wk') : '∞';
+    $('runwayN').textContent = isFinite(s.runway) ? `Weeks until you are ${DEBT_TOLERANCE} hours in debt, which is roughly where something breaks.` : 'No debt. The schedule pays for itself.';
+    // share card
+    const sc = $('sharecard'); sc.className = 'sharecard ' + s.band.cls;
+    $('scFormat').innerHTML = `<b>${s.f.name.replace(/\s*\(.*\)$/,'')}</b> on ${s.p.name}`;
+    $('scBand').textContent = s.band.name;
+    $('scMath').textContent = `${fmtH(s.hpp)} h per upload × ${fmtCad(s.cad)} = ${fmtH(s.need)} h/wk. I have ${fmtH(s.avail)}.`;
+    $('scDate').textContent = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+    // plan
+    renderPlan(s);
+    // url state
+    const hash = `#p=${s.p.id}&f=${s.f.id}&c=${s.cad}&a=${s.avail}&s=${s.hrs.map(fmtH).join(',')}`;
+    history.replaceState(null, '', hash);
+    // analytics: anonymous, no free text
+    const key = `${s.p.id}|${s.f.id}|${s.band.name}`;
+    if (key !== lastKey){ lastKey = key; clearTimeout(render._t); render._t = setTimeout(()=>{ try{ window.plausible && plausible('Burn Rate result', {props:{platform:s.p.id, format:s.f.id, verdict:s.band.name}}); }catch(e){} }, 1500); }
+  }
+
+  // ---------------- plan ----------------
+  const CUTS = {
+    edit:   [ ['Cut the runtime by a third', 'Editing hours scale with finished minutes. A 10-minute video that says the same thing as a 15-minute one costs a third less to cut, and retention usually goes up, not down.', 0.33],
+              ['One location, one setup, no b-roll', 'Every camera angle and every cutaway is an edit decision. A single continuous setup turns a cut into a trim.', 0.30],
+              ['Template the top and tail', 'Intro, outro, lower thirds, end screen: build them once, drop them in every time. Nobody is watching your intro for the craft.', 0.10] ],
+    script: [ ['Outline, don\'t script', 'Eight bullets and a first line beat a word-for-word script for most talking-head formats. You also stop reading, which people can hear.', 0.5],
+              ['Script only the first 30 seconds', 'The hook is the only part that has to be exact. Write that. Talk the rest.', 0.35] ],
+    shoot:  [ ['Batch it', 'Record two to four uploads in one session. Setup and teardown are paid once. The shoot line drops even if each take is the same length.', 0.4],
+              ['Leave the set up', 'If the camera never moves, shooting is pressing record. A permanent corner beats a beautiful one you rebuild every week.', 0.25] ],
+    idea:   [ ['Keep a running list, decide once a month', 'Idea time spent in a panic the night before costs three times what it costs in a batch. Pick the next four titles in one sitting.', 0.3] ],
+    pack:   [ ['Do not cut this one', 'Titles and thumbnails are the cheapest hours you will ever spend. If anything, move an hour here from the edit.', 0] ],
+    comm:   [ ['Reply in one window, not all day', 'Thirty minutes after upload and thirty the next day. Comments left open all day are a tax on every other stage.', 0.4] ],
+  };
+  function renderPlan(s){
+    const items = [];
+    const order = s.hrs.map((h,i)=>({i,h})).sort((a,b)=>b.h-a.h);
+    let n = 0;
+    for (const {i,h} of order){
+      if (h <= 0 || n >= 3) continue;
+      const st = STAGES[i]; const cuts = CUTS[st.id]; if (!cuts) continue;
+      const [title, body, frac] = cuts[0];
+      const save = h * frac * s.cad;
+      items.push(`<li><span class="n">${++n}</span><div><b>${st.name} is ${Math.round(100*h/s.hpp)}% of every upload. ${title}.</b><span>${body}</span>${frac>0?`<span class="save">Saves about ${fmtH(save)} h a week at ${fmtCad(s.cad)}.</span>`:''}</div></li>`);
+    }
+    if (s.mix < 0.15){
+      items.push(`<li><span class="n">${++n}</span><div><b>Move an hour from the edit to the title and thumbnail.</b><span>You are spending ${Math.round(100*s.mix)}% on the idea and the packaging. Top channels spend about 30%. This is the one place where adding hours makes the rest of the hours worth more.</span></div></li>`);
+    }
+    // format alternatives on this platform's cadence
+    const budgetPerUpload = s.avail / s.cad;
+    const alts = FORMATS.filter(f => f.id !== s.f.id && sum(f.h) <= budgetPerUpload).sort((a,b)=>sum(b.h)-sum(a.h)).slice(0,4);
+    if (s.debt > 0){
+      items.push(`<li><span class="n">${++n}</span><div><b>Or keep the format and post ${fmtCad(s.affordPerWeek)}.</b><span>That is what you can afford with ${fmtH(s.avail)} hours. It is below what the platform rewards, and it is a schedule you will actually keep, which beats one you won't. Never miss it.</span></div></li>`);
+      items.push(`<li><span class="n">${++n}</span><div><b>Or change the format. At ${fmtCad(s.cad)} you have ${fmtH(budgetPerUpload)} hours per upload.</b><span>${alts.length ? 'Formats that fit that budget, most ambitious first: ' + alts.map(f=>`${f.name.replace(/\s*\(.*\)$/,'')} (${fmtH(sum(f.h))} h)`).join(', ') + '.' : 'No format in the table fits that budget at this cadence. The cadence is the thing to change.'}</span></div></li>`);
+    } else {
+      items.push(`<li><span class="n">${++n}</span><div><b>You can afford this. Now don't add anything.</b><span>The failure mode from here is a second platform, a longer runtime, or a guest every week. Bank the spare ${fmtH(-s.debt)} hours as slack. Slack is what lets you keep the schedule when life happens.</span></div></li>`);
+    }
+    $('plan').innerHTML = items.join('');
+  }
+
+  // ---------------- gate ----------------
+  const gate = $('gate');
+  function unlock(src){ gate.classList.remove('locked'); try{ localStorage.setItem('br_unlocked','1'); }catch(e){} try{ window.plausible && plausible('Burn Rate unlock', {props:{via:src}}); }catch(e){} }
+  $('unlockBtn').addEventListener('click', () => setTimeout(()=>unlock('subscribe'), 400));
+  $('alreadyBtn').addEventListener('click', () => unlock('already'));
+  try{ if (localStorage.getItem('br_unlocked') === '1') gate.classList.remove('locked'); }catch(e){}
+
+  // ---------------- share ----------------
+  function shareText(){
+    const s = compute();
+    return `Burn Rate: ${s.f.name.replace(/\s*\(.*\)$/,'')} on ${s.p.name} costs ${fmtH(s.hpp)} h per upload. At ${fmtCad(s.cad)} that's ${fmtH(s.need)} h/week against ${fmtH(s.avail)} I have. Verdict: ${s.band.name}. ${location.origin}/burn-rate${location.hash}`;
+  }
+  function toast(msg){ $('toast').textContent = msg; setTimeout(()=>{ $('toast').textContent=''; }, 2400); }
+  $('copyBtn').addEventListener('click', async () => { try{ await navigator.clipboard.writeText(shareText()); toast('Copied.'); }catch(e){ toast('Select the card and copy it manually.'); } });
+  $('shareBtn').addEventListener('click', async () => {
+    const url = `${location.origin}/burn-rate${location.hash}`;
+    if (navigator.share){ try{ await navigator.share({ title:'Burn Rate', text: shareText().replace(url,'').trim(), url }); return; }catch(e){} }
+    try{ await navigator.clipboard.writeText(url); toast('Link copied. It reopens with your numbers.'); }catch(e){ toast('Copy the address bar. It holds your numbers.'); }
+  });
+
+  // ---------------- init from hash ----------------
+  (function init(){
+    const q = new URLSearchParams(location.hash.slice(1));
+    const f = FORMATS.find(x=>x.id===q.get('f')) || FORMATS[0];
+    setFormat(f.id);
+    const p = PLATFORMS.find(x=>x.id===q.get('p')) || PLATFORMS.find(x=>x.id===f.plat);
+    setPlatform(p.id);
+    if (q.get('c')) cadenceIn.value = +q.get('c') || p.def;
+    if (q.get('a')) availIn.value = +q.get('a') || 8;
+    if (q.get('s')){ const arr = q.get('s').split(',').map(Number); if (arr.length===STAGES.length && arr.every(n=>!isNaN(n))){ arr.forEach((h,i)=>stageInputs[i].value=h); stagesEdited = true; } }
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
