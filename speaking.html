@@ -180,10 +180,23 @@
     position: relative; padding-top: 56.25%; /* 16:9 */
     background: var(--bg-deep); overflow: hidden;
   }
-  .media-slot .video-wrap iframe {
+  .media-slot .video-wrap iframe,
+  .media-slot .video-wrap video {
     position: absolute; inset: 0;
     width: 100%; height: 100%; border: 0;
+    object-fit: cover; background: var(--bg-deep);
   }
+  /* Featured reel spans the full media grid width. */
+  .media-slot.media-feature { grid-column: 1 / -1; }
+  .media-subhead {
+    grid-column: 1 / -1;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--fg-3);
+    margin: 12px 0 -6px; padding-top: 8px;
+  }
+  /* On-camera proof under the moderating callout. */
+  .mod-proof { margin: 22px 0 0; max-width: 780px; }
+  .mod-proof .media-grid { gap: 18px; }
   .media-slot .media-info { padding: 20px 22px; }
   .media-slot .media-info .badge {
     display: inline-block; font-size: 9px; font-family: var(--font-mono);
@@ -518,10 +531,25 @@
     <!-- MEDIA -->
     <section class="media-section" id="media">
       <div class="section-eyebrow"><span class="num">03</span> Watch &amp; listen</div>
-      <h2>Building Value — the podcast.</h2>
-      <p class="sub">A hundred-plus conversations on how creative work becomes a business, now relaunching with a new look. The full archive and what's coming live on their own page.</p>
+      <h2>Watch me host.</h2>
+      <p class="sub">A reel from the creator interviews I hosted on Meta's Super, and a couple of Building Value episodes. The full podcast archive lives on its own page.</p>
 
       <div class="media-grid">
+
+        <div class="media-slot media-feature">
+          <div class="video-wrap">
+            <video controls preload="none" playsinline poster="reel-super-2022.jpg" title="Jason Nellis hosting creator interviews on Meta's Super platform — 2022 highlight reel">
+              <source src="reel-super-2022.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="media-info">
+            <span class="badge">Meta · Super</span>
+            <h3>Hosting on Super — 2022 highlight reel</h3>
+            <p>A cut from the creator interviews I hosted live on Super, the platform I built and launched at Meta. This is the on-camera hosting the track record above is counting — 50-plus of these conversations.</p>
+          </div>
+        </div>
+
+        <div class="media-subhead">Building Value — the podcast</div>
 
         <div class="media-slot">
           <div class="video-wrap">
@@ -594,6 +622,36 @@
         <h3>The best panel in the programme is usually the one someone ran properly.</h3>
         <p>Most panels fail the same way: four smart people take turns giving prepared answers and nobody disagrees out loud. I've hosted <strong>150+ recorded conversations</strong> &mdash; 50-plus VidCon interviews on Meta's Super platform and 100-plus episodes of <a href="/building-value" class="bolt">Building Value</a> &mdash; plus internal Meta events up to the Games Day broadcast. It's a different job from speaking: the room should leave remembering the panellists, not the moderator.</p>
         <p class="mod-ask">If you've got a session that matters and nobody obvious to hold it, that's the one to call me about.</p>
+      </div>
+
+      <div class="mod-proof">
+        <div class="media-subhead" style="margin:0 0 16px; padding:0;">The job, on camera — with Austin Evans &amp; team, 2017</div>
+        <div class="media-grid">
+          <div class="media-slot">
+            <div class="video-wrap">
+              <video controls preload="none" playsinline poster="austin-evans-favorite-tech.jpg" title="Jason Nellis hosting Austin Evans and team — Favorite Tech">
+                <source src="austin-evans-favorite-tech.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="media-info">
+              <span class="badge">Interview · 2017</span>
+              <h3>Favorite Tech — Austin Evans &amp; Co.</h3>
+              <p>Running a multi-guest segment with one of tech's biggest YouTubers and his team — keeping four people moving, funny, and on point.</p>
+            </div>
+          </div>
+          <div class="media-slot">
+            <div class="video-wrap">
+              <video controls preload="none" playsinline poster="austin-evans-rapid-fire.jpg" title="Jason Nellis hosting a rapid-fire Q&amp;A with Austin Evans and team">
+                <source src="austin-evans-rapid-fire.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="media-info">
+              <span class="badge">Interview · 2017</span>
+              <h3>Rapid Fire Q&amp;A — Austin Evans &amp; Co.</h3>
+              <p>The faster format: quick questions, real answers, a room that stays with you. This is what "running the panel" looks like in practice.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

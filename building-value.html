@@ -75,7 +75,14 @@
     position: relative; padding-top: 56.25%; /* 16:9 */
     background: var(--bg-deep); overflow: hidden;
   }
-  .media-slot .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .media-slot .video-wrap iframe,
+  .media-slot .video-wrap video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; background: var(--bg-deep); }
+  /* Vertical short-form clips — a centred row of 9:16 cards. */
+  .clip-row { display: flex; flex-wrap: wrap; gap: 24px; margin: 0 0 8px; }
+  .clip-card { width: 300px; max-width: 100%; background: var(--bg-card); border: 1px solid rgba(148,163,184,0.08); border-radius: 12px; overflow: hidden; }
+  .clip-card .clip-wrap { position: relative; padding-top: 177.78%; /* 9:16 */ background: var(--bg-deep); }
+  .clip-card .clip-wrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--bg-deep); }
+  .clip-card .media-info { padding: 16px 18px; }
   .media-slot .media-info { padding: 20px 22px; }
   .media-slot .media-info .badge {
     display: inline-block; font-size: 9px; font-family: var(--font-mono);
@@ -168,6 +175,33 @@
       <div class="section-eyebrow"><span class="num">02</span> The archive</div>
       <h2>A hundred-plus conversations, still worth your time.</h2>
       <p class="sub">While the new season comes together, the back catalog is the best record of how I think about building, strategy, and where media is going. A few to start with:</p>
+
+      <div class="clip-row">
+        <div class="clip-card">
+          <div class="clip-wrap">
+            <video controls preload="none" playsinline poster="building-value-scripting.jpg" title="Building Value clip — how to script like a pro">
+              <source src="building-value-scripting.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="media-info">
+            <span class="badge">Clip</span>
+            <h3>How to script like a pro</h3>
+            <p>A guest breaks down the writing discipline behind work that lands — the part most creators skip.</p>
+          </div>
+        </div>
+        <div class="clip-card">
+          <div class="clip-wrap">
+            <video controls preload="none" playsinline poster="building-value-piano.jpg" title="Building Value clip — inspiring others to play the piano">
+              <source src="building-value-piano.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="media-info">
+            <span class="badge">Clip</span>
+            <h3>Inspiring others to play</h3>
+            <p>On turning your own craft into something other people pick up and run with.</p>
+          </div>
+        </div>
+      </div>
 
       <div class="media-grid">
 

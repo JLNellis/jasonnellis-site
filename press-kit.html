@@ -33,6 +33,11 @@
 
   .kit-section { padding: 56px 0; border-top: 1px solid var(--border-subtle); }
 
+  .kit-reel { margin: 8px 0 0; }
+  .kit-reel .reel-frame { position: relative; padding-top: 56.25%; background: var(--bg-deep); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-subtle); }
+  .kit-reel .reel-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--bg-deep); }
+  .kit-reel figcaption { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--fg-3); display: flex; align-items: center; gap: 8px; line-height: 1.5; }
+
   .photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 340px)); gap: 24px; align-items: start; }
   .kit-headshot { margin: 0; }
   .kit-headshot img { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border-subtle); }
@@ -104,9 +109,23 @@
       <figcaption><span class="live-dot"></span>IFA 2026 · Berlin · &ldquo;AI Tools Powering the Next Generation of Content Creation&rdquo;</figcaption>
     </figure>
 
+    <!-- SPEAKER REEL -->
+    <section class="kit-section">
+      <div class="section-eyebrow"><span class="num">02</span> Speaker reel</div>
+      <h2>Ninety seconds on camera</h2>
+      <figure class="kit-reel">
+        <div class="reel-frame">
+          <video controls preload="none" playsinline poster="reel-super-2022.jpg" title="Jason Nellis hosting creator interviews on Meta's Super platform — 2022 highlight reel">
+            <source src="reel-super-2022.mp4" type="video/mp4">
+          </video>
+        </div>
+        <figcaption><span class="live-dot"></span>Hosting on Super, the creator platform Jason built and launched at Meta · 2022</figcaption>
+      </figure>
+    </section>
+
     <!-- PHOTOS -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">02</span> Photos</div>
+      <div class="section-eyebrow"><span class="num">03</span> Photos</div>
       <h2>Headshots</h2>
       <div class="photo-grid">
         <figure class="kit-headshot">
@@ -129,7 +148,7 @@
 
     <!-- SHORT BIO -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">03</span> Short bio</div>
+      <div class="section-eyebrow"><span class="num">04</span> Short bio</div>
       <h2>~50 words</h2>
       <div class="card bio-card">
         <span class="label label--accent bio-label">For programs, intros, and social posts</span>
@@ -139,7 +158,7 @@
 
     <!-- LONG BIO -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">04</span> Long bio</div>
+      <div class="section-eyebrow"><span class="num">05</span> Long bio</div>
       <h2>~180 words</h2>
       <div class="card bio-card">
         <span class="label label--accent bio-label">For speaker pages, program books, and press</span>
@@ -152,7 +171,7 @@
 
     <!-- EVENT INTRO SCRIPT -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">05</span> Event introduction script</div>
+      <div class="section-eyebrow"><span class="num">06</span> Event introduction script</div>
       <h2>For MC use</h2>
       <div class="card script-card">
         <span class="runtime">Approximate read time: 90 seconds</span>
@@ -165,7 +184,7 @@
 
     <!-- AV REQUIREMENTS -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">06</span> AV / technical requirements</div>
+      <div class="section-eyebrow"><span class="num">07</span> AV / technical requirements</div>
       <h2>What to plan for</h2>
       <div class="av-grid">
         <div class="card av-card">
@@ -191,7 +210,7 @@
 
     <!-- ONE-PAGE SUMMARY -->
     <section class="kit-section">
-      <div class="section-eyebrow"><span class="num">07</span> One-page summary</div>
+      <div class="section-eyebrow"><span class="num">08</span> One-page summary</div>
       <h2>The leave-behind</h2>
       <div class="card onepager-card">
         <p class="kicker">Jason Nellis — Strategist. Operator. Speaker.</p>

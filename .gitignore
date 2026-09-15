@@ -7,3 +7,6 @@ _site/
 
 # The Feed: PNG art originals (source only; WebP derivatives in the-feed-assets/imgs ship)
 the-feed-assets/the-feed-art-library-v2/
+
+# Raw video masters (sources only; compressed derivatives at repo root ship). Too big for git.
+videos/

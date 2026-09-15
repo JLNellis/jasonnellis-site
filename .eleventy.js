@@ -64,6 +64,18 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("logo-zest.png");
   eleventyConfig.addPassthroughCopy("logo-pakcon.svg");
   eleventyConfig.addPassthroughCopy("logo-vidcon.png");
+  // Video (self-hosted, compressed) + poster frames. Raw masters live in
+  // /videos as sources and are deliberately kept out of the build and git.
+  eleventyConfig.addPassthroughCopy("reel-super-2022.mp4");
+  eleventyConfig.addPassthroughCopy("reel-super-2022.jpg");
+  eleventyConfig.addPassthroughCopy("austin-evans-favorite-tech.mp4");
+  eleventyConfig.addPassthroughCopy("austin-evans-favorite-tech.jpg");
+  eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.mp4");
+  eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.jpg");
+  eleventyConfig.addPassthroughCopy("building-value-scripting.mp4");
+  eleventyConfig.addPassthroughCopy("building-value-scripting.jpg");
+  eleventyConfig.addPassthroughCopy("building-value-piano.mp4");
+  eleventyConfig.addPassthroughCopy("building-value-piano.jpg");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("latitude59.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
