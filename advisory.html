@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advisory — Jason Nellis</title>
-<meta name="description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<meta name="description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <!-- Open Graph / Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jasonnellis.com/advisory">
 <meta property="og:title" content="Advisory — Jason Nellis">
-<meta property="og:description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<meta property="og:description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <meta property="og:image" content="https://jasonnellis.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Advisory — Jason Nellis">
-<meta name="twitter:description" content="Strategy advisory from an operator who has been the CPO, the interim CEO, and the founder on the acquired side. Fixed-fee engagements for founders and exec teams in media and the creator economy.">
+<meta name="twitter:description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
 <link rel="canonical" href="https://jasonnellis.com/advisory">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -39,6 +39,27 @@
     font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--fg-2); border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 11px;
   }
+
+  /* ---- Proof band ---- */
+  .stat-band {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    margin: 8px 0 0;
+  }
+  .stat-band .stat { padding: 26px 24px 26px 0; }
+  .stat-band .stat + .stat { padding-left: 24px; border-left: 1px solid var(--border-subtle); }
+  .stat-band .fig {
+    display: block; font-size: 23px; font-weight: 700; color: #FFF;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.15;
+    margin-bottom: 8px; white-space: nowrap;
+  }
+  .stat-band .fig em { font-style: normal; color: var(--color-accent-vivid); font-weight: 400; }
+  .stat-band .unit {
+    display: block; font-family: var(--font-mono); font-size: 11px; line-height: 1.6;
+    letter-spacing: 0.04em; color: var(--fg-3);
+  }
+  .stat-note { font-size: 12px; color: var(--fg-3); line-height: 1.6; margin: 14px 0 0; max-width: 620px; }
 
   /* ---- Shared section shell ---- */
   .adv-section { padding: 72px 0 64px; border-top: 1px solid var(--border-subtle); }
@@ -121,6 +142,12 @@
   /* ---- Responsive ---- */
   @media (max-width: 900px) {
     .fit-grid, .eng-grid, .proof-grid { grid-template-columns: 1fr; }
+    .stat-band { grid-template-columns: 1fr 1fr; }
+    .stat-band .stat { padding: 22px 20px 22px 0; }
+    .stat-band .stat + .stat { padding-left: 0; border-left: 0; }
+    .stat-band .stat:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--border-subtle); }
+    .stat-band .stat:nth-child(n+3) { border-top: 1px solid var(--border-subtle); }
+    .stat-band .fig { font-size: 20px; }
     .how-list { grid-template-columns: 1fr; }
     .how-list li:nth-child(2) { border-top: 0; }
     .adv-cta-inner { grid-template-columns: 1fr; padding: 40px 32px; }
@@ -154,7 +181,7 @@
     "itemListElement": [
       { "@type": "Offer", "name": "The Read", "description": "Two-week fixed-fee strategy diagnostic with a written point of view." },
       { "@type": "Offer", "name": "The 90-Day Sprint", "description": "One strategic question taken to a decision over ninety days." },
-      { "@type": "Offer", "name": "Retainer", "description": "Monthly standing advisory for founders and operators." }
+      { "@type": "Offer", "name": "The Sixth Week", "description": "A standing leadership-team read every six weeks: what is standing between the team and the money." }
     ]
   }
 }
@@ -173,8 +200,8 @@
     <!-- HERO -->
     <div class="adv-hero">
       <div class="section-eyebrow"><span class="num">01</span> Advisory</div>
-      <h1>Strategy from someone who's had to <span class="accent">ship it.</span></h1>
-      <p class="lede">I've been the CPO, the interim CEO, and the founder on the acquired side of the table. When I tell you what to build, I also know what it costs to be wrong, because I've paid it. The work is fixed-fee, scoped up front, and led with the argument rather than the deck.</p>
+      <h1>I make the call that's been sitting on <span class="accent">the table.</span></h1>
+      <p class="lede">Most leadership teams aren't short a strategy. They're short someone who will say the thing out loud and stay until it's decided. I've been the CPO, the interim CEO, and the founder on the acquired side &mdash; so I know what the call costs, because I've paid for it.</p>
       <div class="ctas">
         <a href="/contact?topic=advisory" class="btn primary">Start a conversation
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -189,26 +216,46 @@
       </div>
     </div>
 
+    <!-- PROOF BAND -->
+    <div class="stat-band">
+      <div class="stat">
+        <span class="fig">$70k <em>&rarr;</em> $25k</span>
+        <span class="unit">monthly overhead, inside 45 days</span>
+      </div>
+      <div class="stat">
+        <span class="fig">12 wks <em>&rarr;</em> 4 wks</span>
+        <span class="unit">product cycle time, rebuilt from zero</span>
+      </div>
+      <div class="stat">
+        <span class="fig">5&times;</span>
+        <span class="unit">qualified pipeline, on a go-to-market I owned</span>
+      </div>
+      <div class="stat">
+        <span class="fig">Zero</span>
+        <span class="unit">team exits during my tenure as interim CEO</span>
+      </div>
+    </div>
+
     <!-- WHO IT'S FOR -->
     <section class="adv-section" id="fit">
       <div class="section-eyebrow"><span class="num">02</span> Who it's for</div>
-      <h2>Three rooms I'm useful in.</h2>
-      <p class="sub">If you recognize yourself in one of these, we should talk. If you don't, the first conversation is still free and I'll tell you who to call instead.</p>
+      <h2>Three moments I'm useful in.</h2>
+      <p class="sub">Not a stage or a headcount &mdash; a moment. If you recognize the one you're in, we should talk. If you don't, the first conversation is still free and I'll tell you who to call instead.</p>
       <div class="fit-grid">
         <article class="card fit-card">
           <div class="ix">001</div>
-          <h3>Founders before Series B</h3>
-          <p>Media and creator-economy companies with a product and some revenue that need to decide what the company actually is before the next round decides for them.</p>
+          <h3>You're raising</h3>
+          <p>The story has to survive people who've heard a hundred like it. Which means your own team has to agree on it first, and right now they'd each tell a different version.</p>
         </article>
         <article class="card fit-card">
           <div class="ix">002</div>
-          <h3>Exec teams with an AI mandate</h3>
-          <p>Leadership teams that have been told to do something with AI and now have a budget, a pilot, and no thesis. The pilot is not the strategy.</p>
+          <h3>You're deciding what the company is</h3>
+          <p>The roadmap became a wish list and every item on it is somebody's favourite. Someone has to say which things die, and it can't be the person who has to work with everyone on Monday.</p>
         </article>
         <article class="card fit-card">
           <div class="ix">003</div>
-          <h3>Platforms rebuilding creator relationships</h3>
-          <p>Companies whose business runs on creators, and who are learning the hard way that dashboards aren't relationships and payouts aren't loyalty.</p>
+          <h3>You're mid-transition</h3>
+          <p>A leader left, two teams merged, a mandate landed from above. The work now is holding it steady and keeping people moving while the new shape gets decided.</p>
         </article>
       </div>
     </section>
@@ -250,13 +297,13 @@
         <article class="card eng-card">
           <span class="num">03</span>
           <span class="kind">Standing</span>
-          <h3>Retainer</h3>
-          <p class="shape">Monthly · Three seats, total</p>
-          <p class="desc">A standing sparring partner for founders and operators who want someone with scar tissue in the room before the decision, not after. Weekly calls, async access between them, and the honest read every time.</p>
+          <h3>The Sixth Week</h3>
+          <p class="shape">Every six weeks · Ongoing</p>
+          <p class="desc">I sit down with your leadership team and tell you what I've seen: what is actually standing between this team and the money. Not a status review and not a scorecard &mdash; one honest read, on a cadence, from the only person in the room with no internal position to protect.</p>
           <span class="field-label">You get</span>
-          <p class="deliverable"><strong>Me, on call.</strong> I hold three of these at a time so the ones I hold get real attention.</p>
+          <p class="deliverable"><strong>The conversation your team keeps not having</strong> &mdash; on a schedule, so it can't be deferred to a quieter week that never arrives.</p>
           <div class="foot">
-            <span class="price">From $8k / month<small>Three-month minimum</small></span>
+            <span class="price">From $8k / month<small>Three seats, total · three-month minimum</small></span>
             <a href="/contact?topic=advisory" class="bolt">Ask about a seat →</a>
           </div>
         </article>
@@ -274,6 +321,10 @@
       <div class="section-eyebrow"><span class="num">04</span> How I work</div>
       <h2>The terms, before you ask.</h2>
       <ul class="how-list">
+        <li>
+          <h3>I'm not here to fix your culture.</h3>
+          <p>I'm here to name what's standing between your team and the money, and stay until it moves. If what's in the way turns out to be how you work, we'll deal with that &mdash; but the target is always the number.</p>
+        </li>
         <li>
           <h3>Narrative first.</h3>
           <p>I think in stories before slides and I lead with the argument. We start from a clear written case so the team can weigh the assumptions, trade-offs, and the decision together.</p>
