@@ -867,6 +867,20 @@
     E.buildHand(S); render(); openClose($('startOverlay'), false);
   }
 
+  // Resume a saved run: rehydrate S + the four UI arrays, restore derived UI, close the overlay.
+  // Does NOT re-fire the Plausible 'start' event (a resume is not a new run) and does NOT re-deal
+  // the hand (S.hand was saved). Transient per-week UI (weekLog/queue/…) resets to a clean week.
+  function resumeGame(saved){
+    SFX.unlock();
+    S = saved.S;
+    hist = saved.ui.hist || []; postLog = saved.ui.postLog || {};
+    lastRecap = saved.ui.lastRecap || null;
+    run = saved.ui.run || { restWeeks:0, peakStress:Math.round(S.stress), events:0 };
+    evtThisWeek = false; weekLog = []; queue = []; resolving = false; bizMoreOpen = false; tab = 'home';
+    closeTeam(); closeChanPicker(); paintBackdrop(); render();
+    openClose($('startOverlay'), false);
+  }
+
   // Header backdrop: the run's niche scene, variant 01/02/03 by game phase (early / mid / late).
   let backdropSrc = '';
   function paintBackdrop(){ if(!S) return; const ph=E.CONFIG.phases||{}, w=S.week;
@@ -1486,6 +1500,20 @@
           const nx=els[(i+d+els.length)%els.length]; nx.focus(); sel(nx); }; }); }
     wireGroup($('nichegrid'), k=>{ selNiche=k; });
     wireGroup($('homegrid'), k=>{ selHome=k; });
+    renderContinue();
+  }
+  // If a valid in-progress run exists, prepend a Continue button to the start form as the
+  // primary action. Removes any prior button first, so it stays correct across reopens.
+  function renderContinue(){
+    const form = document.querySelector('#startOverlay .intro-form'); if(!form) return;
+    const prev = $('continueBtn'); if(prev) prev.remove();
+    const saved = loadRun(); if(!saved) return;
+    const b = document.createElement('button');
+    b.id = 'continueBtn'; b.type = 'button'; b.className = 'btn primary';
+    b.style.width = '100%'; b.style.marginBottom = '14px';
+    b.textContent = `Continue — ${saved.S.name} · ${NICHES[saved.S.niche].label} · week ${saved.S.week}`;
+    b.onclick = ()=>resumeGame(saved);
+    form.insertBefore(b, form.firstChild);
   }
   buildStart();
   // fix 7: tap a chip/flag/stress-bar to get its one-line definition (mobile has no hover, so title= isn't enough)
@@ -1523,7 +1551,7 @@
   $('startBtn').onclick=()=>{ const nm=$('nameInput').value.trim()||pick(['midnight uploads','the daily grind','no filter','raw takes','after hours','main character']);
     newGame(nm, selNiche, selHome); };
   $('nameInput').addEventListener('keydown',e=>{ if(e.key==='Enter')$('startBtn').click(); });
-  $('againBtn').onclick=()=>{ openClose($('endOverlay'),false); openClose($('startOverlay'),true); $('nameInput').value=''; };
+  $('againBtn').onclick=()=>{ openClose($('endOverlay'),false); openClose($('startOverlay'),true); $('nameInput').value=''; renderContinue(); };
 })();
 </script>
 </body>
