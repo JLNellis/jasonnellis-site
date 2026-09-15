@@ -54,6 +54,36 @@ running a panel would move it from a claim to a demonstration.
 Embed rule if/when it lands: `youtube-nocookie.com` only, per the privacy
 conventions in `claude.md`.
 
+## 2b. PAKCon 2024 event photos — ask Project A directly
+
+**Status:** searched 2026-09-15, **nothing usable found publicly.**
+
+Jason spoke at **PAKCon 2024** (Project A Knowledge Conference, Berlin,
+20 Sept 2024), listed on the official speakers page as *Chief Product
+Officer, Jogg*. Archived:
+`https://web.archive.org/web/20240624131337/https://knowledge-conference.project-a.com/speakers`
+
+What the search found and didn't:
+
+- The conference subdomain is **dead** (`knowledge-conference.project-a.com`
+  no longer resolves) and the Webflow staging mirror 404s.
+- Archive.org captured a `/gallery` page, but only in Dec 2021 and Jan 2022 —
+  no 2024 gallery exists in the archive.
+- The only image of him on the speakers page is the headshot he supplied
+  himself (a selfie, `IMG_1663.png`) — not event photography, and worse than
+  what's already on the site.
+- An official **aftermovie** exists: `youtube.com/watch?v=Zwo7eXLfSl0`
+  (4:05). He may appear in it; faster for Jason to scan than to analyse.
+
+**The actual route:** ask Project A's comms/marketing team for photos of him
+from the day. Organisers shoot far more than they publish and almost always
+share with a speaker who asks. Same ask covers any session recording.
+
+**Rights note that applies to every event photo:** finding a picture online
+is not permission to use it. Conference photography belongs to the organiser
+or their photographer. Get it in writing, including whether credit is
+required, before anything goes on the site.
+
 ## 3. Event and client logos
 
 **Status:** not started
