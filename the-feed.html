@@ -1548,7 +1548,10 @@
   function paintSound(){ const m=SFX.isMuted(); soundBtn.innerHTML=icon(m?'sound-off':'sound-on'); soundBtn.classList.toggle('muted',m); }
   paintSound();
   soundBtn.onclick=()=>{ SFX.unlock(); const m=SFX.toggleMute(); paintSound(); if(!m)SFX.play('click'); };
-  $('startBtn').onclick=()=>{ const nm=$('nameInput').value.trim()||pick(['midnight uploads','the daily grind','no filter','raw takes','after hours','main character']);
+  $('startBtn').onclick=()=>{
+    const saved=loadRun();
+    if(saved && !confirm(`Start a new run? Your saved run (week ${saved.S.week}) will be erased.`)) return;
+    const nm=$('nameInput').value.trim()||pick(['midnight uploads','the daily grind','no filter','raw takes','after hours','main character']);
     newGame(nm, selNiche, selHome); };
   $('nameInput').addEventListener('keydown',e=>{ if(e.key==='Enter')$('startBtn').click(); });
   $('againBtn').onclick=()=>{ openClose($('endOverlay'),false); openClose($('startOverlay'),true); $('nameInput').value=''; renderContinue(); };
