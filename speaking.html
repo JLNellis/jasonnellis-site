@@ -83,6 +83,10 @@
     opacity: 0.72;
     transition: opacity var(--dur-base) var(--ease-standard);
   }
+  /* PAKCon is a three-line stacked lockup, not a single-line wordmark — at a
+     shared 30px its type renders ~7px and disappears. Sized optically so its
+     text matches the others' apparent weight, not its bounding box. */
+  .logo-strip img.logo-stacked { height: 44px; }
   .logo-strip img:hover { opacity: 1; }
   .logo-strip .logo-wordmark {
     font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
@@ -95,6 +99,7 @@
   @media (max-width: 640px) {
     .logo-strip { gap: 22px 30px; }
     .logo-strip img { height: 24px; }
+    .logo-strip img.logo-stacked { height: 36px; }
   }
 
   .proof-line { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 20px 0 0; max-width: 780px; }
@@ -394,7 +399,7 @@
         <img src="logo-ifa.png" alt="IFA Berlin" width="329" height="96" loading="lazy">
         <img src="logo-latitude59.png" alt="Latitude59" width="278" height="96" loading="lazy">
         <img src="logo-zest.png" alt="ZEST Malta" width="252" height="96" loading="lazy">
-        <span class="logo-wordmark">PAKCon<small>Berlin 2024</small></span>
+        <img class="logo-stacked" src="logo-pakcon.svg" alt="PAKCon — Project A Knowledge Conference, Berlin" width="353" height="101" loading="lazy">
       </div>
     </section>
 

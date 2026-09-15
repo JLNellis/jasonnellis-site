@@ -62,6 +62,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("logo-ifa.png");
   eleventyConfig.addPassthroughCopy("logo-latitude59.png");
   eleventyConfig.addPassthroughCopy("logo-zest.png");
+  eleventyConfig.addPassthroughCopy("logo-pakcon.svg");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("latitude59.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
