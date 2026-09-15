@@ -695,6 +695,39 @@ Consistent emoji would polish the exact thing the reskin removes (emoji as the
 icon system). Not doing it. The OpenMoji entry in `CREDITS.md` can be deleted
 when C ships.
 
+## Open — Reddit playtest feedback (2026-09-15)
+
+A Reddit player called the game **"shallow"** with some **unintuitive
+interface elements**. Analysed (played weeks 1–3 desktop + phone, engine
+read) in `docs/superpowers/specs/2026-09-15-the-feed-reddit-feedback-review.md`
+— ranked hypotheses, eight fixes with engine/chrome split and sim impact,
+further ideas, a three-pass sequence. Headlines: on one platform the dealt
+hand equals the slots so nothing is chosen; topic titles have no mechanical
+effect; posts resolve on tap so End-the-week has no reveal; event replies
+telegraph the answer and hide the stakes. UI: tap-posts-immediately, End the
+week ~2.5 screens down on phones, no scroll reset after `advance()`,
+undefined chip vocabulary, "Add a channel" silently spends a post slot.
+Top fixes: queue-on-tap → resolve on End the week (select-then-publish
+reframed; rejected 2026-09-12, now with external evidence), stakes printed
+on event replies, an expected-range line per card, sticky End button + scroll
+reset on phones.
+
+**Shipped 2026-09-15 — the full spec, all three passes + the payoff/measurement batch:**
+- *Pass 2 (the loop):* queue-on-tap → reveal on End the week; `stakes` string on every
+  event choice (70) with the red/green grading dropped; `previewPost()` expected-range
+  "bet" line on each content card.
+- *Pass 1 (intuitiveness):* sticky End-the-week + phone business sheet + scroll reset;
+  a visible next-target line; tap-to-explain glossary popovers + stress-bar ticks;
+  "uses a post slot" flag; four stable feed narrator voices; Steady chip dropped; copy nits.
+- *Pass 3 (hand + consequences):* single-platform three-angle hand (Personal ungated there);
+  "choices that echo" via `S.flags` + weighted `priority` events (incl. the named
+  `crypto-fallout`); the 90 authored `THUMBS` thumbnail strings.
+- *Payoff + measurement:* end-screen "how you got here" path line; copy-to-clipboard share
+  card; Plausible custom-event funnel (`start`/`week:N`/`end:<key>`/`share`) with `/privacy`
+  updated to match.
+`npm test` 71/71; `npm run sim` 6/6 (seeds 7/42/123). Only the leaderboard stays deferred;
+the essay-ending CTA stays blocked on the essays existing.
+
 ## Open items
 
 Notes from the latest balance pass, not yet actioned:

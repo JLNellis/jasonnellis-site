@@ -34,6 +34,7 @@ const H = {
   start(S)            { return S.hand.findIndex(c => c.kind === 'start'); },
   byAngle(S, a)       { const x = H.posts(S).find(x => x.c.angle === a); return x ? x.i : -1; },
   heaviest(S)         { const x = H.posts(S).sort((a, b) => b.c.stress - a.c.stress)[0]; return x ? x.i : -1; },
+  heaviestContent(S)  { const x = H.posts(S).filter(x => x.c.angle !== 'personal').sort((a, b) => b.c.stress - a.c.stress)[0]; return x ? x.i : -1; },
   lightest(S)         { const x = H.posts(S).sort((a, b) => a.c.stress - b.c.stress)[0]; return x ? x.i : -1; },
   bestMod(S)          { const x = H.posts(S).sort((a, b) => b.c.mod - a.c.mod)[0]; return x ? x.i : -1; },
   coldest(S)          { const x = H.posts(S).sort((a, b) => a.c.heat - b.c.heat)[0]; return x ? x.i : -1; },
@@ -49,7 +50,8 @@ const content = S => S.slots.content > 0, business = S => S.slots.business > 0;
 const PERSONAS = {
   // Two heavy posts every week, never hires, never rests. Should burn out — but not before ~15 weeks.
   'The Grinder': { home: 'longform', eventPref: ['neutral', 'repair', 'escalate'], act(S) {
-    if (content(S)) { const i = H.heaviest(S); if (i >= 0) return { card: i }; }
+    // grinds content output — heaviest trend/evergreen; a grinder isn't posting weekly personal confessionals
+    if (content(S)) { const i = H.heaviestContent(S); if (i >= 0) return { card: i }; }
     if (business(S)) { if (H.upgradeOk(S, 1.2)) return { biz: 'upgrade' }; return { biz: 'engage' }; }
     return { end: true };
   } },

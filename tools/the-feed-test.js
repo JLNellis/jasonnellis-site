@@ -302,15 +302,22 @@ test('buildHand: one post card per active platform, evergreen by default, plus a
   assert.ok(posts.some(c => c.pkey === 'longform' && c.angle === 'trend'), 'alt angle for the strongest platform');
   posts.forEach(c => { assert.ok(c.topic); assert.strictEqual(c.stress, E.stressCost(S, c.pkey, c.angle)); });
 });
-test('buildHand: trend when hot, personal when rep low (max one), ride after a hit', () => {
-  const S = mk(); S.plats.shortform.active = true; S.plats.micro.active = true;
-  S.plats.shortform.heat = 45; S.rep = 40;
-  const hand = E.buildHand(S).filter(c => c.kind === 'post' || c.kind === 'ride');
-  assert.strictEqual(hand.find(c => c.pkey === 'shortform').angle, 'trend');
-  assert.strictEqual(hand.filter(c => c.angle === 'personal').length, 1);
-  S.rep = 60; S.lastHit = { key: 'micro', week: S.week - 1 };
+test('buildHand: hot→trend; a single platform gets all three angles (fix 5); ride after a hit', () => {
+  // multi-platform: the hot platform is dealt trend
+  const M = mk(); M.plats.shortform.active = true; M.plats.micro.active = true; M.plats.shortform.heat = 45;
+  const mhand = E.buildHand(M).filter(c => c.kind === 'post' || c.kind === 'ride');
+  assert.strictEqual(mhand.find(c => c.pkey === 'shortform').angle, 'trend');
+  // one platform: Trend + Evergreen + Personal all on it, so the focused creator picks 2 of 3 —
+  // and Personal is offered regardless of rep (it used to be dealt only at rep < 50)
+  const S = mk(); S.rep = 60;
+  const shand = E.buildHand(S).filter(c => c.kind === 'post');
+  const angles = new Set(shand.filter(c => c.pkey === 'longform').map(c => c.angle));
+  assert.ok(angles.has('trend') && angles.has('evergreen') && angles.has('personal'), 'all three angles on the one platform');
+  assert.strictEqual(shand.filter(c => c.angle === 'personal').length, 1, 'personal dealt exactly once');
+  // ride after a hit
+  S.lastHit = { key: 'longform', week: S.week - 1 };
   const ride = E.buildHand(S).find(c => c.kind === 'ride');
-  assert.ok(ride && ride.pkey === 'micro' && ride.angle === 'trend' && ride.special);
+  assert.ok(ride && ride.pkey === 'longform' && ride.angle === 'trend' && ride.special);
 });
 test('buildHand keeps the same topic for the same platform+angle within a week', () => {
   const S = mk(); const a = E.buildHand(S).find(c => c.kind === 'post' && c.angle === 'evergreen').topic;
@@ -601,6 +608,44 @@ test('endingText fills platform count and the star/goat thresholds from CONFIG',
 test('no engine code references energy or skill', () => {
   const src = require('fs').readFileSync(require.resolve('../the-feed-engine.js'), 'utf8');
   assert.ok(!/S\.energy|S\.skill|skillCap|\brent\(/.test(src));
+});
+test('previewPost: read-only view/follower range that brackets an actual post, no mutation', () => {
+  const S = mk(); const card = E.buildHand(S).find(c => c.kind === 'post' && c.pkey === 'longform');
+  const before = JSON.stringify(S);
+  const pv = E.previewPost(S, card);
+  assert.strictEqual(JSON.stringify(S), before, 'previewPost must not mutate state');
+  assert.ok(pv.viewsLo >= 1 && pv.viewsHi > pv.viewsLo, 'a real low<high range');
+  assert.ok(pv.followersHi >= pv.followersLo, 'follower range ordered');
+  // an actual post of the same card lands inside the previewed view range (with margin for rounding)
+  const T = mk(); const c2 = E.buildHand(T).find(c => c.kind === 'post' && c.pkey === 'longform');
+  const p2 = E.previewPost(T, c2); const v0 = T.totalViews;
+  E.setRng(() => 0.5); E.applyMove(T, c2); const got = T.totalViews - v0;
+  assert.ok(got >= p2.viewsLo * 0.6 && got <= p2.viewsHi * 1.4, `actual ${got} within preview ${p2.viewsLo}-${p2.viewsHi}`);
+  assert.strictEqual(E.previewPost(S, { kind: 'start' }), null, 'no preview for non-post cards');
+});
+test('THUMBS: an authored thumbnail string for every one of the 90 topic lines, index-aligned', () => {
+  let n = 0;
+  Object.keys(E.TOPICS).forEach(niche => Object.keys(E.TOPICS[niche]).forEach(angle => {
+    const titles = E.TOPICS[niche][angle], thumbs = E.THUMBS[niche] && E.THUMBS[niche][angle];
+    assert.ok(Array.isArray(thumbs) && thumbs.length === titles.length, `${niche}/${angle} thumb count matches topics`);
+    titles.forEach((t, i) => { assert.ok(thumbs[i] && thumbs[i].trim(), `${niche}/${angle}[${i}] has a thumb`);
+      assert.strictEqual(E.thumbFor(niche, angle, t), thumbs[i], 'thumbFor resolves the title to its thumb'); n++; });
+  }));
+  assert.strictEqual(n, 90, 'exactly 90 topic lines covered');
+  assert.strictEqual(E.thumbFor('gaming', 'trend', 'not a real topic'), null, 'unknown topic falls back');
+});
+test('choices that echo: Take the bag flags soldOut and makes crypto-fallout eligible + weighted', () => {
+  const S = mk(); S.week = 6;
+  const crypto = E.EVENTS.find(e => e.id === 'crypto-dm');
+  const bag = crypto.choices.find(c => c.label === 'Take the bag');
+  assert.ok(!E.EVENTS.find(e => e.id === 'crypto-fallout').cond(S), 'fallout not eligible before the bag');
+  bag.apply(S);
+  assert.strictEqual(S.flags.soldOut, 6, 'soldOut flag stamped with the week');
+  S.week = 9;   // 3 weeks later, inside the 2–8 window
+  const fallout = E.EVENTS.find(e => e.id === 'crypto-fallout');
+  assert.ok(fallout.cond(S) && fallout.priority(S), 'fallout now eligible and prioritised');
+  S.week = 20;  // past the 8-week window
+  assert.ok(!fallout.cond(S), 'the echo window closes');
 });
 
 // ---------------------------------------------------------------- runner
