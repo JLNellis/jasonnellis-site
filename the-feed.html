@@ -964,7 +964,9 @@
     if(E.checkEndings(S)){ snapshot(); endGame(S.endKey); return; }
     snapshot(); computeRecap(); S.phase='play'; E.buildHand(S); render();
     // fix 4: a new week starts at the top — don't leave the player looking at last week's business list
-    try{ window.scrollTo(0,0); document.querySelectorAll('.tabbody, #tab-home, #tab-alerts, #stagebody').forEach(e=>{ if(e) e.scrollTop=0; }); }catch(e){} }
+    try{ window.scrollTo(0,0); document.querySelectorAll('.tabbody, #tab-home, #tab-alerts, #stagebody').forEach(e=>{ if(e) e.scrollTop=0; }); }catch(e){}
+    saveRun();   // persist the clean start of this week (the ending path returned earlier)
+  }
   // Week-recap payoff (#3): deltas between the two latest UI snapshots = the week just played.
   function computeRecap(){ if(hist.length<2){ lastRecap=null; return; }
     const a=hist[hist.length-2], b=hist[hist.length-1];
