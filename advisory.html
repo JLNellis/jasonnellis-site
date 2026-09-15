@@ -42,7 +42,7 @@
 
   /* ---- Proof band ---- */
   .stat-band {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
     margin: 8px 0 0;
@@ -59,6 +59,12 @@
     display: block; font-family: var(--font-mono); font-size: 11px; line-height: 1.6;
     letter-spacing: 0.04em; color: var(--fg-3);
   }
+  .steward-note {
+    font-size: 14.5px; line-height: 1.7; color: var(--fg-2);
+    max-width: 660px; margin: -22px 0 40px;
+    padding-left: 20px; border-left: 2px solid var(--color-accent-vivid);
+  }
+  .steward-note strong { color: var(--fg-1); font-weight: 500; }
   .stat-note { font-size: 12px; color: var(--fg-3); line-height: 1.6; margin: 14px 0 0; max-width: 620px; }
 
   /* ---- Shared section shell ---- */
@@ -142,11 +148,9 @@
   /* ---- Responsive ---- */
   @media (max-width: 900px) {
     .fit-grid, .eng-grid, .proof-grid { grid-template-columns: 1fr; }
-    .stat-band { grid-template-columns: 1fr 1fr; }
-    .stat-band .stat { padding: 22px 20px 22px 0; }
-    .stat-band .stat + .stat { padding-left: 0; border-left: 0; }
-    .stat-band .stat:nth-child(even) { padding-left: 20px; border-left: 1px solid var(--border-subtle); }
-    .stat-band .stat:nth-child(n+3) { border-top: 1px solid var(--border-subtle); }
+    .stat-band { grid-template-columns: 1fr; }
+    .stat-band .stat { padding: 20px 0; }
+    .stat-band .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--border-subtle); }
     .stat-band .fig { font-size: 20px; }
     .how-list { grid-template-columns: 1fr; }
     .how-list li:nth-child(2) { border-top: 0; }
@@ -229,10 +233,6 @@
       <div class="stat">
         <span class="fig">5&times;</span>
         <span class="unit">qualified pipeline, on a go-to-market I owned</span>
-      </div>
-      <div class="stat">
-        <span class="fig">Zero</span>
-        <span class="unit">team exits during my tenure as interim CEO</span>
       </div>
     </div>
 
@@ -357,6 +357,7 @@
       <div class="section-eyebrow"><span class="num">05</span> Receipts</div>
       <h2>Read the work before you hire it.</h2>
       <p class="sub">Two case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
+      <p class="steward-note">The work isn't only what gets decided &mdash; it's whether the team is still standing to run it. When a chief executive left abruptly and I stepped into the interim seat, there were <strong>no team exits during my tenure</strong>. That part doesn't show up in a strategy memo, and it's the part I'm proudest of.</p>
       <div class="proof-grid">
         <a class="card proof-card" href="/blog/what-you-learn-when-you-stop-building-and-start-listening/">
           <span class="era">Packagd → Meta · 2016 – 2023</span>
