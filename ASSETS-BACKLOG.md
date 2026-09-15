@@ -39,20 +39,29 @@ Meta NPE collaborators, the BoltOS creator cohort.
 
 ## 2. Video footage of Jason speaking
 
-**Status:** not started
+**Status:** partly solved 2026-09-15 — **hosting/interview footage now live;
+on-stage keynote/panel footage still wanted.**
 **Unblocks:** `/speaking`, `/press-kit`, possibly the homepage.
 
-The speaking page has stage *photos* but no moving footage. A speaker reel —
-even ninety seconds of unedited stage or panel footage — is the single thing
-event organisers look for and currently can't find.
+**Now live (self-hosted, compressed `<video>`):** the 2022 Super highlight
+reel (Jason hosting creator interviews on the Meta platform he built) as a
+featured speaker reel on `/speaking` and a "Speaker reel" section on
+`/press-kit`; the two 2017 Austin Evans interviews as on-camera proof under
+the `/speaking` moderating callout — which moves the 150+-conversations
+moderation claim from a count to a demonstration. Two vertical Building Value
+clips also went to `/building-value`. All are **hosting/interview** footage.
 
-Related and cheaper: **footage of him moderating specifically**. The
-moderation offer shipped 2026-09-15 (`/speaking` section 04) and is argued
-from counts alone — 150+ hosted conversations. One clip of him actually
-running a panel would move it from a claim to a demonstration.
+**Still missing:** actual **on-stage keynote or panel footage** — him at a
+podium or on a live conference panel. The reel and interviews show he can
+host a conversation; they don't show him delivering a talk to a room. Ninety
+seconds of unedited stage footage is still the single thing organisers look
+for and can't find here. Cheapest source: a session recording from a past
+event (same Project A ask as 2b covers PAKCon).
 
-Embed rule if/when it lands: `youtube-nocookie.com` only, per the privacy
-conventions in `claude.md`.
+Hosting note (changed): the site now **self-hosts** video (compressed mp4,
+`preload="none"`, poster frames — no cookie, no consent banner), so the old
+"`youtube-nocookie.com` only" rule no longer binds new clips. Either path is
+fine; self-hosting was chosen here to avoid a YouTube dependency.
 
 ## 2b. PAKCon 2024 event photos — ask Project A directly
 
