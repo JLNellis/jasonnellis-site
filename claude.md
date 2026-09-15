@@ -275,6 +275,16 @@ backlog (leaderboard + OpenMoji, both deferred) live in
 
 ---
 
+## Assets backlog
+
+Things the site needs that can't be written, only collected — testimonials,
+speaker footage, logos, NDA clearances, numbers Jason is waiting on — live in
+**`ASSETS-BACKLOG.md`** at the repo root, ranked by leverage. It also records
+the open decision about which claim leads the site header, and the list of
+claims deliberately *not* being pursued (and why). Check it before proposing
+new proof-led copy: the answer to "we should add testimonials here" is usually
+already tracked there.
+
 ## Working preferences
 
 - **Minimal maintenance is the priority.** Don't propose solutions that

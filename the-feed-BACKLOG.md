@@ -6,7 +6,7 @@ the deferred work back up without re-deriving anything. (Not built by Eleventy �
 listed in `.eleventyignore`.)
 
 Live at **`/the-feed`** and **`thefeed.jasonnellis.com`**. Indexed and listed
-on the `/tools` page (via `tool-index/the-feed.md`) and the homepage Tools
+on the `/experiments` page (via `tool-index/the-feed.md`) and the homepage Experiments
 teaser since 2026-09-14; not a top-level nav item itself.
 
 The rework was three sub-projects, specced in `docs/superpowers/specs/` — all
@@ -78,7 +78,7 @@ the deferred leaderboard.
   lifted late-game output — see below).
 
 ### Launched publicly (2026-09-14)
-`noindex` removed, listed on `/tools` and the homepage Tools teaser, in
+`noindex` removed, listed on `/experiments` and the homepage Experiments teaser, in
 `sitemap.xml` via the `tools` collection. The start screen's footer links
 back to `jasonnellis.com/experiments`.
 
