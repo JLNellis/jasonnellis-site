@@ -227,7 +227,10 @@ Inside `buildStart()`, the last statements are the two `wireGroup(...)` calls (~
   function renderContinue(){
     const form = document.querySelector('#startOverlay .intro-form'); if(!form) return;
     const prev = $('continueBtn'); if(prev) prev.remove();
-    const saved = loadRun(); if(!saved) return;
+    const go = $('startBtn');
+    const saved = loadRun();
+    if(!saved){ if(go){ go.classList.add('primary'); go.classList.remove('ghost'); } return; }
+    if(go){ go.classList.remove('primary'); go.classList.add('ghost'); }   // Continue is primary; new run demotes to ghost
     const b = document.createElement('button');
     b.id = 'continueBtn'; b.type = 'button'; b.className = 'btn primary';
     b.style.width = '100%'; b.style.marginBottom = '14px';
