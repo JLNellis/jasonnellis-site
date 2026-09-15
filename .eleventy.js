@@ -72,8 +72,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("austin-evans-favorite-tech.jpg");
   eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.mp4");
   eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.jpg");
-  eleventyConfig.addPassthroughCopy("building-value-scripting.mp4");
-  eleventyConfig.addPassthroughCopy("building-value-scripting.jpg");
   eleventyConfig.addPassthroughCopy("building-value-piano.mp4");
   eleventyConfig.addPassthroughCopy("building-value-piano.jpg");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
