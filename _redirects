@@ -12,12 +12,16 @@
 /burn-rate.html  /burn-rate 301!
 /building-value.html /building-value 301!
 /privacy.html    /privacy   301!
+/thanks.html     /thanks    301!
 
 # Convenience alias
 /podcast         /building-value 301
 
 # Now page removed — send old links/bookmarks to About
 /now             /about     301
+
+# Tools index renamed to Experiments (Sept 2026) — /tools was indexed, so keep it resolving
+/tools           /experiments 301
 
 # Serve clean paths from their underlying files
 # (/blog is generated directly at /blog/index.html by Eleventy — no rewrite needed)
@@ -39,3 +43,4 @@
 https://thefeed.jasonnellis.com/   /the-feed.html   200!
 /building-value  /building-value.html  200
 /privacy         /privacy.html         200
+/thanks          /thanks.html          200

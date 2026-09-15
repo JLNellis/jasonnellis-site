@@ -27,7 +27,8 @@
 })();
 
 const SITE_CONFIG = {
-  substackHandle: 'jasonnellis', // "The Long Yes" — https://jasonnellis.substack.com/
+  newsletterUrl:  '/building-value', // newsletter home on this site (Kit's own hosted form page is unbranded — don't link it)
+  newsletterPost: 'https://app.kit.com/forms/9920578/subscriptions', // form POST endpoint (field: email_address)
   linkedIn:       'https://linkedin.com/in/jasonnellis',
   twitter:        'https://x.com/jasonnellis',
   podcast:        'https://www.youtube.com/@JasonNellis', // Building Value on YouTube
@@ -40,7 +41,7 @@ const NAV_LINKS = [
   { href: '/',         label: 'Home'     },
   { href: '/about',    label: 'About'    },
   { href: '/blog',     label: 'Writing'  },
-  { href: '/tools',    label: 'Tools'    },
+  { href: '/experiments', label: 'Experiments' },
   { href: '/speaking', label: 'Speaking' },
   { href: '/building-value', label: 'Podcast' },
   { href: '/advisory', label: 'Advisory' },
@@ -99,8 +100,8 @@ class SiteHeader extends HTMLElement {
 // ---- <site-footer> ----------------------------------------
 class SiteFooter extends HTMLElement {
   connectedCallback() {
-    const { substackHandle, linkedIn, twitter, podcast, email } = SITE_CONFIG;
-    const subUrl = `https://${substackHandle}.substack.com`;
+    const { newsletterUrl, linkedIn, twitter, podcast, email } = SITE_CONFIG;
+    const subUrl = newsletterUrl;
     const activeMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     const siteLinks = NAV_LINKS.map(({ href, label }) =>
@@ -134,7 +135,7 @@ class SiteFooter extends HTMLElement {
     </div>
     <div>
       <h4>Subscribe</h4>
-      <a href="${subUrl}" target="_blank" rel="noopener">The Long Yes ↗</a>
+      <a href="${subUrl}">Building Value</a>
       <a href="/feed.xml">RSS feed ↗</a>
       <a href="/contact">Get in touch</a>
     </div>

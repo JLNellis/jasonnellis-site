@@ -80,7 +80,7 @@ the deferred leaderboard.
 ### Launched publicly (2026-09-14)
 `noindex` removed, listed on `/tools` and the homepage Tools teaser, in
 `sitemap.xml` via the `tools` collection. The start screen's footer links
-back to `jasonnellis.com/tools`.
+back to `jasonnellis.com/experiments`.
 
 ---
 
@@ -377,7 +377,7 @@ dots" meant nothing. Both fixed, chrome-only plus one engine export.
 (Longform · Short · Live — `['longform','shortform','live']` in `buildStart`,
 no longer filtered on `unlock===0`; Microblog and Newsletter arrive as
 expansions). A `.startfoot` under "Go live" credits Jason with a link, invites
-replay ("every run ends differently") and carries a second "Get The Long Yes"
+replay ("every run ends differently") and carries a second "Get Building Value"
 Substack link, same target as the end screen.
 
 ## Shipped: first art package (illustrations)

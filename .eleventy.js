@@ -57,10 +57,12 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("speaking-ifa-panel.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-headshot-stage.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-headshot-stage-2400.jpg");
+  eleventyConfig.addPassthroughCopy("jason-nellis-stage-portrait.jpg");
   eleventyConfig.addPassthroughCopy("og-speaking-ifa.jpg");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("latitude59.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
+  eleventyConfig.addPassthroughCopy("thanks.html");
   eleventyConfig.addPassthroughCopy("404.html");
 
   // tools/ is the scripts folder (sim, tests, OG-image sources) — its README.md
