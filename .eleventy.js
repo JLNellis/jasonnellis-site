@@ -59,6 +59,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("jason-nellis-headshot-stage-2400.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-stage-portrait.jpg");
   eleventyConfig.addPassthroughCopy("og-speaking-ifa.jpg");
+  eleventyConfig.addPassthroughCopy("logo-ifa.png");
+  eleventyConfig.addPassthroughCopy("logo-latitude59.png");
+  eleventyConfig.addPassthroughCopy("logo-zest.png");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("latitude59.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");

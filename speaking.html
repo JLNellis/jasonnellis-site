@@ -71,6 +71,32 @@
   }
   .proof-stat .v small { font-size: 15px; font-weight: 600; color: var(--color-accent-vivid); }
   .proof-stat .l { display: block; font-size: 12px; color: var(--fg-2); margin-top: 10px; line-height: 1.4; }
+  /* Logo strip — event marks normalised to one flat white so the row reads as
+     a single credential line, not four competing brand palettes. */
+  .logo-strip {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 30px 44px;
+    margin: 26px 0 0; padding: 22px 0 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .logo-strip img {
+    height: 30px; width: auto; display: block;
+    opacity: 0.72;
+    transition: opacity var(--dur-base) var(--ease-standard);
+  }
+  .logo-strip img:hover { opacity: 1; }
+  .logo-strip .logo-wordmark {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+    color: var(--fg-2); opacity: 0.85; white-space: nowrap;
+  }
+  .logo-strip .logo-wordmark small {
+    display: block; font-size: 10px; color: var(--fg-3);
+    letter-spacing: 0.1em; margin-top: 3px;
+  }
+  @media (max-width: 640px) {
+    .logo-strip { gap: 22px 30px; }
+    .logo-strip img { height: 24px; }
+  }
+
   .proof-line { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 20px 0 0; max-width: 780px; }
   .proof-line strong { color: var(--fg-1); font-weight: 600; }
   @media (max-width: 760px) { .proof-stats { grid-template-columns: repeat(2, 1fr); } }
@@ -362,7 +388,14 @@
           <span class="l">Universities &mdash; guest lectures</span>
         </div>
       </div>
-      <p class="proof-line">Guest lectures at <strong>Northwestern</strong>, <strong>Howard</strong>, and <strong>Georgetown</strong> · Conference panels across Europe · Co-founded <strong>Packagd</strong> (acquired by <strong>Meta</strong>), and spoke across internal Meta events including the Games Day broadcast.</p>
+      <p class="proof-line">Guest lectures at <strong>Northwestern</strong>, <strong>Howard</strong>, and <strong>Georgetown</strong> · Conference stages across Europe, from <strong>Latitude59</strong> in Tallinn to <strong>PAKCon</strong> in Berlin and <strong>IFA</strong> · Co-founded <strong>Packagd</strong> (acquired by <strong>Meta</strong>), and spoke across internal Meta events including the Games Day broadcast.</p>
+
+      <div class="logo-strip">
+        <img src="logo-ifa.png" alt="IFA Berlin" width="329" height="96" loading="lazy">
+        <img src="logo-latitude59.png" alt="Latitude59" width="278" height="96" loading="lazy">
+        <img src="logo-zest.png" alt="ZEST Malta" width="252" height="96" loading="lazy">
+        <span class="logo-wordmark">PAKCon<small>Berlin 2024</small></span>
+      </div>
     </section>
 
     <!-- TOPICS -->
