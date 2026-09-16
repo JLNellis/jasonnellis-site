@@ -93,6 +93,8 @@
     taxRate: 0.35,
     years: 52,
     exitWeek: 46,
+    // team 2b: drift + morale
+    roommateScale: 40000,
   };
 
   // ======================= RNG helpers =======================
@@ -976,6 +978,26 @@
               : 'You walked, and found out how much of it you never owned. The reach was rented; it stayed with the landlord.', S.endKey === 'legend' ? 'big' : 'bad'); } },
         { t: 'repair', ci: '🧗', label: 'Keep climbing', desc: 'Turn it down. The work isn\'t finished.', stakes: 'no change — play the year out and see where it lands',
           apply: S => fed('🧗', 'You turned it down. The number was real and you said no anyway. The work isn\'t finished, and neither are you.', '') },
+      ] },
+    { id: 'roommate-drift', kind: 'neutral', emoji: '😰', title: 'Your roommate is drowning at this size.', badge: 'Team',
+      cond: S => S.hires.editor === 'editor-roommate' && totalFollowers(S) > CONFIG.roommateScale && !S.flags.roommateDrift,
+      priority: S => S.hires.editor === 'editor-roommate' && totalFollowers(S) > CONFIG.roommateScale,
+      text: 'The channel got big and the edits didn’t keep up. Your college roommate is working nights and still behind, and everyone can tell the pipeline is straining. They know it too.',
+      choices: [
+        { t: 'repair', ci: '📈', label: 'Level them up', desc: 'Pay for help and better gear. Keep your friend.', stakes: 'pay ~$1,200 (capped) · keep the editor · rep +1–4',
+          apply: S => { S.flags.roommateDrift = S.week; const cost = bite(S, 1200, 0.5); S.rep = clamp(S.rep + rint(1,4), 0, 100); return spend(S, '📈', `You invested in them: −${money(cost)}. They rose to it, mostly, and remembered who bet on them.`, cost, ''); } },
+        { t: 'escalate', ci: '🚪', label: 'Let them go', desc: 'Cut the loyal hire. Hire a pro later.', stakes: 'lose the editor · rep −6–12 · the pool thins',
+          apply: S => { S.flags.roommateDrift = S.week; S.hires.editor = null; S.flags.firedRecently = S.week; const r = repHit(S, 6, 12); return fed('🚪', `You let your roommate go. The pipeline needed it; the friendship needed the opposite. Rep −${r}.`, 'bad'); } },
+      ] },
+    { id: 'edgy-detonation', kind: 'hostile', emoji: '💥', title: 'Your designer’s edgiest thumbnail finally blew up in your face.', badge: 'Backlash',
+      cond: S => S.hires.designer === 'designer-edgy' && act(S) >= 2 && !S.flags.edgyDetonated,
+      priority: S => S.hires.designer === 'designer-edgy' && act(S) >= 2,
+      text: 'The louder packaging that juiced your reach for months just crossed the line for a lot of people. There’s a thread, a screenshot, a headline. The thumbnail is the story now.',
+      choices: [
+        { t: 'escalate', ci: '🤘', label: 'Stand by them', desc: 'Own the bit. Eat the hit.', stakes: 'rep −10–18 · −2–5% followers · keep the designer + the reach',
+          apply: S => { S.flags.edgyDetonated = S.week; const r = repHit(S, 10, 18); return hurt(S, '💥', `You backed your designer and the choice. The reach stays; so does the reputation for it. Rep −${r}.`, .02, .05); } },
+        { t: 'repair', ci: '✂️', label: 'Rein it in — let them go', desc: 'Cut the edge (and the designer). Smaller hit.', stakes: 'rep −3–7 · lose the edgy designer · the pool thins',
+          apply: S => { S.flags.edgyDetonated = S.week; S.hires.designer = null; S.flags.firedRecently = S.week; const r = repHit(S, 3, 7); return fed('✂️', `You cut the edge loose — and the designer with it. The reach cools, the temperature drops. Rep −${r}.`, ''); } },
       ] },
   ];
 

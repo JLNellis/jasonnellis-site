@@ -765,6 +765,25 @@ test('rollEvent does not force the exit before exitWeek', () => {
   for (let i = 0; i < 50; i++) { const ev = E.rollEvent(S); if (ev && ev.id === 'the-exit') assert.fail('exit fired early'); }
 });
 
+// ---------------------------------------------------------------- team 2b: drift + morale
+test('roommate-drift: eligible only with the roommate editor at scale, fires once, "let go" clears the editor', () => {
+  const S = E.newState('gaming','longform'); S.plats.longform.followers = 45000; S.hires.editor = 'editor-roommate';
+  const ev = E.EVENTS.find(e => e.id === 'roommate-drift'); assert.ok(ev && ev.cond(S) && ev.priority(S));
+  const noPro = E.newState('gaming','longform'); noPro.plats.longform.followers = 45000; noPro.hires.editor = 'editor-pro';
+  assert.ok(!ev.cond(noPro), 'not for the pro');
+  const letGo = ev.choices.find(c => c.label === 'Let them go'); letGo.apply(S);
+  assert.equal(S.hires.editor, null); assert.ok(S.flags.roommateDrift && S.flags.firedRecently);
+  assert.ok(!ev.cond(S), 'fires once');
+});
+test('edgy-detonation: eligible only with the edgy designer in act 2+, fires once', () => {
+  const S = E.newState('gaming','longform'); S.week = 20; S.hires.designer = 'designer-edgy';
+  const ev = E.EVENTS.find(e => e.id === 'edgy-detonation'); assert.ok(ev && ev.cond(S));
+  const S1 = E.newState('gaming','longform'); S1.week = 5; S1.hires.designer = 'designer-edgy';
+  assert.ok(!ev.cond(S1), 'not in act 1');
+  ev.choices.find(c => /rein it in/i.test(c.label)).apply(S);
+  assert.equal(S.hires.designer, null); assert.ok(S.flags.edgyDetonated); assert.ok(!ev.cond(S));
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
