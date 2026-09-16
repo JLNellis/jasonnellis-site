@@ -183,6 +183,15 @@ test('payroll sums the hired characters\' weekly', () => {
   const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.hires.analyst = 'analyst';
   assert.equal(E.payroll(S), E.CHARACTERS.mod.weekly + E.CHARACTERS.analyst.weekly);
 });
+test('dealTeamHand: 2–3 candidates, never a filled role, stable within a week', () => {
+  E.setRng(seeded(4));
+  const S = E.newState('gaming','longform'); E.dealTeamHand(S);
+  assert.ok(S.teamHand.length >= 2 && S.teamHand.length <= 3);
+  S.teamHand.forEach(id => assert.ok(E.CHARACTERS[id], 'valid id'));
+  // fill a role → future hands never offer it
+  S.hires.editor = 'editor-pro';
+  for (let i=0;i<20;i++){ E.dealTeamHand(S); assert.ok(!S.teamHand.some(id => E.CHARACTERS[id].role==='editor'), 'no editor offered when filled'); }
+});
 test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
   const S = mk();
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);

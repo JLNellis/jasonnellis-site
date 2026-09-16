@@ -148,6 +148,21 @@
     'analyst':         { role:'analyst', name:'The analyst',           sign:1000,weekly:180, blurb:'Reads the numbers so you don’t. Heat fades slower.',                      fx:{ heatKeep:0.9 } },
   };
   const hiredChar = (S, role) => S.hires[role] ? CHARACTERS[S.hires[role]] : null;
+  // Deals 2–3 candidates for the weekly team shop, never a still-open role's second option in
+  // the same hand and never a role that's already filled.
+  function dealTeamHand(S) {
+    const filled = new Set(HORDER.filter(r => S.hires[r]));
+    const pool = Object.keys(CHARACTERS).filter(id => !filled.has(CHARACTERS[id].role));
+    // pick 2–3 distinct, and never two characters of the same still-open role in one hand
+    const hand = [], seenRole = new Set(); let tries = 0;
+    const want = pool.length >= 3 ? rint(2,3) : pool.length;
+    while (hand.length < want && tries++ < 50) {
+      const id = pick(pool);
+      if (hand.includes(id) || seenRole.has(CHARACTERS[id].role)) continue;
+      hand.push(id); seenRole.add(CHARACTERS[id].role);
+    }
+    S.teamHand = hand; return hand;
+  }
   // Studios: sequential steps after the kit (gear 4/5/6). views multiplies ON TOP of the kit's ×1.33.
   // slots is weekly content capacity (capped at 3 — the scarcity is the game), cap is team size.
   const STUDIOS = {
@@ -269,6 +284,7 @@
     PORDER.forEach(k => { S.plats[k] = { key: k, followers: 0, trendFollowers: 0, heat: 0, fatigue: 0, posts: 0, active: false, proven: false, lastPost: -9, lastAngle: null, weekPosts: 0 }; });
     S.plats[home].active = true;
     S.plats[home].followers = 40;
+    dealTeamHand(S);
     return S;
   }
   const activePlats = S => PORDER.map(k => S.plats[k]).filter(p => p.active);
@@ -1068,7 +1084,7 @@
     return ev;
   }
   function applyEventChoice(S, ev, i) { return ev.choices[i].apply(S); }
-  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; S.crossUsed = false; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
+  function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; S.crossUsed = false; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); dealTeamHand(S); }
 
   function checkEndings(S) {
     if (S.over && S.endKey) return S.endKey;   // honor an ending an event already decided (the Act III exit)
@@ -1118,7 +1134,7 @@
     return Object.assign({}, e, { blurb: raw.replace('{n}', n).replace('{s}', n === 1 ? '' : 's').replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)) }); }
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, CHARACTERS, hiredChar, HORDER, STUDIOS, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, CHARACTERS, hiredChar, dealTeamHand, HORDER, STUDIOS, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
     ACTS, act,
