@@ -125,6 +125,11 @@ const PERSONAS = {
 
 // ======================= run one game =======================
 function resolveEvent(S, ev, persona) {
+  if (ev.id === 'the-exit') {   // a player-authored narrative choice, not a balance lever — personas keep climbing
+    const keep = ev.choices.findIndex(c => c.label === 'Keep climbing');
+    E.applyEventChoice(S, ev, keep >= 0 ? keep : ev.choices.length - 1);
+    return;
+  }
   const prefs = persona.eventPref || ['repair', 'neutral', 'escalate'];
   let idx = -1;
   for (const tag of prefs) { idx = ev.choices.findIndex(c => c.t === tag); if (idx >= 0) break; }
