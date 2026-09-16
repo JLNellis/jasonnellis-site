@@ -4,7 +4,7 @@ kind: "Game"
 tagline: "Fifty-two weeks to turn forty views into a living."
 url: "/the-feed"
 cta: "Play free"
-time: "About 10 min"
+time: "About 20 min"
 released: "Sep 2026"
 order: 1
 ---
