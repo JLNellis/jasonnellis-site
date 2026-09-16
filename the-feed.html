@@ -135,6 +135,15 @@
   .etile.now{border-color:var(--sf-red)} .etile.now .eb b{color:var(--sf-red)}
   .etile.got{border-color:var(--sf-edge)} .etile.locked .ea{filter:none} .etile.locked .eb b{color:var(--sf-fg-2)}
   .etile .ea .badge2{position:absolute;top:5px;left:5px;font-family:var(--sf-sans);font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--sf-edge);color:#06231a} .etile.now .ea .badge2{background:var(--sf-red);color:#fff}
+  /* "creators you've been" shelf */
+  .endhall{margin:14px 0 6px} .endhall .gk{font-size:12.5px;color:var(--sf-fg-2);margin-bottom:8px} .endhall .gk b{color:var(--sf-fg)}
+  .hallgrid{display:flex;flex-direction:column;background:var(--sf-card);border:2px solid var(--sf-line);border-radius:11px;padding:0 10px}
+  .hallrow{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-top:1px solid var(--sf-line)}
+  .hallrow:first-child{border-top:none}
+  .hallrow .hi{flex:none;width:20px;height:20px;display:grid;place-items:center;color:var(--sf-fg-3);margin-top:1px}
+  .hallrow .ht{min-width:0;font-family:var(--sf-sans);font-size:12.5px;line-height:1.4;color:var(--sf-fg-2)}
+  .hallrow .ht b{color:var(--sf-fg)}
+  .hm{display:block;font-size:11.5px;color:var(--sf-fg-2);margin-top:1px}
   .ovbtn{cursor:pointer}
   .ovbtn:focus-visible{outline:3px solid var(--sf-edge);outline-offset:2px;border-radius:6px}
   /* phone: the overhead breakdown is a tap-to-open detail, and the header tightens once you scroll */
@@ -724,6 +733,7 @@
       <span class="sc-copy">The real thing is harder than this. I host a podcast about it.</span>
     </a>
     <div class="endgal" id="endGal"></div>
+    <div class="endhall" id="endHall"></div>
     <button class="btn ghost" id="againBtn">Run it back</button>
     </div>
   </div>
@@ -1518,6 +1528,9 @@
     track('end:'+key);
     const ea=$('endArt'); ea.src=endingArt(key,768)||art(S.niche,640); ea.srcset=endingArt(key,1280)?endingArt(key,1280)+' 2x':''; ea.hidden=!ea.src;
     renderEndGallery(key);
+    pushHallRun({ name:S.name, niche:S.niche, home:top?top.key:null, endKey:key,
+      followers:totalFollowers(), exitChoice:S.flags.exitChoice||null, ts:Date.now() });
+    renderHall();
     render(); openClose($('endOverlay'),true);
   }
   // clipboard with a legacy fallback (blocked/insecure contexts fall back to a hidden textarea)
@@ -1530,6 +1543,11 @@
   // "Here's the ending you got. There are seven others." Found endings persist per browser (no score, no server).
   const END_ORDER=['faded','legend','star','goat','burnout','bankrupt','sellout','cancelled'];
   function foundEndings(){ try{ return JSON.parse(localStorage.getItem('thefeed_endings')||'[]'); }catch(e){ return []; } }
+  // "Creators you've been": past completed runs as short bios, on-device only (see /privacy).
+  // Its own key, separate from the save and the endings gallery. Capped so storage stays small.
+  const HALL_KEY = 'thefeed_hall', HALL_CAP = 12;
+  function hallRuns(){ try{ return JSON.parse(localStorage.getItem(HALL_KEY)||'[]'); }catch(e){ return []; } }
+  function pushHallRun(rec){ try{ const all=[rec, ...hallRuns()].slice(0, HALL_CAP); localStorage.setItem(HALL_KEY, JSON.stringify(all)); }catch(e){} }
   function renderEndGallery(key){
     let found=foundEndings(); if(!found.includes(key)) found.push(key); try{ localStorage.setItem('thefeed_endings',JSON.stringify(found)); }catch(e){}
     const total=END_ORDER.length, n=found.length;
@@ -1538,6 +1556,22 @@
         const artSrc=got?endingArt(k,768):''; 
         return `<div class="etile ${now?'now':got?'got':'locked'}"><div class="ea">${artSrc?`<img src="${artSrc}" alt="" loading="lazy" decoding="async">`:icon(ic[0],'',ic[1])}${now?'<span class="badge2">This run</span>':got?'<span class="badge2">Found</span>':''}</div>
           <div class="eb"><b>${e.kicker}</b><span>${E.endingHint(k)}</span></div></div>`; }).join('')}</div>`; }
+  // "Creators you've been": a compact shelf of past completed runs, from thefeed_hall.
+  function renderHall(){
+    const runs = hallRuns();
+    if(!runs.length){ $('endHall').innerHTML=''; return; }
+    const row = r => {
+      const ic = END_ICON[r.endKey]||['alerts','var(--sf-fg-2)'];
+      const kicker = (E.ENDINGS[r.endKey]&&E.ENDINGS[r.endKey].kicker)||'—';
+      const niche = NICHES[r.niche]?NICHES[r.niche].label:r.niche;
+      const plat = r.home&&PLATFORMS[r.home]?PLATFORMS[r.home].name:'—';
+      const exit = r.exitChoice==='sold'?' · sold out early':r.exitChoice==='independent'?' · went independent':'';
+      return `<div class="hallrow"><span class="hi">${icon(ic[0],'',ic[1])}</span>
+        <span class="ht"><b>“${r.name||'untitled'}”</b> — ${kicker} · ${fmt(r.followers)} followers<span class="hm">${niche} on ${plat}${exit}</span></span></div>`;
+    };
+    $('endHall').innerHTML = `<div class="gk">Creators you've been · <b>${runs.length}</b></div>
+      <div class="hallgrid">${runs.map(row).join('')}</div>`;
+  }
 
   // ---------- start wiring ----------
   function buildStart(){
