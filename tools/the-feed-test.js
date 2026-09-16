@@ -670,6 +670,18 @@ test('platform-turns: eligible only in act 3 with a real top channel', () => {
   S.week = 40; assert.ok(card.cond(S) && S.week >= card.minWeek, 'eligible in act 3');
 });
 
+test('acts 2a deck: the new act-gated cards exist, are well-formed, and ids stay unique', () => {
+  const ids = ['audience-expectations', 'reinvent-or-coast', 'ceiling-plateau', 'format-fatigue',
+    'scale-burnout', 'old-guard', 'growth-pressure', 'sponsor-control', 'legacy-question'];
+  ids.forEach(id => {
+    const c = E.EVENTS.find(e => e.id === id);
+    assert.ok(c, `missing card ${id}`);
+    assert.ok(c.choices.length >= 2 && c.choices.every(ch => ch.t && ch.stakes && typeof ch.apply === 'function'), `${id} malformed`);
+  });
+  const all = E.EVENTS.map(e => e.id);
+  assert.equal(all.length, new Set(all).size, 'duplicate event id in the deck');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
