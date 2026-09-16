@@ -819,10 +819,28 @@ them go") sets `S.flags.firedRecently`; `dealTeamHand` caps the offer at 2 for
 untouched — engine only. Character/event copy is a draft pending Jason's voice pass.
 **Pillar 2 complete.**
 
-**Next: the hall (5a)** — the last Step-1 sub-project: past runs persist as short
-bios on the end screen, reading the existing "how you got here" path line + the
-exit/character flags. Then Step 1 is done and it's decision-on-the-data time (the
-Plausible flatline/replay numbers) for Steps 2–4 of the vision doc.
+### Shipped: the hall (5a) — "Creators you've been" — completes Step 1
+Chrome-only. On a run ending, `endGame` appends a compact bio
+(`{name, niche, home, endKey, followers, exitChoice, ts}`) to a new
+`localStorage.thefeed_hall` key, capped at 12; the end screen grows a **"Creators
+you've been"** shelf below the endings gallery — each past run one line (name,
+ending kicker + icon, followers, niche-on-platform, the Acts-2b exit clause when
+set). Uses the run's ending/path facts now; upgrades to Pillar 4's audience-memory
+sketch later without a migration. Own key, separate from `thefeed_save`/
+`thefeed_endings`; no engine/sim/test change, no `SAVE_VERSION` interaction. One
+`/privacy` clause (+ date bump). `npm test` unchanged (88/88 on its branch; 93/93
+on main with Team-2b). Verified end-to-end in the browser (finished run stored +
+the shelf renders past runs, newest first). Copy here is minimal (bios), no voice
+pass needed. The optional start-screen shelf peek was left out (deferrable).
+
+**STEP 1 OF THE V2 EVOLUTION IS COMPLETE** — save + Acts (Pillar 1) +
+Team-as-characters (Pillar 2) + the hall, all merged and live. The next move per
+the vision doc is **not more building** but **reading the Plausible numbers**: the
+flatline drop between `week:26` and `week:40`, and the replay rate
+(`end:<key>`→`start`). Those decide whether/how far to pursue **Steps 2–4**
+(owned-audience insurance + audience memory · niche/platform builds · the 5b "Big
+Bet" of archetype unlocks / New Game+). Outstanding: **voice passes** on the
+Acts/exit/character/drift copy (all live as drafts).
 
 ## Open items
 
