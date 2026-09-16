@@ -791,6 +791,7 @@
   let resolving = false;   // fix 1: true while the queued moves roll in at week's end (locks input)
   let bizMoreOpen = false;   // UI-only: the collapsed business list after the week's move is spent
   let postLog = {};   // UI-only: last 3 posts per platform {topic, views, week, hit} — feeds the channel cards
+  let beatsSeen = [];   // UI-only: acts whose transition beat has already shown this run (persisted)
   function switchTab(t){ tab = t; SFX.play('click'); render(); }
   // Desktop console: >=980px shows every pane at once (no tab bar). Re-render
   // when we cross the breakpoint so panes fill/empty and hidden flags update.
@@ -847,9 +848,9 @@
   // flags / phase / event; the four UI arrays below can't be recomputed from S.
   // SAVE_VERSION gates the blob: a later build that changes S's shape bumps it, and
   // an older save then fails validSave() and is discarded — no migration code.
-  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 1;
+  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 2;
   function saveRun(){ if(!S) return; try{ localStorage.setItem(SAVE_KEY,
-    JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run } })); }catch(e){} }
+    JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run, beatsSeen } })); }catch(e){} }
   function validSave(d){ return !!(d && d.v===SAVE_VERSION && d.S && d.S.over===false
     && typeof d.S.week==='number' && d.S.week>=1 && d.S.week<=E.CONFIG.years && NICHES[d.S.niche] && d.ui); }
   function loadRun(){ try{ const raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
@@ -861,7 +862,7 @@
     S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam(); closeChanPicker();
     paintBackdrop();
     pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
-    hist = []; lastRecap = null; weekLog = []; queue = []; resolving = false; postLog = {}; snapshot(); tab = 'home';
+    hist = []; lastRecap = null; weekLog = []; queue = []; resolving = false; postLog = {}; beatsSeen = []; snapshot(); tab = 'home';
     run = { restWeeks:0, peakStress:Math.round(S.stress), events:0 };
     track('start', { niche: NICHES[niche].label });
     E.buildHand(S); render(); openClose($('startOverlay'), false);
@@ -875,6 +876,7 @@
     S = saved.S;
     hist = saved.ui.hist || []; postLog = saved.ui.postLog || {};
     lastRecap = saved.ui.lastRecap || null;
+    beatsSeen = saved.ui.beatsSeen || [];
     run = saved.ui.run || { restWeeks:0, peakStress:Math.round(S.stress), events:0 };
     evtThisWeek = false; weekLog = []; queue = []; resolving = false; bizMoreOpen = false; tab = 'home';
     closeTeam(); closeChanPicker(); paintBackdrop(); render();
