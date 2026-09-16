@@ -94,7 +94,7 @@
     years: 52,
     exitWeek: 46,
     // team 2b: drift + morale
-    roommateScale: 40000, moraleStreak: 3,
+    roommateScale: 40000, moraleStreak: 3, firedWindow: 4,
   };
 
   // ======================= RNG helpers =======================
@@ -159,7 +159,8 @@
     const pool = Object.keys(CHARACTERS).filter(id => !filled.has(CHARACTERS[id].role));
     // pick 2–3 distinct, and never two characters of the same still-open role in one hand
     const hand = [], seenRole = new Set(); let tries = 0;
-    const want = pool.length >= 3 ? rint(2,3) : pool.length;
+    let want = pool.length >= 3 ? rint(2,3) : pool.length;
+    if (S.flags.firedRecently && S.week - S.flags.firedRecently < CONFIG.firedWindow) want = Math.min(want, 2);
     while (hand.length < want && tries++ < 50) {
       const id = pick(pool);
       if (hand.includes(id) || seenRole.has(CHARACTERS[id].role)) continue;
@@ -571,7 +572,7 @@
       const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(c.sign), tone: 'loss' });
       log.feed.push({ emoji: ROLE_EMOJI[c.role], text: `Hired ${c.name}. Payroll is now ${money(payroll(S))}/week, due whether or not anyone watched.`, kind: 'good' }); return log; },
     fire(S, role) { const c = hiredChar(S, role); if (!c || !useSlot(S, 'business')) return L();
-      S.hires[role] = null;
+      S.hires[role] = null; S.flags.firedRecently = S.week;
       const log = L(); log.feed.push({ emoji: '👋', text: `Let ${c.name} go. Payroll −${money(c.weekly)}/week. They took the good chair.`, kind: '' }); return log; },
   };
 

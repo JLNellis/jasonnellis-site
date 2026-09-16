@@ -796,6 +796,13 @@ test('team-fraying: needs the morale flag + a hire; "let them walk" drops a hire
   ev.choices.find(c => /walk/i.test(c.label)).apply(S);
   assert.equal(E.hireCount(S), 0); assert.equal(S.flags.morale, 0); assert.ok(S.flags.firedRecently);
 });
+test('firing sets firedRecently and thins the next hand', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.slots.business = 1;
+  E.biz.fire(S, 'mod'); assert.ok(S.flags.firedRecently);
+  // with a recent firing, hands cap smaller
+  let big = 0; for (let i=0;i<40;i++){ E.setRng(seeded(i)); E.dealTeamHand(S); big = Math.max(big, S.teamHand.length); }
+  assert.ok(big <= 2, 'a recent firing thins the offer to at most 2');
+});
 
 // ---------------------------------------------------------------- runner
 let failed = 0;
