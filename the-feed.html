@@ -1477,13 +1477,16 @@
       ['Platforms run',activePlats().length],['Bank',money(S.cash)],['Peak overhead',money(S.peakOverhead)+'/wk']].map(([k,v])=>`<div class="endstat"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
     // "how you got here": the route, so the ending reads as earned by a path, not just a number
     const top=activePlats().slice().sort((a,b)=>b.followers-a.followers)[0];
-    $('endPath').innerHTML=[
+    const pathBits=[
       `Built on <b>${top?PLATFORMS[top.key].name:'—'}</b>`,
       `<b>${S.deals}</b> brand deal${S.deals===1?'':'s'}`,
       `rested <b>${run.restWeeks}</b> week${run.restWeeks===1?'':'s'}`,
       `peak stress <b>${run.peakStress}</b>`,
       `<b>${run.events}</b> event${run.events===1?'':'s'} faced`,
-    ].join(' · ');
+    ];
+    if(S.flags.exitChoice==='sold') pathBits.push('took the <b>buyout</b> in week '+E.CONFIG.exitWeek);
+    else if(S.flags.exitChoice==='independent') pathBits.push('went <b>independent</b> in week '+E.CONFIG.exitWeek);
+    $('endPath').innerHTML=pathBits.join(' · ');
     // share card: one pasteable sentence (no backend, no image)
     const tags=[];
     if(key==='sellout'||S.flags.soldOut) tags.push('sold out'); else if(S.deals===0) tags.push('never took a deal');
