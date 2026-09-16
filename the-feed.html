@@ -325,6 +325,8 @@
     background:var(--sf-card);border:2px solid var(--sf-line);color:var(--sf-fg-2)}
   .tbtn.hire{background:var(--sf-edge);color:#06231a;border-color:var(--sf-edge);font-weight:600}
   .tbtn:disabled{opacity:.4;cursor:not-allowed}
+  .tsec{font-family:var(--sf-mono);font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:var(--sf-fg-3);margin:0 0 6px}
+  .tempty{font-size:12.5px;color:var(--sf-fg-3);padding:6px 0}
   .tnote{margin-top:8px;font-size:11.5px;color:var(--sf-fg-3)}
   /* team management is a dialog: centred on desktop, a bottom sheet on phones */
   .teamdlg{width:min(100% - 32px,520px);background:var(--sf-bg);color:var(--sf-fg);border:2px solid var(--sf-line);border-radius:20px;
@@ -742,7 +744,7 @@
 (function(){
   "use strict";
   const E = window.FeedEngine;
-  const { PLATFORMS, NICHES, TIERS, PORDER, ANGLES, HIRES, HORDER, fmt, money, clamp } = E;
+  const { PLATFORMS, NICHES, TIERS, PORDER, ANGLES, HORDER, CHARACTERS, hiredChar, fmt, money, clamp } = E;
   const $ = id => document.getElementById(id);
   const pick = a => a[Math.floor(Math.random()*a.length)];
 
@@ -759,6 +761,9 @@
   const ANGLE_ICON = { trend:'trend', evergreen:'evergreen', personal:'personal' };
   const BIZ_ICON = { engage:'engage', deal:'deal', upgrade:'upgrade', paid:'membership', team:'team' };
   const HIRE_ICON = { editor:'upgrade', manager:'deal', mod:'team', designer:'membership', producer:'expand', analyst:'stats' };
+  // Display label per role (a role can be filled by either of two characters — editor, designer —
+  // so this is a role label, distinct from the hired character's own name).
+  const ROLE_LABEL = { editor:'Editor', manager:'Manager', mod:'Community mod', designer:'Designer', producer:'Producer', analyst:'Analyst' };
   const nicheIcon = (k, cls) => icon('niche-'+k, cls);
   // Niche illustrations (the-feed-assets/imgs, see CREDITS.md). Add files here as the library grows.
   const IMG = '/the-feed-assets/imgs/';
@@ -860,7 +865,7 @@
   // flags / phase / event; the four UI arrays below can't be recomputed from S.
   // SAVE_VERSION gates the blob: a later build that changes S's shape bumps it, and
   // an older save then fails validSave() and is discarded — no migration code.
-  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 2;
+  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 3;
   function saveRun(){ if(!S) return; try{ localStorage.setItem(SAVE_KEY,
     JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run, beatsSeen } })); }catch(e){} }
   function validSave(d){ return !!(d && d.v===SAVE_VERSION && d.S && d.S.over===false
@@ -974,9 +979,11 @@
     else { if(queue.some(q=>q.cross)) return; queue.push({cross:true,src,dst}); }
     SFX.play('click'); render();
   }
-  function bizDo(id, role){ if(resolving) return; const b0=capture(), log=E.biz[id](S, role); applyLog(log);
-    const label = id==='hire' ? 'Hired '+(HIRES[role]?HIRES[role].label.toLowerCase():'help')
-                : id==='fire' ? 'Let go '+(HIRES[role]?HIRES[role].label.toLowerCase():'someone')
+  function bizDo(id, arg){ if(resolving) return; const b0=capture();
+    const preChar = id==='fire' ? hiredChar(S, arg) : null;   // capture before the fire mutates S.hires
+    const log=E.biz[id](S, arg); applyLog(log);
+    const label = id==='hire' ? 'Hired '+(CHARACTERS[arg]?CHARACTERS[arg].name:'help')
+                : id==='fire' ? 'Let go '+(preChar?preChar.name:'someone')
                 : id==='upgrade' ? (E.studio(S)?'Signed for '+E.studio(S).name.toLowerCase():'Upgraded gear') : BIZ_DONE[id]||id;
     logResult(label, icon(id==='hire'||id==='fire'?'team':(BIZ_ICON[id]||'engage')), b0, log, true, id); render(); }
   function endWeek(){ if(resolving) return;
@@ -1255,7 +1262,7 @@
         :{id:'upgrade',ic:'🛠️',t:'Upgrade gear ('+money(up.cost)+')',d:up.ok?'Better production on every channel. Views ×'+kitMult(S.gear).toFixed(2)+' → ×'+kitMult(S.gear+1).toFixed(2)+'.':up.reason,on:up.ok,f:[['-'+money(up.cost),'dn'],['×'+kitMult(up.next).toFixed(2)+' views','up']]},
       S.members>0?{id:'paid',ic:'⭐',t:'Membership live',d:fmt(S.members)+' members · '+money(S.members*E.CONFIG.memberRate)+'/week. Grows with new followers, churns when you go quiet.',on:false,f:[]}
         :{id:'paid',ic:'⭐',t:'Launch paid membership',d:canPaid?'Charge the true fans. They said they would pay. Find out.':'Locked until '+fmt(E.CONFIG.paidUnlock)+' followers.',on:canPaid&&!noBiz,f:[['+members','up']]},
-      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>HIRES[r].label).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. They want paying whether or not anyone watched.',on:true,f:[],go:'Manage ▸'},
+      {id:'team',ic:'🧑‍💻',t:'Team ('+E.hireCount(S)+'/'+E.hireCap(S)+')',d:E.hireCount(S)?HORDER.filter(r=>S.hires[r]).map(r=>hiredChar(S,r).name).join(', ')+' · '+money(E.payroll(S))+'/week':'Hire help. They want paying whether or not anyone watched.',on:true,f:[],go:'Manage ▸'},
     ];
     // a move already made this week is shown once, as its result — not again as a disabled twin
     const bizCards=biz.filter(b=>!weekLog.some(e=>e.biz&&e.id===b.id));
@@ -1314,10 +1321,22 @@
   $('bizDlgClose').onclick=closeBizSheet;
   bizDlg.addEventListener('click',e=>{ if(e.target===bizDlg) closeBizSheet(); });   // click the backdrop to dismiss
   function teamRowsHTML(){ const noBiz=S.slots.business<=0;
-    return `<div class="team">${HORDER.map(r=>{ const h=HIRES[r], info=E.hireInfo(S,r), have=S.hires[r];
-        return `<div class="trow"><span class="te">${hireAvatarHTML(r)}</span><span class="tt"><b>${h.label}</b><span>${h.blurb}</span></span>
-          <span class="tcost">${money(h.sign)} to sign · ${money(h.weekly)}/wk</span>
-          ${have?`<button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button>`:`<button class="tbtn hire" data-hire="${r}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button>`}</div>`; }).join('')}</div>
+    // (a) this week's dealt candidates — never a role that's already filled
+    const offered = S.teamHand.filter(id=>!S.hires[CHARACTERS[id].role]);
+    const candRows = offered.map(id=>{ const c=CHARACTERS[id], info=E.hireInfo(S,id);
+      return `<div class="trow"><span class="te">${hireAvatarHTML(c.role)}</span><span class="tt"><b>${c.name} · ${ROLE_LABEL[c.role]}</b><span>${c.blurb}</span></span>
+        <span class="tcost">${money(c.sign)} to sign · ${money(c.weekly)}/wk</span>
+        <button class="tbtn hire" data-hire="${id}" ${info.ok?'':'disabled'} title="${info.reason}">Hire</button></div>`; }).join('');
+    // (b) the current roster
+    const hiredRoles = HORDER.filter(r=>S.hires[r]);
+    const teamRows = hiredRoles.map(r=>{ const c=hiredChar(S,r);
+      return `<div class="trow"><span class="te">${hireAvatarHTML(r)}</span><span class="tt"><b>${c.name} · ${ROLE_LABEL[r]}</b><span>${c.blurb}</span></span>
+        <span class="tcost">${money(c.weekly)}/wk</span>
+        <button class="tbtn" data-fire="${r}" ${noBiz?'disabled':''}>Let go</button></div>`; }).join('');
+    return `<div class="team">
+        <div class="tsec">On offer this week</div>${candRows || '<div class="tempty">No new faces this week.</div>'}
+        <div class="tsec" style="margin-top:12px">Your team</div>${teamRows || '<div class="tempty">No one on the payroll yet.</div>'}
+      </div>
       <div class="tnote">Room for ${E.hireCap(S)}${E.hireCap(S)<6?' · a bigger space holds more':''}. Hiring and letting go each take your business slot${noBiz?' — yours is spent this week':''}.</div>`; }
   function openTeam(){ if(!S) return; SFX.play('click');
     $('teamDlgSub').textContent=`${E.hireCount(S)} of ${E.hireCap(S)} seats · payroll ${money(E.payroll(S))}/wk`;
@@ -1370,14 +1389,15 @@
     const ob=E.overheadBreakdown(S), studio=E.studio(S), cap=E.contentSlots(S), up=E.upgradeInfo(S);
     const roster=HORDER.filter(r=>S.hires[r]);
     const team=roster.length
-      ? roster.map(r=>`<span class="stm">${hireAvatarHTML(r)}${HIRES[r].label}</span>`).join('')
+      ? roster.map(r=>`<span class="stm">${hireAvatarHTML(r)}${hiredChar(S,r).name}</span>`).join('')
       : '<span class="stm solo">Working solo</span>';
     const oline=(k,v)=>`<div class="sol"><span>${k}</span><b>${v}</b></div>`;
+    const desChar=hiredChar(S,'designer');
     target.innerHTML=`<div class="studio">
       <div class="scard hasart">
         <img class="studio-art" src="${studioArt(S.gear,640)}" srcset="${studioArt(S.gear,320)} 320w, ${studioArt(S.gear,640)} 640w" sizes="300px" width="1536" height="1024" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.srcset='${studioArtFallback(S.gear,320)} 320w, ${studioArtFallback(S.gear,640)} 640w';this.src='${studioArtFallback(S.gear,640)}';}">
         <div class="sk">${studio?studio.name:'Setup · kit tier '+S.gear+' of 3'}</div>
-        <div class="sv">Views ×${kitMult(S.gear).toFixed(2)}${S.hires.designer?' <small style="font-weight:400;color:var(--sf-fg-2)">· Designer ×1.15 on top</small>':''}</div>
+        <div class="sv">Views ×${kitMult(S.gear).toFixed(2)}${desChar?` <small style="font-weight:400;color:var(--sf-fg-2)">· Designer ×${desChar.fx.viewsBump.toFixed(2)} on top</small>`:''}</div>
         <ol class="ladder">${(S.gear<=3
             ? [0,1,2,3].map(g=>({g,lab:'Tier '+g,m:'×'+kitMult(g).toFixed(2)})).concat([{g:4,lab:'Studios',m:'×'+kitMult(4).toFixed(1)+'–'+kitMult(6).toFixed(1)}])
             : [{g:3,lab:'Kit',m:'×'+kitMult(3).toFixed(2)}].concat([4,5,6].map(g=>({g,lab:E.STUDIOS[g].name.replace('The ',''),m:'×'+kitMult(g).toFixed(2)}))))
