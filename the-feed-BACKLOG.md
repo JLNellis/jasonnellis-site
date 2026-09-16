@@ -801,10 +801,28 @@ verified end-to-end in the browser (dealt candidates, hire fills the role + payr
 offer varies week to week, v2 saves discarded). Character copy is a draft pending
 Jason's voice pass.
 
-**Next: Team-as-characters 2b** — drift-with-scale (the roommate-editor drowns at
-50K → level-up-or-let-go; the edgy designer's backlash *detonates* in Act II/III)
-and morale-as-flag (stress on fumes+ for N weeks → quit/complaint events weighted
-up; firing thins/prices the pool). Then the hall (5a).
+### Shipped: Team-as-characters 2b — drift + morale (Pillar 2, part b) — completes Pillar 2
+The cast's relationships. Three flagged events on the consequence engine + the 2a
+cast: **`roommate-drift`** (the `editor-roommate` past `CONFIG.roommateScale`
+40K followers → level them up for cash, or let them go for a rep hit — fires once
+via `S.flags.roommateDrift`); **`edgy-detonation`** (the `designer-edgy` in act 2+ →
+the backlash lands; stand by them and eat it, or rein it in and lose the edge — once
+via `S.flags.edgyDetonated`); **`team-fraying`** (morale). Morale is a **hidden
+`S.hiStressStreak` counter** in `settleWeek` (consecutive fumes+ weeks, reset on a
+calm week — never displayed) that sets `S.flags.morale` at `CONFIG.moraleStreak`
+(3) when you have a hire → an overworked hire threatens to walk (talk them down for
+cash + rest, or let them go). **Firing thins the pool:** `biz.fire` (and every "let
+them go") sets `S.flags.firedRecently`; `dealTeamHand` caps the offer at 2 for
+`CONFIG.firedWindow` (4) weeks — word gets around. `npm test` 93/93; `npm run sim`
+6/6 on seeds 7/42/123 **with no retune** (the event costs were well-calibrated). No
+`SAVE_VERSION` bump (all new state is absent-means-default). `the-feed.html`
+untouched — engine only. Character/event copy is a draft pending Jason's voice pass.
+**Pillar 2 complete.**
+
+**Next: the hall (5a)** — the last Step-1 sub-project: past runs persist as short
+bios on the end screen, reading the existing "how you got here" path line + the
+exit/character flags. Then Step 1 is done and it's decision-on-the-data time (the
+Plausible flatline/replay numbers) for Steps 2–4 of the vision doc.
 
 ## Open items
 
