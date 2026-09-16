@@ -779,8 +779,32 @@ the browser (exit fires at 46; Sell → Sold-out screen with the buyout in Bank 
 path clause). Card copy is a draft pending Jason's voice pass. **Pillar 1 (Acts) is
 complete.**
 
-**Next: Team-as-characters (Pillar 2)** — the capped cast, dealt hiring, drift with
-scale, morale-as-flag. Then the hall (5a).
+### Shipped: Team-as-characters 2a — the dealt cast + traits (Pillar 2, part a)
+The fix for the playtester's "hires are safe bets with no trade-offs." The six
+always-available role modifiers became an **8-character cast dealt as a weekly
+roguelike shop**. **Engine:** `CHARACTERS` (keyed by id; editor + designer each
+offer an in-role bet — loyal-cheap roommate vs pricey pro, steady vs edgy — the
+other four roles are one hire each) + `hiredChar(S, role)`; **`S.hires[role]`
+went boolean → character id** and the ~8 modifier sites (`viewsMult`,
+`stressCost`, `repHit`, `loseFollowers`, `settleWeek` heat, `doPost` tail,
+`biz.deal`, `payroll`) now read magnitudes from the hired character's `fx`;
+`dealTeamHand` fills a weekly `S.teamHand` (2–3 candidates, never a filled role,
+fixed within the week); `biz.hire(S, id)` / `hireInfo(S, id)` take a candidate id,
+`biz.fire(S, role)` a role. The edgy designer is **not** a strict upgrade — cheaper
++ more reach but its `edgy` flag makes hostile-event rep hits bite harder.
+**Sim:** `nextHire` picks from the dealt hand by a per-persona id-preference list —
+6/6 on seeds 7/42/123 **with no cast retune** (the `fx` mapped cleanly to the old
+flat modifiers). **Chrome:** the Team panel shows "On offer this week" (candidate
+cards: name, role, trait, sign + weekly, Hire) + "Your team" (roster with Let go);
+`SAVE_VERSION` bumped **2 → 3** (the `S.hires` shape changed). `npm test` 85/85;
+verified end-to-end in the browser (dealt candidates, hire fills the role + payroll,
+offer varies week to week, v2 saves discarded). Character copy is a draft pending
+Jason's voice pass.
+
+**Next: Team-as-characters 2b** — drift-with-scale (the roommate-editor drowns at
+50K → level-up-or-let-go; the edgy designer's backlash *detonates* in Act II/III)
+and morale-as-flag (stress on fumes+ for N weeks → quit/complaint events weighted
+up; firing thins/prices the pool). Then the hall (5a).
 
 ## Open items
 
