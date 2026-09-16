@@ -682,6 +682,15 @@ test('acts 2a deck: the new act-gated cards exist, are well-formed, and ids stay
   assert.equal(all.length, new Set(all).size, 'duplicate event id in the deck');
 });
 
+test('checkEndings honors an ending an event already set (the exit mechanism)', () => {
+  const S = E.newState('gaming', 'longform'); S.week = 46;
+  S.over = true; S.endKey = 'sellout';
+  assert.equal(E.checkEndings(S), 'sellout');
+});
+test('CONFIG.exitWeek is a late-Act-III week', () => {
+  assert.ok(E.CONFIG.exitWeek > E.CONFIG.phases.midEnd && E.CONFIG.exitWeek < E.CONFIG.years);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

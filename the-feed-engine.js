@@ -92,6 +92,7 @@
     phases: { earlyEnd: 17, midEnd: 35 }, // early 2–17 · mid 18–35 · late 36–52
     taxRate: 0.35,
     years: 52,
+    exitWeek: 46,
   };
 
   // ======================= RNG helpers =======================
@@ -1037,6 +1038,7 @@
   function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; S.crossUsed = false; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
 
   function checkEndings(S) {
+    if (S.over && S.endKey) return S.endKey;   // honor an ending an event already decided (the Act III exit)
     const tot = totalFollowers(S); let key = null;
     if (S.rep <= 0) key = 'cancelled';
     else if (S.cash < CONFIG.bankruptFloor) key = 'bankrupt';
