@@ -648,6 +648,14 @@ test('choices that echo: Take the bag flags soldOut and makes crypto-fallout eli
   assert.ok(!fallout.cond(S), 'the echo window closes');
 });
 
+test('act(S): 1–17 → act 1, 18–35 → act 2, 36–52 → act 3', () => {
+  const S = E.newState('gaming', 'longform');
+  const at = w => { S.week = w; return E.act(S); };
+  assert.equal(at(1), 1); assert.equal(at(17), 1);
+  assert.equal(at(18), 2); assert.equal(at(35), 2);
+  assert.equal(at(36), 3); assert.equal(at(52), 3);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

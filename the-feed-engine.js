@@ -281,6 +281,11 @@
   function platPolish(S, p) { return p.posts * 3 + S.gear * 9; }   // what tiers are cut on (TIERCUT)
   function platTier(S, p) { const pol = platPolish(S, p); let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
 
+  // Acts: the run's three chapters, cut on the phase boundaries that already exist.
+  // 1 "Nobody's watching" (≤earlyEnd) · 2 "The business" (≤midEnd) · 3 "The ceiling".
+  const ACTS = { 1: 'Nobody’s watching', 2: 'The business', 3: 'The ceiling' };
+  function act(S) { const p = CONFIG.phases; return S.week <= p.earlyEnd ? 1 : S.week <= p.midEnd ? 2 : 3; }
+
   // --- slots & stress ---
   function useSlot(S, kind) { if (S.slots[kind] <= 0) return false; S.slots[kind]--; return true; }
   function addStress(S, n) { S.stress = clamp(S.stress + n, 0, 100); }
@@ -987,6 +992,7 @@
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, HIRES, HORDER, STUDIOS, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
+    ACTS, act,
     useSlot, addStress, stressBand, hasStudio, studio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, overheadAt, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, postCard, previewPost, buildHand, applyMove, doPost, startPlatform, crosspost, crossOptions, biz,
