@@ -1518,6 +1518,8 @@
     track('end:'+key);
     const ea=$('endArt'); ea.src=endingArt(key,768)||art(S.niche,640); ea.srcset=endingArt(key,1280)?endingArt(key,1280)+' 2x':''; ea.hidden=!ea.src;
     renderEndGallery(key);
+    pushHallRun({ name:S.name, niche:S.niche, home:top?top.key:null, endKey:key,
+      followers:totalFollowers(), exitChoice:S.flags.exitChoice||null, ts:Date.now() });
     render(); openClose($('endOverlay'),true);
   }
   // clipboard with a legacy fallback (blocked/insecure contexts fall back to a hidden textarea)
@@ -1530,6 +1532,11 @@
   // "Here's the ending you got. There are seven others." Found endings persist per browser (no score, no server).
   const END_ORDER=['faded','legend','star','goat','burnout','bankrupt','sellout','cancelled'];
   function foundEndings(){ try{ return JSON.parse(localStorage.getItem('thefeed_endings')||'[]'); }catch(e){ return []; } }
+  // "Creators you've been": past completed runs as short bios, on-device only (see /privacy).
+  // Its own key, separate from the save and the endings gallery. Capped so storage stays small.
+  const HALL_KEY = 'thefeed_hall', HALL_CAP = 12;
+  function hallRuns(){ try{ return JSON.parse(localStorage.getItem(HALL_KEY)||'[]'); }catch(e){ return []; } }
+  function pushHallRun(rec){ try{ const all=[rec, ...hallRuns()].slice(0, HALL_CAP); localStorage.setItem(HALL_KEY, JSON.stringify(all)); }catch(e){} }
   function renderEndGallery(key){
     let found=foundEndings(); if(!found.includes(key)) found.push(key); try{ localStorage.setItem('thefeed_endings',JSON.stringify(found)); }catch(e){}
     const total=END_ORDER.length, n=found.length;
