@@ -94,7 +94,7 @@
     years: 52,
     exitWeek: 46,
     // team 2b: drift + morale
-    roommateScale: 40000,
+    roommateScale: 40000, moraleStreak: 3,
   };
 
   // ======================= RNG helpers =======================
@@ -278,7 +278,7 @@
       name: '', niche, week: 1, phase: 'play',
       cash: CONFIG.startCash, stress: CONFIG.startStress, rep: n.rep0,
       gear: 0, deals: 0, members: 0,
-      band: 'normal', redlineStreak: 0,
+      band: 'normal', redlineStreak: 0, hiStressStreak: 0,
       slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
       hires: { editor: null, manager: null, mod: null, designer: null, producer: null, analyst: null }, teamHand: [],
       tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
@@ -999,6 +999,16 @@
         { t: 'repair', ci: '✂️', label: 'Rein it in — let them go', desc: 'Cut the edge (and the designer). Smaller hit.', stakes: 'rep −3–7 · lose the edgy designer · the pool thins',
           apply: S => { S.flags.edgyDetonated = S.week; S.hires.designer = null; S.flags.firedRecently = S.week; const r = repHit(S, 3, 7); return fed('✂️', `You cut the edge loose — and the designer with it. The reach cools, the temperature drops. Rep −${r}.`, ''); } },
       ] },
+    { id: 'team-fraying', kind: 'neutral', emoji: '😮‍💨', title: 'Someone on the team is done.', badge: 'Morale',
+      cond: S => !!S.flags.morale && hireCount(S) >= 1,
+      priority: S => !!S.flags.morale,
+      text: 'Weeks of running on fumes, and it shows — not just in you, in them. One of your people pulls you aside: they can’t keep doing this. They mean it.',
+      choices: [
+        { t: 'repair', ci: '🤝', label: 'Talk them down', desc: 'A bonus, some time off, an actual apology.', stakes: 'pay ~$800 (capped) · −15 stress · keep them · resets the strain',
+          apply: S => { S.flags.morale = 0; S.hiStressStreak = 0; addStress(S, -15); const cost = bite(S, 800, 0.4); return spend(S, '🤝', `You paid attention (and a bonus): −${money(cost)}. They stayed. You both finally slept.`, cost, 'good'); } },
+        { t: 'escalate', ci: '🚪', label: 'Let them walk', desc: 'You can’t fix it this week. Wish them well.', stakes: 'lose a hire · rep −3–7 · the pool thins',
+          apply: S => { S.flags.morale = 0; S.hiStressStreak = 0; const roles = HORDER.filter(r => S.hires[r]); const role = pick(roles); const c = hiredChar(S, role); S.hires[role] = null; S.flags.firedRecently = S.week; const r = repHit(S, 3, 7); return fed('🚪', `${c ? c.name : 'Someone'} walked out. Payroll’s lighter; so is the room. Rep −${r}.`, 'bad'); } },
+      ] },
   ];
 
   // ======================= weekly orchestration =======================
@@ -1074,6 +1084,9 @@
     const band = stressBand(S);
     if (band !== S.band) { log.feed.push({ ...BAND_MSG[band] }); S.band = band; }
     S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
+    // morale: sustained fumes+ frays the team (a hidden streak, never shown; not a meter)
+    S.hiStressStreak = (band === 'fumes' || band === 'redline') ? (S.hiStressStreak || 0) + 1 : 0;
+    if (S.hiStressStreak >= CONFIG.moraleStreak && hireCount(S) >= 1) S.flags.morale = S.week;
     addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
     S.newFollowers = 0;
     // seed for the platform-dependency arc: a creator who bet on one channel by the business act

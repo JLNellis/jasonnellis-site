@@ -783,6 +783,19 @@ test('edgy-detonation: eligible only with the edgy designer in act 2+, fires onc
   ev.choices.find(c => /rein it in/i.test(c.label)).apply(S);
   assert.equal(S.hires.designer, null); assert.ok(S.flags.edgyDetonated); assert.ok(!ev.cond(S));
 });
+test('hiStressStreak counts consecutive fumes+ weeks and sets the morale flag', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod';
+  assert.equal(S.hiStressStreak, 0);
+  for (let i=0;i<E.CONFIG.moraleStreak;i++){ S.stress = 95; S.slots.content = 0; E.settleWeek(S); }
+  assert.ok(S.hiStressStreak >= E.CONFIG.moraleStreak); assert.ok(S.flags.morale);
+  S.stress = 10; E.settleWeek(S); assert.equal(S.hiStressStreak, 0);   // a calm week resets
+});
+test('team-fraying: needs the morale flag + a hire; "let them walk" drops a hire', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.flags.morale = 5;
+  const ev = E.EVENTS.find(e => e.id === 'team-fraying'); assert.ok(ev.cond(S) && ev.priority(S));
+  ev.choices.find(c => /walk/i.test(c.label)).apply(S);
+  assert.equal(E.hireCount(S), 0); assert.equal(S.flags.morale, 0); assert.ok(S.flags.firedRecently);
+});
 
 // ---------------------------------------------------------------- runner
 let failed = 0;
