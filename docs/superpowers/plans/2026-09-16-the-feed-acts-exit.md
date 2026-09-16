@@ -92,6 +92,13 @@ test('the-exit: Go independent → legend with an owned audience + rep, else fad
   const C = E.newState('gaming', 'longform'); C.week = 46; C.rep = 30; C.members = 500;   // owns, but low rep
   E.applyEventChoice(C, ev, indie); assert.equal(C.endKey, 'faded');
 });
+test('the-exit is never surfaced by the random draw (forced-only)', () => {
+  E.setRng(seeded(9));
+  for (let wk = 2; wk <= 52; wk++) for (let i = 0; i < 40; i++) {
+    const S = E.newState('gaming', 'longform'); S.week = wk; S.plats.longform.followers = 40000; S.rep = 55; S.deals = 3;
+    const ev = E.drawEvent(S); if (ev && ev.id === 'the-exit') assert.fail('the-exit must not appear in the random deck');
+  }
+});
 test('the-exit: Keep climbing leaves the run alive and changes no state', () => {
   const S = E.newState('gaming', 'longform'); S.week = 46; const snap = JSON.stringify(S);
   const ev = E.EVENTS.find(e => e.id === 'the-exit'); const keep = ev.choices.findIndex(c => c.label === 'Keep climbing');
@@ -109,6 +116,7 @@ test('the-exit: Keep climbing leaves the run alive and changes no state', () => 
 
 ```js
     { id: 'the-exit', kind: 'neutral', emoji: '🚪', title: 'Someone wants to buy the whole thing.', badge: 'The offer',
+      cond: () => false,   // never in the RANDOM deck — surfaced ONLY by the forced pre-empt in rollEvent (which bypasses cond)
       text: 'A media company slid a number across the table for the channel — the name, the audience, the back catalogue, all of it. A year in, this is the fork: take the money and walk, keep it and see how far it goes, or hand the reins to nobody and go independent.',
       choices: [
         { t: 'escalate', ci: '💰', label: 'Sell the channel', desc: 'Take the buyout. Walk away rich.', stakes: 'a buyout hits the bank, then the run ends — Sold out',
