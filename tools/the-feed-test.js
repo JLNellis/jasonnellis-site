@@ -765,6 +765,45 @@ test('rollEvent does not force the exit before exitWeek', () => {
   for (let i = 0; i < 50; i++) { const ev = E.rollEvent(S); if (ev && ev.id === 'the-exit') assert.fail('exit fired early'); }
 });
 
+// ---------------------------------------------------------------- team 2b: drift + morale
+test('roommate-drift: eligible only with the roommate editor at scale, fires once, "let go" clears the editor', () => {
+  const S = E.newState('gaming','longform'); S.plats.longform.followers = 45000; S.hires.editor = 'editor-roommate';
+  const ev = E.EVENTS.find(e => e.id === 'roommate-drift'); assert.ok(ev && ev.cond(S) && ev.priority(S));
+  const noPro = E.newState('gaming','longform'); noPro.plats.longform.followers = 45000; noPro.hires.editor = 'editor-pro';
+  assert.ok(!ev.cond(noPro), 'not for the pro');
+  const letGo = ev.choices.find(c => c.label === 'Let them go'); letGo.apply(S);
+  assert.equal(S.hires.editor, null); assert.ok(S.flags.roommateDrift && S.flags.firedRecently);
+  assert.ok(!ev.cond(S), 'fires once');
+});
+test('edgy-detonation: eligible only with the edgy designer in act 2+, fires once', () => {
+  const S = E.newState('gaming','longform'); S.week = 20; S.hires.designer = 'designer-edgy';
+  const ev = E.EVENTS.find(e => e.id === 'edgy-detonation'); assert.ok(ev && ev.cond(S));
+  const S1 = E.newState('gaming','longform'); S1.week = 5; S1.hires.designer = 'designer-edgy';
+  assert.ok(!ev.cond(S1), 'not in act 1');
+  ev.choices.find(c => /rein it in/i.test(c.label)).apply(S);
+  assert.equal(S.hires.designer, null); assert.ok(S.flags.edgyDetonated); assert.ok(!ev.cond(S));
+});
+test('hiStressStreak counts consecutive fumes+ weeks and sets the morale flag', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod';
+  assert.equal(S.hiStressStreak, 0);
+  for (let i=0;i<E.CONFIG.moraleStreak;i++){ S.stress = 95; S.slots.content = 0; E.settleWeek(S); }
+  assert.ok(S.hiStressStreak >= E.CONFIG.moraleStreak); assert.ok(S.flags.morale);
+  S.stress = 10; E.settleWeek(S); assert.equal(S.hiStressStreak, 0);   // a calm week resets
+});
+test('team-fraying: needs the morale flag + a hire; "let them walk" drops a hire', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.flags.morale = 5;
+  const ev = E.EVENTS.find(e => e.id === 'team-fraying'); assert.ok(ev.cond(S) && ev.priority(S));
+  ev.choices.find(c => /walk/i.test(c.label)).apply(S);
+  assert.equal(E.hireCount(S), 0); assert.equal(S.flags.morale, 0); assert.ok(S.flags.firedRecently);
+});
+test('firing sets firedRecently and thins the next hand', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.slots.business = 1;
+  E.biz.fire(S, 'mod'); assert.ok(S.flags.firedRecently);
+  // with a recent firing, hands cap smaller
+  let big = 0; for (let i=0;i<40;i++){ E.setRng(seeded(i)); E.dealTeamHand(S); big = Math.max(big, S.teamHand.length); }
+  assert.ok(big <= 2, 'a recent firing thins the offer to at most 2');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
