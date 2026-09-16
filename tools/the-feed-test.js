@@ -682,6 +682,62 @@ test('acts 2a deck: the new act-gated cards exist, are well-formed, and ids stay
   assert.equal(all.length, new Set(all).size, 'duplicate event id in the deck');
 });
 
+test('checkEndings honors an ending an event already set (the exit mechanism)', () => {
+  const S = E.newState('gaming', 'longform'); S.week = 46;
+  S.over = true; S.endKey = 'sellout';
+  assert.equal(E.checkEndings(S), 'sellout');
+});
+test('CONFIG.exitWeek is a late-Act-III week', () => {
+  assert.ok(E.CONFIG.exitWeek > E.CONFIG.phases.midEnd && E.CONFIG.exitWeek < E.CONFIG.years);
+});
+
+test('the-exit: Sell ends the run as sellout with a buyout banked', () => {
+  const S = E.newState('gaming', 'longform'); S.week = 46; S.plats.longform.followers = 40000; S.cash = 1000;
+  const ev = E.EVENTS.find(e => e.id === 'the-exit'); const sell = ev.choices.findIndex(c => c.label === 'Sell the channel');
+  E.applyEventChoice(S, ev, sell);
+  assert.equal(S.over, true); assert.equal(S.endKey, 'sellout'); assert.ok(S.cash > 1000, 'buyout banked'); assert.equal(S.flags.exitChoice, 'sold');
+});
+test('the-exit: Go independent → legend with an owned audience + rep, else faded', () => {
+  const ev = E.EVENTS.find(e => e.id === 'the-exit'); const indie = ev.choices.findIndex(c => c.label === 'Go independent');
+  const A = E.newState('gaming', 'longform'); A.week = 46; A.rep = 60; A.plats.writing.active = true;   // owns a newsletter
+  E.applyEventChoice(A, ev, indie); assert.equal(A.endKey, 'legend'); assert.equal(A.over, true);
+  const B = E.newState('gaming', 'longform'); B.week = 46; B.rep = 60;   // owns nothing
+  E.applyEventChoice(B, ev, indie); assert.equal(B.endKey, 'faded');
+  const C = E.newState('gaming', 'longform'); C.week = 46; C.rep = 30; C.members = 500;   // owns, but low rep
+  E.applyEventChoice(C, ev, indie); assert.equal(C.endKey, 'faded');
+});
+test('the-exit is never surfaced by the random draw (forced-only)', () => {
+  E.setRng(seeded(9));
+  for (let wk = 2; wk <= 52; wk++) for (let i = 0; i < 40; i++) {
+    const S = E.newState('gaming', 'longform'); S.week = wk; S.plats.longform.followers = 40000; S.rep = 55; S.deals = 3;
+    const ev = E.drawEvent(S); if (ev && ev.id === 'the-exit') assert.fail('the-exit must not appear in the random deck');
+  }
+});
+test('the-exit: Keep climbing leaves the run alive and changes no state', () => {
+  const S = E.newState('gaming', 'longform'); S.week = 46; const snap = JSON.stringify(S);
+  const ev = E.EVENTS.find(e => e.id === 'the-exit'); const keep = ev.choices.findIndex(c => c.label === 'Keep climbing');
+  E.applyEventChoice(S, ev, keep);
+  assert.equal(S.over, false); assert.equal(S.endKey, null);
+  // no economy mutation (feed line only): the sim relies on this
+  const after = JSON.parse(JSON.stringify(S)); delete after.feed; const b = JSON.parse(snap); delete b.feed;
+  assert.deepEqual(after, b);
+});
+
+test('rollEvent forces the exit exactly once at exitWeek, pre-empting the roll', () => {
+  E.setRng(seeded(11));
+  const S = E.newState('gaming', 'longform'); S.week = E.CONFIG.exitWeek; S.plats.longform.followers = 40000;
+  const ev = E.rollEvent(S);
+  assert.ok(ev && ev.id === 'the-exit', 'exit forced at exitWeek');
+  assert.equal(S.flags.exitOffered, E.CONFIG.exitWeek);
+  // not again next call at the same week
+  assert.ok(!(E.rollEvent(S) || {}).id || (E.rollEvent(S) || {}).id !== 'the-exit');
+});
+test('rollEvent does not force the exit before exitWeek', () => {
+  E.setRng(seeded(11));
+  const S = E.newState('gaming', 'longform'); S.week = E.CONFIG.exitWeek - 1;
+  for (let i = 0; i < 50; i++) { const ev = E.rollEvent(S); if (ev && ev.id === 'the-exit') assert.fail('exit fired early'); }
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

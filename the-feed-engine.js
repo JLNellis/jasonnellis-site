@@ -92,6 +92,7 @@
     phases: { earlyEnd: 17, midEnd: 35 }, // early 2–17 · mid 18–35 · late 36–52
     taxRate: 0.35,
     years: 52,
+    exitWeek: 46,
   };
 
   // ======================= RNG helpers =======================
@@ -929,6 +930,21 @@
         { t: 'escalate', ci: '💰', label: 'Cash out the goodwill while it’s hot', desc: 'Monetize everything. Ask the meaning question next year.', stakes: '+$800 plus 2% of followers · rep −3–7',
           apply: S => { const amt = Math.round(800 + totalFollowers(S) * 0.02); S.cash += amt; S.grossEarned += amt; const r = repHit(S, 3, 7); const log = fed('💰', `You turned the goodwill into money while the turning was good: +${money(amt)}. The meaning question can wait. It always waits. Rep −${r}.`, ''); log.floats.push({ anchor:'cash', text:'+'+money(amt), tone:'cash' }); return log; } },
       ] },
+    { id: 'the-exit', kind: 'neutral', emoji: '🚪', title: 'Someone wants to buy the whole thing.', badge: 'The offer',
+      cond: () => false,   // never in the RANDOM deck — surfaced ONLY by the forced pre-empt in rollEvent (which bypasses cond)
+      text: 'A media company slid a number across the table for the channel — the name, the audience, the back catalogue, all of it. A year in, this is the fork: take the money and walk, keep it and see how far it goes, or hand the reins to nobody and go independent.',
+      choices: [
+        { t: 'escalate', ci: '💰', label: 'Sell the channel', desc: 'Take the buyout. Walk away rich.', stakes: 'a buyout hits the bank, then the run ends — Sold out',
+          apply: S => { const buyout = Math.round(totalFollowers(S) * 3); S.cash += buyout; S.grossEarned += buyout; S.flags.exitChoice = 'sold'; S.over = true; S.endKey = 'sellout';
+            const log = fed('💰', `You sold. ${money(buyout)} cleared, and the channel is someone else's problem now. Your name is still on it — that was the expensive part.`, 'big'); log.floats.push({ anchor: 'cash', text: '+' + money(buyout), tone: 'cash' }); return log; } },
+        { t: 'neutral', ci: '🕊️', label: 'Go independent', desc: 'Walk away on your own terms, with what you own.', stakes: 'run ends — Niche legend if you own an audience (newsletter/members) with rep ≥ 50, else Faded out',
+          apply: S => { const owned = S.members > 0 || S.plats.writing.active; S.flags.exitChoice = 'independent'; S.over = true; S.endKey = (owned && S.rep >= 50) ? 'legend' : 'faded';
+            return fed('🕊️', S.endKey === 'legend'
+              ? 'You walked, and the audience that was actually yours walked with you. No buyer, no boss, no ceiling but your own.'
+              : 'You walked, and found out how much of it you never owned. The reach was rented; it stayed with the landlord.', S.endKey === 'legend' ? 'big' : 'bad'); } },
+        { t: 'repair', ci: '🧗', label: 'Keep climbing', desc: 'Turn it down. The work isn\'t finished.', stakes: 'no change — play the year out and see where it lands',
+          apply: S => fed('🧗', 'You turned it down. The number was real and you said no anyway. The work isn\'t finished, and neither are you.', '') },
+      ] },
   ];
 
   // ======================= weekly orchestration =======================
@@ -1028,6 +1044,12 @@
     return pick(pool);
   }
   function rollEvent(S) {
+    // The Act III exit is guaranteed once, late in the run — it pre-empts the random roll.
+    if (S.week === CONFIG.exitWeek && !S.flags.exitOffered) {
+      S.flags.exitOffered = S.week;
+      const ev = EVENTS.find(e => e.id === 'the-exit'); S.seenEvents.push(ev.id);
+      return ev;
+    }
     if (!(S.week >= 2 && chance(CONFIG.eventChance))) return null;
     const ev = drawEvent(S);
     if (ev && !ev.repeatable && !S.seenEvents.includes(ev.id)) S.seenEvents.push(ev.id);
@@ -1037,6 +1059,7 @@
   function advanceWeek(S) { S.week++; S.slots = { content: contentSlots(S), business: CONFIG.slotsBusiness }; S.crossUsed = false; PORDER.forEach(k => { S.plats[k].weekPosts = 0; }); }
 
   function checkEndings(S) {
+    if (S.over && S.endKey) return S.endKey;   // honor an ending an event already decided (the Act III exit)
     const tot = totalFollowers(S); let key = null;
     if (S.rep <= 0) key = 'cancelled';
     else if (S.cash < CONFIG.bankruptFloor) key = 'bankrupt';
