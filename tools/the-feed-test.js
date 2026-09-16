@@ -200,6 +200,31 @@ test('hireInfo/biz.hire work on a candidate id; fire clears the role', () => {
   S.slots.business = 1; S.teamHand = []; assert.ok(!E.hireInfo(S,'analyst').ok);
   E.biz.fire(S,'mod'); assert.equal(S.hires.mod, null);
 });
+test('hire consumes the business slot and is refused when broke', () => {
+  const S = E.newState('gaming','longform'); S.teamHand = ['analyst']; S.cash = E.CHARACTERS.analyst.sign - 100;
+  const info = E.hireInfo(S, 'analyst');
+  assert.equal(info.ok, false); assert.match(info.reason, /\$/, 'reason mentions the cost');
+  const before = S.cash; E.biz.hire(S, 'analyst');
+  assert.equal(S.hires.analyst, null, 'broke hire is a no-op'); assert.equal(S.cash, before);
+  // now affordable: hire consumes the business slot
+  S.cash = 5000; S.teamHand = ['mod']; assert.equal(S.slots.business, 1);
+  E.biz.hire(S, 'mod'); assert.equal(S.hires.mod, 'mod'); assert.equal(S.slots.business, 0);
+});
+test('hire is refused at the cap and costs nothing', () => {
+  const S = E.newState('gaming','longform'); S.cash = 20000;   // cap is 2 without a studio
+  S.teamHand = ['mod'];     E.biz.hire(S, 'mod');     S.slots.business = 1;
+  S.teamHand = ['analyst']; E.biz.hire(S, 'analyst'); S.slots.business = 1;   // 2 of 2 seats
+  S.teamHand = ['manager']; const info = E.hireInfo(S, 'manager');
+  assert.equal(info.ok, false); assert.match(info.reason, /room|full|space/i);
+  const before = S.cash; E.biz.hire(S, 'manager');
+  assert.equal(S.hires.manager, null); assert.equal(S.cash, before);
+});
+test('the edgy designer amplifies hostile-event rep hits', () => {
+  const base = E.newState('gaming','longform'); base.rep = 80;
+  const edgy = E.newState('gaming','longform'); edgy.rep = 80; edgy.hires.designer = 'designer-edgy';
+  const nBase = E.repHit(base, 10, 10), nEdgy = E.repHit(edgy, 10, 10);
+  assert.ok(nEdgy > nBase, `edgy rep hit (${nEdgy}) should exceed base (${nBase})`);
+});
 test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
   const S = mk();
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);
