@@ -10,6 +10,10 @@
 
 **Testing model (read this first):** This repo has **no automated UI-test harness** for `the-feed.html` — every prior chrome-only change was verified in the browser preview, with `npm test` (the engine tests, currently 71/71) as the regression guard proving the engine was untouched. This plan follows that established pattern: each task states the exact browser check and expected result, and the final task confirms `npm test` is unchanged. Do **not** add a jsdom/Jest harness — it is out of scope and against the project's minimal-maintenance preference.
 
+**⚠️ `npm test` does NOT cover `the-feed.html`.** The game's inline script is never parsed by the tests, so a syntax error there (a stray brace, an unclosed function) passes `npm test` and still breaks the whole game. After **every** task that edits `the-feed.html`, you MUST load `http://localhost:8080/the-feed.html` in the browser and confirm the game initializes with **no console errors** (a quick proxy: `document.querySelectorAll('#nichegrid .pick').length === 6`, which is only true if the IIFE ran to completion). Never rely on `npm test` alone to prove a `the-feed.html` change is safe.
+
+**The IIFE scope gotcha for verification:** everything in the game is inside one IIFE, so its functions/consts (`saveRun`, `SAVE_VERSION`, `newGame`, …) are **not** reachable from the console — only `FeedEngine` and `localStorage` are. Verify **observable behavior** (a `localStorage.thefeed_save` blob appears; the Continue button renders; the game starts), never `typeof saveRun` in the console.
+
 **Local preview:** `the-feed.html` is served at `http://localhost:8080/the-feed.html` by the `site` launch config (`npm run serve`). Clean URLs (`/the-feed`) are Netlify-only and do **not** work on the dev server — always use the `.html` URL locally. Start it with `preview_start {name:"site"}`, then `navigate` to that URL.
 
 ---
@@ -59,33 +63,23 @@ Insert this block on its own lines directly **before** `function newGame(name, n
   function saveRun(){ if(!S) return; try{ localStorage.setItem(SAVE_KEY,
     JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run } })); }catch(e){} }
   function validSave(d){ return !!(d && d.v===SAVE_VERSION && d.S && d.S.over===false
-    && typeof d.S.week==='number' && d.S.week>=1 && d.S.week<=E.CONFIG.years && d.ui); }
+    && typeof d.S.week==='number' && d.S.week>=1 && d.S.week<=E.CONFIG.years && NICHES[d.S.niche] && d.ui); }
   function loadRun(){ try{ const raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
     const d=JSON.parse(raw); return validSave(d)?d:null; }catch(e){ return null; } }
   function clearRun(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
 ```
 
-- [ ] **Step 2: Verify the helpers load without error**
+- [ ] **Step 2: Verify the new code parses and the game still initializes**
 
-Reload `http://localhost:8080/the-feed.html`. In the console (`javascript_tool`), run:
-
-```js
-[typeof saveRun, typeof loadRun, typeof clearRun, typeof validSave, SAVE_VERSION]
-```
-
-Expected: `["function","function","function","function",1]`. `read_console_messages` shows no errors.
-
-- [ ] **Step 3: Verify validSave rejects junk**
-
-In the console:
+The helpers are inside the IIFE, so you CANNOT check `typeof saveRun` from the console (see the header note). Instead, prove the inline script still parses and runs end to end. Reload `http://localhost:8080/the-feed.html`, then in the console:
 
 ```js
-[validSave(null), validSave({v:1}), validSave({v:2,S:{over:false,week:3},ui:{}}), validSave({v:1,S:{over:false,week:3},ui:{}})]
+({ noSaveYet: localStorage.getItem('thefeed_save'), nicheTiles: document.querySelectorAll('#nichegrid .pick').length, startBtn: !!document.getElementById('startBtn') })
 ```
 
-Expected: `[false, false, false, true]` (null rejected; missing S rejected; wrong version rejected; well-formed accepted).
+Expected: `{ noSaveYet: null, nicheTiles: 6, startBtn: true }`. Six niche tiles means `buildStart()` (near the end of the IIFE) ran, i.e. no syntax error. `read_console_messages {onlyErrors:true}` shows **no** errors — a stray brace would surface here as an "Unexpected token" SyntaxError even though `npm test` passed.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add the-feed.html
@@ -113,10 +107,11 @@ to:
 
 ```js
     try{ window.scrollTo(0,0); document.querySelectorAll('.tabbody, #tab-home, #tab-alerts, #stagebody').forEach(e=>{ if(e) e.scrollTop=0; }); }catch(e){}
-    saveRun();   // persist the clean start of this week (the ending path returned above, before this) }
+    saveRun();   // persist the clean start of this week (the ending path returned earlier)
+  }
 ```
 
-Note: the closing `}` of `advance()` stays on that last line exactly as shown.
+**Critical:** the closing `}` of `advance()` must be on its **own line**, NOT at the end of the `//` comment — a `}` after `//` is commented out and breaks the whole inline script. (`npm test` will NOT catch this; only a browser load will — see Step 2.)
 
 - [ ] **Step 2: Verify a run is saved with the right week**
 
@@ -176,19 +171,11 @@ to:
     S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam(); closeChanPicker();
 ```
 
-- [ ] **Step 3: Verify both clear paths**
+- [ ] **Step 3: Verify both clear paths (via the UI — internals aren't console-reachable)**
 
-Reload, start a run, end one week so a save exists. In the console:
-
-```js
-// newGame clears:
-newGame('probe','gaming','longform'); const afterNew = localStorage.thefeed_save;
-// endGame clears:
-endGame('faded'); const afterEnd = localStorage.thefeed_save;
-[afterNew, afterEnd]
-```
-
-Expected: `[null, null]` — both `newGame` and `endGame` removed the save. `read_console_messages` shows no errors. (Reload afterward to reset the page state.)
+`newGame`/`endGame` are inside the IIFE, so drive them through the UI, not the console.
+- **fresh-run clears:** reload, start a run, end one week so `localStorage.thefeed_save` is present (confirm in console). Then reload, and on the start screen click a niche + **Go live** to start another run. Immediately check the console: `localStorage.getItem('thefeed_save')` is `null` (newGame's `clearRun()` fired; a new save won't be written until the first week ends).
+- **ending clears:** the cleanest way to reach an ending on demand is to burn out — but that's slow. Instead confirm the code path by reading `endGame` in `the-feed.html` and checking `clearRun();` is its first statement; then, opportunistically, when any real playthrough reaches an ending, confirm `localStorage.thefeed_save` is `null` on the end screen. `read_console_messages {onlyErrors:true}` shows no errors throughout.
 
 - [ ] **Step 4: Commit**
 
@@ -240,7 +227,10 @@ Inside `buildStart()`, the last statements are the two `wireGroup(...)` calls (~
   function renderContinue(){
     const form = document.querySelector('#startOverlay .intro-form'); if(!form) return;
     const prev = $('continueBtn'); if(prev) prev.remove();
-    const saved = loadRun(); if(!saved) return;
+    const go = $('startBtn');
+    const saved = loadRun();
+    if(!saved){ if(go){ go.classList.add('primary'); go.classList.remove('ghost'); } return; }
+    if(go){ go.classList.remove('primary'); go.classList.add('ghost'); }   // Continue is primary; new run demotes to ghost
     const b = document.createElement('button');
     b.id = 'continueBtn'; b.type = 'button'; b.className = 'btn primary';
     b.style.width = '100%'; b.style.marginBottom = '14px';
