@@ -723,6 +723,21 @@ test('the-exit: Keep climbing leaves the run alive and changes no state', () => 
   assert.deepEqual(after, b);
 });
 
+test('rollEvent forces the exit exactly once at exitWeek, pre-empting the roll', () => {
+  E.setRng(seeded(11));
+  const S = E.newState('gaming', 'longform'); S.week = E.CONFIG.exitWeek; S.plats.longform.followers = 40000;
+  const ev = E.rollEvent(S);
+  assert.ok(ev && ev.id === 'the-exit', 'exit forced at exitWeek');
+  assert.equal(S.flags.exitOffered, E.CONFIG.exitWeek);
+  // not again next call at the same week
+  assert.ok(!(E.rollEvent(S) || {}).id || (E.rollEvent(S) || {}).id !== 'the-exit');
+});
+test('rollEvent does not force the exit before exitWeek', () => {
+  E.setRng(seeded(11));
+  const S = E.newState('gaming', 'longform'); S.week = E.CONFIG.exitWeek - 1;
+  for (let i = 0; i < 50; i++) { const ev = E.rollEvent(S); if (ev && ev.id === 'the-exit') assert.fail('exit fired early'); }
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

@@ -1044,6 +1044,12 @@
     return pick(pool);
   }
   function rollEvent(S) {
+    // The Act III exit is guaranteed once, late in the run — it pre-empts the random roll.
+    if (S.week === CONFIG.exitWeek && !S.flags.exitOffered) {
+      S.flags.exitOffered = S.week;
+      const ev = EVENTS.find(e => e.id === 'the-exit'); S.seenEvents.push(ev.id);
+      return ev;
+    }
     if (!(S.week >= 2 && chance(CONFIG.eventChance))) return null;
     const ev = drawEvent(S);
     if (ev && !ev.repeatable && !S.seenEvents.includes(ev.id)) S.seenEvents.push(ev.id);
