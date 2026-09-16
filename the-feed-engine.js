@@ -651,6 +651,22 @@
         { t: 'escalate', ci: '📸', label: 'Expose their DMs publicly', desc: 'Post the receipts to humiliate them.', stakes: 'rep −3 to −15 and a follower hit either way',
           apply: S => { if (chance(.5)) { const r = repHit(S, 8, 15); return hurt(S, '😖', `Airing a fan's private breakdown looked cruel. Rep −${r}.`, .01, .03); } const r = repHit(S, 3, 7); return hurt(S, '😐', `Some cheered, many winced. A wash that left a bad taste. Rep −${r}.`, .005, .015); } },
       ] },
+    { id: 'platform-turns', kind: 'hostile', emoji: '🪤', title: 'The platform you built on turned on you.', badge: 'Platform risk', minWeek: 36,
+      cond: S => { const t = strongest(S); return t && t.followers > 5000; },
+      priority: S => !!S.flags.concentrated,
+      text: 'An algorithm change, a policy sweep, a reach collapse — take your pick. The channel you bet everything on just stopped putting your work in front of the people who follow you.',
+      choices: [
+        { t: 'repair', ci: '🌱', label: 'Lean on what you own', desc: 'The newsletter, the members — the audience they can’t take back.', stakes: 'an owned audience softens it; concentrated + rented → a big reach hit',
+          apply: S => { const owned = S.members > 0 || S.plats.writing.active; const conc = !!S.flags.concentrated; addStress(S, 4);
+            const lo = owned ? .01 : (conc ? .06 : .03), hi = owned ? .03 : (conc ? .12 : .06);
+            return hurt(S, '🪤', owned ? 'The platform buried you, but the people on your own list still turned up. You had a floor.' : 'You had nowhere else to send them, and the reach just… left.', lo, hi); } },
+        { t: 'escalate', ci: '📣', label: 'Fight the change publicly', desc: 'Make noise, demand answers.', stakes: 'a reach hit either way · 40%: sympathy followers · else rep −2–6',
+          apply: S => { const conc = !!S.flags.concentrated; const lo = conc ? .05 : .03, hi = conc ? .10 : .05;
+            const log = hurt(S, '📣', 'You posted the callout everywhere that still worked.', lo, hi);
+            if (chance(.4)) { const p = strongest(S); const g = Math.round(rnd(800, 2600)); p.followers += g; S.newFollowers += g; log.feed.push({ emoji:'🫶', text:`+${fmt(g)} showed up on your side.`, kind:'good' }); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'gain' }); }
+            else { const r = repHit(S, 2, 6); log.feed.push({ emoji:'🙄', text:`Some read it as sour grapes. Rep −${r}.`, kind:'bad' }); }
+            return log; } },
+      ] },
     { id: 'sleepless', repeatable: true, kind: 'neutral', emoji: '🥵', title: "You haven't slept in days.", badge: 'Health', cond: S => S.stress >= 60,
       priority: S => S.flags.pushedThrough && S.week - S.flags.pushedThrough <= 5,   // echo: push through it and your body sends the next invoice sooner
       text: 'The grind is catching up. Your body is sending invoices.',
@@ -917,6 +933,11 @@
     S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
     addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
     S.newFollowers = 0;
+    // seed for the platform-dependency arc: a creator who bet on one channel by the business act
+    if (act(S) >= 2 && !S.flags.concentrated) {
+      const tot = totalFollowers(S), top = strongest(S);
+      if (tot > 3000 && top && top.followers / tot >= 0.65) S.flags.concentrated = S.week;
+    }
     return log;
   }
   function drawEvent(S) {
