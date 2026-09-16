@@ -26,7 +26,8 @@ if (process.env.SEED) { let s = parseInt(process.env.SEED, 10) >>> 0; E.setRng((
 // ======================= persona helpers =======================
 // A persona's act(S) returns ONE action per call; the runner keeps calling until
 // the persona returns {end:true}, a slot runs out, or an action is refused.
-//   {card:i} | {biz:'engage'|'deal'|'upgrade'|'paid'} | {hire:'editor'} | {fire:'editor'} | {cross:{src,dst}} | {end:true}
+//   {card:i} | {biz:'engage'|'deal'|'upgrade'|'paid'} | {hire:'editor-pro'} | {fire:'editor'} | {cross:{src,dst}} | {end:true}
+//   (hire takes a candidate id from S.teamHand; fire takes a role)
 const H = {
   posts(S)            { return S.hand.map((c, i) => ({ c, i })).filter(x => x.c.kind === 'post' || x.c.kind === 'ride'); },
   ride(S)             { return S.hand.findIndex(c => c.kind === 'ride'); },
@@ -40,7 +41,13 @@ const H = {
   coldest(S)          { const x = H.posts(S).sort((a, b) => a.c.heat - b.c.heat)[0]; return x ? x.i : -1; },
   canPaid(S)          { return S.members === 0 && totalFollowers(S) >= CONFIG.paidUnlock; },
   canDeal(S)          { return totalFollowers(S) >= 1000; },
-  nextHire(S, order)  { return order.find(r => !S.hires[r] && E.hireInfo(S, r).ok && S.cash > E.HIRES[r].sign * 4) || null; },
+  // Picks the best offered candidate for a persona's ID preference order, gated on
+  // hireInfo (dealt this week, role open, cash/slot/cap ok) and a cash cushion over sign-on.
+  nextHire(S, prefIds) {
+    return (S.teamHand || []).slice()
+      .sort((a, b) => prefIds.indexOf(a) - prefIds.indexOf(b))
+      .find(id => prefIds.includes(id) && E.hireInfo(S, id).ok && S.cash > E.CHARACTERS[id].sign * 4) || null;
+  },
   upgradeOk(S, mult)  { const u = E.upgradeInfo(S); return u.ok && u.next <= 3 && S.cash > u.cost * mult; },
   studioOk(S, mult)   { const u = E.upgradeInfo(S); return u.ok && u.next >= 4 && S.cash > u.need * mult; },   // next studio step, with a cushion over the runway gate
 };
@@ -84,7 +91,7 @@ const PERSONAS = {
     if (business(S)) {
       if (H.canPaid(S)) return { biz: 'paid' };
       if (S.rep < 62) return { biz: 'engage' };
-      const h = H.nextHire(S, ['editor', 'mod']); if (h) return { hire: h };
+      const h = H.nextHire(S, ['editor-roommate', 'mod']); if (h) return { hire: h };
       if (H.upgradeOk(S, 3)) return { biz: 'upgrade' };
     }
     return { end: true };
@@ -93,7 +100,7 @@ const PERSONAS = {
   'The Chaos Gremlin': { eventPref: null, act(S) {
     const opts = [{ end: true }, { end: true }];
     if (content(S)) S.hand.forEach((c, i) => opts.push({ card: i }));
-    if (business(S)) { opts.push({ biz: 'engage' }); if (H.canDeal(S)) opts.push({ biz: 'deal' }); if (E.upgradeInfo(S).ok) opts.push({ biz: 'upgrade' }); if (H.canPaid(S)) opts.push({ biz: 'paid' }); const h = HORDER.find(r => E.hireInfo(S, r).ok); if (h) opts.push({ hire: h }); }
+    if (business(S)) { opts.push({ biz: 'engage' }); if (H.canDeal(S)) opts.push({ biz: 'deal' }); if (E.upgradeInfo(S).ok) opts.push({ biz: 'upgrade' }); if (H.canPaid(S)) opts.push({ biz: 'paid' }); const h = (S.teamHand || []).find(id => E.hireInfo(S, id).ok); if (h) opts.push({ hire: h }); }
     return pick(opts);
   } },
   // Plays well: rides hits, manages stress, hires everyone, buys the Studio. Target: Star/GOAT.
@@ -113,11 +120,11 @@ const PERSONAS = {
       if (H.canPaid(S)) return { biz: 'paid' };
       if (S.cash < 300 && H.canDeal(S)) return { biz: 'deal' };
       if (H.studioOk(S, 1.5)) return { biz: 'upgrade' };
-      const h = H.nextHire(S, ['editor', 'designer', 'manager', 'mod', 'producer', 'analyst']); if (h) return { hire: h };
+      const h = H.nextHire(S, ['editor-pro', 'designer-steady', 'manager', 'producer', 'analyst', 'mod']); if (h) return { hire: h };
       if (H.upgradeOk(S, 2.5)) return { biz: 'upgrade' };
       if (S.rep < 50) return { biz: 'engage' };
       // fire the most expensive hire if the lease is drowning us
-      if (S.cash < -600 && E.hireCount(S) > 0) return { fire: HORDER.filter(r => S.hires[r]).sort((a, b) => E.HIRES[b].weekly - E.HIRES[a].weekly)[0] };
+      if (S.cash < -600 && E.hireCount(S) > 0) return { fire: HORDER.filter(r => S.hires[r]).sort((a, b) => E.hiredChar(S, b).weekly - E.hiredChar(S, a).weekly)[0] };
     }
     return { end: true };
   } },
