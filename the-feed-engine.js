@@ -132,15 +132,22 @@
   };
   const PORDER = ['longform', 'shortform', 'micro', 'writing', 'live'];
   // Team. Each role is a one-line modifier applied at exactly one site in the engine.
-  const HIRES = {
-    editor:   { label: 'Editor',        emoji: '✂️', sign: 600, weekly: 110, blurb: 'Cuts the grind out of longform and live.' },
-    manager:  { label: 'Manager',       emoji: '📞', sign: 500, weekly: 90,  blurb: 'Better deals, less of the sellout smell.' },
-    mod:      { label: 'Community mod', emoji: '🛡️', sign: 400, weekly: 60,  blurb: 'Keeps the comments from becoming the story.' },
-    designer: { label: 'Designer',      emoji: '🎨', sign: 800, weekly: 140, blurb: 'Packaging and thumbnails. More clicks everywhere.' },
-    producer: { label: 'Producer',      emoji: '🎬', sign: 900, weekly: 160, blurb: 'Runs the back catalogue. Evergreen posts keep earning two weeks longer.' },
-    analyst:  { label: 'Analyst',       emoji: '📊', sign: 1000, weekly: 180, blurb: 'Reads the numbers so you don’t have to. Heat fades slower.' },
-  };
   const HORDER = ['editor', 'manager', 'mod', 'designer', 'producer', 'analyst'];
+  // The cast: each hire is a character filling one of the six roles. Two roles (editor,
+  // designer) offer an in-role bet; the rest are a single distinctive hire. `fx` holds the
+  // magnitudes the modifier sites read (so a hire is data, not a hard-coded constant).
+  // Copy is a draft (Jason voice-passes); numbers tuned against the sim.
+  const CHARACTERS = {
+    'editor-roommate': { role:'editor',  name:'Your college roommate', sign:400, weekly:80,  blurb:'Loyal, cheap, in over their head eventually. Cuts some of the grind.', fx:{ stressCut:5,  viewsBump:1.0 } },
+    'editor-pro':      { role:'editor',  name:'The seasoned pro',       sign:850, weekly:160, blurb:'Expensive and worth it. Cuts the grind hard and sharpens the work.',      fx:{ stressCut:10, viewsBump:1.08 } },
+    'designer-steady': { role:'designer',name:'The reliable designer',  sign:800, weekly:140, blurb:'Clean thumbnails, on time. More clicks everywhere.',                      fx:{ viewsBump:1.15 } },
+    'designer-edgy':   { role:'designer',name:'The edgy designer',      sign:600, weekly:120, blurb:'Louder packaging, more reach — and more people mad about it.',           fx:{ viewsBump:1.22, edgy:true } },
+    'manager':         { role:'manager', name:'The manager',           sign:500, weekly:90,  blurb:'Better deals, less of the sellout smell.',                               fx:{ dealMult:1.3, dealRepMult:0.6 } },
+    'mod':             { role:'mod',     name:'The community mod',      sign:400, weekly:60,  blurb:'Keeps the comments from becoming the story.',                            fx:{ repHitMult:0.67, followerLossMult:0.5 } },
+    'producer':        { role:'producer',name:'The producer',          sign:900, weekly:160, blurb:'Runs the back catalogue. Evergreen posts earn two weeks longer.',         fx:{ tailWeeks:2 } },
+    'analyst':         { role:'analyst', name:'The analyst',           sign:1000,weekly:180, blurb:'Reads the numbers so you don’t. Heat fades slower.',                      fx:{ heatKeep:0.9 } },
+  };
+  const hiredChar = (S, role) => S.hires[role] ? CHARACTERS[S.hires[role]] : null;
   // Studios: sequential steps after the kit (gear 4/5/6). views multiplies ON TOP of the kit's ×1.33.
   // slots is weekly content capacity (capped at 3 — the scarcity is the game), cap is team size.
   const STUDIOS = {
@@ -1106,7 +1113,7 @@
     return Object.assign({}, e, { blurb: raw.replace('{n}', n).replace('{s}', n === 1 ? '' : 's').replace('{star}', fmt(CONFIG.starAt)).replace('{goat}', fmt(CONFIG.goatAt)) }); }
 
   return {
-    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, HIRES, HORDER, STUDIOS, ENDINGS, EVENTS,
+    CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, CHARACTERS, hiredChar, HORDER, STUDIOS, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
     ACTS, act,

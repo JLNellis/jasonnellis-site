@@ -163,6 +163,15 @@ test('burnout ending after 3 redline weeks', () => {
 });
 
 // ---------------------------------------------------------------- hires + overhead
+test('CHARACTERS: 8 characters, valid roles, editor+designer each have two', () => {
+  const roles = ['editor','manager','mod','designer','producer','analyst'];
+  const ids = Object.keys(E.CHARACTERS);
+  assert.equal(ids.length, 8);
+  ids.forEach(id => { const c = E.CHARACTERS[id]; assert.ok(roles.includes(c.role)); assert.ok(c.name && c.sign>0 && c.weekly>0 && c.fx); });
+  const byRole = r => ids.filter(id => E.CHARACTERS[id].role === r).length;
+  assert.equal(byRole('editor'), 2); assert.equal(byRole('designer'), 2);
+  ['manager','mod','producer','analyst'].forEach(r => assert.equal(byRole(r), 1));
+});
 test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
   const S = mk();
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);
