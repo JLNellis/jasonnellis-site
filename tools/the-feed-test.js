@@ -192,6 +192,14 @@ test('dealTeamHand: 2–3 candidates, never a filled role, stable within a week'
   S.hires.editor = 'editor-pro';
   for (let i=0;i<20;i++){ E.dealTeamHand(S); assert.ok(!S.teamHand.some(id => E.CHARACTERS[id].role==='editor'), 'no editor offered when filled'); }
 });
+test('hireInfo/biz.hire work on a candidate id; fire clears the role', () => {
+  const S = E.newState('gaming','longform'); S.cash = 5000; S.teamHand = ['mod'];
+  assert.ok(E.hireInfo(S,'mod').ok);
+  E.biz.hire(S,'mod'); assert.equal(S.hires.mod, 'mod'); assert.ok(S.cash < 5000);
+  // can't hire a candidate not in the dealt hand
+  S.slots.business = 1; S.teamHand = []; assert.ok(!E.hireInfo(S,'analyst').ok);
+  E.biz.fire(S,'mod'); assert.equal(S.hires.mod, null);
+});
 test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
   const S = mk();
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);

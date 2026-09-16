@@ -148,6 +148,8 @@
     'analyst':         { role:'analyst', name:'The analyst',           sign:1000,weekly:180, blurb:'Reads the numbers so you don’t. Heat fades slower.',                      fx:{ heatKeep:0.9 } },
   };
   const hiredChar = (S, role) => S.hires[role] ? CHARACTERS[S.hires[role]] : null;
+  // Cosmetic only (feed-line emoji per role) — not part of the fx a modifier site reads.
+  const ROLE_EMOJI = { editor: '✂️', manager: '📞', mod: '🛡️', designer: '🎨', producer: '🎬', analyst: '📊' };
   // Deals 2–3 candidates for the weekly team shop, never a still-open role's second option in
   // the same hand and never a role that's already filled.
   function dealTeamHand(S) {
@@ -339,11 +341,13 @@
     b.total = b.base + b.platforms + b.payroll + b.lease; return b;
   }
   const overhead = S => overheadBreakdown(S).total;
-  function hireInfo(S, role) {
-    const h = HIRES[role];
-    if (S.hires[role]) return { ok: false, reason: 'Already on the team.' };
+  function hireInfo(S, id) {
+    const c = CHARACTERS[id];
+    if (!c) return { ok: false, reason: 'No such candidate.' };
+    if (!S.teamHand.includes(id)) return { ok: false, reason: 'Not on offer this week.' };
+    if (S.hires[c.role]) return { ok: false, reason: 'That seat is filled.' };
     if (hireCount(S) >= hireCap(S)) return { ok: false, reason: S.gear >= 6 ? 'Team is full.' : 'No room. A bigger space holds more people.' };
-    if (S.cash < h.sign) return { ok: false, reason: 'Signing costs ' + money(h.sign) + '.' };
+    if (S.cash < c.sign) return { ok: false, reason: 'Signing costs ' + money(c.sign) + '.' };
     if (S.slots.business <= 0) return { ok: false, reason: 'No business slot left this week.' };
     return { ok: true, reason: '' };
   }
@@ -560,13 +564,13 @@
     paid(S) { if (S.members > 0 || totalFollowers(S) < CONFIG.paidUnlock || !useSlot(S, 'business')) return L();
       S.members = Math.round(totalFollowers(S) * rnd(CONFIG.memberConvMin, CONFIG.memberConvMax));
       const log = L(); log.feed.push({ emoji: '⭐', text: `Membership is live. ${fmt(S.members)} people are paying you every month now. They will notice the week you skip.`, kind: 'good' }); return log; },
-    hire(S, role) { const h = HIRES[role]; if (!h || !hireInfo(S, role).ok || !useSlot(S, 'business')) return L();
-      S.cash -= h.sign; S.hires[role] = true;
-      const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(h.sign), tone: 'loss' });
-      log.feed.push({ emoji: h.emoji, text: `Hired a ${h.label.toLowerCase()}. Payroll is now ${money(payroll(S))}/week, due whether or not anyone watched.`, kind: 'good' }); return log; },
-    fire(S, role) { const h = HIRES[role]; if (!h || !S.hires[role] || !useSlot(S, 'business')) return L();
-      S.hires[role] = false;
-      const log = L(); log.feed.push({ emoji: '👋', text: `Let your ${h.label.toLowerCase()} go. Payroll −${money(h.weekly)}/week. They took the good chair.`, kind: '' }); return log; },
+    hire(S, id) { const c = CHARACTERS[id]; if (!c || !hireInfo(S, id).ok || !useSlot(S, 'business')) return L();
+      S.cash -= c.sign; S.hires[c.role] = id;
+      const log = L(); log.floats.push({ anchor: 'cash', text: '-' + money(c.sign), tone: 'loss' });
+      log.feed.push({ emoji: ROLE_EMOJI[c.role], text: `Hired ${c.name}. Payroll is now ${money(payroll(S))}/week, due whether or not anyone watched.`, kind: 'good' }); return log; },
+    fire(S, role) { const c = hiredChar(S, role); if (!c || !useSlot(S, 'business')) return L();
+      S.hires[role] = null;
+      const log = L(); log.feed.push({ emoji: '👋', text: `Let ${c.name} go. Payroll −${money(c.weekly)}/week. They took the good chair.`, kind: '' }); return log; },
   };
 
   // ======================= events (single deck: display + effect) =======================
