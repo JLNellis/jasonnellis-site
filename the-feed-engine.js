@@ -281,6 +281,11 @@
   function platPolish(S, p) { return p.posts * 3 + S.gear * 9; }   // what tiers are cut on (TIERCUT)
   function platTier(S, p) { const pol = platPolish(S, p); let t = 0; for (let i = 0; i < TIERCUT.length; i++) if (pol >= TIERCUT[i]) t = i; return t; }
 
+  // Acts: the run's three chapters, cut on the phase boundaries that already exist.
+  // 1 "Nobody's watching" (≤earlyEnd) · 2 "The business" (≤midEnd) · 3 "The ceiling".
+  const ACTS = { 1: 'Nobody’s watching', 2: 'The business', 3: 'The ceiling' };
+  function act(S) { const p = CONFIG.phases; return S.week <= p.earlyEnd ? 1 : S.week <= p.midEnd ? 2 : 3; }
+
   // --- slots & stress ---
   function useSlot(S, kind) { if (S.slots[kind] <= 0) return false; S.slots[kind]--; return true; }
   function addStress(S, n) { S.stress = clamp(S.stress + n, 0, 100); }
@@ -646,6 +651,22 @@
         { t: 'escalate', ci: '📸', label: 'Expose their DMs publicly', desc: 'Post the receipts to humiliate them.', stakes: 'rep −3 to −15 and a follower hit either way',
           apply: S => { if (chance(.5)) { const r = repHit(S, 8, 15); return hurt(S, '😖', `Airing a fan's private breakdown looked cruel. Rep −${r}.`, .01, .03); } const r = repHit(S, 3, 7); return hurt(S, '😐', `Some cheered, many winced. A wash that left a bad taste. Rep −${r}.`, .005, .015); } },
       ] },
+    { id: 'platform-turns', kind: 'hostile', emoji: '🪤', title: 'The platform you built on turned on you.', badge: 'Platform risk', minWeek: 36,
+      cond: S => { const t = strongest(S); return t && t.followers > 5000; },
+      priority: S => !!S.flags.concentrated,
+      text: 'An algorithm change, a policy sweep, a reach collapse — take your pick. The channel you bet everything on just stopped putting your work in front of the people who follow you.',
+      choices: [
+        { t: 'repair', ci: '🌱', label: 'Lean on what you own', desc: 'The newsletter, the members — the audience they can’t take back.', stakes: 'an owned audience softens it; concentrated + rented → a big reach hit',
+          apply: S => { const owned = S.members > 0 || S.plats.writing.active; const conc = !!S.flags.concentrated; addStress(S, 4);
+            const lo = owned ? .01 : (conc ? .06 : .03), hi = owned ? .03 : (conc ? .12 : .06);
+            return hurt(S, '🪤', owned ? 'The platform buried you, but the people on your own list still turned up. You had a floor.' : 'You had nowhere else to send them, and the reach just… left.', lo, hi); } },
+        { t: 'escalate', ci: '📣', label: 'Fight the change publicly', desc: 'Make noise, demand answers.', stakes: 'a reach hit either way · 40%: sympathy followers · else rep −2–6',
+          apply: S => { const conc = !!S.flags.concentrated; const lo = conc ? .05 : .03, hi = conc ? .10 : .05;
+            const log = hurt(S, '📣', 'You posted the callout everywhere that still worked.', lo, hi);
+            if (chance(.4)) { const p = strongest(S); const g = Math.round(rnd(800, 2600)); p.followers += g; S.newFollowers += g; log.feed.push({ emoji:'🫶', text:`+${fmt(g)} showed up on your side.`, kind:'good' }); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'gain' }); }
+            else { const r = repHit(S, 2, 6); log.feed.push({ emoji:'🙄', text:`Some read it as sour grapes. Rep −${r}.`, kind:'bad' }); }
+            return log; } },
+      ] },
     { id: 'sleepless', repeatable: true, kind: 'neutral', emoji: '🥵', title: "You haven't slept in days.", badge: 'Health', cond: S => S.stress >= 60,
       priority: S => S.flags.pushedThrough && S.week - S.flags.pushedThrough <= 5,   // echo: push through it and your body sends the next invoice sooner
       text: 'The grind is catching up. Your body is sending invoices.',
@@ -835,6 +856,79 @@
         { t: 'neutral', ci: '😊', label: 'Mark it quietly', desc: 'A small thank-you, back to work.', stakes: 'rep +1–3',
           apply: S => { S.rep = clamp(S.rep + rint(1, 3), 0, 100); return fed('😊', 'A quiet thanks, and on to the next round number.', ''); } },
       ] },
+    // ---- Acts 2a: late-act deck expansion (Act III ceiling/audience + Act II texture) ----
+    { id: 'audience-expectations', kind: 'neutral', emoji: '🪞', title: 'Your audience decided who you are.', badge: 'Expectations', minWeek: 36,
+      text: 'Every time you try something new, the comments ask for the old thing. They love a version of you that you finished being months ago.',
+      choices: [
+        { t: 'neutral', ci: '🔁', label: 'Give them the version they subscribed for', desc: 'Serve the hits. Stay in the lane.', stakes: '+2–3% of your following (small audiences barely move it) · heat +8 · rep −1–3 (you know it’s a cage)',
+          apply: S => { const p = strongest(S); const g = Math.round(rnd(0.02, 0.03) * Math.min(totalFollowers(S), 45000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 8, 0, 100); const r = repHit(S, 1, 3); const log = fed('🪞', `You made the thing they wanted. It did fine — +${fmt(g)} — and you felt like a tribute act to yourself. Rep −${r}.`, ''); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'gain' }); log.bump.push(p.key); return log; } },
+        { t: 'escalate', ci: '🎨', label: 'Make what you actually want', desc: 'Follow the work, not the room.', stakes: '50%: rep +6–12, they grow with you · else −2–5% of your biggest channel',
+          apply: S => { if (chance(.5)) { S.rep = clamp(S.rep + rint(6, 12), 0, 100); return fed('🎨', 'You made the thing you wanted. Enough of them came with you; the rest were quietly replaced by better ones.', 'big'); } S.flags.pivoted = S.week; return hurt(S, '🥶', 'You made the thing you wanted and the room went cold. The regulars felt abandoned and said so.', .02, .05); } },
+      ] },
+    { id: 'reinvent-or-coast', kind: 'neutral', emoji: '🛞', title: 'You could coast from here.', badge: 'Fork', minWeek: 40,
+      text: 'You have a formula that works. You could run it to the end of the year on autopilot — or bet the momentum on becoming something else while you still have momentum to bet.',
+      choices: [
+        { t: 'repair', ci: '😌', label: 'Coast the formula', desc: 'Bank the wins, take your foot off.', stakes: '−8 stress · heat −6 everywhere (the slow fade)',
+          apply: S => { addStress(S, -8); activePlats(S).forEach(p => p.heat = clamp(p.heat - 6, 0, 100)); return fed('😌', 'You stopped pushing. The numbers held, then softened. Nobody could name the week you started phoning it in.', ''); } },
+        { t: 'escalate', ci: '🎲', label: 'Bet on a reinvention', desc: 'Blow it up while it’s still your choice.', stakes: '45%: +3K–9K followers, heat +18 · else rep −3–7 and a stress spike',
+          apply: S => { if (chance(.45)) { const p = strongest(S); const g = Math.round(rnd(3000, 9000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 18, 0, 100); const log = fed('🎲', `The reinvention landed. +${fmt(g)} came for the new thing, and you bought another year of being interesting.`, 'big'); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'hit' }); log.bump.push(p.key); return log; } const r = repHit(S, 3, 7); addStress(S, 10); return fed('🌫️', `The new direction confused everyone, you included. It didn’t take. Rep −${r}, and you’re tired.`, 'bad'); } },
+      ] },
+    { id: 'ceiling-plateau', kind: 'neutral', emoji: '📊', title: 'The number stopped moving.', badge: 'Plateau', minWeek: 36,
+      text: 'For weeks the follower count has hovered in the same place. Not falling. Just done climbing. You built the thing, and the thing found its size.',
+      choices: [
+        { t: 'repair', ci: '🧱', label: 'Double down on what works', desc: 'Make more of the thing they already like.', stakes: '+4.5–7% of your following (small audiences barely move it) · heat +6 on your top channel · +2 stress',
+          apply: S => { const p = strongest(S); const g = Math.round(rnd(0.045, 0.07) * Math.min(totalFollowers(S), 45000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 6, 0, 100); addStress(S, 2); const log = fed('📊', `You leaned into the proven formula. The plateau nudged up — +${fmt(g)} — steady and warm. Sometimes steady is the win.`, 'good'); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'gain' }); log.bump.push(p.key); return log; } },
+        { t: 'escalate', ci: '🚀', label: 'Chase a new format', desc: 'Try to break the ceiling with something different.', stakes: '50%: +1.5K–5K followers & heat +14 · else heat −6 everywhere',
+          apply: S => { if (chance(.5)) { const p = strongest(S); const g = Math.round(rnd(1500, 5000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 14, 0, 100); const log = fed('🚀', `The new format broke the ceiling. +${fmt(g)} followers, and the graph remembered how to go up.`, 'big'); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'hit' }); log.bump.push(p.key); return log; } activePlats(S).forEach(p => p.heat = clamp(p.heat - 6, 0, 100)); return fed('📉', 'The new thing landed with a thud. The regulars were confused and the algorithm shrugged.', 'bad'); } },
+      ] },
+    { id: 'format-fatigue', kind: 'neutral', emoji: '🔁', title: 'Your signature format is getting tired.', badge: 'Format', minWeek: 36,
+      text: 'The thing that made you is now the thing they expect. The views are softening on the exact format that used to be a guaranteed hit.',
+      choices: [
+        { t: 'escalate', ci: '🪦', label: 'Retire it while it’s ahead', desc: 'Kill your darling before it kills your channel.', stakes: '45%: rep +4–9 & +1–3K followers · else −2–4% of your biggest channel',
+          apply: S => { if (chance(.45)) { S.rep = clamp(S.rep + rint(4, 9), 0, 100); const p = strongest(S); const g = Math.round(rnd(1000, 3000)); p.followers += g; S.newFollowers += g; const log = fed('🪦', `You retired the format at its peak. Respect for going out on top — and +${fmt(g)} curious about what’s next.`, 'big'); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'gain' }); log.bump.push(p.key); return log; } return hurt(S, '🫤', 'You dropped the format, and the people who came for exactly that drifted off.', .02, .04); } },
+        { t: 'neutral', ci: '🥱', label: 'Keep making it', desc: 'It still works. Mostly. For now.', stakes: '+1.5–2.5% of your following (small audiences barely move it) · heat +4 · the slow decline continues',
+          apply: S => { const p = strongest(S); const g = Math.round(rnd(0.015, 0.025) * Math.min(totalFollowers(S), 45000)); p.followers += g; S.newFollowers += g; p.heat = clamp(p.heat + 4, 0, 100); const log = fed('🔁', `You kept making the hits. They keep doing fine (+${fmt(g)}), a little less every time, like a band playing the one song.`, ''); log.floats.push({ anchor: 'plat:' + p.key, text: '+' + fmt(g), tone: 'gain' }); log.bump.push(p.key); return log; } },
+      ] },
+    { id: 'scale-burnout', kind: 'neutral', emoji: '🪫', title: 'Success turned out to be heavier than you thought.', badge: 'Scale', minWeek: 36, cond: S => S.stress >= 50,
+      text: 'More followers, more posts, more people wanting things. The bigger it gets, the less of it is the part you actually liked.',
+      choices: [
+        { t: 'repair', ci: '🧑‍🤝‍🧑', label: 'Delegate and take a breath', desc: 'Let some of it go. Protect the part that matters.', stakes: '−20 stress · heat −6 everywhere',
+          apply: S => { addStress(S, -20); activePlats(S).forEach(p => p.heat = clamp(p.heat - 6, 0, 100)); return fed('🧑‍🤝‍🧑', 'You handed off the parts you dreaded and remembered why you started. Quieter numbers, louder sleep.', 'good'); } },
+        { t: 'escalate', ci: '⛽', label: 'Push through — you’re so close', desc: 'The finish line is right there. Probably.', stakes: '+12 stress · heat +5 everywhere · your body will send the invoice',
+          apply: S => { addStress(S, 12); S.flags.pushedThrough = S.week; activePlats(S).forEach(p => p.heat = clamp(p.heat + 5, 0, 100)); return fed('⛽', 'You told yourself just a little more. You always tell yourself that. The feed got fed.', 'bad'); } },
+      ] },
+    { id: 'old-guard', kind: 'neutral', emoji: '🧓', title: 'You’re not the new thing anymore.', badge: 'Old guard', minWeek: 40,
+      text: 'There’s a creator half your size and a quarter your age doing your thing, hungrier. The comments have started using the word “veteran.” You’re not sure it’s a compliment.',
+      choices: [
+        { t: 'repair', ci: '🤝', label: 'Bring them into your orbit', desc: 'Collab, co-sign, pass something down.', stakes: '+6–9% of your following (small audiences barely move it) · rep +2–5',
+          apply: S => { const p = strongest(S); const g = Math.round(rnd(0.06, 0.09) * Math.min(totalFollowers(S), 45000)); p.followers += g; S.newFollowers += g; S.rep = clamp(S.rep + rint(2, 5), 0, 100); const log = fed('🤝', `You lifted them up instead of competing. Their audience met yours, and being the elder statesman looks good on you. +${fmt(g)}.`, 'good'); log.floats.push({ anchor:'plat:'+p.key, text:'+'+fmt(g), tone:'gain' }); log.bump.push(p.key); return log; } },
+        { t: 'escalate', ci: '🥊', label: 'Remind everyone who did it first', desc: 'Compete. Out-work the newcomer.', stakes: '+5 stress · 50%: heat +12 · else rep −2–6 (looked insecure)',
+          apply: S => { addStress(S, 5); if (chance(.5)) { const p = strongest(S); p.heat = clamp(p.heat + 12, 0, 100); const log = fed('🥊', 'You reminded everyone why you’re the one they copied. Point made.', 'good'); log.bump.push(p.key); return log; } const r = repHit(S, 2, 6); return fed('😬', `Picking a fight with someone smaller than you read as insecure. Rep −${r}.`, 'bad'); } },
+      ] },
+    { id: 'growth-pressure', kind: 'neutral', emoji: '📈', title: 'Everyone expects you to keep going up.', badge: 'Pressure', minWeek: 18, maxWeek: 35,
+      text: 'The sponsors, the algorithm, the part of your own brain that checks the stats — they all want the same thing. Bigger. This month, next month, forever.',
+      choices: [
+        { t: 'repair', ci: '🧘', label: 'Hold a sustainable pace', desc: 'Grow at a speed you can survive.', stakes: '−6 stress · rep +1–3',
+          apply: S => { addStress(S, -6); S.rep = clamp(S.rep + rint(1, 3), 0, 100); return fed('🧘', 'You decided your pace was your pace. The numbers grew slower, and you were still standing to enjoy them.', 'good'); } },
+        { t: 'escalate', ci: '🏃', label: 'Chase the number', desc: 'Feed the machine. Post more, sleep less.', stakes: '+10 stress · heat +8 everywhere',
+          apply: S => { addStress(S, 10); activePlats(S).forEach(p => p.heat = clamp(p.heat + 8, 0, 100)); return fed('🏃', 'You chased it. Everything got louder, including the ringing in your ears. The graph went up.', ''); } },
+      ] },
+    { id: 'sponsor-control', kind: 'neutral', emoji: '📋', title: 'A sponsor wants creative control.', badge: 'Deal terms', minWeek: 18, maxWeek: 35, cond: S => S.deals >= 1,
+      text: 'Good money, one condition: they approve the script, the thumbnail, the jokes. They’d like your audience’s trust, packaged and delivered on brand.',
+      choices: [
+        { t: 'repair', ci: '✋', label: 'Hold the line', desc: 'Smaller deal, your voice intact.', stakes: '+$300 plus 1% of followers · rep +1–3',
+          apply: S => { const amt = Math.round(300 + totalFollowers(S) * 0.01); S.grossEarned += amt; S.rep = clamp(S.rep + rint(1, 3), 0, 100); return gift(S, '✋', `You kept final cut and took the smaller check: +${money(amt)}. The audience never knew there was a fight, which was the point.`, amt, 'good'); } },
+        { t: 'escalate', ci: '🖊️', label: 'Give them the keys', desc: 'Bigger money. Their words in your mouth.', stakes: '+$600 plus 2% of followers · rep −4–9',
+          apply: S => { const amt = Math.round(600 + totalFollowers(S) * 0.02); S.cash += amt; S.grossEarned += amt; S.deals++; const r = repHit(S, 4, 9); const log = fed('🖊️', `You ran their script word for word for ${money(amt)}. It read like an ad because it was one. Rep −${r}.`, 'bad'); log.floats.push({ anchor:'cash', text:'+'+money(amt), tone:'cash' }); return log; } },
+      ] },
+    { id: 'legacy-question', kind: 'neutral', emoji: '🕰️', title: 'What is all this actually for?', badge: 'Reckoning', minWeek: 44,
+      text: 'Late, staring at the upload screen, the question arrives uninvited: a year of your life went into this. What did you want it to be — and is it that?',
+      choices: [
+        { t: 'repair', ci: '🎯', label: 'Recommit to the work that matters', desc: 'Make the thing you’d be proud to have made.', stakes: '−8 stress · rep +3–8',
+          apply: S => { addStress(S, -8); S.rep = clamp(S.rep + rint(3, 8), 0, 100); return fed('🎯', 'You remembered the version of this you actually believed in, and made that. It was the best thing you’d posted in months.', 'good'); } },
+        { t: 'escalate', ci: '💰', label: 'Cash out the goodwill while it’s hot', desc: 'Monetize everything. Ask the meaning question next year.', stakes: '+$800 plus 2% of followers · rep −3–7',
+          apply: S => { const amt = Math.round(800 + totalFollowers(S) * 0.02); S.cash += amt; S.grossEarned += amt; const r = repHit(S, 3, 7); const log = fed('💰', `You turned the goodwill into money while the turning was good: +${money(amt)}. The meaning question can wait. It always waits. Rep −${r}.`, ''); log.floats.push({ anchor:'cash', text:'+'+money(amt), tone:'cash' }); return log; } },
+      ] },
   ];
 
   // ======================= weekly orchestration =======================
@@ -912,6 +1006,11 @@
     S.redlineStreak = band === 'redline' ? S.redlineStreak + 1 : 0;
     addStress(S, -(CONFIG.stressRecover + S.slots.content * CONFIG.stressRecoverPerEmptySlot));
     S.newFollowers = 0;
+    // seed for the platform-dependency arc: a creator who bet on one channel by the business act
+    if (act(S) >= 2 && !S.flags.concentrated) {
+      const tot = totalFollowers(S), top = strongest(S);
+      if (tot > 3000 && top && top.followers / tot >= 0.65) S.flags.concentrated = S.week;
+    }
     return log;
   }
   function drawEvent(S) {
@@ -987,6 +1086,7 @@
     CONFIG, NICHES, PLATFORMS, PORDER, TIERS, TIERCUT, ANGLES, AORDER, TOPICS, THUMBS, thumbFor, HIRES, HORDER, STUDIOS, ENDINGS, EVENTS,
     setRng, rnd, rint, clamp, chance, pick, fmt, money,
     newState, activePlats, totalFollowers, strongest, platTier, platPolish, silentWeeks, silentWeeksAll, idleChurnRate,
+    ACTS, act,
     useSlot, addStress, stressBand, hasStudio, studio, contentSlots, hireCount, hireCap, payroll, overhead, overheadBreakdown, overheadAt, hireInfo, livingStep, livingCost, taxOwed,
     viewsMult, stressCost, upgradeInfo, repHit, loseFollowers,
     pickTopic, postCard, previewPost, buildHand, applyMove, doPost, startPlatform, crosspost, crossOptions, biz,

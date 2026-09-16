@@ -10,11 +10,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Feed: a creator life sim</title>
-<meta name="description" content="A year as a content creator, in ten minutes. Five platforms, one stress meter, eight endings.">
+<meta name="description" content="A year as a content creator, in about twenty minutes. Five platforms, one stress meter, eight endings.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Nellis">
 <meta property="og:title" content="The Feed: a creator life sim">
-<meta property="og:description" content="A year as a content creator, in about ten minutes. Five platforms, one stress meter, eight endings. Play free.">
+<meta property="og:description" content="A year as a content creator, in about twenty minutes. Five platforms, one stress meter, eight endings. Play free.">
 <meta property="og:url" content="https://jasonnellis.com/the-feed">
 <meta property="og:image" content="https://jasonnellis.com/the-feed-assets/imgs/og-the-feed.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="The Feed — a creator life sim. A creator works late at a small desk lit by a monitor.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Feed: a creator life sim">
-<meta name="twitter:description" content="A year as a content creator, in about ten minutes. Five platforms, one stress meter, eight endings. Play free.">
+<meta name="twitter:description" content="A year as a content creator, in about twenty minutes. Five platforms, one stress meter, eight endings. Play free.">
 <meta name="twitter:image" content="https://jasonnellis.com/the-feed-assets/imgs/og-the-feed.jpg">
 <link rel="icon" href="/favicon.svg">
 <!-- Site design system: DM Sans / DM Mono @font-face + Bolt OS tokens -->
@@ -498,6 +498,8 @@
   .overlay.hidden{display:none}
   .overlay .card{width:100%;max-width:var(--sf-col-w);background:var(--sf-bg);border:2px solid var(--sf-line);
     border-radius:20px;padding:22px 20px;box-shadow:var(--sf-shadow);margin:auto}
+  /* ---- act-transition beat: a short one-time chrome overlay, narrower than the intro/end cards ---- */
+  .card.beat{max-width:520px}
   /* ---- intro: the opening scene as a shallow banner on phones, a full column beside the form on wide screens ---- */
   .overlay .card.intro{padding:0;overflow:hidden;display:flex;flex-direction:column}
   .intro-art{margin:0;position:relative;flex:none;height:150px;background:var(--sf-bg-2)}
@@ -685,7 +687,7 @@
       </picture>
     </figure>
     <div class="intro-form">
-    <div class="kick">A year as a creator, in about ten minutes</div>
+    <div class="kick">A year as a creator, in about twenty minutes</div>
     <h1>Your first video is up. Forty people watched it. One of them was your mom.</h1>
     <p class="lede">Fifty-two weeks to turn that into a living. Every platform wants something different from you, the algorithm changes its mind without telling you, and the comments are about to get interesting. There are eight ways this ends.</p>
     <div class="field"><label for="nameInput">Name your online persona</label><input id="nameInput" maxlength="24" placeholder="e.g. midnight uploads" autocomplete="off"></div>
@@ -722,6 +724,16 @@
     <div class="endgal" id="endGal"></div>
     <button class="btn ghost" id="againBtn">Run it back</button>
     </div>
+  </div>
+</div>
+
+<!-- ACT BEAT -->
+<div class="overlay hidden" id="beatOverlay">
+  <div class="card beat">
+    <div class="kick" id="beatKick"></div>
+    <h1 id="beatTitle"></h1>
+    <p class="lede" id="beatText"></p>
+    <button class="btn primary" id="beatBtn" style="width:100%">Keep going →</button>
   </div>
 </div>
 
@@ -791,6 +803,7 @@
   let resolving = false;   // fix 1: true while the queued moves roll in at week's end (locks input)
   let bizMoreOpen = false;   // UI-only: the collapsed business list after the week's move is spent
   let postLog = {};   // UI-only: last 3 posts per platform {topic, views, week, hit} — feeds the channel cards
+  let beatsSeen = [];   // UI-only: acts whose transition beat has already shown this run (persisted)
   function switchTab(t){ tab = t; SFX.play('click'); render(); }
   // Desktop console: >=980px shows every pane at once (no tab bar). Re-render
   // when we cross the breakpoint so panes fill/empty and hidden flags update.
@@ -847,21 +860,36 @@
   // flags / phase / event; the four UI arrays below can't be recomputed from S.
   // SAVE_VERSION gates the blob: a later build that changes S's shape bumps it, and
   // an older save then fails validSave() and is discarded — no migration code.
-  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 1;
+  const SAVE_KEY = 'thefeed_save', SAVE_VERSION = 2;
   function saveRun(){ if(!S) return; try{ localStorage.setItem(SAVE_KEY,
-    JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run } })); }catch(e){} }
+    JSON.stringify({ v:SAVE_VERSION, ts:Date.now(), S, ui:{ hist, postLog, lastRecap, run, beatsSeen } })); }catch(e){} }
   function validSave(d){ return !!(d && d.v===SAVE_VERSION && d.S && d.S.over===false
     && typeof d.S.week==='number' && d.S.week>=1 && d.S.week<=E.CONFIG.years && NICHES[d.S.niche] && d.ui); }
   function loadRun(){ try{ const raw=localStorage.getItem(SAVE_KEY); if(!raw) return null;
     const d=JSON.parse(raw); return validSave(d)?d:null; }catch(e){ return null; } }
   function clearRun(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
 
+  // Act-transition beats: shown once when the run crosses into act 2 and act 3. Chrome, not an
+  // engine event — driven by E.act(S) so it can't be missed by the random event roll.
+  const BEATS = {
+    2: { kick: 'Act II · The business', title: 'This is a job now.',
+         text: 'Four months in. The hobby has overhead — a payroll, a tax bill, a landlord who doesn’t watch your videos. The numbers stopped being a scoreboard and started being a budget.' },
+    3: { kick: 'Act III · The ceiling', title: 'The easy growth is behind you.',
+         text: 'Eight months in. The audience knows exactly what it wants from you, the algorithm has opinions, and every choice from here costs something. This is where you find out what kind of creator you became.' },
+  };
+  function showBeat(a) {
+    const b = BEATS[a]; if (!b) return;
+    $('beatKick').textContent = b.kick; $('beatTitle').textContent = b.title; $('beatText').textContent = b.text;
+    openClose($('beatOverlay'), true);
+  }
+  $('beatBtn').onclick = () => openClose($('beatOverlay'), false);
+
   function newGame(name, niche, home){
     SFX.unlock(); SFX.play('level'); clearRun();
     S = E.newState(niche, home); S.name = name || 'untitled'; evtThisWeek = false; closeTeam(); closeChanPicker();
     paintBackdrop();
     pushFeed(NICHES[niche].emoji, `${PLATFORMS[home].name} is live. Forty followers, and you know most of them.`, '');
-    hist = []; lastRecap = null; weekLog = []; queue = []; resolving = false; postLog = {}; snapshot(); tab = 'home';
+    hist = []; lastRecap = null; weekLog = []; queue = []; resolving = false; postLog = {}; beatsSeen = []; snapshot(); tab = 'home';
     run = { restWeeks:0, peakStress:Math.round(S.stress), events:0 };
     track('start', { niche: NICHES[niche].label });
     E.buildHand(S); render(); openClose($('startOverlay'), false);
@@ -875,6 +903,7 @@
     S = saved.S;
     hist = saved.ui.hist || []; postLog = saved.ui.postLog || {};
     lastRecap = saved.ui.lastRecap || null;
+    beatsSeen = saved.ui.beatsSeen || [];
     run = saved.ui.run || { restWeeks:0, peakStress:Math.round(S.stress), events:0 };
     evtThisWeek = false; weekLog = []; queue = []; resolving = false; bizMoreOpen = false; tab = 'home';
     closeTeam(); closeChanPicker(); paintBackdrop(); render();
@@ -973,10 +1002,14 @@
     run.peakStress = Math.max(run.peakStress, Math.round(S.stress)); if(S.slots.content > 0) run.restWeeks++;
     applyLog(E.settleWeek(S)); const ev=E.rollEvent(S);
     if(ev){ S.event=ev; S.phase='event'; evtThisWeek=true; SFX.play('event'); render(); return; } SFX.play('week'); advance(); }
-  function advance(){ tab='home'; weekLog=[]; queue=[]; resolving=false; bizMoreOpen=false; E.advanceWeek(S);
+  function advance(){ tab='home'; weekLog=[]; queue=[]; resolving=false; bizMoreOpen=false;
+    const actBefore = E.act(S);
+    E.advanceWeek(S);
     if([10,26,40].includes(S.week)) track('week:'+S.week);   // funnel milestones: where do people quit?
     if(E.checkEndings(S)){ snapshot(); endGame(S.endKey); return; }
     snapshot(); computeRecap(); S.phase='play'; E.buildHand(S); render();
+    const actNow = E.act(S);
+    if(actNow > actBefore && !beatsSeen.includes(actNow)){ beatsSeen.push(actNow); showBeat(actNow); }
     // fix 4: a new week starts at the top — don't leave the player looking at last week's business list
     try{ window.scrollTo(0,0); document.querySelectorAll('.tabbody, #tab-home, #tab-alerts, #stagebody').forEach(e=>{ if(e) e.scrollTop=0; }); }catch(e){}
     saveRun();   // persist the clean start of this week (the ending path returned earlier)

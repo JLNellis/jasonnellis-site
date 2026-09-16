@@ -648,6 +648,40 @@ test('choices that echo: Take the bag flags soldOut and makes crypto-fallout eli
   assert.ok(!fallout.cond(S), 'the echo window closes');
 });
 
+test('act(S): 1–17 → act 1, 18–35 → act 2, 36–52 → act 3', () => {
+  const S = E.newState('gaming', 'longform');
+  const at = w => { S.week = w; return E.act(S); };
+  assert.equal(at(1), 1); assert.equal(at(17), 1);
+  assert.equal(at(18), 2); assert.equal(at(35), 2);
+  assert.equal(at(36), 3); assert.equal(at(52), 3);
+});
+
+test('concentrated flag: set in act 2+ when the top platform holds ≥65% of a real audience', () => {
+  const S = E.newState('gaming', 'longform'); S.week = 20;
+  S.plats.longform.followers = 9000; S.plats.shortform.active = true; S.plats.shortform.followers = 1000;
+  E.settleWeek(S);
+  assert.ok(S.flags.concentrated, 'concentrated should be set');
+});
+test('platform-turns: eligible only in act 3 with a real top channel', () => {
+  const S = E.newState('gaming', 'longform'); S.plats.longform.followers = 9000; S.flags.concentrated = 10;
+  const card = E.EVENTS.find(e => e.id === 'platform-turns');
+  assert.ok(card, 'card exists');
+  S.week = 20; assert.ok(!(S.week >= card.minWeek), 'not eligible before act 3');
+  S.week = 40; assert.ok(card.cond(S) && S.week >= card.minWeek, 'eligible in act 3');
+});
+
+test('acts 2a deck: the new act-gated cards exist, are well-formed, and ids stay unique', () => {
+  const ids = ['audience-expectations', 'reinvent-or-coast', 'ceiling-plateau', 'format-fatigue',
+    'scale-burnout', 'old-guard', 'growth-pressure', 'sponsor-control', 'legacy-question'];
+  ids.forEach(id => {
+    const c = E.EVENTS.find(e => e.id === id);
+    assert.ok(c, `missing card ${id}`);
+    assert.ok(c.choices.length >= 2 && c.choices.every(ch => ch.t && ch.stakes && typeof ch.apply === 'function'), `${id} malformed`);
+  });
+  const all = E.EVENTS.map(e => e.id);
+  assert.equal(all.length, new Set(all).size, 'duplicate event id in the deck');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

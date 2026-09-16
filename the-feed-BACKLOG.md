@@ -728,6 +728,42 @@ reset on phones.
 `npm test` 71/71; `npm run sim` 6/6 (seeds 7/42/123). Only the leaderboard stays deferred;
 the essay-ending CTA stays blocked on the essays existing.
 
+## Step 1 of the v2 evolution (spec: `docs/superpowers/specs/2026-09-15-the-feed-v2-evolution-vision.md`)
+
+The vision doc's "Step 1" (kill the flatline: acts + team-as-characters + a hall),
+decomposed into ordered sub-projects, each its own spec+plan under
+`docs/superpowers/{specs,plans}/`.
+
+### Shipped: mid-run save (sub-project 1)
+Persist the run to `localStorage.thefeed_save` (`{v, ts, S, ui}`) on every
+`advance()`; **Continue** on the start screen restores the full run; cleared on
+ending and on a fresh run; a `SAVE_VERSION` gate silently discards corrupt /
+future-version / unknown-niche saves (never crashes). `the-feed.html` +
+`privacy.html` only; engine/sim/tests untouched. The clock reposition was
+deliberately deferred to Acts (saving doesn't lengthen a run).
+
+### Shipped: Acts 2a — structure, transitions, late-act decks (sub-project 2, part a)
+The flatline fix's structural half. **Engine:** `act(S)` + `ACTS` labels (three
+acts on the existing `CONFIG.phases` boundaries, 1–17/18–35/36–52); a
+`concentrated` flag set in `settleWeek` for a creator who bet on one platform by
+the business act, harvested by the new **`platform-turns`** card (the platform you
+built on turns on you, biting hardest when concentrated); **9 new act-gated event
+cards** (Act III ceiling/audience/reinvent + Act II texture) — the four
+Diversifier-picked growth branches scale proportionally to audience (capped 45K)
+so the spread player isn't starved without inflating the big personas (keeps target
+6). **Chrome (`the-feed.html`):** guaranteed **act-transition beats** (Act II "This
+is a job now.", Act III "The easy growth is behind you.") shown once at the
+boundary, driven by `E.act(S)` not the random roll, with a `beatsSeen` array
+persisted in the save; `SAVE_VERSION` bumped **1→2** (v1 saves retire cleanly).
+**Clock copy** repositioned to "about twenty minutes" across the six surfaces
+(meta/og/twitter/kicker, `tools.njk`, `tool-index/the-feed.md`), to be trued-up
+against the Plausible `start`→`end` median. `npm test` 75/75; `npm run sim` 6/6 on
+seeds 7/42/123. Card **copy is a draft pending Jason's voice pass.**
+
+**Next: Acts 2b — the Act III exit decision** (sell / go independent / keep
+climbing, ending the run early with a steered *existing* ending via a one-line
+`checkEndings` change). Then Team-as-characters (Pillar 2), then the hall (5a).
+
 ## Open items
 
 Notes from the latest balance pass, not yet actioned:
