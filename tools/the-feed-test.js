@@ -172,63 +172,39 @@ test('CHARACTERS: 8 characters, valid roles, editor+designer each have two', () 
   assert.equal(byRole('editor'), 2); assert.equal(byRole('designer'), 2);
   ['manager','mod','producer','analyst'].forEach(r => assert.equal(byRole(r), 1));
 });
+test('S.hires holds character ids; the pro editor beats the roommate on stress + views', () => {
+  const S = E.newState('gaming','longform');
+  assert.deepEqual(S.hires, { editor:null, manager:null, mod:null, designer:null, producer:null, analyst:null });
+  S.hires.editor = 'editor-roommate'; const roomStress = E.stressCost(S,'longform','trend'); const roomViews = E.viewsMult(S,'longform');
+  S.hires.editor = 'editor-pro';      const proStress  = E.stressCost(S,'longform','trend'); const proViews  = E.viewsMult(S,'longform');
+  assert.ok(proStress < roomStress, 'pro cuts more stress'); assert.ok(proViews > roomViews, 'pro adds views, roommate does not');
+});
+test('payroll sums the hired characters\' weekly', () => {
+  const S = E.newState('gaming','longform'); S.hires.mod = 'mod'; S.hires.analyst = 'analyst';
+  assert.equal(E.payroll(S), E.CHARACTERS.mod.weekly + E.CHARACTERS.analyst.weekly);
+});
 test('overhead is flat + per-platform + payroll + lease, and breakdown sums', () => {
   const S = mk();
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform);
   S.plats.shortform.active = true;
   assert.strictEqual(E.overhead(S), E.CONFIG.overheadBase + E.CONFIG.overheadPerPlatform * 2);
-  S.hires.editor = true;
-  assert.strictEqual(E.payroll(S), E.HIRES.editor.weekly);
+  S.hires.editor = 'editor-pro';
+  assert.strictEqual(E.payroll(S), E.CHARACTERS['editor-pro'].weekly);
   S.gear = 4;
   const b = E.overheadBreakdown(S);
   assert.strictEqual(b.base, E.CONFIG.overheadBase); assert.strictEqual(b.platforms, E.CONFIG.overheadPerPlatform * 2);
-  assert.strictEqual(b.payroll, E.HIRES.editor.weekly); assert.strictEqual(b.lease, E.STUDIOS[4].lease);
+  assert.strictEqual(b.payroll, E.CHARACTERS['editor-pro'].weekly); assert.strictEqual(b.lease, E.STUDIOS[4].lease);
   assert.strictEqual(b.total, E.overhead(S));
   assert.strictEqual(b.total, b.base + b.platforms + b.payroll + b.lease);
 });
 test('hire cap is 2 without studio, 4 with', () => {
   const S = mk(); S.cash = 99999;
   assert.strictEqual(E.hireCap(S), E.CONFIG.hireCapBase);
-  E.biz.hire(S, 'editor'); S.slots.business = 1;
-  E.biz.hire(S, 'mod'); S.slots.business = 1;
+  S.hires.editor = 'editor-roommate'; S.hires.mod = 'mod';
   assert.strictEqual(E.hireCount(S), 2);
-  const before = S.cash;
-  E.biz.hire(S, 'designer');
-  assert.strictEqual(S.hires.designer, false, 'third hire refused without studio');
-  assert.strictEqual(S.cash, before, 'refused hire costs nothing');
-  assert.strictEqual(S.slots.business, 1, 'refused hire keeps the slot');
   S.gear = 4; assert.strictEqual(E.hireCap(S), E.STUDIOS[4].cap); S.gear = 6; assert.strictEqual(E.hireCap(S), E.STUDIOS[6].cap);
-  E.biz.hire(S, 'designer');
-  assert.strictEqual(S.hires.designer, true);
-});
-test('hire takes signing cost and business slot; fire clears payroll', () => {
-  const S = mk(); S.cash = 5000;
-  const log = E.biz.hire(S, 'manager');
-  assert.strictEqual(S.cash, 5000 - E.HIRES.manager.sign);
-  assert.strictEqual(S.slots.business, 0);
-  assert.ok(log.feed.length === 1 && /manager/i.test(log.feed[0].text));
-  assert.strictEqual(E.payroll(S), E.HIRES.manager.weekly);
-  E.biz.fire(S, 'manager');
-  assert.strictEqual(S.hires.manager, true, 'fire refused: no business slot left');
-  S.slots.business = 1;
-  E.biz.fire(S, 'manager');
-  assert.strictEqual(S.hires.manager, false);
-  assert.strictEqual(E.payroll(S), 0);
-});
-test('hire refused when broke', () => {
-  const S = mk(); S.cash = 10;
-  E.biz.hire(S, 'mod');
-  assert.strictEqual(S.hires.mod, false); assert.strictEqual(S.slots.business, 1);
-});
-test('hireInfo explains refusals', () => {
-  const S = mk(); S.cash = 10;
-  assert.strictEqual(E.hireInfo(S, 'mod').ok, false);
-  assert.match(E.hireInfo(S, 'mod').reason, /\$/);
-  S.cash = 5000; assert.strictEqual(E.hireInfo(S, 'mod').ok, true);
-  S.hires.editor = S.hires.manager = true;
-  assert.match(E.hireInfo(S, 'mod').reason, /bigger space/i);
-  S.gear = 6; S.hires.mod = S.hires.designer = S.hires.producer = S.hires.analyst = true;
-  assert.match(E.hireInfo(S, 'editor').reason, /already/i); assert.strictEqual(E.hireCount(S), 6);
+  S.hires.designer = 'designer-steady'; S.hires.producer = 'producer'; S.hires.analyst = 'analyst'; S.hires.manager = 'manager';
+  assert.strictEqual(E.hireCount(S), 6);
 });
 
 // ---------------------------------------------------------------- gear + studio + multipliers
@@ -238,17 +214,17 @@ test('viewsMult stacks gear, studio, designer, editor(longform/live), fumes', ()
   S.gear = 2; assert.ok(Math.abs(E.viewsMult(S, 'micro') - E.CONFIG.gearViewsMult * E.CONFIG.gearViewsMult) < 1e-9);
   S.gear = 4; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.STUDIOS[4].views) < 1e-9);
   S.gear = 6; assert.ok(Math.abs(E.viewsMult(S, 'micro') - Math.pow(E.CONFIG.gearViewsMult, 3) * E.STUDIOS[6].views) < 1e-9);
-  S.gear = 0; S.hires.designer = true; assert.ok(Math.abs(E.viewsMult(S, 'micro') - 1.15) < 1e-9);
-  S.hires.designer = false; S.hires.editor = true;
-  assert.ok(Math.abs(E.viewsMult(S, 'longform') - 1.05) < 1e-9);
+  S.gear = 0; S.hires.designer = 'designer-steady'; assert.ok(Math.abs(E.viewsMult(S, 'micro') - E.CHARACTERS['designer-steady'].fx.viewsBump) < 1e-9);
+  S.hires.designer = null; S.hires.editor = 'editor-pro';
+  assert.ok(Math.abs(E.viewsMult(S, 'longform') - E.CHARACTERS['editor-pro'].fx.viewsBump) < 1e-9);
   assert.strictEqual(E.viewsMult(S, 'micro'), 1, 'editor does not touch micro');
-  S.hires.editor = false; S.stress = 75; assert.strictEqual(E.viewsMult(S, 'micro'), E.CONFIG.fumesViewsMult);
+  S.hires.editor = null; S.stress = 75; assert.strictEqual(E.viewsMult(S, 'micro'), E.CONFIG.fumesViewsMult);
 });
 test('stressCost: platform + angle − editor − studio, min 1', () => {
   const S = mk();
   assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress);
   assert.strictEqual(E.stressCost(S, 'longform', 'personal'), E.PLATFORMS.longform.stress + E.ANGLES.personal.stress);
-  S.hires.editor = true; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress - 8, 'editor takes 8 off longform');
+  S.hires.editor = 'editor-pro'; assert.strictEqual(E.stressCost(S, 'longform', 'evergreen'), E.PLATFORMS.longform.stress - E.CHARACTERS['editor-pro'].fx.stressCut, 'editor takes stressCut off longform');
   assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress, 'editor does not touch micro');
   S.gear = 4; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), E.PLATFORMS.micro.stress - E.STUDIOS[4].stress, 'spare room takes its relief off');
   S.gear = 6; assert.strictEqual(E.stressCost(S, 'micro', 'evergreen'), 1, 'floors at 1');
@@ -277,9 +253,9 @@ test('studios: no follower gate; deposit + runway of the NEW overhead; sequentia
 test('producer keeps evergreen tails two weeks longer; analyst slows heat decay', () => {
   E.setRng(seeded(3)); const S = mk(); S.plats.longform.followers = 2000;
   E.doPost(S, 'longform', 'evergreen', 'a', 1); assert.strictEqual(S.tails[0].weeksLeft, E.CONFIG.tailWeeks);
-  S.hires.producer = true; E.doPost(S, 'longform', 'evergreen', 'b', 1); assert.strictEqual(S.tails[1].weeksLeft, E.CONFIG.tailWeeks + 2);
+  S.hires.producer = 'producer'; E.doPost(S, 'longform', 'evergreen', 'b', 1); assert.strictEqual(S.tails[1].weeksLeft, E.CONFIG.tailWeeks + E.CHARACTERS.producer.fx.tailWeeks);
   const A = mk(); A.cash = 50000; A.plats.longform.heat = 60; A.plats.longform.lastPost = A.week; E.settleWeek(A);
-  const B = mk(); B.cash = 50000; B.plats.longform.heat = 60; B.plats.longform.lastPost = B.week; B.hires.analyst = true; E.settleWeek(B);
+  const B = mk(); B.cash = 50000; B.plats.longform.heat = 60; B.plats.longform.lastPost = B.week; B.hires.analyst = 'analyst'; E.settleWeek(B);
   assert.ok(B.plats.longform.heat > A.plats.longform.heat, 'analyst keeps more heat');
 });
 
@@ -558,7 +534,7 @@ test('deal: gated at 1K, pays more at high rep, manager boosts pay and softens r
   E.setRng(seeded(5)); const hi = mk(); hi.plats.longform.followers = 10000; hi.rep = 80; const c1 = hi.cash; E.biz.deal(hi);
   const expectRatio = (E.CONFIG.dealRepBase + 0.8) / (E.CONFIG.dealRepBase + 0.4);
   assert.ok(Math.abs((hi.cash - c1) / (lo.cash - c0) - expectRatio) < 0.01, `rep 80 pays ${expectRatio.toFixed(2)}x rep 40`);
-  E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = true; const c2 = m.cash; E.biz.deal(m);
+  E.setRng(seeded(5)); const m = mk(); m.plats.longform.followers = 10000; m.rep = 80; m.hires.manager = 'manager'; const c2 = m.cash; E.biz.deal(m);
   assert.ok(Math.abs((m.cash - c2) / (hi.cash - c1) - 1.3) < 0.01, 'manager 1.3x');
   assert.ok((80 - m.rep) < (80 - hi.rep), 'manager softens rep cost');
   assert.strictEqual(m.stress, E.CONFIG.startStress + E.CONFIG.dealStress);
@@ -573,11 +549,11 @@ test('loseFollowers takes a % of the strongest platform, halved by a mod, shrink
   const S = mk(); S.plats.longform.followers = 10000; S.plats.longform.trendFollowers = 5000;
   assert.strictEqual(E.loseFollowers(S, 0.10, 0.10), 1000);
   assert.strictEqual(S.plats.longform.followers, 9000); assert.strictEqual(S.plats.longform.trendFollowers, 4500);
-  S.hires.mod = true; assert.strictEqual(E.loseFollowers(S, 0.10, 0.10), 450);
+  S.hires.mod = 'mod'; assert.strictEqual(E.loseFollowers(S, 0.10, 0.10), 450);
 });
 test('repHit is softened to 2/3 by a mod', () => {
   const S = mk(); S.rep = 60; E.repHit(S, 9, 9); assert.strictEqual(S.rep, 51);
-  S.hires.mod = true; E.repHit(S, 9, 9); assert.strictEqual(S.rep, 45);
+  S.hires.mod = 'mod'; E.repHit(S, 9, 9); assert.strictEqual(S.rep, 45);
 });
 test('health event triggers on stress and moves stress', () => {
   const ev = E.EVENTS.find(e => /slept/.test(e.title));

@@ -261,7 +261,7 @@
       gear: 0, deals: 0, members: 0,
       band: 'normal', redlineStreak: 0,
       slots: { content: CONFIG.slotsContent, business: CONFIG.slotsBusiness },
-      hires: { editor: false, manager: false, mod: false, designer: false },
+      hires: { editor: null, manager: null, mod: null, designer: null, producer: null, analyst: null }, teamHand: [],
       tails: [], usedTopics: [], totalViews: 0, peakOverhead: 0, newFollowers: 0,
       seenEvents: [], flags: {}, grossEarned: 0, taxedThrough: 0, peakFollowers: 0, crossUsed: false,
       lastHit: null, over: false, endKey: null, plats: {}, hand: [],
@@ -311,7 +311,7 @@
   const contentSlots = S => { const st = studio(S); return st ? st.slots : CONFIG.slotsContent; };
   const hireCount = S => HORDER.filter(k => S.hires[k]).length;
   const hireCap = S => { const st = studio(S); return st ? st.cap : CONFIG.hireCapBase; };
-  const payroll = S => HORDER.reduce((s, k) => s + (S.hires[k] ? HIRES[k].weekly : 0), 0);
+  const payroll = S => HORDER.reduce((s, k) => s + (hiredChar(S, k) ? hiredChar(S, k).weekly : 0), 0);
   // lifestyle creep: which step of CONFIG.livingSteps the run has reached (0 = base), and the $/wk it costs
   function livingStep(S) { let i = 0; CONFIG.livingSteps.forEach((st, k) => { if ((S.peakFollowers || 0) >= st[0]) i = k + 1; }); return i; }
   const livingCost = S => { const i = livingStep(S); return i ? CONFIG.livingSteps[i - 1][1] : CONFIG.overheadBase; };
@@ -336,14 +336,14 @@
   function viewsMult(S, pkey) {
     let m = Math.pow(CONFIG.gearViewsMult, Math.min(S.gear, 3));
     const st = studio(S); if (st) m *= st.views;
-    if (S.hires.designer) m *= 1.15;
-    if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) m *= 1.05;
+    const des = hiredChar(S,'designer'); if (des) m *= des.fx.viewsBump;
+    const ed = hiredChar(S,'editor'); if (ed && (pkey==='longform'||pkey==='live')) m *= ed.fx.viewsBump;
     const band = stressBand(S); if (band === 'fumes' || band === 'redline') m *= CONFIG.fumesViewsMult;
     return m;
   }
   function stressCost(S, pkey, angleKey) {
     let c = PLATFORMS[pkey].stress + (ANGLES[angleKey] ? ANGLES[angleKey].stress : 0);
-    if (S.hires.editor && (pkey === 'longform' || pkey === 'live')) c -= 8;
+    const ed = hiredChar(S,'editor'); if (ed && (pkey === 'longform' || pkey === 'live')) c -= ed.fx.stressCut;
     const st = studio(S); if (st) c -= st.stress;
     return Math.max(1, c);
   }
@@ -362,10 +362,15 @@
   }
 
   // --- damage helpers used by events; the community mod softens both ---
-  function repHit(S, lo, hi) { const n = Math.round(rint(lo, hi) * (S.hires.mod ? 0.67 : 1)); S.rep = clamp(S.rep - n, 0, 100); return n; }
+  function repHit(S, lo, hi) {
+    const mod = hiredChar(S,'mod'), des = hiredChar(S,'designer');
+    let mult = mod ? mod.fx.repHitMult : 1; if (des && des.fx.edgy) mult *= 1.15;
+    const n = Math.round(rint(lo, hi) * mult); S.rep = clamp(S.rep - n, 0, 100); return n;
+  }
   function loseFollowers(S, fracLo, fracHi) {
     const p = strongest(S); if (!p) return 0;
-    const n = Math.round(p.followers * rnd(fracLo, fracHi) * (S.hires.mod ? 0.5 : 1));
+    const mod = hiredChar(S,'mod');
+    const n = Math.round(p.followers * rnd(fracLo, fracHi) * (mod ? mod.fx.followerLossMult : 1));
     const cohortShare = p.followers ? p.trendFollowers / p.followers : 0;
     p.followers -= n; p.trendFollowers = Math.max(0, Math.round(p.trendFollowers - n * cohortShare));
     return n;
@@ -466,7 +471,7 @@
     if (A.rep) S.rep = clamp(S.rep + rint(A.rep[0], A.rep[1]), 0, 100);
     let repHit = 0;
     if (A.badChance && chance(A.badChance)) { repHit = rint(A.badRep[0], A.badRep[1]); S.rep = clamp(S.rep - repHit, 0, 100); }
-    if (A.tail) S.tails.push({ pkey: k, topic, views, weeksLeft: CONFIG.tailWeeks + (S.hires.producer ? 2 : 0) });
+    if (A.tail) S.tails.push({ pkey: k, topic, views, weeksLeft: CONFIG.tailWeeks + (hiredChar(S,'producer') ? hiredChar(S,'producer').fx.tailWeeks : 0) });
     S.usedTopics.push({ topic, week: S.week });
 
     const log = L();
@@ -521,9 +526,9 @@
       const log = L(); log.floats.push({ anchor: 'rep', text: '+' + r.toFixed(1), tone: 'up' });
       log.feed.push({ emoji: '💬', text: 'Spent the week in the comments. The regulars noticed. The regulars always notice.', kind: 'good' }); return log; },
     deal(S) { if (totalFollowers(S) < 1000 || !useSlot(S, 'business')) return L(); addStress(S, CONFIG.dealStress);
-      const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = S.hires.manager;
-      const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? 1.3 : 1));
-      const h = rnd(4, 9) * (mgr ? 0.6 : 1);
+      const repMult = CONFIG.dealRepBase + S.rep / 100, mgr = hiredChar(S,'manager');
+      const pay = Math.round((CONFIG.dealBase + totalFollowers(S) * CONFIG.dealScale) * NICHES[S.niche].deal * repMult * (mgr ? mgr.fx.dealMult : 1));
+      const h = rnd(4, 9) * (mgr ? mgr.fx.dealRepMult : 1);
       S.cash += pay; S.grossEarned += pay; S.rep = clamp(S.rep - h, 0, 100); S.deals++;
       const log = L(); log.floats.push({ anchor: 'cash', text: '+' + money(pay), tone: 'cash' }); log.floats.push({ anchor: 'rep', text: '-' + h.toFixed(0), tone: 'loss' });
       log.feed.push({ emoji: '🤝', text: `Ran a sponsored segment for ${money(pay)}${mgr ? '; your manager did the talking' : ''}. You said “link in bio” like you meant it. A few fans noticed you didn’t.`, kind: '' }); return log; },
@@ -779,10 +784,10 @@
     { id: 'editor-quits', kind: 'neutral', emoji: '✂️', title: 'Your editor just quit.', badge: 'Team', cond: S => S.hires.editor,
       text: 'Two lines in a DM and your longform pipeline is suddenly your problem again.',
       choices: [
-        { t: 'repair', ci: '🔁', label: 'Re-hire fast', desc: 'Pay to bring someone in quick.', stakes: '−$600 to re-sign · +4 stress',
-          apply: S => { const cost = HIRES.editor.sign; addStress(S, 4); return spend(S, '🔁', `Signed a replacement editor: −${money(cost)}. The pipeline holds.`, cost, ''); } },
-        { t: 'escalate', ci: '😮‍💨', label: 'Do it all yourself', desc: 'Save the cash, eat the hours.', stakes: 'lose the editor (payroll −$110/wk) · +12 stress',
-          apply: S => { S.hires.editor = false; addStress(S, 12); return fed('😮‍💨', 'Back to editing at 2am. Payroll down, stress up.', 'bad'); } },
+        { t: 'repair', ci: '🔁', label: 'Re-hire fast', desc: 'Pay to bring someone in quick.', stakes: 'pay to re-sign · +4 stress',
+          apply: S => { const cost = hiredChar(S,'editor').sign; addStress(S, 4); return spend(S, '🔁', `Signed a replacement editor: −${money(cost)}. The pipeline holds.`, cost, ''); } },
+        { t: 'escalate', ci: '😮‍💨', label: 'Do it all yourself', desc: 'Save the cash, eat the hours.', stakes: 'lose the editor (payroll drops) · +12 stress',
+          apply: S => { S.hires.editor = null; addStress(S, 12); return fed('😮‍💨', 'Back to editing at 2am. Payroll down, stress up.', 'bad'); } },
       ] },
     { id: 'sponsor-pullout', kind: 'neutral', emoji: '🏳️', title: 'A sponsor pulled out at the last minute.', badge: 'Deal fell through', cond: S => S.deals >= 1, minWeek: 14,
       text: 'The deal you were counting on this month evaporated after their own PR mess.',
@@ -1020,7 +1025,7 @@
       else log.feed.push({ emoji: '👋', text: `${fmt(lost)} people left this week. Trend-chasers go first; silence pushes out the rest.`, kind: 'bad' });
     }
     // heat / fatigue decay
-    const heatKeep = S.hires.analyst ? 0.9 : 0.82;
+    const an = hiredChar(S,'analyst'); const heatKeep = an ? an.fx.heatKeep : 0.82;
     PORDER.forEach(k => { const p = S.plats[k]; p.heat = clamp(Math.round(p.heat * heatKeep) - 2, 0, 100); p.fatigue = clamp(p.fatigue - CONFIG.repeatDecay, 0, 100); });
     // stress: judge the band + burnout streak on the stress you ended the week's work at,
     // THEN recover. (Judging after recovery would make redline unreachable: 100 - 12 < 90.)
