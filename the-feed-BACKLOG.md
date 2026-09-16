@@ -760,9 +760,27 @@ persisted in the save; `SAVE_VERSION` bumped **1→2** (v1 saves retire cleanly)
 against the Plausible `start`→`end` median. `npm test` 75/75; `npm run sim` 6/6 on
 seeds 7/42/123. Card **copy is a draft pending Jason's voice pass.**
 
-**Next: Acts 2b — the Act III exit decision** (sell / go independent / keep
-climbing, ending the run early with a steered *existing* ending via a one-line
-`checkEndings` change). Then Team-as-characters (Pillar 2), then the hall (5a).
+### Shipped: Acts 2b — the Act III exit decision (sub-project 2, part b) — completes Pillar 1
+The marquee decision. A single forced event **`the-exit`** (`cond: () => false` so
+it's never in the random deck) surfaced once at **`CONFIG.exitWeek` (46)** by a
+pre-empt at the top of `rollEvent`. Three choices, ending the run early with a
+**steered *existing* ending**: **Sell the channel** → a buyout (`followers × 3`)
+banked, then `sellout`; **Go independent** → `legend` if you own an audience
+(`members > 0 || plats.writing.active`) with `rep ≥ 50`, else `faded`; **Keep
+climbing** → a feed line only, **zero state change**, play the year out. The whole
+steering mechanism is a **one-line guard** at the top of `checkEndings`:
+`if (S.over && S.endKey) return S.endKey;`. The **sim declines the exit**
+(`resolveEvent` special-case picks Keep climbing), so it's a pure player choice that
+leaves the 6 balance targets untouched — **no retune, no new ending, no
+`SAVE_VERSION` bump** (`S.flags.exitOffered`/`exitChoice` are absent-means-default).
+End screen gains one path-line clause ("took the buyout / went independent in week
+46"). `npm test` 83/83; `npm run sim` 6/6 on seeds 7/42/123. Verified end-to-end in
+the browser (exit fires at 46; Sell → Sold-out screen with the buyout in Bank + the
+path clause). Card copy is a draft pending Jason's voice pass. **Pillar 1 (Acts) is
+complete.**
+
+**Next: Team-as-characters (Pillar 2)** — the capped cast, dealt hiring, drift with
+scale, morale-as-flag. Then the hall (5a).
 
 ## Open items
 
