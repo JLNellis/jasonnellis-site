@@ -37,6 +37,34 @@ exactly the pair the site is currently missing.
 Best candidates: former SuperBam and Jogg colleagues, Packagd co-founders,
 Meta NPE collaborators, the BoltOS creator cohort.
 
+## 1b. A recent case study — last 2–3 years, not the overhead cut
+
+**Status:** not started · Jason flagged 2026-09-20
+**Unblocks:** the Receipts section on `/advisory`.
+
+Both case studies on `/advisory` are old: Packagd → Meta (2016–2023) and
+Hulu (2007–2012). Since the Sept 2026 rework the page sells counsel next to
+the CEO and a fractional-CPO sprint, and the newest written proof of that
+kind of work is three years stale. A buyer reading the receipts sees a
+career, not a current practice.
+
+**The ask:** one case study from the last 2–3 years, written from the
+inside like the existing two — what the decision looked like at the time,
+what it cost, what happened. SuperBam is the obvious source, but **not the
+$70k → $25k overhead reduction**: that number already leads the stat band
+and the site shouldn't tell the same story twice. Look for the other
+SuperBam call — a product, market, or team decision — or something from
+Jogg or the BoltOS cohort.
+
+**What makes it useful for this page:** it should show Jason in the second
+chair or running a sprint, i.e. a CEO making a call with him in the room,
+rather than Jason as the sole operator. That's the shape the new
+engagements promise and neither existing case study demonstrates it.
+
+Ships as an essay in `essays/` (so it gets a permanent `/blog/<slug>/` URL)
+and a third `.proof-card` in `advisory.html`; the two-column `.proof-grid`
+will need a third slot or a row.
+
 ## 2. Video footage of Jason speaking
 
 **Status:** partly solved 2026-09-15 — **hosting/interview footage now live;
