@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Advisory — Jason Nellis</title>
-<meta name="description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
+<meta name="description" content="Counsel for founders. I sit next to the CEO in the meetings that matter and stay on the phone in between, from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <!-- Open Graph / Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jasonnellis.com/advisory">
 <meta property="og:title" content="Advisory — Jason Nellis">
-<meta property="og:description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
+<meta property="og:description" content="Counsel for founders. I sit next to the CEO in the meetings that matter and stay on the phone in between, from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <meta property="og:image" content="https://jasonnellis.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Advisory — Jason Nellis">
-<meta name="twitter:description" content="Advisory for founders and leadership teams at the moment one decision sets the next two years. Fixed-fee engagements from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
+<meta name="twitter:description" content="Counsel for founders. I sit next to the CEO in the meetings that matter and stay on the phone in between, from an operator who has been the CPO, the interim CEO, and the founder on the acquired side.">
 <meta name="twitter:image" content="https://jasonnellis.com/og-image.png">
 <link rel="canonical" href="https://jasonnellis.com/advisory">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -32,6 +32,8 @@
   .adv-hero h1 .accent { color: var(--color-accent-vivid); }
   .adv-hero .lede { font-size: 18px; line-height: 1.65; color: var(--fg-2); max-width: 620px; margin: 0 0 32px; }
   .adv-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .adv-hero .cta-note { font-size: 13.5px; color: var(--fg-3); margin: 14px 0 0; }
+  .adv-hero .cta-note strong { color: var(--fg-2); font-weight: 500; }
   .adv-hero .terms {
     display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px;
   }
@@ -80,7 +82,7 @@
   .fit-card p { font-size: 13.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
 
   /* ---- Engagements ---- */
-  .eng-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .eng-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .eng-card { display: flex; flex-direction: column; padding: 28px 26px; position: relative; overflow: hidden; }
   .eng-card.lead { border-color: rgba(0,230,118,0.35); background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,0.05) 170%); }
   .eng-card .num { position: absolute; top: 20px; right: 20px; font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); letter-spacing: 0.1em; }
@@ -98,9 +100,22 @@
   .eng-card .price { font-size: 15px; font-weight: 600; color: #FFF; font-variant-numeric: tabular-nums; }
   .eng-card .price small { display: block; font-size: 11px; font-weight: 400; color: var(--fg-3); margin-top: 2px; }
   .eng-note { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 24px 0 0; max-width: 720px; }
-  .workshop-callout { margin: 28px 0 0; padding: 24px 26px; border: 1px solid var(--border-subtle); border-left: 2px solid var(--color-accent-vivid); border-radius: var(--radius-lg); background: var(--bg-card); max-width: 760px; }
-  .workshop-callout h3 { font-size: 18px; font-weight: 600; color: #FFF; margin: 8px 0 10px; }
-  .workshop-callout p { font-size: 14px; color: var(--fg-2); line-height: 1.7; margin: 0 0 16px; }
+  /* ---- Intake ---- */
+  .intake { margin: 40px 0 0; padding-top: 36px; border-top: 1px solid var(--border-subtle); }
+  .intake h3 { font-size: 22px; font-weight: 700; color: #FFF; letter-spacing: -0.01em; margin: 8px 0 8px; }
+  .intake .sub { margin-bottom: 28px; }
+  .intake-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: step; }
+  .intake-steps li { padding: 22px 22px 24px; counter-increment: step; }
+  .intake-steps li::before { content: "0" counter(step); display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--color-accent-vivid); margin-bottom: 14px; }
+  .intake-steps h4 { font-size: 15px; font-weight: 600; color: #FFF; line-height: 1.3; margin: 0 0 8px; }
+  .intake-steps p { font-size: 13.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+  .eng-extras { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0 0; }
+  .side-callout { display: flex; flex-direction: column; padding: 24px 26px; border: 1px solid var(--border-subtle); border-left: 2px solid var(--color-accent-vivid); border-radius: var(--radius-lg); background: var(--bg-card); }
+  .side-callout h3 { font-size: 18px; font-weight: 600; color: #FFF; margin: 8px 0 10px; }
+  .side-callout p { font-size: 14px; color: var(--fg-2); line-height: 1.7; margin: 0 0 16px; }
+  .side-callout .bolt { margin-top: auto; }
+  .side-callout.door { border: 1px dashed var(--border-strong); background: transparent; }
+  .side-callout.door .section-eyebrow .num { color: var(--fg-3); }
 
   /* ---- How I work ---- */
   .how-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
@@ -147,7 +162,8 @@
 
   /* ---- Responsive ---- */
   @media (max-width: 900px) {
-    .fit-grid, .eng-grid, .proof-grid { grid-template-columns: 1fr; }
+    .fit-grid, .eng-grid, .proof-grid, .eng-extras { grid-template-columns: 1fr; }
+    .intake-steps { grid-template-columns: 1fr 1fr; }
     .stat-band { grid-template-columns: 1fr; }
     .stat-band .stat { padding: 20px 0; }
     .stat-band .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--border-subtle); }
@@ -159,14 +175,15 @@
   }
   @media (max-width: 640px) {
     .adv-hero { padding: 64px 0 40px; }
+    .intake-steps { grid-template-columns: 1fr; }
   }
 </style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Service",
-  "name": "Strategy advisory — Jason Nellis",
-  "serviceType": "Strategy consulting",
+  "name": "Founder counsel and advisory — Jason Nellis",
+  "serviceType": "Executive counsel and fractional product leadership",
   "url": "https://jasonnellis.com/advisory",
   "areaServed": "Worldwide",
   "provider": {
@@ -183,9 +200,9 @@
     "@type": "OfferCatalog",
     "name": "Advisory engagements",
     "itemListElement": [
-      { "@type": "Offer", "name": "The Read", "description": "Two-week fixed-fee strategy diagnostic with a written point of view." },
-      { "@type": "Offer", "name": "The 90-Day Sprint", "description": "One strategic question taken to a decision over ninety days." },
-      { "@type": "Offer", "name": "The Sixth Week", "description": "A standing leadership-team read every six weeks: what is standing between the team and the money." }
+      { "@type": "Offer", "name": "The Second Chair", "description": "Three months of one-on-one counsel: in the CEO's most critical meetings, and on the phone in between." },
+      { "@type": "Offer", "name": "The Six-Month Sprint", "description": "The Second Chair plus a team marshalled around one named product or market goal, run as fractional CPO." },
+      { "@type": "Offer", "name": "Leadership workshop", "description": "Half a day with the leadership team on one strategic question." }
     ]
   }
 }
@@ -205,16 +222,18 @@
     <div class="adv-hero">
       <div class="section-eyebrow"><span class="num">01</span> Advisory</div>
       <h1>I make the call that's been sitting on <span class="accent">the table.</span></h1>
-      <p class="lede">Most leadership teams aren't short a strategy. They're short someone who will say the thing out loud and stay until it's decided. I've been the CPO, the interim CEO, and the founder on the acquired side &mdash; so I know what the call costs, because I've paid for it.</p>
+      <p class="lede">Most founders aren't short a strategy. They're short one person in the room with no position to protect &mdash; someone who'll say the thing out loud, and who they can be wrong in front of first. I've been the CPO, the interim CEO, and the founder on the acquired side, so I know what the call costs, because I've paid for it.</p>
       <div class="ctas">
-        <a href="/contact?topic=advisory" class="btn primary">Start a conversation
+        <a href="/contact?topic=advisory" class="btn primary">Book the first call
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <a href="#engagements" class="btn ghost">See the engagements</a>
       </div>
+      <p class="cta-note"><strong>Ninety minutes, free.</strong> You talk, I listen. Nothing gets pitched.</p>
       <div class="terms">
         <span>Fixed fee</span>
         <span>Scoped up front</span>
+        <span>24h turnaround</span>
         <span>No juniors</span>
         <span>Remote-first · Cannes, FR</span>
       </div>
@@ -240,7 +259,7 @@
     <section class="adv-section" id="fit">
       <div class="section-eyebrow"><span class="num">02</span> Who it's for</div>
       <h2>Three moments I'm useful in.</h2>
-      <p class="sub">Not a stage or a headcount &mdash; a moment. If you recognize the one you're in, we should talk. If you don't, the first conversation is still free and I'll tell you who to call instead.</p>
+      <p class="sub">Not a stage or a headcount &mdash; a moment. If you recognize the one you're in, we should talk.</p>
       <div class="fit-grid">
         <article class="card fit-card">
           <div class="ix">001</div>
@@ -263,56 +282,72 @@
     <!-- ENGAGEMENTS -->
     <section class="adv-section" id="engagements">
       <div class="section-eyebrow"><span class="num">03</span> Engagements</div>
-      <h2>Three shapes. Pick the one that matches the problem.</h2>
-      <p class="sub">Every engagement starts with a written point of view and ends with a decision. The difference is how far I ride along after that.</p>
+      <h2>Let's collaborate.</h2>
+      <p class="sub">The difference is whether I'm your counsel, or your counsel and your builder.</p>
       <div class="eng-grid">
         <article class="card eng-card lead">
           <span class="num">01</span>
-          <span class="kind">Diagnostic</span>
-          <h3>The Read</h3>
-          <p class="shape">Two weeks · Fixed fee</p>
-          <p class="desc">I talk to your team, read everything you've got, and hand back a written point of view: what to build, what to kill, and what nobody is saying out loud. Most engagements start here.</p>
+          <span class="kind">Counsel</span>
+          <h3>The Second Chair</h3>
+          <p class="shape">Three months · Fixed fee</p>
+          <p class="desc">I sit next to you in the meetings that matter &mdash; the board, the term sheet, the hire you can't get wrong &mdash; and afterwards I tell you what you missed. Between meetings I'm on your phone: a place to be wrong out loud before you have to be right in the room.</p>
           <span class="field-label">You get</span>
-          <p class="deliverable"><strong>A strategy memo</strong> the whole team can read in twenty minutes, and a working session to argue about it.</p>
+          <p class="deliverable"><strong>One person with no position to protect</strong> in your most critical meetings, and on your phone between them.</p>
           <div class="foot">
-            <span class="price">From $10k<small>Credited toward a sprint or retainer</small></span>
-            <a href="/contact?topic=advisory" class="bolt">Ask about The Read →</a>
+            <span class="price">$10k<small>Three months, all in</small></span>
+            <a href="/contact?topic=advisory" class="bolt">Ask about the second chair →</a>
           </div>
         </article>
-
         <article class="card eng-card">
           <span class="num">02</span>
-          <span class="kind">Project</span>
-          <h3>The 90-Day Sprint</h3>
-          <p class="shape">Ninety days · Fixed fee</p>
-          <p class="desc">One strategic question taken all the way to a decision: product direction, go-to-market, or positioning. Weekly working sessions with the people who own the outcome, and a half-day workshop with the full leadership team to lock it.</p>
+          <span class="kind">Build</span>
+          <h3>The Six-Month Sprint</h3>
+          <p class="shape">Six months · Monthly + equity</p>
+          <p class="desc">Everything in the second chair, plus I take a team and ship one thing: the market you're entering, the product you're launching, the line of business that has to exist by spring. You name the goal before we start &mdash; "make things better" isn't one. I run it as your fractional CPO.</p>
           <span class="field-label">You get</span>
-          <p class="deliverable"><strong>A document the board can read</strong> and a plan the team can actually run, with the trade-offs written down instead of argued about later.</p>
+          <p class="deliverable"><strong>A named outcome, shipped</strong>, and a team that did it with you rather than watched me do it.</p>
           <div class="foot">
-            <span class="price">$25k – $50k<small>Scoped to the question</small></span>
+            <span class="price">$8k / month<small>Plus equity · six months</small></span>
             <a href="/contact?topic=advisory" class="bolt">Ask about a sprint →</a>
           </div>
         </article>
-
-        <article class="card eng-card">
-          <span class="num">03</span>
-          <span class="kind">Standing</span>
-          <h3>The Sixth Week</h3>
-          <p class="shape">Every six weeks · Ongoing</p>
-          <p class="desc">I sit down with your leadership team and tell you what I've seen: what is actually standing between this team and the money. Not a status review and not a scorecard &mdash; one honest read, on a cadence, from the only person in the room with no internal position to protect.</p>
-          <span class="field-label">You get</span>
-          <p class="deliverable"><strong>The conversation your team keeps not having</strong> &mdash; on a schedule, so it can't be deferred to a quieter week that never arrives.</p>
-          <div class="foot">
-            <span class="price">From $8k / month<small>Three seats, total · three-month minimum</small></span>
-            <a href="/contact?topic=advisory" class="bolt">Ask about a seat →</a>
-          </div>
-        </article>
       </div>
-      <div class="workshop-callout" id="workshop">
-        <div class="section-eyebrow"><span class="num">+</span> Standalone workshop</div>
-        <h3>A leadership workshop around one decision.</h3>
-        <p>Bring one strategic question &mdash; your AI roadmap, go-to-market, or how you make money from an audience. Half a day, your leadership team in the room, a decision and next steps on the table by the end. It's a sprint with the middle taken out.</p>
-        <a href="/contact?topic=advisory" class="bolt">Tell me the question &rarr;</a>
+      <div class="eng-extras">
+        <div class="side-callout door" id="full-time">
+          <div class="section-eyebrow"><span class="num">&ne;</span> Not an engagement</div>
+          <h3>Someone in the seat, full time.</h3>
+          <p>Not fractional and not counsel: the role, on your team, a hundred percent. That's a different conversation from anything on this page, and a much shorter list of companies. If yours is one, say so.</p>
+          <a href="/contact?topic=advisory" class="bolt">Tell me &rarr;</a>
+        </div>
+        <div class="side-callout" id="workshop">
+          <div class="section-eyebrow"><span class="num">+</span> Standalone workshop</div>
+          <h3>A leadership workshop around one decision.</h3>
+          <p>Bring one strategic question &mdash; your AI roadmap, go-to-market, or how you make money from an audience. Half a day, your leadership team in the room, a decision and next steps on the table by the end. It's a sprint with the middle taken out.</p>
+          <a href="/contact?topic=advisory" class="bolt">Tell me the question &rarr;</a>
+        </div>
+      </div>
+      <div class="intake" id="intake">
+        <div class="section-eyebrow"><span class="num">+</span> Before any money moves</div>
+        <h3>The first two weeks are the same for everyone.</h3>
+        <p class="sub">You don't buy an engagement on this page. You book a call, and the engagement is the last thing we get to.</p>
+        <ol class="intake-steps">
+          <li class="card">
+            <h4>The first call</h4>
+            <p>Ninety minutes, free. You talk about everything that's in the way. I listen and take notes. Nothing gets pitched.</p>
+          </li>
+          <li class="card">
+            <h4>I read</h4>
+            <p>Your calendar, your tools, what you're telling investors, whatever reports you actually run the company from. Send it all.</p>
+          </li>
+          <li class="card">
+            <h4>The assessment</h4>
+            <p>A written read of what I see: what's in the way, what I'd do first, what nobody's saying out loud, and the cadence we'd work to.</p>
+          </li>
+          <li class="card">
+            <h4>The agreement</h4>
+            <p>If the assessment is right, you sign it and we start. If it isn't, you keep it, and I'll tell you who to call instead.</p>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -326,12 +361,12 @@
           <p>I'm here to name what's standing between your team and the money, and stay until it moves. If what's in the way turns out to be how you work, we'll deal with that &mdash; but the target is always the number.</p>
         </li>
         <li>
-          <h3>Narrative first.</h3>
-          <p>I think in stories before slides and I lead with the argument. We start from a clear written case so the team can weigh the assumptions, trade-offs, and the decision together.</p>
+          <h3>Fixed fee, scoped at the start.</h3>
+          <p>No hourly billing and no surprise invoices. The assessment sets the price and the cadence before any money moves.</p>
         </li>
         <li>
-          <h3>Fixed fee, scoped at the start.</h3>
-          <p>No hourly billing and no surprise invoices. We agree the question and the deliverable before any money moves.</p>
+          <h3>Reachable, with a stated turnaround.</h3>
+          <p>Text me. You'll hear back inside 24 hours except where I've told you otherwise, and I'll tell you in advance when I'm unavailable. I'm in Cannes, so mornings overlap the US East Coast, and emergency calls happen with a little warning whatever the time zone.</p>
         </li>
         <li>
           <h3>I do the work.</h3>
@@ -340,14 +375,6 @@
         <li>
           <h3>Confidential by default.</h3>
           <p>No NDA for the first conversation. For project work, a standard mutual NDA within 24 hours.</p>
-        </li>
-        <li>
-          <h3>Remote-first, Cannes-based.</h3>
-          <p>Mornings overlap with the US East Coast. I travel in Europe when the work needs a room, and it's a train, not a flight.</p>
-        </li>
-        <li>
-          <h3>I'll say no fast.</h3>
-          <p>If I'm not the right person, you'll hear it in the first conversation, with a name of someone who is.</p>
         </li>
       </ul>
     </section>
@@ -385,9 +412,9 @@
         <div>
           <div class="section-eyebrow"><span class="num">06</span> Start here</div>
           <h2>Tell me the problem.</h2>
-          <p>If you're not sure which engagement fits, don't pick one. Tell me what's not working and I'll tell you within 48 hours whether I can help and what it would cost.</p>
+          <p>If you're not sure which shape fits, don't pick one. Book the call, tell me what's not working, and you'll hear within 48 hours whether I can help.</p>
           <div class="ctas">
-            <a href="/contact?topic=advisory" class="btn primary">Start a conversation
+            <a href="/contact?topic=advisory" class="btn primary">Book the first call
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
             <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
@@ -395,12 +422,9 @@
         </div>
         <div>
           <ul class="check-list">
-            <li>Product direction when the roadmap has become a wish list</li>
-            <li>Go-to-market for something that doesn't have a category yet</li>
-            <li>Positioning and narrative for a round, a board, or a launch</li>
-            <li>An AI strategy that survives contact with the P&amp;L</li>
-            <li>Creator and audience monetization that isn't just a dashboard</li>
-            <li>A second opinion before a decision you can't take back</li>
+            <li>A board meeting you're not sure you'll walk out of with the answer</li>
+            <li>A hire you can't get wrong</li>
+            <li>A decision you can't take back</li>
           </ul>
         </div>
       </div>
