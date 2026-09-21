@@ -39,7 +39,9 @@ Meta NPE collaborators, the BoltOS creator cohort.
 
 ## 1b. A recent case study — last 2–3 years, not the overhead cut
 
-**Status:** not started · Jason flagged 2026-09-20
+**Status:** drafted 2026-09-21 as `essays/the-call-to-start-over-at-superbam.md`
+(the ingestion rebuild + the "we're a technology company" call) · awaiting
+Jason's vet before push. Delete this item once it's live.
 **Unblocks:** the Receipts section on `/advisory`.
 
 Both case studies on `/advisory` are old: Packagd → Meta (2016–2023) and
