@@ -175,7 +175,14 @@
   }
   @media (max-width: 640px) {
     .adv-hero { padding: 64px 0 40px; }
-    .intake-steps { grid-template-columns: 1fr; }
+    /* Tighter rhythm through the middle run (engagements → terms); Receipts and the CTA keep the wider reset. */
+    .adv-section { padding: 56px 0 48px; }
+    .adv-section#proof { padding: 72px 0 64px; }
+    .intake { margin-top: 32px; padding-top: 28px; }
+    .intake-steps { grid-template-columns: 1fr; gap: 12px; }
+    .intake-steps li { padding: 18px 18px 20px; }
+    .eng-grid, .eng-extras { gap: 12px; }
+    .eng-extras { margin-top: 12px; }
   }
 </style>
 <script type="application/ld+json">
