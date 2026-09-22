@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root{ --navy:#0A2540; --deep:#0F172A; --fg1:#FFFFFF; --fg2:#94A3B8; --fg3:#8892AA; --green:#00E676; --line:rgba(148,163,184,.22); }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ width:1200px; height:630px; }
+  body{ background:var(--navy); font-family:'DM Sans',system-ui,sans-serif; color:var(--fg1); overflow:hidden; position:relative; }
+  .glow{ position:absolute; right:-160px; top:-200px; width:560px; height:560px; border-radius:50%;
+         background:radial-gradient(circle, rgba(0,230,118,.14), transparent 68%); pointer-events:none; }
+  .card{ position:relative; height:100%; padding:70px 78px; display:flex; flex-direction:column; }
+  .eyebrow{ display:flex; align-items:center; justify-content:space-between;
+            font-family:'DM Mono',monospace; font-size:19px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; }
+  .eyebrow .l{ color:var(--green); display:flex; align-items:center; gap:12px; }
+  .eyebrow .l .dot{ width:12px; height:12px; border-radius:50%; background:var(--green); box-shadow:0 0 0 5px rgba(0,230,118,.18); }
+  .eyebrow .r{ color:var(--fg3); font-size:16px; letter-spacing:.08em; }
+  .main{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+  h1{ font-size:58px; line-height:1.06; font-weight:700; letter-spacing:-.02em; max-width:16ch; }
+  h1 .accent{ color:var(--green); }
+  .sub{ margin-top:22px; font-size:24px; line-height:1.4; color:var(--fg2); max-width:34ch; font-weight:500; }
+  .tells{ display:flex; gap:14px; }
+  .chip{ font-family:'DM Mono',monospace; font-size:19px; font-weight:500; color:var(--fg1); white-space:nowrap;
+         border:1.5px solid var(--line); background:var(--deep); border-radius:12px; padding:13px 20px; }
+  .chip b{ color:var(--green); font-weight:500; margin-right:9px; }
+</style></head>
+<body>
+  <div class="glow"></div>
+  <div class="card">
+    <div class="eyebrow"><span class="l"><span class="dot"></span>The Lens</span><span class="r">jasonnellis.com/lens</span></div>
+    <div class="main">
+      <h1>Building something, or <span class="accent">renting attention?</span></h1>
+      <p class="sub">Three questions for reading a creator's durability. None of them are about follower count.</p>
+    </div>
+    <div class="tells">
+      <span class="chip"><b>01</b>Whose asset?</span>
+      <span class="chip"><b>02</b>Does it travel?</span>
+      <span class="chip"><b>03</b>The reps?</span>
+    </div>
+  </div>
+</body></html>
