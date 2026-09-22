@@ -138,7 +138,7 @@ it defensible rather than asserted. Low urgency; the claim is fine as is.
 - **A — "I move outcomes."** Decisions, results, the accomplishment ledger.
 - **B — "I build teams and consensus."** Relational, embedded, commands the room.
 
-Currently **A leads the header and B carries the offer** (The Sixth Week, the
+Currently **A leads the header and B carries the offer** (The Second Chair, the
 mid-transition card, the not-here-to-fix-your-culture guardrail). That split
 is deliberate: a buyer buys the outcome and experiences the method.
 

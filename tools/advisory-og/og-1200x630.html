@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0A2540;--deep:#0F172A;--card:#1E293B;--edge:#00E676;--fg:#fff;--fg2:#94A3B8;--fg3:#8892AA;--line:rgba(148,163,184,.18)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--fg);-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1200px;height:630px;overflow:hidden;background:
+  radial-gradient(ellipse 60% 50% at 12% 0%,rgba(0,230,118,.10),transparent 60%),
+  radial-gradient(ellipse 55% 55% at 95% 100%,rgba(15,77,140,.55),transparent 60%),var(--bg)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(148,163,184,.13) 1.5px,transparent 1.5px);background-size:26px 26px;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)}
+.frame{position:absolute;inset:16px;border:1px solid var(--line);border-radius:18px}
+.left{position:absolute;left:64px;top:60px;bottom:60px;width:600px;display:flex;flex-direction:column;justify-content:space-between}
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:'DM Mono',monospace;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg2)}
+.eyebrow::before{content:'';width:34px;height:2px;background:var(--edge)}
+h1{font-size:62px;font-weight:700;line-height:1.04;letter-spacing:-.03em;margin-top:22px;max-width:15ch}
+h1 span{color:var(--edge)}
+.sub{font-size:23px;line-height:1.4;color:var(--fg2);margin-top:22px;max-width:28ch}
+.sub b{color:#fff;font-weight:500}
+.url{font-family:'DM Mono',monospace;font-size:20px;color:var(--fg3);letter-spacing:.04em}
+.url b{color:#fff;font-weight:500}
+.sc{position:absolute;right:64px;top:92px;width:452px;background:var(--deep);border:1px solid rgba(0,230,118,.35);border-radius:16px;padding:32px 34px 28px;box-shadow:0 40px 80px -30px rgba(0,0,0,.7)}
+.sc::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse 70% 60% at 100% 0%,rgba(0,230,118,.08),transparent 60%);pointer-events:none}
+.sc .t{font-family:'DM Mono',monospace;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--edge)}
+.stat{padding:22px 0;border-bottom:1px solid var(--line)}
+.stat:last-of-type{border-bottom:0}
+.stat .fig{font-size:44px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat .fig em{font-style:normal;font-weight:400;color:var(--edge)}
+.stat .unit{display:flex;justify-content:space-between;gap:16px;margin-top:10px;font-family:'DM Mono',monospace;font-size:15px;color:var(--fg2);letter-spacing:.02em}
+.stat .unit b{color:var(--fg3);font-weight:400;white-space:nowrap}
+.sc .foot{display:flex;justify-content:space-between;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-family:'DM Mono',monospace;font-size:13px;color:var(--fg3);letter-spacing:.06em}
+</style></head><body><div class="card"><div class="dots"></div><div class="frame"></div>
+<div class="left">
+  <div>
+    <div class="eyebrow">Advisory · Founder counsel</div>
+    <h1>I make the call that's been sitting on <span>the table.</span></h1>
+    <p class="sub">One person in the room with <b>no position to protect.</b> Three months in the second chair, or six months shipping one named thing.</p>
+  </div>
+  <div class="url"><b>jasonnellis.com</b>/advisory &nbsp;·&nbsp; first call free</div>
+</div>
+<div class="sc">
+  <div class="t">Receipts</div>
+  <div class="stat"><div class="fig">$70k <em>→</em> $20k</div><div class="unit"><span>monthly overhead, 45 days</span><b>SuperBam</b></div></div>
+  <div class="stat"><div class="fig">12 wks <em>→</em> 4 wks</div><div class="unit"><span>product cycle time</span><b>Jogg</b></div></div>
+  <div class="stat"><div class="fig">5×</div><div class="unit"><span>qualified pipeline</span><b>BoltOS</b></div></div>
+  <div class="foot"><span>CPO · INTERIM CEO · FOUNDER</span><span>jasonnellis.com</span></div>
+</div>
+</div></body></html>

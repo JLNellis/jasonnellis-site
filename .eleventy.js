@@ -44,6 +44,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("the-feed.html");
   eleventyConfig.addPassthroughCopy("burn-rate.html");
   eleventyConfig.addPassthroughCopy("og-burn-rate.jpg");
+  eleventyConfig.addPassthroughCopy("og-advisory.jpg");
   eleventyConfig.addPassthroughCopy("the-feed-engine.js");
   // The Feed assets: only the WebP derivatives, sounds and credits ship. The PNG art library
   // (the-feed-assets/the-feed-art-library-v2, ~95 MB of originals) is gitignored and not deployed.
