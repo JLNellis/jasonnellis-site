@@ -20,6 +20,6 @@ eleventyExcludeFromCollections: true
   <url><loc>https://jasonnellis.com{{ tool.data.url }}</loc></url>
 {%- endfor %}
 {%- for talk in collections.talks %}
-  <url><loc>https://jasonnellis.com{{ talk.url }}</loc><lastmod>{{ talk.date | w3cDate }}</lastmod></url>
+  <url><loc>https://jasonnellis.com{{ talk.url }}</loc></url>
 {%- endfor %}
 </urlset>

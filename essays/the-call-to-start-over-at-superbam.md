@@ -5,7 +5,6 @@ date: 2026-09-21
 category: "Case Study"
 readTime: "7 min"
 heroImage: "/superbam.jpg"
-ogImage: "/og-case-superbam.jpg"
 ---
 *Chief Product Officer, SuperBam · October 2024 – 2026*
 
@@ -41,7 +40,7 @@ On top of that we built a new archive-and-distribution layer, so that a file ing
 
 The piece I'm proudest of is timecode-specific policy. A song in a video is usually a thirty-second stretch, not the whole thing, and the old process could only apply a policy to the full file. We rebuilt ingestion so a policy could be applied to a span of the video rather than all of it, which is how rights actually work and how the platforms' own systems expect to be told.
 
-The remote desktop in someone's living room went away.
+The remote desktop in an employee's home went away.
 
 ### Result
 

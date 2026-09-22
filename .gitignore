@@ -4,6 +4,7 @@
 node_modules/
 _site/
 .superpowers/
+scratchpad/
 
 # The Feed: PNG art originals (source only; WebP derivatives in the-feed-assets/imgs ship)
 the-feed-assets/the-feed-art-library-v2/

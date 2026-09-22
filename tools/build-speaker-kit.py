@@ -225,11 +225,11 @@ section_eyebrow("03", "Track record", top)
 top += 16
 bullets = [
     "Co-founded Packagd — acquired by Meta (2019)",
-    "Built & launched Facebook Live Shopping inside Meta NPE",
+    "Built & launched Facebook Live Shopping in Meta's Commerce org",
     "CPO, then Interim CEO at SuperBam — creator IP",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",
-    "Hosted Building Value — 100+ creator conversations, to 2024",
+    "Hosted Building Value — 100+ creator conversations",
 ]
 col_w = (CW - 20) / 2
 for i, b in enumerate(bullets):

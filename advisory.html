@@ -114,8 +114,9 @@
   .side-callout h3 { font-size: 18px; font-weight: 600; color: #FFF; margin: 8px 0 10px; }
   .side-callout p { font-size: 14px; color: var(--fg-2); line-height: 1.7; margin: 0 0 16px; }
   .side-callout .bolt { margin-top: auto; }
-  .side-callout.door { border: 1px dashed var(--border-strong); background: transparent; }
-  .side-callout.door .section-eyebrow .num { color: var(--fg-3); }
+  .eng-extras--single { grid-template-columns: 1fr; }
+  .full-time-note { font-size: 14px; color: var(--fg-3); line-height: 1.7; margin: 20px 0 0; max-width: 62ch; }
+  .full-time-note a { color: var(--fg-2); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- How I work ---- */
   .how-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
@@ -320,13 +321,8 @@
           </div>
         </article>
       </div>
-      <div class="eng-extras">
-        <div class="side-callout door" id="full-time">
-          <div class="section-eyebrow"><span class="num">&ne;</span> Not an engagement</div>
-          <h3>Someone in the seat, full time.</h3>
-          <p>Not fractional and not counsel: the role, on your team, a hundred percent. That's a different conversation from anything on this page, and a much shorter list of companies. If yours is one, say so.</p>
-          <a href="/contact?topic=advisory" class="bolt">Tell me &rarr;</a>
-        </div>
+      <p class="full-time-note">Full time is a different conversation than anything on this page &mdash; and a much shorter list of companies. If yours is one, <a href="/contact?topic=advisory">say so</a>.</p>
+      <div class="eng-extras eng-extras--single">
         <div class="side-callout" id="workshop">
           <div class="section-eyebrow"><span class="num">+</span> Standalone workshop</div>
           <h3>A leadership workshop around one decision.</h3>

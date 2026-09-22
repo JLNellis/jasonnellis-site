@@ -9,7 +9,7 @@ originalUrl: "https://www.linkedin.com/posts/jasonnellis_if-you-missed-made-on-y
 ---
 If you missed the Made on YouTube event, you missed a subtle but important signal: YouTube is still trying to figure out what live means for their creator economy, and the answer is still "maybe shopping?"
 
-I've been in this conversation in various forms since 2019, when I was building Facebook Live Shopping inside Meta's NPE team. The fundamental tension hasn't changed: live video is a great product for building connection and urgency, but it's a terrible product for completing commerce transactions. The two things want to happen at the same time, and they keep interrupting each other.
+I've been in this conversation in various forms since 2019, when I was building Facebook Live Shopping in Meta's Commerce org. The fundamental tension hasn't changed: live video is a great product for building connection and urgency, but it's a terrible product for completing commerce transactions. The two things want to happen at the same time, and they keep interrupting each other.
 
 The shopping experience breaks the viewing experience. The viewing experience breaks the shopping experience. The creator has to choose which one they're doing every thirty seconds. The viewer has to do the same. And the platform is in the middle trying to capture both moments with one interface.
 
