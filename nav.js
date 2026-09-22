@@ -141,7 +141,7 @@ class SiteFooter extends HTMLElement {
     </div>
   </div>
   <div class="site-footer__bottom">
-    <span>© 2026 Jason Nellis</span>
+    <span>© ${new Date().getFullYear()} Jason Nellis</span>
     <nav class="site-footer__legal" aria-label="Legal">
       ${legalLinks}
     </nav>

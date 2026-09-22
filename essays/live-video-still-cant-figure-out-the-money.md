@@ -1,10 +1,10 @@
 ---
 title: "Live video still can't figure out the money"
 description: "Ten years of trying to make live commerce work — and why the economics keep breaking the same way."
-date: 2024-10-15
+date: 2025-09-19
 category: "Product"
-readTime: "6 min"
-originalDate: "Oct 2024"
+readTime: "1 min"
+originalDate: "Sep 2025"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_if-you-missed-made-on-youtube-event-you-activity-7374789383050371072-ph8W"
 ---
 If you missed the Made on YouTube event, you missed a subtle but important signal: YouTube is still trying to figure out what live means for their creator economy, and the answer is still "maybe shopping?"

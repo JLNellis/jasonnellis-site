@@ -1,10 +1,10 @@
 ---
 title: "We moved to Europe to change our lives"
 description: "Not for a vacation. Not for an adventure. For a different answer to what a life is for."
-date: 2026-06-05
+date: 2025-07-14
 category: "Life"
-readTime: "7 min"
-originalDate: "Jun 2026"
+readTime: "2 min"
+originalDate: "Jul 2025"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_we-moved-to-europe-not-for-a-vacation-activity-7350508484901158913-IPJo"
 ---
 We moved to Europe. Not for a vacation. Not for a sabbatical. Not for an adventure, though it is certainly that. We moved because we looked at the life we were building in Los Angeles and decided that the architecture was wrong — that the version of success we were optimizing for wasn't the version we actually wanted when we said it out loud.
@@ -21,4 +21,4 @@ What we gained: mornings that belong to us. A pace that makes space for the kids
 
 > The question wasn't "can we afford to move?" The question was "can we afford not to?" Those are different calculations.
 
-We've been here just over a year. The kids are learning French. We are learning French, more slowly. The light in the south is different than I expected — more varied, more directional. I've started noticing things I didn't have the bandwidth to notice before. I think that's what we came for.
+We arrived in April 2025. The kids are learning French. We are learning French, more slowly. The light in the south is different than I expected — more varied, more directional. I've started noticing things I didn't have the bandwidth to notice before. I think that's what we came for.

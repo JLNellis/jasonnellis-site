@@ -1,13 +1,13 @@
 ---
 title: "Every generation blames the next medium"
 description: "Why moral panic about new media is as old as the printing press — and what the BAFTAs had to do with it."
-date: 2025-02-10
+date: 2026-02-17
 category: "Creator Economy"
-readTime: "5 min"
-originalDate: "Feb 2025"
+readTime: "1 min"
+originalDate: "Feb 2026"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_yesterday-i-flew-to-london-for-the-children-activity-7429494553046388736-0c1k"
 ---
-Yesterday I flew to London for the Children's BAFTAs. I wasn't there to pick up an award. I was there because SuperBam works with creators who were nominated, and because the conversation backstage at events like this is always more interesting than the stage itself.
+I flew to London for the Children's BAFTAs. I wasn't there to pick up an award. I was there because SuperBam works with creators who were nominated, and because the conversation backstage at events like this is always more interesting than the stage itself.
 
 Somewhere between the pre-show reception and the third time someone asked me what I did, I ended up in a debate about YouTube kids content with a producer who has been in children's television for thirty years. Her position: the algorithm is destroying children's ability to focus. My position: every generation says this about the new medium, and every generation is wrong about the mechanism while being vaguely right about the anxiety.
 

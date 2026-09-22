@@ -130,8 +130,8 @@ needs to be touched by hand.
   boilerplate, GA snippet, OG/Twitter tags, canonical, `Article` JSON-LD,
   the `.post-body` styling). Edit this once to change how every essay page
   looks — don't hand-edit individual essay output.
-- `blog.njk` is the `/blog` index template — hero, Substack subscribe
-  banner, category filter bar, featured post, and the full post list. Loops
+- `blog.njk` is the `/blog` index template — hero, Building Value podcast
+  notify banner, category filter bar, featured post, and the full post list. Loops
   over `collections.essays` (defined in `.eleventy.js`, sorted newest
   first).
 - `sitemap.njk` generates `sitemap.xml` from the essay and talk collections
@@ -185,9 +185,13 @@ site does. Keep it true. Conventions that keep it true:
 - **Nothing sets a cookie before user action.** Adding anything that does
   (an ad pixel, a chat widget, a non-Plausible analytics tag) means adding a
   consent banner *and* updating `/privacy` — so don't, without asking Jason.
-- Forms: the contact form is Netlify Forms; the newsletter form posts
-  straight to Kit (plain HTML POST to the form endpoint — deliberately NOT
-  Kit's `ck.5.js` embed, which would set cookies and force a consent banner).
+- Forms: the contact form is Netlify Forms; the Building Value podcast
+  notify form posts straight to Kit (plain HTML POST to the form endpoint —
+  deliberately NOT Kit's `ck.5.js` embed, which would set cookies and force a
+  consent banner). There is deliberately **no** newsletter — the Kit list is a
+  "get notified when the podcast relaunches" list, and every capture box across
+  the site is framed as Building Value (relaunching Q4 2026), not an email
+  newsletter. `/privacy`'s "Podcast updates" section describes it.
   Endpoint and field name live in `SITE_CONFIG` in `nav.js`; the email input
   must be `name="email_address"`, which is what Kit expects. If a new form appears anywhere, the policy's
   "What I collect" section needs a matching entry.
@@ -201,11 +205,11 @@ site does. Keep it true. Conventions that keep it true:
 | File | URL | Purpose | Notes |
 |---|---|---|---|
 | `index.njk` | `/` | Homepage | Nunjucks-templated (the "recent writing" teaser pulls from the essay collection); still emits `/index.html`. Otherwise plain hand-authored HTML. |
-| `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has newsletter subscribe banner (Kit email capture form). Essays are LinkedIn reposts turned into permanent pages. |
+| `blog.njk` + `essays/*.md` | `/blog`, `/blog/<slug>` | Writing archive | Eleventy-generated — see "Writing archive (Eleventy)" above. Has a Building Value podcast notify banner (Kit email capture form — not a newsletter). Essays are LinkedIn reposts turned into permanent pages. |
 | `speaking.html` + `talks/*.md` | `/speaking`, `/speaking/<slug>` | Speaking/media page + per-talk pages | Aspirational — positioning + "book me" CTA, not a list of past gigs. Has a "Where I'll be" strip (section 05) listing upcoming markets/events Jason will attend — one `.where-row` per event, hand-maintained; remove rows once the event has passed (MIPCOM 2026, 12–15 Oct, is the first). The homepage `.offer-note` pill repeats the same event and needs the same cleanup. Section 04 (Formats) lists panel moderation / event MC as a named bookable offer alongside keynotes, with a `.mod-callout` making the case from real numbers (50+ VidCon interviews on Meta's Super + 100+ Building Value episodes = 150+ hosted conversations) — added Sept 2026 because organisers book moderators on a separate line item from keynotes. Media section embeds Building Value YouTube clips via `youtube-nocookie.com` (see "Analytics & privacy"). Individual talk pages are Eleventy-generated from `talks/*.md` via `_includes/talk-layout.njk`. |
 | `advisory.html` | `/advisory` | Advisory / contract work | Reworked Sept 2026 around the "CEO whisperer" ladder (internal name only — never on the page): **The Second Chair** (3 months counsel next to the CEO, $10k, placeholder name) and **The Six-Month Sprint** (Second Chair + fractional CPO shipping one named goal, $48k fixed over six months, billed $8k monthly, + equity), plus a one-line "full time is a different conversation" note (deliberately not a card — the site is not job seeking) and the standalone workshop callout. The Read and The Sixth Week were retired; The Read's diagnostic became the free intake strip (`.intake`: 90-min call → read the reports → written assessment → signed agreement), which is the page's CTA ("Ask for the first call" — deliberately not "Book": there is no scheduler behind it, just the contact form). Who-it's-for, how-I-work terms, case-study links, CTA prefills `?topic=advisory`. Prices live only in this file — change them here. Homepage offer card and the contact FAQ mirror the same ladder. |
 | `press-kit.html` | `/press-kit` | Speaker press kit | Bios (short/long), downloadable headshots (square stage shot `jason-nellis-headshot-stage.jpg` + 2400px download variant, and the seated portrait), MC intro script, AV requirements, one-pager + PDF download. `noindex` (deliberately kept out of the sitemap). Linked from `/speaking`. The downloadable `jason-nellis-speaker-kit.pdf` is generated by `tools/build-speaker-kit.py` (deps: `pip3 install reportlab fonttools brotli`) — edit the copy in that script and rerun it to regenerate; never hand-edit the PDF. |
-| `tools.njk` + `tool-index/*.md` | `/experiments` | Experiments index | Eleventy-generated — see "Writing archive (Eleventy)". Lists The Feed, Burn Rate, and The Lens as cards with a newsletter banner. In `NAV_LINKS` as "Experiments". Template filename stays `tools.njk`; old `/tools` 301s here. |
+| `tools.njk` + `tool-index/*.md` | `/experiments` | Experiments index | Eleventy-generated — see "Writing archive (Eleventy)". Lists The Feed, Burn Rate, and The Lens as cards with a Building Value podcast notify banner. In `NAV_LINKS` as "Experiments". Template filename stays `tools.njk`; old `/tools` 301s here. |
 | `lens.html` | `/lens` | The Lens — creator durability framework | Three questions ("tells") for reading whether a creator is building or renting attention. Linked from `/blog` hero, `/speaking`, `/advisory`, `/experiments`. |
 | `burn-rate.html` | `/burn-rate` | Burn Rate — creator cadence calculator | Standalone-styled but loads `nav.js`. Newsletter-gated "what to cut" plan (unlock flag in `localStorage`). Indexed since 2026-09-14; listed on `/experiments`. OG image built from `tools/burn-rate-og/`. |
 | `bio.html` | `/about` | About / personal story | Contains the origin narrative (Hodgkin's diagnosis at 19, Northwestern, the move to France). This content doesn't exist anywhere else — don't remove without checking with Jason. Served at `/about`, not `/bio` — see "URL structure". Hero is a split layout: text left, portrait right. Portrait is `jason-nellis-stage-portrait.jpg` — a 1200x1800 crop of the IFA Berlin stage shot (master: `confheadshot.jpg`, 3711px). It's a high-key image on a dark page, so the CSS carries a deliberate `filter` plus layered navy gradients to sit it in the palette; re-tune those together if the photo is ever swapped. Full-resolution photo masters (`confheadshot.jpg` 3711px, `confpanel.jpg` 4080x2187 — the wide IFA 2026 panel frame) are committed but deliberately **not** in `addPassthroughCopy`: they're sources to crop from, not files to ship. Derive a sized web copy and add that to passthrough instead. |

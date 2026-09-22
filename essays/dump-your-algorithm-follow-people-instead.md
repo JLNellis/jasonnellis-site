@@ -1,10 +1,10 @@
 ---
 title: "Dump your algorithm. Follow people instead."
 description: "The Discover tab is optimized for engagement, not for you. There's a better way."
-date: 2025-01-14
+date: 2026-02-09
 category: "Strategy"
-readTime: "4 min"
-originalDate: "Jan 2025"
+readTime: "1 min"
+originalDate: "Feb 2026"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_radical-idea-dump-your-discover-for-you-activity-7426589817569861632-BCri"
 ---
 Radical idea: dump your Discover / For You / Explore feed and replace it with a deliberately curated list of people whose judgment you trust. Not influencers. Not brands. People.

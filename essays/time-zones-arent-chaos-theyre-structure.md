@@ -1,10 +1,10 @@
 ---
 title: "Time zones aren't chaos. They're structure."
 description: "What working across eight time zones taught me about async communication and the myth of synchrony."
-date: 2024-09-12
+date: 2025-08-26
 category: "Leadership"
-readTime: "5 min"
-originalDate: "Sep 2024"
+readTime: "1 min"
+originalDate: "Aug 2025"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_if-you-have-ever-worked-across-multiple-time-activity-7366052688460963840-b4la"
 ---
 If you have ever worked across multiple time zones, you have heard some version of the same complaint: "It's so hard to find time to get everyone together." This is the wrong problem to solve.

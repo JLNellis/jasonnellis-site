@@ -146,7 +146,7 @@ c.drawString(M, y(top), "Keynotes, leadership workshops, and advisory")
 c.drawString(M, y(top + 17), "for media and the creator economy.")
 
 top += 38
-bio = ("Building at the intersection of media, technology, and the creator economy since 2007. "
+bio = ("Building at the intersection of media, technology, and the creator economy since 2008. "
        "Co-founder of Packagd (acquired by Meta, 2019). Former Content Partner Manager at Hulu. "
        "Chief Product Officer and Interim CEO at SuperBam. Currently leading innovation at BoltOS "
        "and building Akaeon Corp from Cannes, France.")
@@ -156,10 +156,10 @@ top = para(M, top, bio, "DMSans", 9.5, 14.5, FG2, text_w)
 top = 222
 tile_gap = 10
 tile_w = (CW - 3 * tile_gap) / 4
-stats = [("2007", "Building in media since", FG1),
+stats = [("2008", "Building in media since", FG1),
          ("3", "Companies co-founded", FG1),
          ("2019", "Packagd acquired by Meta", GREEN),
-         ("2", "Active: BoltOS & Akaeon", FG1)]
+         ("2", "Now building: BoltOS & Akaeon", FG1)]
 for i, (v, l, colr) in enumerate(stats):
     x = M + i * (tile_w + tile_gap)
     c.setFillColor(CARD); c.setStrokeColor(BORDER); c.setLineWidth(1)

@@ -15,7 +15,7 @@ whyNow: "Every wave of media disruption produces the same 'this time it's differ
 argument: "This isn't nostalgia for the streaming wars or a prediction about what's next. It's an argument about pattern recognition: the people who keep getting caught flat-footed by media cycles aren't behind on trends — they're pattern-blind to the one that already happened to them."
 narrativeArc:
   - title: "Wave one: the streaming era"
-    body: "Early product and growth work at Hulu (2007–2012) — the platform-versus-content fight nobody thought would resolve, and how it did."
+    body: "Early product and growth work at Hulu (2008–2012) — the platform-versus-content fight nobody thought would resolve, and how it did."
   - title: "Wave two: distribution moves again"
     body: "Founder and operator years across PBS, an agency, and Vizio (2012–2016) — watching the fight move to the living room."
   - title: "Wave three: the creator becomes the platform"
@@ -25,7 +25,7 @@ narrativeArc:
   - title: "Where the current wave really sits"
     body: "A framework for locating any organization on the curve, instead of just reacting to the loudest headline."
 evidence:
-  - label: "Hulu — Early Product & Growth (2007–2012)"
+  - label: "Hulu — Early Product & Growth (2008–2012)"
     body: "Inside the first platform-versus-content fight of the streaming era."
   - label: "Packagd → Meta (2016–2023)"
     body: "Built and sold a company at the exact moment distribution moved to creators directly."

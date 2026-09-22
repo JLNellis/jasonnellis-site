@@ -1,13 +1,13 @@
 ---
 title: "Hulu made my career. Now it's really gone."
 description: "What it meant to be there in the beginning — and what it means to watch it end."
-date: 2024-08-22
+date: 2025-08-13
 category: "Reflection"
-readTime: "6 min"
-originalDate: "Aug 2024"
+readTime: "2 min"
+originalDate: "Aug 2025"
 originalUrl: "https://www.linkedin.com/posts/jasonnellis_i-knew-this-moment-was-coming-and-yet-i-activity-7361389662264832000-Zl2Z"
 ---
-I knew this moment was coming, and yet I wasn't ready for it. Hulu — as a standalone brand, as a specific kind of company, as the place that made me — is effectively gone now, absorbed into Disney's content machinery in a way that makes it unrecognizable from what it was when I joined in 2007.
+I knew this moment was coming, and yet I wasn't ready for it. Hulu — as a standalone brand, as a specific kind of company, as the place that made me — is effectively gone now, absorbed into Disney's content machinery in a way that makes it unrecognizable from what it was when I joined in 2008.
 
 I joined Hulu when it was genuinely weird. Not weird in a startup-cool way — weird in a "we're not sure if this is legal" way. The television industry had not yet decided whether streaming was an opportunity or an existential threat, and Hulu existed in the gap between those two positions. It was funded by the networks that were most afraid of it and built by people who thought those networks were wrong.
 

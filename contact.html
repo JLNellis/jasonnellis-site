@@ -84,6 +84,10 @@
   .form-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--border-subtle); margin-top: 8px; }
   .form-meta .left { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
   .form-meta .left .live-dot { width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; }
+  @media (max-width: 600px) {
+    .form-meta { flex-direction: column; align-items: stretch; gap: 16px; }
+    .form-meta .btn { width: 100%; justify-content: center; }
+  }
 
   .toast { margin-top: 18px; padding: 14px 16px; border-radius: 6px; background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.4); border-left: 3px solid var(--color-accent-vivid); color: var(--color-accent-vivid); font-size: 13px; display: none; }
   .toast.shown { display: flex; gap: 10px; align-items: center; }
@@ -235,7 +239,7 @@
               <option>—</option>
               <option>The Second Chair · $10k</option>
               <option>The Six-Month Sprint · $48k + equity</option>
-              <option>Leadership workshop · half day</option>
+              <option>Leadership workshop · half or full day</option>
               <option>Speaking honorarium</option>
               <option>Not yet sure</option>
             </select>
@@ -300,7 +304,7 @@
           <div>
             <div class="lbl">My local time</div>
             <div class="v accent" id="time-local">—</div>
-            <div class="place">Cannes · UTC+2</div>
+            <div class="place" id="tz-cannes">Cannes · UTC+2</div>
           </div>
           <div class="div"></div>
           <div>
@@ -393,6 +397,9 @@
     const tzEl = document.getElementById('tz-you'); if (tzEl) tzEl.textContent = tz.replace('_', ' ') + ' · UTC' + offS;
     const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false });
     const lEl = document.getElementById('time-local'); if (lEl) lEl.textContent = fmt.format(now);
+    const p = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(now).reduce((a, x) => (a[x.type] = x.value, a), {});
+    const cOff = Math.round((Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - now.getTime()) / 3600000);
+    const cEl = document.getElementById('tz-cannes'); if (cEl) cEl.textContent = 'Cannes · UTC' + (cOff >= 0 ? '+' : '') + cOff;
   }
   tick(); setInterval(tick, 1000 * 30);
 

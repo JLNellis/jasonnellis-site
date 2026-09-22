@@ -122,6 +122,8 @@
 }
 
 :root {
+  color-scheme: dark;   /* dark form controls, scrollbars and <select> popups */
+
   /* --- Color: Primary (Foundation, ~70%) -------------------------- */
   --color-primary-navy:        #0A2540;   /* dominant surface */
   --color-primary-dark:        #0F172A;   /* deep / nested surface */
