@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Burn Rate — how many hours a week does your channel actually cost?</title>
-<meta name="description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login, nothing leaves your browser.">
+<meta name="description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login, no email needed.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Nellis">
 <meta property="og:url" content="https://jasonnellis.com/burn-rate">
@@ -172,7 +172,7 @@
       <section class="br-hero">
         <div class="section-eyebrow">Burn Rate · a free calculator</div>
         <h1>How many hours a week does your channel <span class="accent">actually cost?</span></h1>
-        <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs, whether you can afford it, and what to cut.</strong> No login. Nothing leaves your browser.</p>
+        <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs, whether you can afford it, and what to cut.</strong> No login. No email needed to see your result.</p>
         <div class="meta"><span>2 minutes</span><span>Numbers dated 14 Sept 2026</span><span>Deterministic, no AI</span></div>
       </section>
 
@@ -290,7 +290,7 @@
       <p>Burn rate is hours per upload multiplied by the rewarded cadence, compared with the hours you said you have. Under 60 percent of your time is idling. 60 to 90 is sustainable. 90 to 125 is running hot. 125 to 175 is burning. Above that is a flameout. Format debt is the weekly shortfall. Runway assumes most people can borrow about 40 hours from sleep and weekends before something breaks, and counts the weeks until that debt is spent. The idea-and-packaging share is compared with the roughly 30 percent that top channels spend on ideas, titles and thumbnails, against about 5 percent for most small channels.</p>
 
       <h3>Privacy</h3>
-      <p>Everything is computed in your browser. Nothing you type is stored or sent anywhere. The site's privacy-friendly analytics record an anonymous count of which format, platform and verdict came up, so I can publish "how long an upload really takes" once there are enough results to say something. Refreshed yearly.</p>
+      <p>Everything is computed in your browser. If you type your own hours, the numbers are saved anonymously: platform, format, cadence, hours a week, hours per stage, which of those you changed, and the verdict. No name, no email, no channel, no IP address, and the date is kept to the month. (Netlify's standard server logs still apply; see <a href="/privacy">/privacy</a>.) That is the raw material for a yearly "how long an upload really takes" report, once there are enough results to say something. If you leave the estimates as they are, nothing is saved. The site's cookieless analytics also count which format, platform and verdict came up.</p>
 
       <h3>Sources</h3>
       <p class="src">
@@ -394,7 +394,7 @@
     row.innerHTML = `<label for="st_${s.id}">${s.name}<small>${s.small}</small></label><input type="number" id="st_${s.id}" min="0" max="200" step="0.25" inputmode="decimal">`;
     stagesEl.appendChild(row);
     const inp = row.querySelector('input'); stageInputs.push(inp);
-    inp.addEventListener('input', () => { stagesEdited = true; render(); });
+    inp.addEventListener('input', () => { stagesEdited = true; typed.e[i] = 1; render(); });
   });
   $('stagekey').innerHTML = STAGES.map(s => `<span><i style="background:${s.color}"></i>${s.name}</span>`).join('');
 
@@ -403,6 +403,8 @@
   $('hrsTable').innerHTML = FORMATS.map(f => `<tr><td>${f.name}${f.est?' <span class="conf lo">inferred</span>':''}</td>${f.h.map(x=>`<td class="num">${x}</td>`).join('')}<td class="num">${sum(f.h)}</td><td>${f.range}</td></tr>`).join('');
 
   let stagesEdited = false;
+  // What the visitor typed in this page view (not what a shared link filled in).
+  const typed = { e:[0,0,0,0,0,0], a:0, c:0 };
   const plat = () => PLATFORMS.find(p => p.id === platformSel.value);
   const fmt  = () => FORMATS.find(f => f.id === formatSel.value);
 
@@ -417,12 +419,12 @@
   function fmtH(x){ return (Math.round(x*4)/4).toString().replace(/\.0+$/,''); }
 
   function setPlatform(id){ platformSel.value = id; cadenceIn.value = plat().def; }
-  function setFormat(id){ formatSel.value = id; fmt().h.forEach((h,i)=> stageInputs[i].value = h); stagesEdited = false; }
+  function setFormat(id){ formatSel.value = id; fmt().h.forEach((h,i)=> stageInputs[i].value = h); stagesEdited = false; typed.e = [0,0,0,0,0,0]; }
 
   platformSel.addEventListener('change', () => { cadenceIn.value = plat().def; render(); });
   formatSel.addEventListener('change', () => { const f = fmt(); setFormat(f.id); setPlatform(f.plat); render(); });
-  cadenceIn.addEventListener('input', render);
-  availIn.addEventListener('input', render);
+  cadenceIn.addEventListener('input', () => { typed.c = 1; render(); });
+  availIn.addEventListener('input', () => { typed.a = 1; render(); });
   $('resetStages').addEventListener('click', () => { setFormat(formatSel.value); render(); });
 
   // ---------------- compute ----------------
@@ -489,7 +491,31 @@
     // analytics: anonymous, no free text
     const key = `${s.p.id}|${s.f.id}|${s.band.name}`;
     if (key !== lastKey){ lastKey = key; clearTimeout(render._t); render._t = setTimeout(()=>{ try{ window.plausible && plausible('Burn Rate result', {props:{platform:s.p.id, format:s.f.id, verdict:s.band.name}}); }catch(e){} }, 1500); }
+    queueLog(s);
   }
+
+  // ---------------- anonymous result log ----------------
+  // Feeds the yearly "Hours Per Upload" report. Numbers only, and only once
+  // the visitor has typed something. One row per platform+format per page
+  // view; the server keeps the last version. sid lives in memory only.
+  const sid = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => 'abcdefghijklmnopqrstuvwxyz0123456789'[b % 36]).join('');
+  const sent = {};
+  let pending = null;
+  function queueLog(s){
+    const rec = { v:1, sid, p:s.p.id, f:s.f.id, c:Math.min(50, s.cad), a:Math.min(100, s.avail), h:s.hrs.map(h => Math.min(200, h)), e:typed.e.slice(), ta:typed.a, tc:typed.c, b:s.band.name };
+    if (pending && (pending.p !== rec.p || pending.f !== rec.f)) flushLog();
+    pending = rec;
+  }
+  function flushLog(){
+    const rec = pending; if (!rec || (!rec.e.includes(1) && !rec.ta)) return;
+    const body = JSON.stringify(rec), k = rec.p + '|' + rec.f;
+    if (sent[k] === body) return;
+    sent[k] = body;
+    try{ if (!navigator.sendBeacon('/api/burn-rate', new Blob([body], {type:'application/json'}))) throw 0; }
+    catch(e){ try{ fetch('/api/burn-rate', {method:'POST', body, headers:{'Content-Type':'application/json'}, keepalive:true}).catch(()=>{}); }catch(e){} }
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushLog(); });
+  addEventListener('pagehide', flushLog);
 
   // ---------------- plan ----------------
   const CUTS = {
@@ -532,7 +558,7 @@
 
   // ---------------- gate ----------------
   const gate = $('gate');
-  function unlock(src){ gate.classList.remove('locked'); try{ localStorage.setItem('br_unlocked','1'); }catch(e){} try{ window.plausible && plausible('Burn Rate unlock', {props:{via:src}}); }catch(e){} }
+  function unlock(src){ flushLog(); gate.classList.remove('locked'); try{ localStorage.setItem('br_unlocked','1'); }catch(e){} try{ window.plausible && plausible('Burn Rate unlock', {props:{via:src}}); }catch(e){} }
   $('unlockBtn').addEventListener('click', () => setTimeout(()=>unlock('subscribe'), 400));
   $('alreadyBtn').addEventListener('click', () => unlock('already'));
   try{ if (localStorage.getItem('br_unlocked') === '1') gate.classList.remove('locked'); }catch(e){}
@@ -543,8 +569,9 @@
     return `Burn Rate: ${s.f.name.replace(/\s*\(.*\)$/,'')} on ${s.p.name} costs ${fmtH(s.hpp)} h per upload. At ${fmtCad(s.cad)} that's ${fmtH(s.need)} h/week against ${fmtH(s.avail)} I have. Verdict: ${s.band.name}. ${location.origin}/burn-rate${location.hash}`;
   }
   function toast(msg){ $('toast').textContent = msg; setTimeout(()=>{ $('toast').textContent=''; }, 2400); }
-  $('copyBtn').addEventListener('click', async () => { try{ await navigator.clipboard.writeText(shareText()); toast('Copied.'); }catch(e){ toast('Select the card and copy it manually.'); } });
+  $('copyBtn').addEventListener('click', async () => { flushLog(); try{ await navigator.clipboard.writeText(shareText()); toast('Copied.'); }catch(e){ toast('Select the card and copy it manually.'); } });
   $('shareBtn').addEventListener('click', async () => {
+    flushLog();
     const url = `${location.origin}/burn-rate${location.hash}`;
     if (navigator.share){ try{ await navigator.share({ title:'Burn Rate', text: shareText().replace(url,'').trim(), url }); return; }catch(e){} }
     try{ await navigator.clipboard.writeText(url); toast('Link copied. It reopens with your numbers.'); }catch(e){ toast('Copy the address bar. It holds your numbers.'); }

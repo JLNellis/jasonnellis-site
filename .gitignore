@@ -11,3 +11,6 @@ the-feed-assets/the-feed-art-library-v2/
 
 # Raw video masters (sources only; compressed derivatives at repo root ship). Too big for git.
 videos/
+
+# Local Netlify folder
+.netlify

@@ -195,6 +195,13 @@ site does. Keep it true. Conventions that keep it true:
   Endpoint and field name live in `SITE_CONFIG` in `nav.js`; the email input
   must be `name="email_address"`, which is what Kit expects. If a new form appears anywhere, the policy's
   "What I collect" section needs a matching entry.
+- Burn Rate logs anonymous results (numbers only, month-level date, no IP)
+  through `netlify/functions/burn-rate.mjs` into the `burn-rate` Netlify Blobs
+  store, only when the visitor typed their own hours. This is the dataset for
+  the yearly "Hours Per Upload" report; export with
+  `tools/burn-rate-export.mjs`. The function's id lists must match
+  `burn-rate.html`, and `/privacy` lists every field it stores — change them
+  together.
 - `localStorage` is fine for on-device state (games, mute, unlock flags).
   It never leaves the browser and the policy already covers it.
 - When any of the above changes, update the "Last updated" date in the
