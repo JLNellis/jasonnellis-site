@@ -9,7 +9,7 @@ ogImage: "/og-case-packagd.jpg"
 relatedTalkSlug: "why-some-creators-break-through-and-most-dont"
 relatedTalkTitle: "Why Some Creators Break Through and Most Don't"
 ---
-*Co-Founder (Creator Engagement & Product), Packagd, 2016–2019 · Acquired by Meta*
+*Co-Founder (Creator Engagement & Product), Packagd, 2017–2019 · Acquired by Meta*
 
 Packagd started with a real thesis: YouTube influencers were producing enormous amounts of high-quality content — unboxing videos, tech reviews, beauty tutorials — and almost none of it was being leveraged past the initial upload. The value was sitting on the table. We were going to help creators pick it up.
 

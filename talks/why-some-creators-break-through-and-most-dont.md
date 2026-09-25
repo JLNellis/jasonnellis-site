@@ -25,7 +25,7 @@ narrativeArc:
   - title: "A practical lens"
     body: "How platforms and brands can apply this to evaluate creator potential without guessing."
 evidence:
-  - label: "Packagd → Meta (2016–2023)"
+  - label: "Packagd → Meta (2017–2023)"
     body: "Co-founded a company built for creators — and learned to listen to them the hard way."
     url: "/blog/what-you-learn-when-you-stop-building-and-start-listening/"
   - label: "Building Value — podcast"

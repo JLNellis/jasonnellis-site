@@ -17,9 +17,9 @@ narrativeArc:
   - title: "Wave one: the streaming era"
     body: "Early product and growth work at Hulu (2008–2012) — the platform-versus-content fight nobody thought would resolve, and how it did."
   - title: "Wave two: distribution moves again"
-    body: "Founder and operator years across PBS, an agency, and Vizio (2012–2016) — watching the fight move to the living room."
+    body: "Founder and operator years across PBS, an agency, and Vizio (2012–2017) — watching the fight move to the living room."
   - title: "Wave three: the creator becomes the platform"
-    body: "Co-founding Packagd, acquired by Meta (2016–2023) — the moment content and distribution collapsed into the same person."
+    body: "Co-founding Packagd, acquired by Meta (2017–2023) — the moment content and distribution collapsed into the same person."
   - title: "The pattern underneath the panic"
     body: "Why new mediums don't create the danger everyone assumes — they redistribute power, and whoever held the old power calls that a crisis."
   - title: "Where the current wave really sits"
@@ -27,7 +27,7 @@ narrativeArc:
 evidence:
   - label: "Hulu — Early Product & Growth (2008–2012)"
     body: "Inside the first platform-versus-content fight of the streaming era."
-  - label: "Packagd → Meta (2016–2023)"
+  - label: "Packagd → Meta (2017–2023)"
     body: "Built and sold a company at the exact moment distribution moved to creators directly."
     url: "/blog/what-you-learn-when-you-stop-building-and-start-listening/"
 adaptations:
