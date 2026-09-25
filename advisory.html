@@ -136,6 +136,12 @@
   .how-list p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 0 22px; }
 
   /* ---- Proof ---- */
+  .quote-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 0 0 16px; }
+  .quote-card { margin: 0; padding: 28px 30px; }
+  .quote-card blockquote { margin: 0 0 18px; font-size: 17px; line-height: 1.65; color: var(--fg-1); }
+  .quote-card figcaption { font-size: 13px; color: var(--fg-2); line-height: 1.5; }
+  .quote-card figcaption strong { color: #FFF; font-weight: 600; }
+  .quote-card figcaption span { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--fg-3); margin-top: 2px; }
   .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .proof-card { display: flex; flex-direction: column; padding: 24px; text-decoration: none; color: inherit; }
   .proof-card .era { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 12px; }
@@ -404,6 +410,13 @@
       <h2>Read the work before you hire it.</h2>
       <p class="sub">Three case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
       <p class="steward-note">Making the decision is half of it. The other half is whether the team is still standing to run it. When I stepped into the interim seat, there were <strong>no team exits during my tenure</strong>. That never shows up in a strategy memo, and it's the part I'm proudest of.</p>
+      <!-- Testimonials: one .quote-card per quote; the grid takes a second card side by side. -->
+      <div class="quote-strip">
+        <figure class="card quote-card">
+          <blockquote>&ldquo;He proposed and executed a full rebuild of our ingestion technology, and the resulting efficiencies and speed enabled a strategic shift in both our operations and our sales. Both teams could now go after large libraries, bringing in more revenue at higher margins.&rdquo;</blockquote>
+          <figcaption><strong>Jeremy Rosen</strong><span>Fmr. General Manager, SuperBam</span></figcaption>
+        </figure>
+      </div>
       <div class="proof-grid">
         <a class="card proof-card" href="/blog/the-call-to-start-over-at-superbam/">
           <span class="era">SuperBam · 2024 – 2026</span>
@@ -425,7 +438,6 @@
         </a>
       </div>
       <p class="eng-note">Want the thinking before the engagement? <a href="/lens" class="bolt">The Lens</a> walks through how I read a creator's business in three questions, with real examples.</p>
-      <!-- Testimonials: add a quote strip here once the first two client quotes are in. -->
     </section>
 
   </div>

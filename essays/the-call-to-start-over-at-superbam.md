@@ -48,6 +48,11 @@ Throughput went up roughly four times, by our own count. We hadn't instrumented 
 
 The claim I'll make without hedging is about people. Onboarding a creator with thousands of hours of video had previously taken most of a team, working for weeks. On the new system a single person could process the same library. That's what made large libraries a sales conversation instead of an operations negotiation.
 
+<figure class="testimonial">
+<blockquote><p>&ldquo;He proposed and executed a full rebuild of our ingestion technology, and the resulting efficiencies and speed enabled a strategic shift in both our operations and our sales. Both teams could now go after large libraries, bringing in more revenue at higher margins.&rdquo;</p></blockquote>
+<figcaption>Jeremy Rosen, Fmr. General Manager, SuperBam</figcaption>
+</figure>
+
 It was also, for the first time, a secure and scalable system: one source of truth for every reference file and every policy, instead of a machine in a house.
 
 And it became the foundation. The client dashboard, the new reporting, the rethink of the payment engine, and the administration of all of it were built on the ingestion platform over the following year. None of that would have been possible on what we'd stopped.

@@ -13,11 +13,20 @@ the item once it's live on the site.
 
 ## 1. Testimonials — 2–3 client quotes
 
-**Status:** not started · Jason considering (2026-09-15)
+**Status:** 1 of 2–3 in (2026-09-25) · follow-up question to Jeremy not yet asked
 **Unblocks:** the biggest open question on the site.
 
-`advisory.html` has an HTML comment sitting where the first two quotes go,
-in the Receipts section. Until they exist, the whole relational half of the
+**Live:** Jeremy Rosen (Fmr. General Manager, SuperBam) on the ingestion
+rebuild, trimmed with his approval (opening line and "A+, would work with
+again" cut). It sits in `.quote-strip` in the Case studies section of
+`advisory.html` (the grid takes a second card side by side) and as a
+`.testimonial` figure in the SuperBam case study. It proves the *outcome*
+half (A) only: it corroborates the "large libraries became a sales
+conversation" claim and says nothing about the team. Next ask to Jeremy:
+"Was there a point where stopping the four projects felt like the wrong
+call? How did the team take it?"
+
+Until quotes like that exist, the whole relational half of the
 positioning — that he builds teams, reads a room, gets people to consensus —
 is asserted rather than shown.
 
