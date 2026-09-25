@@ -392,7 +392,19 @@
   }
 
   /* ---- Responsive ---- */
+  /* ---- Closing: where I'm useful now ---- */
+  .bio-next { padding: 64px 0 72px; border-top: 1px solid var(--border-subtle); }
+  .bio-next h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
+  .bio-next .sub { font-size: 15px; color: var(--fg-2); line-height: 1.65; max-width: 600px; margin: 0 0 32px; }
+  .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .next-card { display: flex; flex-direction: column; padding: 22px 24px; text-decoration: none; color: inherit; }
+  .next-card .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-vivid); margin-bottom: 10px; }
+  .next-card p { font-size: 14px; color: var(--fg-2); line-height: 1.6; margin: 0 0 16px; }
+  .next-card .go { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--fg-1); transition: color var(--dur-fast); }
+  .next-card:hover .go { color: var(--color-accent-vivid); }
+
   @media (max-width: 900px) {
+    .next-grid { grid-template-columns: 1fr; }
     .bio-hero { grid-template-columns: 1fr; min-height: auto; }
     .bio-portrait-wrap { height: 88vw; max-height: 520px; }
     .bio-portrait-wrap img { object-position: 58% 14%; }
@@ -430,10 +442,10 @@
     <!-- Text column -->
     <div class="bio-intro">
       <p class="eyebrow">About Jason Nellis</p>
-      <h1>Cancer didn't stop me,<br><em>so why should a bad quarter?</em></h1>
+      <h1>&ldquo;Someday&rdquo; stopped being<br><em>a safe assumption at 19.</em></h1>
       <p class="tagline">
-        The diagnosis came at 19. Everything since has been one long argument
-        against <strong>deferring the interesting life.</strong>
+        That was the year of the cancer diagnosis. Everything since has been one long
+        argument against <strong>deferring the interesting life.</strong>
       </p>
 
       <div class="bio-facts">
@@ -444,8 +456,8 @@
       </div>
 
       <div class="bio-ctas">
-        <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn primary">LinkedIn ↗</a>
-        <a href="/contact" class="btn ghost">Get in touch</a>
+        <a href="/contact" class="btn primary">Get in touch</a>
+        <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
       </div>
     </div>
 
@@ -470,8 +482,7 @@
 
       <div class="bio-narrative-label">
         <span class="num">01 · The longer story</span>
-        <h2>Why behind<br>the career.</h2>
-        <p class="caption" style="margin-top:14px">The part a résumé leaves out.</p>
+        <h2>What the résumé<br>leaves out.</h2>
       </div>
 
       <div class="bio-narrative-body">
@@ -479,46 +490,40 @@
         <p>
           When I was 19, doctors found <strong>Stage 2B Hodgkin's lymphoma.</strong> I was at
           Northwestern, a theatre major, a lot more at home onstage than in an exam room. I did the
-          chemo and the radiation and finished school anyway — then moved to Los Angeles instead of
+          chemo and the radiation and finished school anyway. Then I moved to Los Angeles instead of
           back to the East Coast, because by then playing it safe had a cost I could actually feel.
         </p>
 
+        <p>
+          That urgency turned into a habit: find something worth building and get there before the
+          rest of the room notices. It runs through everything in the log below, from
+          <strong>Hulu's early years</strong> to <strong>the interim CEO seat at SuperBam</strong>.
+        </p>
+
+        <p>
+          I went to Northwestern to be an actor. I don't mention it to be charming. It's half of how
+          I work. Four years of theatre and improv is four years of training in reading a room: who
+          has stopped talking, what the scene is actually about underneath the words everyone agreed
+          to say, when to hold a beat instead of filling it. <strong>I spent the next twenty years
+          inside things as they scaled</strong>, paying attention to which decisions made people money
+          and which ones quietly cost them. The useful part is having both.
+        </p>
+
         <div class="bio-pull">
-          <p>"Someday" stopped being a safe assumption that year. It never really came back.</p>
+          <p>Plenty of operators can read a P&amp;L. Fewer can tell you what the room isn't saying while you read it.</p>
         </div>
 
         <p>
-          That urgency turned into a pattern: find something worth building and get to it before the
-          rest of the room realizes it's worth building. It took me through <strong>Hulu's early
-          years</strong>, a company I co-founded that <strong>Facebook acquired</strong>, a stint
-          building Live Shopping inside Meta's Commerce org, and eventually the
-          <strong>Interim CEO seat at SuperBam</strong>.
+          The through-line has been a read on systems: which ones were about to break open, and which
+          ones needed someone to care more carefully than the people already in charge.
+          <strong>I think in stories before slides.</strong> That frustrates the people who want a
+          deck before they'll engage with the problem. It works on everyone else.
         </p>
 
         <p>
-          I went to Northwestern to be an actor. That is not a detail I bring up to be charming
-          about it — it's half of how I work. Four years of theatre and improv is four years of
-          training in reading a room: who has stopped talking, what the scene is actually about
-          underneath the words everyone agreed to say, when to hold a beat instead of filling it.
-          <strong>I spent the next twenty years watching enormous things scale</strong> and paying
-          attention to which decisions made people money and which ones quietly cost them. The
-          useful part is the two together. Plenty of operators can read a P&amp;L. Fewer can tell
-          you what the room isn't saying while you read it.
-        </p>
-
-        <p>
-          None of it followed a strategy document. It followed a read on systems — which ones were
-          about to break open, which ones needed someone to care more carefully than the people
-          already in charge. <strong>I think in stories before slides, and I lead with the
-          narrative.</strong> That frustrates the people who want a deck before they'll engage with
-          the problem. It works on everyone else.
-        </p>
-
-        <p>
-          In April 2025 I moved the family to the south of France. Not a sabbatical, not a
-          gesture — a bet that the life we'd been optimizing for in LA wasn't the one we actually
-          wanted. I write, advise, and build from here now. Two kids who think a Tuesday market is
-          normal are the best evidence it's working.
+          In April 2025 I moved the family to the south of France. We bet that the life we'd been
+          optimizing for in LA wasn't the one we actually wanted. I write, advise, and build from
+          here now. Two kids who think a Tuesday market is normal are the best evidence it's working.
         </p>
 
       </div>
@@ -535,7 +540,7 @@
 
       <div class="bio-timeline-label">
         <span class="num">02 · Career arc</span>
-        <h2>Process<br>log.</h2>
+        <h2>Career<br>log.</h2>
         <p class="log-hint">Click an entry to expand</p>
       </div>
 
@@ -556,30 +561,30 @@
           </button>
           <div class="log-body" id="log-body-hulu">
             <div class="log-body-inner">
-              <p>Joined during Hulu's formative years and started in content partnerships — content strategy for accounts from the White House to NBCUniversal — before moving into product and growth as streaming scaled. Across a book of seventy-plus partners I grew revenue and viewership by as much as 200% over goal, and built the go-to-market for <em>If I Can Dream</em>, Hulu's first exclusive original. Learned the gap between a good idea and a shippable product, and came away with a permanent taste for building at scale.</p>
+              <p>Joined during Hulu's formative years and started in content partnerships, running content strategy for accounts from the White House to NBCUniversal, before moving into product and growth as streaming scaled. Across a book of seventy-plus partners I grew revenue and viewership by as much as 200% over goal, and built the go-to-market for <em>If I Can Dream</em>, Hulu's first exclusive original.</p>
               <div class="log-tags"><span>Streaming</span><span>Partnerships</span><span>Product</span></div>
               <a href="/blog/comedy-time-and-the-format-problem-at-hulu/" class="bolt log-cta">Read the case study →</a>
             </div>
           </div>
         </article>
 
-        <article class="log-entry" data-status="sunset">
+        <article class="log-entry" data-status="acquired">
           <button class="log-head" aria-expanded="false" aria-controls="log-body-pbs">
             <span class="log-node" aria-hidden="true"></span>
             <span class="log-meta">
-              <span class="log-time">2012 → 2016</span>
-              <span class="log-status">Sunset</span>
+              <span class="log-time">2012 → 2017</span>
+              <span class="log-status">Sold</span>
             </span>
             <span class="log-title">
-              <strong>Founder, operator, entrepreneur</strong>
+              <strong>Editorial product → Founder → Product marketing</strong>
               <span class="log-org">PBS · Marketing agency · Vizio</span>
             </span>
             <span class="log-chev" aria-hidden="true">›</span>
           </button>
           <div class="log-body" id="log-body-pbs">
             <div class="log-body-inner">
-              <p>Ran editorial product at PBS, then left to found a marketing agency — a solo consultancy that became a four-person shop, $35k of revenue in year one to $125k in year two. Sold it in 2016, and learned the painful version of a lesson that stuck: partnerships, like strategies, can both easily go out the window.</p>
-              <div class="log-tags"><span>Editorial</span><span>Founder</span><span>Lessons learned</span></div>
+              <p>Ran editorial product at PBS, then left to found a marketing agency: a solo consultancy that grew into a four-person shop, from $35k of revenue in year one to $125k in year two. Sold it to Brllnt in 2016 and left three months after the deal. That October I joined Vizio as Senior Product Marketing Manager, and in March 2017 I left to co-found Packagd.</p>
+              <div class="log-tags"><span>Editorial</span><span>Founder</span><span>Exit</span></div>
             </div>
           </div>
         </article>
@@ -588,7 +593,7 @@
           <button class="log-head" aria-expanded="false" aria-controls="log-body-packagd">
             <span class="log-node" aria-hidden="true"></span>
             <span class="log-meta">
-              <span class="log-time">2016 → 2023</span>
+              <span class="log-time">2017 → 2023</span>
               <span class="log-status">Acquired</span>
             </span>
             <span class="log-title">
@@ -599,7 +604,7 @@
           </button>
           <div class="log-body" id="log-body-packagd">
             <div class="log-body-inner">
-              <p>Co-founded Packagd. The decision that mattered was killing a finished iPhone app nobody was using and rebuilding around the creators themselves — which is what produced the relationships, and sixty of the top hundred tech creators on YouTube, that made the rest possible. Facebook acquired it in 2019, where the team built Live Shopping for the Commerce group and a native gift-certificate platform that gave small businesses a way to take cash during lockdown. After moving to Meta's New Product Experimentation team, I built and launched Super, a live streaming app, and became the team's first Founder in Residence — a startup operator's seat inside a very large machine.</p>
+              <p>Co-founded Packagd. The decision that mattered was killing a finished iPhone app nobody was using and rebuilding around the creators themselves. That produced the relationships, and sixty of the top hundred tech creators on YouTube, that made the rest possible. After Facebook acquired the company in 2019, the team built Live Shopping for the Commerce group and a native gift-certificate platform that gave small businesses a way to take cash during lockdown. Then, on Meta's New Product Experimentation team, I built and launched Super, a live streaming app, and became the team's first Founder in Residence: a startup operator's seat inside a very large machine.</p>
               <div class="log-tags"><span>Acquisition</span><span>Live commerce</span><span>NPE</span></div>
               <a href="/blog/what-you-learn-when-you-stop-building-and-start-listening/" class="bolt log-cta">Read the case study →</a>
             </div>
@@ -611,7 +616,7 @@
             <span class="log-node" aria-hidden="true"></span>
             <span class="log-meta">
               <span class="log-time">2023 → 2026</span>
-              <span class="log-status">Interim CEO</span>
+              <span class="log-status">Rebuilt</span>
             </span>
             <span class="log-title">
               <strong>CPO → Interim CEO</strong>
@@ -621,7 +626,7 @@
           </button>
           <div class="log-body" id="log-body-superbam">
             <div class="log-body-inner">
-              <p>Signed on as Chief Product Officer, first at Jogg, then SuperBam, running product across creator IP protection, content monetization, and AI deepfake enforcement. At Jogg I rebuilt the product process from nothing — PRD standards, TAM discipline, a real QA cadence — and cut development time on most feature sets from twelve weeks to four. At SuperBam I rebuilt content ingestion from the ground up and shipped an AI deepfake-analysis platform alongside new payment and client-reporting systems. Later stepped into the interim CEO seat: no team exits during my tenure as interim CEO, which is the part of it I'm proudest of. The kind of seat that tests whether the narrative-first thing is real or just something you say.</p>
+              <p>Signed on as Chief Product Officer, first at Jogg, then SuperBam, running product across creator IP protection, content monetization, and AI deepfake enforcement. At Jogg I rebuilt the product process from nothing (PRD standards, TAM discipline, a real QA cadence) and cut development time on most feature sets from twelve weeks to four. At SuperBam I rebuilt content ingestion from the ground up and shipped an AI deepfake-analysis platform alongside new payment and client-reporting systems. Later I stepped into the interim CEO seat. There were no team exits during my tenure, and that's the part I'm proudest of.</p>
               <div class="log-tags"><span>Creator economy</span><span>IP protection</span><span>Leadership</span></div>
               <a href="/blog/the-call-to-start-over-at-superbam/" class="bolt log-cta">Read the case study →</a>
             </div>
@@ -636,14 +641,14 @@
               <span class="log-status">In flight</span>
             </span>
             <span class="log-title">
-              <strong>Director of Innovation, and always building<span class="log-cursor" aria-hidden="true"></span></strong>
+              <strong>Director of Innovation<span class="log-cursor" aria-hidden="true"></span></strong>
               <span class="log-org">BoltOS · Akaeon Corp</span>
             </span>
             <span class="log-chev" aria-hidden="true">›</span>
           </button>
           <div class="log-body" id="log-body-now">
             <div class="log-body-inner">
-              <p>Director of Innovation at BoltOS, building the product infrastructure that turns creator and brand relationships into revenue, not just dashboards. Alongside that, building Akaeon Corp with Jenn: a media and events company, early stage.</p>
+              <p>Director of Innovation at BoltOS, building the product infrastructure that turns creator and brand relationships into revenue. Alongside that, I'm building Akaeon Corp with my wife, Jenn: a media and events company, early stage.</p>
               <div class="log-tags"><span>AI strategy</span><span>Venture building</span><span>Live</span></div>
             </div>
           </div>
@@ -654,10 +659,28 @@
   </div>
 </section>
 
-<section style="padding: 56px 0; border-top: 1px solid var(--border-subtle);">
+<!-- ===================== NOW ===================== -->
+<section class="bio-next" data-screen-label="04 now">
   <div class="page-wrap">
-    <div class="bio-pull" style="max-width: 620px;">
-      <p>"The job isn't to be right. It's to make the room safe enough to make the tough decision."</p>
+    <div class="section-eyebrow"><span class="num">03</span> Where I'm useful now</div>
+    <h2>Where to go from here.</h2>
+    <p class="sub">Most of my work now is with founders and leadership teams in media, creator and rights businesses, usually when a decision has sat on the table too long.</p>
+    <div class="next-grid">
+      <a class="card next-card" href="/advisory">
+        <span class="kind">Advisory</span>
+        <p>Three months as counsel next to the CEO, or six as your fractional CPO shipping one named thing.</p>
+        <span class="go">How advisory works →</span>
+      </a>
+      <a class="card next-card" href="/speaking">
+        <span class="kind">Speaking</span>
+        <p>Keynotes, moderated panels, and leadership workshops built from things I built.</p>
+        <span class="go">See the talks →</span>
+      </a>
+      <a class="card next-card" href="/blog">
+        <span class="kind">Writing</span>
+        <p>Essays and case studies, including the long versions of the log above.</p>
+        <span class="go">Read the writing →</span>
+      </a>
     </div>
   </div>
 </section>
