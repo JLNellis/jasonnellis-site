@@ -4,6 +4,8 @@
 //  This file renders <site-header> and <site-footer> on every page.
 //
 //  TO ADD A PAGE: add one entry to NAV_LINKS (header nav + footer "Site" column).
+//  footerOnly entries skip the header (the logo already goes home; Contact is
+//  the header's button, not a link).
 //  TO ADD A LEGAL/UTILITY LINK (privacy, terms…): add one entry to LEGAL_LINKS
 //  (footer bottom bar). Both lists render on every page that includes this file.
 //  TO UPDATE FOOTER DETAILS: edit SITE_CONFIG.
@@ -37,15 +39,16 @@ const SITE_CONFIG = {
 
 const LOGO_MARK_SVG = `<svg viewBox="0 0 1024 1024" role="img" aria-label="Jason Nellis"><path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/><path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/></svg>`;
 
+// Order: the audience-building work first, then the paid offers, then About.
 const NAV_LINKS = [
-  { href: '/',         label: 'Home'     },
-  { href: '/about',    label: 'About'    },
+  { href: '/',         label: 'Home', footerOnly: true },
   { href: '/blog',     label: 'Writing'  },
+  { href: '/building-value', label: 'Podcast' },
   { href: '/experiments', label: 'Experiments' },
   { href: '/speaking', label: 'Speaking' },
-  { href: '/building-value', label: 'Podcast' },
   { href: '/advisory', label: 'Advisory' },
-  { href: '/contact',  label: 'Contact'  },
+  { href: '/about',    label: 'About'    },
+  { href: '/contact',  label: 'Contact', footerOnly: true },
 ];
 
 // Footer bottom bar, next to the copyright line. Every page that renders
@@ -64,17 +67,17 @@ function activePage() {
 class SiteHeader extends HTMLElement {
   connectedCallback() {
     const page = activePage();
-    const links = NAV_LINKS.map(({ href, label }) => {
-      const active = page === href ? ' aria-current="page"' : '';
-      return `<a href="${href}"${active}>${label}</a>`;
-    }).join('\n      ');
+    const current = (href) => page === href ? ' aria-current="page"' : '';
+    const links = NAV_LINKS.filter(({ footerOnly }) => !footerOnly).map(({ href, label }) =>
+      `<a href="${href}"${current(href)}>${label}</a>`
+    ).join('\n      ');
 
     this.outerHTML = `
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="brand">
       <span class="mark">${LOGO_MARK_SVG}</span>
-      <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
+      <span class="name">Jason Nellis</span>
     </a>
     <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
       <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -82,7 +85,7 @@ class SiteHeader extends HTMLElement {
     </button>
     <nav class="site-nav" id="site-nav">
       ${links}
-      <span class="live-pill"><span class="live-dot"></span>Cannes, FR · Europe in person · Worldwide remote</span>
+      <a href="/contact" class="btn ghost nav-cta"${current('/contact')}>Get in touch</a>
     </nav>
   </div>
 </header>`;
@@ -117,9 +120,9 @@ class SiteFooter extends HTMLElement {
     <div>
       <a href="/" class="brand" style="margin-bottom:14px">
         <span class="mark">${LOGO_MARK_SVG}</span>
-        <span class="name">Jason Nellis<small>Strategist · Operator · Speaker</small></span>
+        <span class="name">Jason Nellis</span>
       </a>
-      <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Strategy, writing, and the occasional strong opinion.</p>
+      <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Product strategy for media and creator businesses. Plus writing, a podcast, and the occasional strong opinion.</p>
       <span class="live-pill"><span class="live-dot"></span>Currently active · ${activeMonth}</span>
     </div>
     <div>

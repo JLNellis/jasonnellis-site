@@ -11,8 +11,10 @@ building — **not** job seeking. Jason is a strategist, writer, and media
 executive (Director of Innovation at BoltOS; co-founder Akaeon Corp;
 hosts the *Building Value* podcast). Based near Cannes, France.
 
-The site positions him as "Strategist · Operator · Speaker." Tone is direct,
-confident, no filler.
+The site positions him as product strategy for media and creator businesses
+(the homepage `<title>`; the old "Strategist · Operator · Speaker" tagline was
+retired Sept 2026 — it read as a list of job titles and led with the
+least-proven offer). Tone is direct, confident, no filler.
 
 ---
 
@@ -56,7 +58,13 @@ single file: **`nav.js`**, using Web Components (`<site-header>` and
 - `nav.js` builds the nav links from a `NAV_LINKS` array and the footer from
   a `SITE_CONFIG` object, both at the top of the file.
 - **To add/remove/reorder a nav item: edit `NAV_LINKS` in `nav.js` only.**
-  Do not add header/footer markup to individual HTML files.
+  Do not add header/footer markup to individual HTML files. Entries flagged
+  `footerOnly` (Home, Contact) render in the footer "Site" column but not the
+  header: the logo goes home, and Contact is the header's "Get in touch"
+  ghost button (`.nav-cta`). The header is deliberately lean — mark + name (no
+  tagline), six links, one button, no location pill — so it fits on one line
+  from 761px up. Adding a seventh header link means re-checking that; the
+  761–900px band in `site.css` already tightens link padding.
 - **Legal/utility links (privacy policy, future terms, etc.) live in
   `LEGAL_LINKS` in `nav.js`** and render in the footer bottom bar next to the
   copyright line. Every page that includes `nav.js` gets them automatically;
@@ -257,7 +265,8 @@ hardcode hex values.
 - CTAs: `.btn.primary` (filled green) and `.btn.ghost` (outlined) button
   classes already exist in `site.css`.
 - "Live" indicators: small pulsing green dot (`.live-pip` / `.live-dot`),
-  used for active ventures and the location pill in the nav.
+  used for active ventures (the header location pill was removed Sept 2026;
+  availability lives on `/speaking`).
 
 ---
 
