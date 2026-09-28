@@ -321,7 +321,7 @@ Create `robot-comments-copy.js`:
       'broadcaster': {
         name: 'The Broadcaster',
         tagline: 'Huge in the feed. Unknown in the inbox.',
-        diagnosis: 'Your reach was in the top quarter and your pipeline was not. Polls and broad posts travel: polls reach 1.78x a typical post but draw 0.37x the engagement (AuthoredUp, 3M posts). LinkedIn's published ranking work measures itself on long dwell and contribution, not impressions (Hertel et al., 2026). Reach is the instrument. You were scored on conversations.',
+        diagnosis: 'Your reach was in the top quarter and your pipeline was not. Polls and broad posts travel: polls reach 1.78x a typical post but draw 0.37x the engagement (AuthoredUp, 3M posts). LinkedIn\'s published ranking work measures itself on long dwell and contribution, not impressions (Hertel et al., 2026). Reach is the instrument. You were scored on conversations.',
       },
       'fingerprinted-founder': {
         name: 'The Fingerprinted Founder',
