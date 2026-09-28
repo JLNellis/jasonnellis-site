@@ -26,7 +26,7 @@ Plans 2 to 4 are written after this plan lands, because calibration can move num
 | Checkpoint | After | State |
 |---|---|---|
 | A | Task 2 | data file + engine core, 5 tests |
-| B | Task 5 | full engine incl. resume, 22 tests |
+| B | Task 5b | full engine incl. resume and review fixes, 29 tests |
 | C | Task 6 | simulator + generated bands + baseline (uncalibrated) numbers |
 | D | Task 8 | calibrated, spec updated, final review. Plan 1 complete. |
 
@@ -1115,6 +1115,234 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
+### Task 5b: Review fixes before the simulator
+
+Added after the checkpoint-B code review. Fixes: derived engine version, frozen data, stamp/source tier integrity, pipeline scale, normalised distribution loop, event week clears the popular boost; plus missing tests.
+
+**Files:**
+- Modify: `robot-comments-data.js`, `robot-comments-engine.js`, `tools/robot-comments-test.js`
+
+- [ ] **Step 1: Write the failing tests**
+
+Insert above the runner line in `tools/robot-comments-test.js`:
+
+```js
+// ---------------------------------------------------------------- review fixes (task 5b)
+test('engine version is derived from the model, so a rebalance invalidates saves', () => {
+  assert.strictEqual(typeof E.ENGINE_VERSION, 'number');
+  assert.strictEqual(E.ENGINE_VERSION, E.versionOf(E.CONFIG, D.CARDS));
+  const tweaked = JSON.parse(JSON.stringify(E.CONFIG));
+  tweaked.coherence.on.v += 0.01;
+  assert.notStrictEqual(E.versionOf(tweaked, D.CARDS), E.ENGINE_VERSION);
+});
+
+test('card data and CONFIG are frozen so the UI cannot corrupt them', () => {
+  assert.ok(Object.isFrozen(D.CARDS) && Object.isFrozen(D.CARDS[0]));
+  assert.ok(Object.isFrozen(E.CONFIG.formats.text.reach));
+  assert.throws(() => { 'use strict'; D.CARDS[0].title = 'x'; });
+});
+
+test('every stamp matches the tier of the source it cites', () => {
+  const allowed = new Set(['disputed:vdb']); // vdB's -16% is one side of the disputed link effect
+  const check = (stamp, src, what) => {
+    if (stamp === 'ours') return;
+    const tier = D.SOURCES[src].tier;
+    assert.ok(tier === stamp || allowed.has(stamp + ':' + src), `${what}: ${stamp} cites ${src} (${tier})`);
+  };
+  for (const e of E.stampEntries()) check(e.stamp, e.src, JSON.stringify(e));
+  for (const k of D.CARDS.filter(k => k.bait)) check(k.stamp, k.src, k.id);
+});
+
+test('replay matches live play under a random policy with skips and bait', () => {
+  for (let seed = 1; seed <= 30; seed++) {
+    const r = E.rng(seed);
+    const live = E.newGame({ archetype: ARCH[seed % 4], budget: [1, 3, 6][seed % 3] });
+    while (!live.done) {
+      if (E.weekKind(live) === 'event') { E.resolveEvent(live); continue; }
+      const hand = E.deal(live);
+      const opts = hand.filter(k => E.canAfford(live, k, 'none'));
+      if (r() < 0.2 || !opts.length) { E.resolveWeek(live, { skip: true }); continue; }
+      const k = opts[Math.floor(r() * opts.length)];
+      const engs = E.CONFIG.engagements.filter(e => E.canAfford(live, k, e));
+      E.resolveWeek(live, { card: k.id, engagement: engs[Math.floor(r() * engs.length)] });
+    }
+    assert.deepStrictEqual(E.replay(JSON.parse(JSON.stringify(E.serialize(live)))), live, 'seed ' + seed);
+  }
+});
+
+test('the reset lowers anchor but not anchorStart', () => {
+  let found = false;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    if (found) break;
+    const S = playScript({ archetype, budget }, firstAffordable);
+    if (S.events.includes('reset')) {
+      assert.ok(Math.abs(S.anchor - S.anchorStart * E.CONFIG.events.reset.permanent.v) < 1e-9);
+      found = true;
+    }
+  }
+  assert.ok(found, 'reset never drawn in the scripted games');
+});
+
+test('a second bait CTA within three weeks suppresses the next decision week', () => {
+  let found = false;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    const S = E.newGame({ archetype, budget });
+    while (!S.done && !found) {
+      if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+      const hand = E.deal(S);
+      const baitCta = hand.find(k => !k.bait && k.cta === 'bait' && E.canAfford(S, k, 'none'));
+      if (baitCta && S.week > 1) {
+        const w = S.week;
+        S.baitCtaWeeks.push(w - 1);
+        E.resolveWeek(S, { card: baitCta.id, engagement: 'none' });
+        const next = E.nextDecisionWeeks(w, 1)[0];
+        if (next) assert.ok(S.suppress[next] <= E.CONFIG.baitCta.suppression.v + 1e-9);
+        found = true;
+      } else E.resolveWeek(S, firstAffordable(S, hand));
+    }
+  }
+  assert.ok(found, 'no bait-CTA card dealt in the scripted games');
+});
+
+test('a popular-comments boost does not survive an event week', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable, 3);
+  const hand = E.deal(S);
+  const k = hand.find(k => E.canAfford(S, k, 'popular'));
+  assert.ok(k, 'expected a card affordable with popular comments at 3h');
+  E.resolveWeek(S, { card: k.id, engagement: 'popular' });
+  assert.strictEqual(E.weekKind(S), 'event');
+  E.resolveEvent(S);
+  const g = E.CONFIG.events.gravity.boost.v;
+  assert.ok(S.nextReachMult === 1 || Math.abs(S.nextReachMult - g) < 1e-12, 'nextReachMult ' + S.nextReachMult);
+});
+```
+
+Also, in the existing test `finish reports band, clarity word, rounded pipeline`, replace the line
+
+```js
+  assert.strictEqual(at(25.4, 0.5).pipeline, 25);
+```
+
+with
+
+```js
+  assert.strictEqual(at(25.44, 0.5).pipeline, 25.4);
+  assert.strictEqual(at(29.96, 0.5).band, 'hot'); // band uses the displayed (rounded) value
+```
+
+- [ ] **Step 2: Run the tests to verify they fail**
+
+Run: `npm run test:rc`
+Expected failures: engine version (`E.versionOf is not a function`), frozen, stamp tier (`invented cites jurka26 (proven)` and `dhelin (review)`), finish rounding, popular boost. The replay, reset and bait-CTA tests may already pass.
+
+- [ ] **Step 3: Data fixes**
+
+In `robot-comments-data.js`:
+
+1. Change the `dhelin` entry's `tier: 'review'` to `tier: 'invented'`.
+2. Add this entry directly above `dhelin`:
+
+```js
+    nosource:   { tier: 'invented', cite: "No primary source or study found (checked Sep 2026). LinkedIn's own engagement-bait examples (Jurka, 12 Mar 2026) do not include it.", url: 'https://www.linkedin.com/pulse/updates-linkedin-feed-focusing-authentic-relevant-tim-jurka-umwnc' },
+```
+
+3. In the `bait-thoughts` card, change the source `'jurka26'` to `'nosource'`.
+4. Replace `return { SOURCES, ARCHETYPES, OUTCOMES, EVENTS, CARDS };` with:
+
+```js
+  const deepFreeze = o => {
+    if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); }
+    return o;
+  };
+  return deepFreeze({ SOURCES, ARCHETYPES, OUTCOMES, EVENTS, CARDS });
+```
+
+- [ ] **Step 4: Engine fixes**
+
+In `robot-comments-engine.js`:
+
+1. Delete these two lines near the top:
+
+```js
+  // Bump whenever a change would make an old save replay into a different game.
+  const ENGINE_VERSION = 1;
+```
+
+2. In `CONFIG`, replace the loop comment and entry:
+
+```js
+    // Distribution loop: baseline *= 1 + a*dwell + b*contrib - c*scroll, clamped to [lo, hi] x anchor.
+    loop: { a: c(0.15, O), b: c(0.20, O), c: c(0.10, O), lo: c(0.5, O), hi: c(2.0, O) },
+```
+
+with
+
+```js
+    // Distribution loop, relative to an average post:
+    // baseline *= 1 + a*(dwell/base.dwell - 1) + b*(contrib/base.contrib - 1), clamped to [lo, hi] x anchor.
+    loop: { a: c(0.10, O), b: c(0.05, O), lo: c(0.5, O), hi: c(2.0, O) },
+```
+
+3. In `CONFIG.pipeline`, change `dmRate: c(0.04, O)` to `dmRate: c(0.12, O)`.
+
+4. Directly after the closing `};` of `CONFIG`, add:
+
+```js
+  const deepFreeze = o => {
+    if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); }
+    return o;
+  };
+  deepFreeze(CONFIG);
+```
+
+5. Directly after the `for (const k of D.CARDS) BY_ID[k.id] = k;` line, add:
+
+```js
+  // Derived from everything that shapes a game, so any rebalance invalidates old saves (spec §5a).
+  const versionOf = (config, cards) => hashStr(JSON.stringify([
+    config,
+    cards.map(k => [k.id, k.fmt, k.topic, k.hook, k.sub, k.cta, !!k.bait, k.extraCost || 0]),
+    D.EVENTS.map(e => e.id),
+  ])) % 2147483647;
+  const ENGINE_VERSION = versionOf(CONFIG, D.CARDS);
+```
+
+6. In `resolveWeek`, delete the line `    const scroll = 1 - dwell - click;` and replace
+
+```js
+    S.baseline *= 1 + L.a.v * dwell + L.b.v * contribP - L.c.v * scroll;
+```
+
+with
+
+```js
+    S.baseline *= 1 + L.a.v * (dwell / CONFIG.base.dwell.v - 1) + L.b.v * (contribP / CONFIG.base.contrib.v - 1);
+```
+
+7. In `resolveEvent`, directly above the `if (id === 'swarm')` line, add:
+
+```js
+    S.nextReachMult = 1; // a popular-comments boost is spent on the event week
+```
+
+8. In `finish`, replace `const p = S.pipeline;` with `const p = Math.round(S.pipeline * 10) / 10; // displayed value; band uses it too`, and in the returned object replace `pipeline: Math.round(p), pipelineRaw: p,` with `pipeline: p, pipelineRaw: S.pipeline,`.
+
+9. Add `versionOf` to the returned object, after `ENGINE_VERSION,`.
+
+- [ ] **Step 5: Run the tests to verify they pass**
+
+Run: `npm run test:rc`
+Expected: `29/29 passed`. If the "bait CTA" or "reset" test reports "never dealt/drawn", report it rather than editing the test.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add robot-comments-data.js robot-comments-engine.js tools/robot-comments-test.js docs/superpowers/plans/2026-09-28-robot-comments-engine.md
+git commit -m "Robot Comments engine: review fixes (derived version, frozen data, stamp tiers, pipeline scale, normalised loop)"
+```
+
+---
+
 ### Task 6: Balance simulator
 
 **Files:**
@@ -1272,7 +1500,7 @@ Expected: `wrote .../robot-comments-bands.js` followed by four objects, each wit
 - [ ] **Step 3: Confirm the tests still pass with real bands loaded**
 
 Run: `npm run test:rc`
-Expected: `22/22 passed`.
+Expected: `29/29 passed`.
 
 - [ ] **Step 4: Run the targets once to get a baseline**
 
@@ -1307,11 +1535,12 @@ Which knob for which failure (all in `CONFIG`):
 
 | Failing target | Knobs to try, in order |
 |---|---|
-| sensible 3h working/hot below 80% | `loop.a` up (0.15 to 0.30); `coherence.on` up (0.12 to 0.16); `pipeline.visitsSpecific` up |
+| sensible 3h working/hot below 80% | `loop.a` up (0.10 to 0.20); `loop.b` up (0.05 to 0.10); `coherence.on` up (0.12 to 0.16); `pipeline.visitsSpecific` up |
 | Fingerprinted Founder below 40% | `coherence.decay` up (0.94 to 0.96); `coherence.on` up; `startCoherence` up (0.5 to 0.55) |
 | Fingerprinted Founder above 60% | `coherence.decay` down; `coherence.adj` down |
 | sensible 1h working/hot above 40% | `pipeline.visitsDoc` up (documents are unaffordable at 1h); `engagement.clusterVisits` up (comments are unaffordable with a 1h text post) |
 | vendor below 80% Broadcaster/Pod Casualty | `coherence.popular` more negative (-0.08 to -0.12); `baitCta.suppression` down (0.5 to 0.4); `bait-pod.suppression` down |
+| sensible 3h Fingerprinted Founder share is driven only by pipeline because coherence pins at 1.0 (print `median final coherence`: add `console.log` of sens3 coherences) | `coherence.on` down (0.12 to 0.08), `coherence.cluster` down (0.05 to 0.03), `coherence.decay` down (0.94 to 0.90). Target: sensible 3h median final coherence 0.70 to 0.90 |
 | a random-policy archetype below 3% | report it; do not force it. A rule that no random player reaches is a design finding for Jason. |
 
 Never touch a value whose stamp is `M`, `P` or `X`, and never change `cost`, `eventWeeks`, `budgets`, the archetype rule thresholds (3 bait, 2 skips, 0.35, 0.65) or the four `headlineFit` values without asking Jason.
@@ -1330,7 +1559,7 @@ Stop when `npm run sim:rc` exits 0, or after six rounds. If six rounds do not pa
 - [ ] **Step 4: Run the full test suite**
 
 Run: `npm run test:rc && npm test`
-Expected: `22/22 passed` for Robot Comments, and The Feed's suite still passes (nothing shared was touched).
+Expected: `29/29 passed` for Robot Comments, and The Feed's suite still passes (nothing shared was touched).
 
 - [ ] **Step 5: Confirm the site still builds**
 

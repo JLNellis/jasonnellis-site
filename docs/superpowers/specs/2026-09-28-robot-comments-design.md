@@ -96,7 +96,7 @@ Target: under 40 s per turn, under 7 min per game.
 ## 5a. Resume after losing the page
 
 Because the engine is deterministic, the save is only the inputs, never the state:
-`{ v: ENGINE_VERSION, setup: {archetype, budget}, choices: [{card, engagement} | 'skip' | 'event', ...] }`
+`{ v: ENGINE_VERSION, setup: {archetype, budget}, choices: [{card, engagement} | {skip: true} | {event: true}, ...] }`
 in `localStorage` key `rc_run`, written after every resolved week (wrapped in try/catch; a failed
 write never blocks play).
 
@@ -107,6 +107,7 @@ write never blocks play).
 - Mid-resolve losses: the save is written only after a week resolves, so a player who closes during
   the animation resumes at the start of that same week with the same hand (the deal is derived from
   the seed + prior choices, so it is identical).
+- `ENGINE_VERSION` is a hash of CONFIG plus the cards' mechanical fields, so any rebalance changes it automatically.
 - `ENGINE_VERSION` mismatch or a replay that fails validation (unknown card id, over-budget choice)
   → discard silently and show normal setup. A shipped rebalance never resumes into a different game.
 - On reaching the end screen, `rc_run` is replaced by `rc_last` = `{archetype, band, tax, slug}` so
@@ -180,11 +181,11 @@ reach × contrib_p; profile visits; DMs.
 
 ### Distribution loop (for next week)
 ```
-baseline_reach *= (1 + a*dwell_p + b*contrib_p - c*scroll_p)     a,b,c ours (start 0.15/0.20/0.10)
+baseline_reach *= 1 + a*(dwell_p/base_dwell - 1) + b*(contrib_p/base_contrib - 1)   a,b ours (start 0.10/0.05)
 baseline_reach  = clamp(baseline_reach, 0.5*anchor_reach, 2.0*anchor_reach)
 anchor_reach    = connections * 0.12
 ```
-Popular-post comments this week: next week's reach × 1.06. Skip: baseline × 0.95.
+Popular-post comments this week: next week's reach × 1.06 (lost if next week is an event week). Skip: baseline × 0.95.
 
 ### Pipeline
 ```
@@ -192,16 +193,16 @@ specific       = substance in {named, personal}
 held           = reach * dwell_p
 profile_visits = held * (0.07 + 0.10*specific + 0.07*(fmt == document))
                  * 1.10 if popular comments this week, * 1.05 if in-cluster comments
-dms            = profile_visits * fit * 0.04
+dms            = profile_visits * fit * 0.12
 pipeline      += dms   (+ gatedgame bonus)
 ```
-Displayed pipeline = round(pipeline).
+Displayed pipeline = pipeline rounded to one decimal; the band is computed on that same rounded value.
 
 ### Coherence (applied each week, decision or event)
 ```
 on-cluster post +0.12 · adjacent +0.03 · off-cluster −0.15
 in-cluster comments +0.05 · popular comments −0.08
-skip: weeks_silent += 1; each time weeks_silent reaches 2, coherence −0.30; posting resets it
+skip: weeks_silent += 1; at every second consecutive silent week (2, 4, 6…), coherence −0.30; posting resets it
 decay: coherence *= 0.94
 ```
 Decay is ours, loosely motivated by FeedSR v1's 60-day training half-life (cited as v1 only).
@@ -382,6 +383,8 @@ anywhere, reduced motion, Plausible events firing, share fallback, email post sh
 | contrib_p = dwell_p × … | format term from measured eng ÷ reach | Avoid double-counting |
 | Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "And they love you"; `/robot-comments` | Jason, 2026-09-28; title self-stamped (§1) |
 | "No saving progress" | Same-device resume via replayed choice list | Jason, 2026-09-28 |
+| Distribution loop on absolute probabilities | normalised to base dwell/contribution; scroll term dropped | Absolute form shrank reach for 39 of 47 cards and made the contribution term inert |
+| DM rate 0.04, integer pipeline | 0.12, one decimal | Integer rounding showed 0 or 1 for small archetypes |
 | profile_visits = reach × (…) | held attention × (…) | Brief's formula made the poll bait raise pipeline, contradicting its own "pipeline near zero" |
 | Tax reframe "traced to nothing" | "shortcuts you took on someone else's word"; gatedgame excluded | Poll/hashtag bait is Measured; gatedgame works |
 
@@ -424,6 +427,7 @@ https://www.tryordinal.com/blog/linkedin-link-penalty-study), `authoredup`.
   (60% link penalty, Depth Score)
 - `linkboost` https://www.linkboost.co/blog/what-content-performs-best-linkedin-2026/ (Depth Score,
   1.2%→15.6% dwell buckets)
+- `nosource` No primary source or study found (checked Sep 2026); LinkedIn's bait examples don't include it. Used by the "Thoughts?" card.
 - `dhelin` Dhélin, *The LinkedIn Algorithm 2026: what is proven, what is measured, what is
   invented*, Fast Growth Advisors, Jul 2026 (tiering method; names +21% pre-commenting and dwell
   buckets untraceable). https://fast-growth.fr/en/white-paper/linkedin-algorithm-2026/
