@@ -380,14 +380,14 @@ git commit -m "Robot Comments: copy file (why-lines, events, outcomes, end scree
 
 ---
 
-### Task 2: Card titles
+### Task 2: Card titles (done 2026-09-28)
 
 **Files:**
 - Modify: `robot-comments-data.js` (the 40 `R(...)` titles; bait titles stay)
 
 Titles are the post's first line, so the hook type is visible in the title itself.
 
-- [ ] **Step 1: Rewrite the titles**
+- [x] **Step 1: Rewrite the titles**
 
 Run from the repo root:
 
@@ -449,12 +449,12 @@ EOF
 
 Expected: `rewrote 40 titles`.
 
-- [ ] **Step 2: Confirm the engine version did not change and all tests pass**
+- [x] **Step 2: Confirm the engine version did not change and all tests pass**
 
 Run: `git stash && node -e "console.log(require('./robot-comments-engine.js').ENGINE_VERSION)" && git stash pop && node -e "console.log(require('./robot-comments-engine.js').ENGINE_VERSION)" && npm run test:rc && npm run sim:rc`
 Expected: the two version numbers are identical (titles are not part of the hash), `38/38 passed`, and the sim exits 0 with the same table as before.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add robot-comments-data.js docs/superpowers/plans/2026-09-28-robot-comments-copy.md
