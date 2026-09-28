@@ -39,7 +39,7 @@
 - Create: `robot-comments-copy.js`
 - Modify: `tools/robot-comments-test.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 At the top of `tools/robot-comments-test.js`, after `const D = require('../robot-comments-data.js');`, add:
 
@@ -127,12 +127,12 @@ test('copy: house rules hold across all copy and card titles', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: crash with `Cannot find module '../robot-comments-copy.js'`.
 
-- [ ] **Step 3: Add the source and create the copy file**
+- [x] **Step 3: Add the source and create the copy file**
 
 In `robot-comments-data.js`, add this entry directly above `nosource`:
 
@@ -366,12 +366,12 @@ Create `robot-comments-copy.js`:
 });
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `npm run test:rc`
 Expected: `38/38 passed`. If the house-rules test flags a string, rewrite that string to satisfy the rule (keep the meaning) and note it in the report; never loosen the regex. If the why-line coverage test names a missing key, add the why-line in the same register and report it.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-copy.js robot-comments-data.js tools/robot-comments-test.js docs/superpowers/plans/2026-09-28-robot-comments-copy.md

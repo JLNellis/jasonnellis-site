@@ -6,6 +6,7 @@
 const assert = require('assert');
 const E = require('../robot-comments-engine.js');
 const D = require('../robot-comments-data.js');
+const C = require('../robot-comments-copy.js');
 
 const tests = [];
 const test = (name, fn) => tests.push([name, fn]);
@@ -392,6 +393,82 @@ test('rows carry the lever and engagement, so resume can restore stamps', () => 
 test('archetype connections are part of the engine version', () => {
   assert.notStrictEqual(E.versionOf(E.CONFIG, D.CARDS), E.versionOf(E.CONFIG, D.CARDS.slice(1)));
   assert.ok(/D\.ARCHETYPES/.test(E.versionOf.toString()), 'versionOf must hash D.ARCHETYPES');
+});
+
+// ---------------------------------------------------------------- copy (plan 2)
+const allStrings = (o, out = []) => {
+  if (typeof o === 'string') out.push(o);
+  else if (o && typeof o === 'object') for (const v of Object.values(o)) allStrings(v, out);
+  return out;
+};
+
+test('copy: every lever a card or event can reveal has a why-line', () => {
+  const keys = new Set();
+  for (const k of D.CARDS) for (const supp of [1, 0.5]) keys.add(E.leverFor(k, { supp, cadence: 1 }).key);
+  for (const e of D.EVENTS) keys.add('event:' + e.id);
+  for (const key of keys) assert.ok(typeof C.why[key] === 'string' && C.why[key].length > 20, 'missing why-line: ' + key);
+  // Extra why-lines are allowed (e.g. hook:claim may never be a card's dominant lever today), but must be well-formed keys.
+  for (const key of Object.keys(C.why)) assert.ok(/^(format|hook|sub|cta|event):[a-z]+$|^suppressed$|^bait-[a-z0-9]+$/.test(key), 'odd why-line key: ' + key);
+});
+
+test('copy: outcomes match the data and carry a 40-80 word diagnosis', () => {
+  for (const id of Object.keys(D.OUTCOMES)) {
+    const o = C.outcomes[id];
+    assert.ok(o, 'missing outcome ' + id);
+    assert.strictEqual(o.name, D.OUTCOMES[id].name);
+    assert.ok(o.tagline && o.tagline.length > 5, id);
+    const n = o.diagnosis.trim().split(/\s+/).length;
+    assert.ok(n >= 40 && n <= 80, `${id}: ${n} words`);
+  }
+  assert.strictEqual(C.outcomes['control-group'].tagline, D.OUTCOMES['control-group'].tagline);
+});
+
+test('copy: events have a body, consequences and an audit line per archetype', () => {
+  for (const e of D.EVENTS) {
+    const ev = C.events[e.id];
+    assert.ok(ev && ev.name === e.name, e.id);
+    assert.ok(ev.body || ev.bodyByArchetype, e.id);
+    assert.ok(Object.keys(ev.consequence).length >= 1, e.id);
+  }
+  for (const a of Object.keys(D.ARCHETYPES)) assert.ok(C.events.audit.bodyByArchetype[a], 'audit body for ' + a);
+  assert.ok(C.events.gravity.consequence.clear && C.events.gravity.consequence.blurred);
+  assert.ok(C.events.audit.consequence.up && C.events.audit.consequence.down);
+});
+
+test('copy: labels cover every dimension, engagement, metric, band and stamp', () => {
+  const L = C.labels;
+  for (const k of Object.keys(E.CONFIG.formats)) assert.ok(L.formats[k], 'format ' + k);
+  for (const k of ['on', 'adj', 'off']) assert.ok(L.topics[k], 'topic ' + k);
+  for (const k of Object.keys(E.CONFIG.hooks)) assert.ok(L.hooks[k], 'hook ' + k);
+  for (const k of Object.keys(E.CONFIG.substance)) assert.ok(L.substance[k], 'substance ' + k);
+  for (const k of Object.keys(E.CONFIG.cta)) assert.ok(L.cta[k], 'cta ' + k);
+  for (const k of E.CONFIG.engagements) assert.ok(L.engagement[k], 'engagement ' + k);
+  for (const k of ['impressions', 'held', 'contributions', 'visits', 'dms', 'coherence']) assert.ok(L.metrics[k], 'metric ' + k);
+  for (const k of ['cold', 'warm', 'working', 'hot']) assert.ok(L.bands[k], 'band ' + k);
+  for (const k of ['proven', 'measured', 'disputed', 'invented']) assert.ok(L.stamps[k], 'stamp ' + k);
+  for (const b of E.CONFIG.budgets) assert.ok(C.setup.budgets[b], 'budget ' + b);
+});
+
+test('copy: the disclosure line is verbatim', () => {
+  assert.strictEqual(C.end.disclosure, "The structure of this model comes from LinkedIn's published engineering. The weights are ours. Anyone who tells you they have the weights is selling something.");
+});
+
+test('copy: the title self-stamp is Invented and cites an invented-tier source', () => {
+  assert.strictEqual(C.titleStamp.stamp, 'invented');
+  assert.strictEqual(D.SOURCES[C.titleStamp.src].tier, 'invented');
+  assert.ok(C.titleStamp.why.length > 20);
+});
+
+test('copy: house rules hold across all copy and card titles', () => {
+  const strings = allStrings(C).concat(D.CARDS.map(k => k.title));
+  assert.ok(strings.length > 150);
+  for (const s of strings) {
+    assert.ok(!/[—–]/.test(s), 'em/en dash: ' + s);
+    assert.ok(!s.includes('!'), 'exclamation mark: ' + s);
+    assert.ok(!/fast-paced/i.test(s), 'banned phrase: ' + s);
+    assert.ok(!/(^|[.?:]\s+)[A-Z][a-z]+ly\b/.test(s), 'adverb sentence opener: ' + s);
+  }
+  for (const k of D.CARDS) assert.ok(k.title.length <= 100, 'title too long: ' + k.id);
 });
 
 // ---------------------------------------------------------------- runner

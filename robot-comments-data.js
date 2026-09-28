@@ -30,6 +30,7 @@
     dataslayer: { tier: 'invented', cite: 'Dataslayer, LinkedIn algorithm February 2026 (example of the folklore: 60% link penalty, 0.07% polls)', url: 'https://www.dataslayer.ai/blog/linkedin-algorithm-february-2026-whats-working-now' },
     digitalapplied: { tier: 'invented', cite: 'Digital Applied, LinkedIn algorithm 2026 guide (example of the folklore: 60% link penalty, Depth Score)', url: 'https://www.digitalapplied.com/blog/linkedin-algorithm-2026-engagement-strategy-guide' },
     linkboost:  { tier: 'invented', cite: 'Linkboost, what content performs best 2026 (example of the folklore: Depth Score, dwell-bucket rates)', url: 'https://www.linkboost.co/blog/what-content-performs-best-linkedin-2026/' },
+    vdb80:      { tier: 'invented', cite: 'van der Blom, Creator Science interview (at 23:02): an estimate that about 80% of the early comments on his own posts are AI-written. An anecdote about one account, not a study finding. It circulates as a statistic.', url: 'https://podcast.creatorscience.com/richard-van-der-blom-2/' },
     nosource:   { tier: 'invented', cite: "No primary source or study found (checked Sep 2026). LinkedIn's own engagement-bait examples (Jurka, 12 Mar 2026) do not include it.", url: 'https://www.linkedin.com/pulse/updates-linkedin-feed-focusing-authentic-relevant-tim-jurka-umwnc' },
     dhelin:     { tier: 'invented', cite: 'Dhélin, The LinkedIn Algorithm 2026: what is proven, what is measured, what is invented, Fast Growth Advisors, Jul 2026', url: 'https://fast-growth.fr/en/white-paper/linkedin-algorithm-2026/' },
   };
