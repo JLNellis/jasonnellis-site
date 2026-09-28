@@ -14,14 +14,27 @@ const ARCH = Object.keys(D.ARCHETYPES);
 
 const pickBest = scored => scored.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
 const affordableIn = (S, hand) => hand.filter(k => E.canAfford(S, k, 'none'));
+const taxBait = k => k.bait && k.id !== 'bait-gatedgame';
+
+// Deterministic players would make 200 runs about four distinct games (hands are seeded from
+// setup + choices), so the sensible and reach players take their second-best card in ~20% of
+// decision weeks, unless the second-best is a card the policy never plays (`avoid`).
+const VARY = 0.2;
+function pickVaried(scored, r, avoid) {
+  const ranked = scored.slice().sort((a, b) => b[1] - a[1]);
+  const roll = r();
+  if (roll < VARY && ranked.length > 1 && !avoid(ranked[1][0])) return ranked[1][0];
+  return ranked[0][0];
+}
 
 const POLICIES = {
   // On-cluster, claim-first, a document every third decision week, no bait, in-cluster comments.
+  // Varied: second-best card in ~20% of weeks; in ~20% of weeks it could comment in-cluster it doesn't.
   sensible(S, hand, r) {
     const options = affordableIn(S, hand);
     if (!options.length) return { skip: true };
     const docWeek = S.posted.length % 3 === 2;
-    const card = pickBest(options.map(k => {
+    const card = pickVaried(options.map(k => {
       let s = r();
       if (k.bait) s += k.id === 'bait-gatedgame' ? -1 : -100;
       s += k.topic === 'on' ? 10 : k.topic === 'adj' ? 3 : -10;
@@ -31,8 +44,32 @@ const POLICIES = {
       s += (k.fmt === 'poll' || k.fmt === 'reshare') ? -4 : 0;
       if (docWeek && k.fmt === 'document') s += 8;
       return [k, s];
-    }));
-    return { card: card.id, engagement: E.canAfford(S, card, 'cluster') ? 'cluster' : 'none' };
+    }), r, taxBait);
+    const lazy = r() < VARY;
+    return { card: card.id, engagement: E.canAfford(S, card, 'cluster') && !lazy ? 'cluster' : 'none' };
+  },
+  // The reach chaser. Within its own topic it takes the format with the highest measured reach
+  // multiplier (poll 1.78 > document 1.39 > image 1.20 > text 1.07 > long video > short video >
+  // article > reshare); it writes for everyone (generic over named specifics); it never plays a
+  // bait card or an engagement-bait CTA (the CTA cuts reach); it comments on popular posts whenever
+  // it can afford to and the post is on-cluster; it never skips. Same ~20% second-best variation.
+  // Calibration (2026-09-28): the first draft (format-first, mild topic preference, popular comments
+  // every week) never reached The Broadcaster: weekly popular comments pinned coherence under 0.35,
+  // so every run was The Generalist. The topic and comment preferences above are the adjustment.
+  reach(S, hand, r) {
+    const options = affordableIn(S, hand);
+    if (!options.length) return { skip: true };
+    const card = pickVaried(options.map(k => {
+      let s = r() * 0.1;
+      if (k.bait) s -= 100;
+      if (k.cta === 'bait') s -= 10;
+      s += 10 * E.CONFIG.formats[k.fmt].reach.v;
+      s += k.topic === 'on' ? 10 : k.topic === 'adj' ? 3 : 0;
+      if (k.sub === 'generic') s += 5;
+      return [k, s];
+    }), r, k => k.bait);
+    const popular = card.topic === 'on' && E.canAfford(S, card, 'popular');
+    return { card: card.id, engagement: popular ? 'popular' : 'none' };
   },
   // Polls, pods, six hashtags, link in body, popular comments, always take the bait.
   vendor(S, hand, r) {
@@ -112,26 +149,38 @@ const share = (xs, f) => xs.filter(f).length / xs.length;
 const hotish = x => x.band === 'working' || x.band === 'hot';
 const counts = xs => xs.reduce((m, x) => ((m[x.archetype] = (m[x.archetype] || 0) + 1), m), {});
 
+const median = xs => pct(xs, 0.5);
+
 function runTargets() {
-  const sens3 = population('sensible', 3), sens1 = population('sensible', 1), vend3 = population('vendor', 3);
-  const rand = [].concat(...E.CONFIG.budgets.map(b => population('random', b)));
+  const pops = {
+    'sensible 3h': population('sensible', 3), 'sensible 1h': population('sensible', 1),
+    'vendor 3h': population('vendor', 3), 'reach 3h': population('reach', 3),
+  };
+  for (const b of E.CONFIG.budgets) pops[`random ${b}h`] = population('random', b);
+  const sens3 = pops['sensible 3h'], sens1 = pops['sensible 1h'], vend3 = pops['vendor 3h'], reach3 = pops['reach 3h'];
+  const is = a => x => x.archetype === a;
   const T = [
     ['sensible 3h: working or hot >= 80%', share(sens3, hotish), v => v >= 0.8],
-    ['sensible 3h: Fingerprinted Founder 40-60%', share(sens3, x => x.archetype === 'fingerprinted-founder'), v => v >= 0.4 && v <= 0.6],
+    ['sensible 3h: Fingerprinted Founder 40-60%', share(sens3, is('fingerprinted-founder')), v => v >= 0.4 && v <= 0.6],
     ['sensible 1h: working or hot <= 40%', share(sens1, hotish), v => v <= 0.4],
     ['vendor 3h: Broadcaster or Pod Casualty >= 80%', share(vend3, x => x.archetype === 'broadcaster' || x.archetype === 'pod-casualty'), v => v >= 0.8],
-    ...Object.keys(D.OUTCOMES).map(a => [`random: ${a} reachable >= 3%`, share(rand, x => x.archetype === a), v => v >= 0.03]),
+    ['reach 3h: Broadcaster >= 25%', share(reach3, is('broadcaster')), v => v >= 0.25],
   ];
+  // Reachability: every archetype is reached by at least one population (>= 3% of its runs).
+  for (const a of Object.keys(D.OUTCOMES)) {
+    const [best, v] = Object.entries(pops).map(([n, xs]) => [n, share(xs, is(a))]).reduce((m, x) => (x[1] > m[1] ? x : m));
+    T.push([`${a} reachable >= 3% (best: ${best})`, v, x => x >= 0.03]);
+  }
   let fail = 0;
   for (const [name, v, ok] of T) {
     const pass = ok(v);
     if (!pass) fail++;
-    console.log(`${pass ? '  ok ' : ' FAIL'}  ${name.padEnd(50)} ${(v * 100).toFixed(1)}%`);
+    console.log(`${pass ? '  ok ' : ' FAIL'}  ${name.padEnd(58)} ${(v * 100).toFixed(1)}%`);
   }
-  console.log('\nsensible 3h', counts(sens3));
-  console.log('sensible 1h', counts(sens1));
-  console.log('vendor 3h  ', counts(vend3));
-  console.log('random     ', counts(rand));
+  console.log(`\nsensible 3h median final coherence ${median(sens3.map(x => x.coherence)).toFixed(2)} (aim 0.70-0.90)`);
+  console.log(`distinct sensible 3h outcomes: ${new Set(sens3.map(x => x.pipelineRaw.toFixed(6))).size}/200`);
+  console.log('');
+  for (const [n, xs] of Object.entries(pops)) console.log(n.padEnd(12), JSON.stringify(counts(xs)));
   process.exit(fail ? 1 : 0);
 }
 

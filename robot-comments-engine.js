@@ -82,8 +82,8 @@
     engagement: { popularNextReach: c(1.06, O), popularVisits: c(1.10, O), clusterVisits: c(1.05, O) },
     coherence: {
       on: c(0.12, O), adj: c(0.03, O), off: c(-0.15, O),
-      cluster: c(0.05, O), popular: c(-0.08, O),
-      silentPenalty: c(0.30, O), decay: c(0.88, O),
+      cluster: c(0.05, O), popular: c(-0.05, O),
+      silentPenalty: c(0.30, O), decay: c(0.90, O),
     },
     // visits = reach * dwell * (base + specific + doc); dms = visits * fit * dmRate
     pipeline: { visitsBase: c(0.07, O), visitsSpecific: c(0.10, O), visitsDoc: c(0.07, O), dmRate: c(0.12, O) },
