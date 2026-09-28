@@ -136,13 +136,13 @@ Interact card at most once per game.
 
 | Id | Card | Stamp | Mechanic |
 |---|---|---|---|
-| precomment | Comment on three posts fifteen minutes before publishing (+21%) | Invented (figure untraceable per Dhélin) | +0.5h cost, no effect |
-| poll | Add a poll for 1.78x reach | Measured (AuthoredUp) | Poll format: reach up, per-impression contribution 0.21x, pipeline near zero |
-| pod | Join a pod of twelve peers who engage in the first hour | Proven policy (Jurka 2026), magnitude ours | This week: +50% displayed contributions that do not feed distribution. Next two decision weeks: suppression 0.5x |
-| firstcomment | Put the link in the first comment to dodge the 60% penalty | Invented (the 60%); link effect Disputed | Behaves as CTA "link in first comment" |
-| hashtags6 | Use six hashtags for discoverability | Measured direction (AuthoredUp), magnitude ours | Reach 0.85x |
-| thoughts | Ask "Thoughts?" at the end | Invented | No effect |
-| gatedgame | Build a gated game on your website to collect emails | Measured (Interact, vendor data: 40.1% start-to-lead, 100M+ leads) | Text post, link in body (dwell hit), 3h. Pipeline bonus = profile_visits × 0.05 (start rate, ours) × 0.401. Why-line says it works and that the source sells quizzes. |
+| bait-precomment | Comment on three posts fifteen minutes before publishing (+21%) | Invented (figure untraceable per Dhélin) | +0.5h cost, no effect |
+| bait-poll | Add a poll for 1.78x reach | Measured (AuthoredUp) | Poll format: reach up, per-impression contribution 0.21x, pipeline near zero |
+| bait-pod | Join a pod of twelve peers who engage in the first hour | Proven policy (Jurka 2026), magnitude ours | This week: +50% displayed contributions that do not feed distribution. Next two decision weeks: suppression 0.5x |
+| bait-firstcomment | Put the link in the first comment to dodge the 60% penalty | Invented (the 60%); link effect Disputed | Behaves as CTA "link in first comment" |
+| bait-hashtags6 | Use six hashtags for discoverability | Measured direction (AuthoredUp), magnitude ours | Reach 0.85x |
+| bait-thoughts | Ask "Thoughts?" at the end | Invented | No effect |
+| bait-gatedgame | Build a gated game on your website to collect emails | Measured (Interact, vendor data: 40.1% start-to-lead, 100M+ leads) | Text post, link in body (dwell hit), 3h. Pipeline bonus = profile_visits × 0.05 (start rate, ours) × 0.401. Why-line says it works and that the source sells quizzes. |
 
 `folklore_tax` = count of bait cards played, excluding gatedgame (it is the one that works; the
 end screen notes whether you played it).
@@ -189,7 +189,8 @@ Popular-post comments this week: next week's reach × 1.06. Skip: baseline × 0.
 ### Pipeline
 ```
 specific       = substance in {named, personal}
-profile_visits = reach * (0.02 + 0.03*specific + 0.02*(fmt == document))
+held           = reach * dwell_p
+profile_visits = held * (0.07 + 0.10*specific + 0.07*(fmt == document))
                  * 1.10 if popular comments this week, * 1.05 if in-cluster comments
 dms            = profile_visits * fit * 0.04
 pipeline      += dms   (+ gatedgame bonus)
@@ -250,7 +251,7 @@ Darker stock, torn edge, absurdist copy, tap through, then consequence + why-lin
 | Event | Effect | Why-line basis |
 |---|---|---|
 | The swarm | Best post so far: event-week contributions display +40; held attention 0; no distribution effect | Proven: Jurka 2026 anti-automation section (LinkedIn limiting automated comments' effect). Not the "80% AI comments" anecdote. |
-| The reset | Event-week reach displayed at 0.6x; baseline and anchor × 0.85 for the rest of the game | Measured: van der Blom, reach down ~60% over two years (author on record, report paid). Plus Proven: LinkedIn says it chose relevance over reach. Never "intentional narrowing". |
+| The reset | No post this week (the card copy carries the 40% drop); baseline and anchor × 0.85 for the rest of the game | Measured: van der Blom, reach down ~60% over two years (author on record, report paid). Plus Proven: LinkedIn says it chose relevance over reach. Never "intentional narrowing". |
 | Adjacent gravity | If coherence ≥ 0.5: next week reach × 1.08; else nothing | Proven mechanism (Danchev: semantic retrieval, world knowledge relates topics), magnitude ours |
 | The audit | headline_fit ≤ 0.6 → coherence −0.10; headline_fit ≥ 0.8 → +0.05 | Proven mechanism (Danchev: headline in post text; cold-start from headline), magnitude ours |
 
@@ -381,6 +382,7 @@ anywhere, reduced motion, Plausible events firing, share fallback, email post sh
 | contrib_p = dwell_p × … | format term from measured eng ÷ reach | Avoid double-counting |
 | Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "And they love you"; `/robot-comments` | Jason, 2026-09-28; title self-stamped (§1) |
 | "No saving progress" | Same-device resume via replayed choice list | Jason, 2026-09-28 |
+| profile_visits = reach × (…) | held attention × (…) | Brief's formula made the poll bait raise pipeline, contradicting its own "pipeline near zero" |
 | Tax reframe "traced to nothing" | "shortcuts you took on someone else's word"; gatedgame excluded | Poll/hashtag bait is Measured; gatedgame works |
 
 ## 16. Sources
