@@ -1,12 +1,23 @@
-# Twelve Weeks — design spec
+# 80% of Your Comments Are Robots — design spec
 
 Date: 2026-09-28. Source brief: `~/Downloads/twelve-weeks-build-brief.md` (not in repo).
 This spec supersedes the brief wherever they differ; every difference is listed in §15.
 
 ## 1. What it is
 
+**Name:** 80% of Your Comments Are Robots. **Tagline:** And they love you.
+**URL / file prefix:** `/robot-comments`, `robot-comments-*`; Plausible events and Kit fields use
+the `rc_` prefix, CSS tokens `--rc-`. (Working title in the brief was "Twelve Weeks".)
+
+**The title is itself a bait card.** The 80% figure traces to van der Blom describing comments on
+his own posts in an interview: an anecdote, not a study. The game says so rather than hiding it: the
+intro screen carries a small unstamped circle next to the title, and the end screen stamps it
+**Invented** with the why-line "One researcher, describing his own posts, in one interview. It
+became a statistic. So did this title." Sources: `vdb` (podcast, 23:02) and `dhelin`.
+(Pending Jason's confirmation; see §18.)
+
 A phone-first, single-page simulator of twelve weeks of LinkedIn posting decisions, at
-`/twelve-weeks`. A brand asset first (something people finish and screenshot), a soft on-ramp to
+`/robot-comments`. A brand asset first (something people finish and screenshot), a soft on-ramp to
 the Building Value relaunch (Q4 2026) second. Its argument: separate what LinkedIn has published
 from what vendors repeat. Every mechanic and card carries one of four evidence stamps (Proven /
 Measured / Disputed / Invented), and every stamp resolves to a citation the player can open.
@@ -24,8 +35,8 @@ Success metrics, in order: completion (target 70%+ of starts), shares, replays, 
    screen is the only input). Every screen fits 390x844 and 360x780 without scrolling except the
    end screen. No horizontal scroll.
 5. Deterministic: identical setup + choices = identical game.
-6. No saving progress, no accounts, no leaderboard, no LinkedIn API, no claim of real reach
-   prediction.
+6. No accounts, no leaderboard, no LinkedIn API, no claim of real reach prediction. Mid-game
+   resume on the same device is in (§5a); nothing is saved server-side.
 
 ## 3. Architecture
 
@@ -33,23 +44,23 @@ Same pattern as The Feed.
 
 | File | Job |
 |---|---|
-| `twelve-weeks.html` | Standalone page (does NOT load `nav.js`; inline Plausible snippet like `the-feed.html`). Markup, game-scoped CSS tokens, UI controller. Loads `colors_and_type.css` for DM Sans / DM Mono. |
-| `twelve-weeks-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ value, stamp, source }` where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
-| `twelve-weeks-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
-| `tools/twelve-weeks-sim.js` | Seeded policy runs + band derivation (§11). `npm run sim:tw`; exits non-zero if a target fails. |
-| `tools/twelve-weeks-test.js` | Engine tests (§13). `npm run test:tw`. |
-| `twelve-weeks-share.njk` | Eleventy, paginates over the six archetypes → `/twelve-weeks/r/<slug>/`. Each page: `noindex`, archetype OG/Twitter tags, meta-refresh + link to `/twelve-weeks`. |
-| `tools/twelve-weeks-og/` | One HTML template + README; headless Chrome renders 7 JPGs (6 archetypes + default) exactly like `tools/burn-rate-og/`. |
-| `tool-index/twelve-weeks.md` | `/experiments` card. |
+| `robot-comments.html` | Standalone page (does NOT load `nav.js`; inline Plausible snippet like `the-feed.html`). Markup, game-scoped CSS tokens, UI controller. Loads `colors_and_type.css` for DM Sans / DM Mono. |
+| `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ value, stamp, source }` where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
+| `robot-comments-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
+| `tools/robot-comments-sim.js` | Seeded policy runs + band derivation (§11). `npm run sim:rc`; exits non-zero if a target fails. |
+| `tools/robot-comments-test.js` | Engine tests (§13). `npm run test:rc`. |
+| `robot-comments-share.njk` | Eleventy, paginates over the six archetypes → `/robot-comments/r/<slug>/`. Each page: `noindex`, archetype OG/Twitter tags, meta-refresh + link to `/robot-comments`. |
+| `tools/robot-comments-og/` | One HTML template + README; headless Chrome renders 7 JPGs (6 archetypes + default) exactly like `tools/burn-rate-og/`. |
+| `tool-index/robot-comments.md` | `/experiments` card. |
 
-Wiring: `_redirects` rewrite + 301 pair for `/twelve-weeks`; `.eleventy.js` passthrough for the
+Wiring: `_redirects` rewrite + 301 pair for `/robot-comments`; `.eleventy.js` passthrough for the
 HTML, both JS files and the OG images; sitemap picks the page up via the tools collection; share
 pages stay out of the sitemap. CLAUDE.md pages table gets a row.
 
 Data flow: setup → seed. Each decision week: `deal` derives the hand from the seed plus all
 choices so far → player picks card + engagement → `resolveWeek` returns new state, one strip-chart
 column, the dominant lever (for the why-line) and its stamp → UI animates what the engine
-returned. Weeks 5 and 9 call `resolveEvent`. Reload = new game.
+returned. Weeks 5 and 9 call `resolveEvent`. Reload resumes (§5a).
 
 ## 4. Setup (one screen, three taps)
 
@@ -81,6 +92,28 @@ Decision week, one screen:
    why-line, stamp lands on the card. Tap a revealed stamp → source sheet. "Next week".
 
 Target: under 40 s per turn, under 7 min per game.
+
+## 5a. Resume after losing the page
+
+Because the engine is deterministic, the save is only the inputs, never the state:
+`{ v: ENGINE_VERSION, setup: {archetype, budget}, choices: [{card, engagement} | 'skip' | 'event', ...] }`
+in `localStorage` key `rc_run`, written after every resolved week (wrapped in try/catch; a failed
+write never blocks play).
+
+- On load, if a valid `rc_run` exists: a resume card replaces the setup screen — "Week 7 of 12,
+  Series B exec, 3 hours" with **Resume** (primary) and **Start over**. Resume replays the choice
+  list through the engine (instant, no animation) and lands on the next unplayed week with the
+  strip chart already filled.
+- Mid-resolve losses: the save is written only after a week resolves, so a player who closes during
+  the animation resumes at the start of that same week with the same hand (the deal is derived from
+  the seed + prior choices, so it is identical).
+- `ENGINE_VERSION` mismatch or a replay that fails validation (unknown card id, over-budget choice)
+  → discard silently and show normal setup. A shipped rebalance never resumes into a different game.
+- On reaching the end screen, `rc_run` is replaced by `rc_last` = `{archetype, band, tax, slug}` so
+  reopening the page offers "See your last result" alongside a new game. Replay/Start over clears
+  both.
+- Same device and browser only; no server, no account. Private windows and blocked storage simply
+  lose resume. `/privacy` already covers on-device `localStorage`.
 
 ## 6. Cards
 
@@ -233,7 +266,7 @@ cards are Measured).
 
 Bands are per archetype (800 vs 12,000 connections cannot share a scale): cut points at the 25th /
 60th / 85th percentile of a seeded random-policy population, stored in `CONFIG.bands`, regenerated
-by `npm run sim:tw -- --bands`. Reach band = total impressions ÷ (anchor × 10), same percentile
+by `npm run sim:rc -- --bands`. Reach band = total impressions ÷ (anchor × 10), same percentile
 method; "top" = top quartile.
 
 Archetype, first rule that matches:
@@ -251,12 +284,12 @@ Each: ~60 words of flat, sourced diagnosis + one absurdist tagline. The Overdraw
 Above the fold (screenshot target): archetype name, pipeline number + band, tagline, strip chart,
 disclosure line. Below, in order:
 1. Share: `navigator.share` on mobile, copy-link fallback. Text: "<Archetype> · pipeline: <band> ·
-   folklore tax: <n>" + `https://jasonnellis.com/twelve-weeks/r/<slug>`. No LinkedIn-specific copy.
+   folklore tax: <n>" + `https://jasonnellis.com/robot-comments/r/<slug>`. No LinkedIn-specific copy.
 2. Replay.
 3. Email (optional, one field): Building Value framing only, e.g. "Get notified when Building
    Value relaunches." No playbook, no gate, no blur. Posts via `fetch(..., {mode:'no-cors'})` to
    Kit form 9920578 (`SITE_CONFIG.newsletterPost`, field `email_address`) plus custom fields
-   `fields[tw_archetype]`, `fields[tw_budget]`, `fields[tw_tax]`, `fields[tw_headline]`. Player
+   `fields[rc_archetype]`, `fields[rc_budget]`, `fields[rc_tax]`, `fields[rc_headline]`. Player
    stays on the page; inline "Check your inbox to confirm."
 4. Podcast paragraph in Jason's voice (this game ran twelve weeks; Building Value runs whole
    careers; Q4 2026), one link to `/building-value`.
@@ -279,8 +312,8 @@ Step 3 (v1.1): friends' exports.
 
 ## 12. Visual system (lab notebook)
 
-- Site navy background; the game on a paper panel (game tokens: `--tw-paper`, `--tw-rule`,
-  `--tw-ink`, `--tw-margin` red, and four stamp inks). Faint grey rules, thin red margin, no blue.
+- Site navy background; the game on a paper panel (game tokens: `--rc-paper`, `--rc-rule`,
+  `--rc-ink`, `--rc-margin` red, and four stamp inks). Faint grey rules, thin red margin, no blue.
 - DM Sans for titles/copy; every number DM Mono tabular on a fixed grid.
 - Post card: index-card proportion, red top rule, title, hours top-right, five dimension tags along
   the bottom, dashed empty circle top-left where the stamp lands.
@@ -299,20 +332,21 @@ Step 3 (v1.1): friends' exports.
 
 ## 13. Testing
 
-Engine (`npm run test:tw`): determinism (same inputs → identical state and results across two
-runs); budget enforcement; every hand has an affordable card at 1h; every `CONFIG` entry and card
+Engine (`npm run test:rc`): determinism (same inputs → identical state and results across two
+runs); resume (replaying a saved choice list at every week 1–12 reproduces the live state
+exactly; version mismatch and corrupted saves are discarded); budget enforcement; every hand has an affordable card at 1h; every `CONFIG` entry and card
 stamp resolves to a `SOURCES` id or is `ours`; archetype rule order; reach clamp; no card repeats
 within a game; bait rate and one-per-hand cap; Interact at most once.
-Sim (`npm run sim:tw`): §11 targets.
+Sim (`npm run sim:rc`): §11 targets.
 Browser: 390x844 and 360x780 with no scroll on setup/week/event screens, no horizontal scroll
 anywhere, reduced motion, Plausible events firing, share fallback, email post shape.
 
 ## 14. Integration
 
-- Plausible custom events: `tw_start`, `tw_setup_complete` {archetype, budget},
-  `tw_turn_resolved` {week, card, stamp, engagement}, `tw_event_shown` {event},
-  `tw_completed` {archetype, band, tax}, `tw_share`, `tw_replay`, `tw_email`. Jason adds the
-  goals in the Plausible dashboard. `tw_turn_resolved` fires 10× per game (counts toward quota).
+- Plausible custom events: `rc_start`, `rc_setup_complete` {archetype, budget},
+  `rc_turn_resolved` {week, card, stamp, engagement}, `rc_event_shown` {event},
+  `rc_completed` {archetype, band, tax}, `rc_share`, `rc_replay`, `rc_email`, `rc_resume` {week}. Jason adds the
+  goals in the Plausible dashboard. `rc_turn_resolved` fires 10× per game (counts toward quota).
 - Kit: create the four custom fields via the Kit connector (with Jason's OK), then one test
   subscription with an address Jason supplies to confirm the fields land. Fallback if Kit ignores
   form-posted fields: drop the fields, keep the plain subscribe.
@@ -345,6 +379,8 @@ anywhere, reduced motion, Plausible events firing, share fallback, email post sh
 | "March 2026 Authenticity Update" | event Proven, label folklore | Jurka post is real |
 | Jason's multipliers 1.25/0.8/1.3/1.5/1.2 | 1.10/0.90/1.2/2.0/1.5 | Re-derived from the CSV |
 | contrib_p = dwell_p × … | format term from measured eng ÷ reach | Avoid double-counting |
+| Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "And they love you"; `/robot-comments` | Jason, 2026-09-28; title self-stamped (§1) |
+| "No saving progress" | Same-device resume via replayed choice list | Jason, 2026-09-28 |
 | Tax reframe "traced to nothing" | "shortcuts you took on someone else's word"; gatedgame excluded | Poll/hashtag bait is Measured; gatedgame works |
 
 ## 16. Sources
@@ -401,3 +437,4 @@ data, Kit bridge sequence, desktop polish, extra bait cards, more OG variety.
   taglines, intro, podcast paragraph) to the brief's house rules; Jason edits before launch.
 - Jason: Plausible goals.
 - Jason's OK: Kit custom-field creation and one test subscription.
+- Jason's confirmation: the title's self-stamp treatment (§1).
