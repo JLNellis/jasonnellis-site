@@ -1583,6 +1583,29 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ---
 
+### Task 7b: Varied sensible policy, reach chaser, reachability by any population (done)
+
+Approved by Jason after Task 7 (2026-09-28). Changes in `tools/robot-comments-sim.js`:
+
+- **Varied sensible player.** Hands are seeded from setup + choices, so the old sensible policy
+  played about four distinct games per 200 runs and its percentages moved in 25% steps. It now takes
+  its second-best card in ~20% of decision weeks (never a tax bait card) and skips in-cluster
+  comments in ~20% of the weeks it could afford them: 194/200 distinct games.
+- **Reach chaser (`reach`).** On-cluster first, then the highest measured format reach; generic over
+  named; no bait cards, no bait CTA; popular comments when affordable on on-cluster posts; never
+  skips; same 20% variation. The first draft (format-first, mild topic preference, popular comments
+  every week) never produced a Broadcaster: 187/200 ended as The Generalist.
+- **Targets.** Random-policy reachability replaced by "each archetype >= 3% in at least one
+  population" (sensible 3h/1h, vendor 3h, reach 3h, random 1/3/6h), printing the best population.
+  New target: reach 3h Broadcaster >= 25%. The sim also prints sensible 3h median final coherence.
+
+Re-tune, same hard rules as Task 7, five rounds: `coherence.decay` 0.88 -> 0.90 and
+`coherence.popular` -0.08 -> -0.05 kept. Everything passes except reach 3h Broadcaster (11.5%);
+pipeline knobs moved it one point and were not kept. Reported to Jason as a structural finding
+(spec §11). Commit 2d49439.
+
+---
+
 ### Task 8: Record calibration in the spec
 
 **Files:**
