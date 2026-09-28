@@ -7,7 +7,9 @@
     "build": "eleventy",
     "serve": "eleventy --serve",
     "test": "node tools/the-feed-test.js",
-    "sim": "node tools/the-feed-sim.js"
+    "sim": "node tools/the-feed-sim.js",
+    "test:rc": "node tools/robot-comments-test.js",
+    "sim:rc": "node tools/robot-comments-sim.js"
   },
   "repository": {
     "type": "git",
