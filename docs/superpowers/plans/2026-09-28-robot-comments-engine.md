@@ -901,7 +901,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `tools/robot-comments-test.js`
 - Modify: `robot-comments-engine.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Insert above the runner line:
 
@@ -954,12 +954,12 @@ test('finish refuses to score without generated bands', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: `events land on weeks 5 and 9` passes (events already exist); the three `finish` tests FAIL with `E.finish is not a function`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Insert above the final `return {` in `robot-comments-engine.js`:
 
@@ -997,12 +997,12 @@ Add `finish` to the returned object:
   };
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `npm run test:rc`
 Expected: `19/19 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-engine.js tools/robot-comments-test.js

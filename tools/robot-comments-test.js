@@ -211,6 +211,53 @@ test('every card reveals one of the four public stamps', () => {
   assert.strictEqual(E.leverFor(t, { supp: 0.5, cadence: 1 }).key, 'suppressed');
 });
 
+// ---------------------------------------------------------------- events + scoring
+const STUB = { pipeline: [10, 20, 30], reachTop: 1.2 };
+const STUB_BANDS = { seed: STUB, seriesb: STUB, second: STUB, fractional: STUB };
+const ended = () => {
+  const S = E.newGame({ archetype: 'seed', budget: 3 });
+  S.done = true; S.week = 13;
+  S.totalImpressions = S.anchorStart * 10; // reach multiple 1.0
+  S.pipeline = 25; S.coherence = 0.5;
+  return S;
+};
+
+test('events land on weeks 5 and 9, two distinct', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable);
+  const ev = S.rows.filter(r => r.kind === 'event');
+  assert.deepStrictEqual(ev.map(r => r.week), [5, 9]);
+  assert.notStrictEqual(ev[0].event, ev[1].event);
+  assert.strictEqual(S.rows.length, 12);
+  assert.ok(S.done);
+});
+
+test('outcome archetype follows the spec rule order', () => {
+  let S = ended(); S.tax = 3; S.skips = 2; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'pod-casualty');
+  S = ended(); S.skips = 2; S.coherence = 0.1; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'ghost');
+  S = ended(); S.coherence = 0.2; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'generalist');
+  S = ended(); S.totalImpressions = S.anchorStart * 13; S.pipeline = 15; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'broadcaster');
+  S = ended(); S.coherence = 0.7; S.pipeline = 31; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'fingerprinted-founder');
+  S = ended(); S.coherence = 0.7; S.pipeline = 25; assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'control-group');
+  S = ended(); assert.strictEqual(E.finish(S, STUB_BANDS).archetype, 'control-group');
+});
+
+test('finish reports band, clarity word, rounded pipeline', () => {
+  const at = (pipeline, coherence) => { const S = ended(); S.pipeline = pipeline; S.coherence = coherence; return E.finish(S, STUB_BANDS); };
+  assert.strictEqual(at(5, 0.5).band, 'cold');
+  assert.strictEqual(at(15, 0.5).band, 'warm');
+  assert.strictEqual(at(25, 0.5).band, 'working');
+  assert.strictEqual(at(31, 0.5).band, 'hot');
+  assert.strictEqual(at(25, 0.3).clarity, 'Blurred');
+  assert.strictEqual(at(25, 0.4).clarity, 'Faint');
+  assert.strictEqual(at(25, 0.6).clarity, 'Legible');
+  assert.strictEqual(at(25, 0.7).clarity, 'Sharp');
+  assert.strictEqual(at(25.4, 0.5).pipeline, 25);
+});
+
+test('finish refuses to score without generated bands', () => {
+  assert.throws(() => E.finish(ended(), { seed: null }), /sim:rc -- --bands/);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

@@ -343,8 +343,31 @@
     return { row, lever: { key: 'event:' + id, stamp: e.stamp, src: e.src, mag: e.mag }, event: id };
   }
 
+  // Spec §9. bands defaults to the generated RobotBands; tests pass their own.
+  function finish(S, bands) {
+    const B = (bands || BANDS)[S.setup.archetype];
+    if (!B) throw new Error('No bands for ' + S.setup.archetype + ': run `npm run sim:rc -- --bands`');
+    const p = S.pipeline;
+    const band = p >= B.pipeline[2] ? 'hot' : p >= B.pipeline[1] ? 'working' : p >= B.pipeline[0] ? 'warm' : 'cold';
+    const reachMultiple = S.totalImpressions / (S.anchorStart * 10);
+    const reachTop = reachMultiple >= B.reachTop;
+    const coh = S.coherence;
+    const clarity = CONFIG.clarity.find(([t]) => coh < t)[1];
+    let archetype;
+    if (S.tax >= 3) archetype = 'pod-casualty';
+    else if (S.skips >= 2) archetype = 'ghost';
+    else if (coh < 0.35) archetype = 'generalist';
+    else if (reachTop && (band === 'cold' || band === 'warm')) archetype = 'broadcaster';
+    else if (coh >= 0.65 && band === 'hot') archetype = 'fingerprinted-founder';
+    else archetype = 'control-group';
+    return {
+      archetype, band, pipeline: Math.round(p), pipelineRaw: p, clarity, coherence: coh,
+      tax: S.tax, playedGated: S.playedGated, reachMultiple, reachTop,
+    };
+  }
+
   return {
     ENGINE_VERSION, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
-    nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, stampEntries,
+    nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, stampEntries,
   };
 });
