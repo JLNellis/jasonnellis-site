@@ -1529,7 +1529,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 The loop, repeated at most six times:
 
-- [ ] **Step 1: Pick the first failing target and change one `O` knob**
+- [x] **Step 1: Pick the first failing target and change one `O` knob**
 
 Which knob for which failure (all in `CONFIG`):
 
@@ -1545,28 +1545,30 @@ Which knob for which failure (all in `CONFIG`):
 
 Never touch a value whose stamp is `M`, `P` or `X`, and never change `cost`, `eventWeeks`, `budgets`, the archetype rule thresholds (3 bait, 2 skips, 0.35, 0.65) or the four `headlineFit` values without asking Jason.
 
-- [ ] **Step 2: Bump nothing, regenerate bands, rerun**
+- [x] **Step 2: Bump nothing, regenerate bands, rerun**
 
 `ENGINE_VERSION` stays 1 until the game ships (no saves exist yet).
 
 Run: `npm run sim:rc -- --bands && npm run sim:rc`
 Expected: the table again; compare with the previous run.
 
-- [ ] **Step 3: Stop condition**
+- [x] **Step 3: Stop condition**
 
 Stop when `npm run sim:rc` exits 0, or after six rounds. If six rounds do not pass, revert to the best round, and report to Jason: the table, the knobs moved, and which target resists. Do not relax a target on your own.
 
-- [ ] **Step 4: Run the full test suite**
+Outcome (2026-09-28): three rounds, kept round 2 (`coherence.decay` 0.94 -> 0.88 only). All four policy targets pass; random Broadcaster (0.2%) and random Fingerprinted Founder (0.2%) stay below 3% and are reported to Jason as design findings, not forced (see the Task 7 commit body).
+
+- [x] **Step 4: Run the full test suite**
 
 Run: `npm run test:rc && npm test`
 Expected: `29/29 passed` for Robot Comments, and The Feed's suite still passes (nothing shared was touched).
 
-- [ ] **Step 5: Confirm the site still builds**
+- [x] **Step 5: Confirm the site still builds**
 
 Run: `npm run build`
 Expected: Eleventy completes with no error. The three new root `.js` files are not templates and are not yet passthrough-copied (Plan 4 does that), so `_site/` should not contain them.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add robot-comments-engine.js robot-comments-bands.js
