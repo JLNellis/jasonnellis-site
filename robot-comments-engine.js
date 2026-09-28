@@ -366,8 +366,31 @@
     };
   }
 
+  // Resume: the save is the inputs, never the state (spec §5a).
+  function serialize(S) {
+    return { v: ENGINE_VERSION, setup: { archetype: S.setup.archetype, budget: S.setup.budget }, choices: S.choices.slice() };
+  }
+  function replay(save) {
+    try {
+      if (!save || typeof save !== 'object' || save.v !== ENGINE_VERSION || !Array.isArray(save.choices)) return null;
+      const S = newGame(save.setup);
+      for (const ch of save.choices) {
+        if (ch && ch.event) {
+          if (weekKind(S) !== 'event') return null;
+          resolveEvent(S);
+        } else {
+          if (weekKind(S) !== 'decision') return null;
+          resolveWeek(S, ch);
+        }
+      }
+      return S;
+    } catch (e) {
+      return null;
+    }
+  }
+
   return {
     ENGINE_VERSION, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
-    nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, stampEntries,
+    nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, serialize, replay, stampEntries,
   };
 });

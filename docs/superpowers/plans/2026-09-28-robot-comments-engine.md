@@ -1019,7 +1019,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `tools/robot-comments-test.js`
 - Modify: `robot-comments-engine.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Insert above the runner line:
 
@@ -1056,12 +1056,12 @@ test('replay discards stale versions and corrupted saves', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: the three resume tests FAIL with `E.serialize is not a function` / `E.replay is not a function`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Insert above the final `return {`:
 
@@ -1099,12 +1099,12 @@ Replace the returned object with:
   };
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `npm run test:rc`
 Expected: `22/22 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-engine.js tools/robot-comments-test.js

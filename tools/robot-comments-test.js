@@ -258,6 +258,37 @@ test('finish refuses to score without generated bands', () => {
   assert.throws(() => E.finish(ended(), { seed: null }), /sim:rc -- --bands/);
 });
 
+// ---------------------------------------------------------------- resume (spec §5a)
+test('replay reproduces the live state after every week', () => {
+  for (const [archetype, budget] of [['second', 6], ['seed', 1]]) {
+    const live = E.newGame({ archetype, budget });
+    while (!live.done) {
+      if (E.weekKind(live) === 'event') E.resolveEvent(live);
+      else E.resolveWeek(live, firstAffordable(live, E.deal(live)));
+      const copy = E.replay(JSON.parse(JSON.stringify(E.serialize(live))));
+      assert.deepStrictEqual(copy, live, `${archetype} after week ${live.week - 1}`);
+    }
+  }
+});
+
+test('replay of a mid-week save deals the same hand', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable, 3);
+  const again = E.replay(E.serialize(S));
+  assert.deepStrictEqual(E.deal(again).map(k => k.id), E.deal(S).map(k => k.id));
+});
+
+test('replay discards stale versions and corrupted saves', () => {
+  const S = playScript({ archetype: 'seed', budget: 3 }, firstAffordable, 4);
+  const save = E.serialize(S);
+  assert.ok(E.replay(save));
+  assert.strictEqual(E.replay({ ...save, v: save.v + 1 }), null);
+  assert.strictEqual(E.replay({ ...save, choices: [{ card: 'nope', engagement: 'none' }] }), null);
+  assert.strictEqual(E.replay({ ...save, choices: [{ event: true }] }), null);
+  assert.strictEqual(E.replay({ v: save.v, setup: { archetype: 'x', budget: 3 }, choices: [] }), null);
+  assert.strictEqual(E.replay(null), null);
+  assert.strictEqual(E.replay('garbage'), null);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
