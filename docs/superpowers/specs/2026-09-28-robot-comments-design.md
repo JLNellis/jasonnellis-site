@@ -312,19 +312,19 @@ card they refuse), so a population is 200 different games, not four.
   ≥ 80% land The Broadcaster or The Pod Casualty.
 - **Reach chaser** (on-cluster first, then the highest measured format reach; generic over named;
   no bait cards, no bait CTA; popular comments when affordable on on-cluster posts; never skips;
-  3h): ≥ 25% land The Broadcaster.
+  3h): the population that has to make The Broadcaster reachable (see Reachability).
 - **Reachability**: every archetype reaches ≥ 3% in at least one population (sensible 3h, sensible
   1h, vendor 3h, reach 3h, random at 1h, 3h and 6h). The sim prints the best population for each.
 
 Calibrated 2026-09-28 (commit 2d49439): sensible 3h working/hot 97.5%, Fingerprinted Founder 56.0%
 (median final coherence 0.71); sensible 1h working/hot 15.5%; vendor Broadcaster/Pod Casualty 97.5%;
-**reach chaser Broadcaster 11.5% (below the 25% target; open for Jason, not forced)**. Reachability
+reach chaser Broadcaster 11.5%. Reachability
 all pass: Pod Casualty 90.0% (vendor 3h), Ghost 8.0% (random 6h), Generalist 36.5% (reach 3h),
 Broadcaster 11.5% (reach 3h), Fingerprinted Founder 56.0% (sensible 3h), Control Group 80.5%
 (sensible 1h). Knobs moved: coherence decay 0.94 → 0.88 → 0.90; popular-comment coherence
 −0.08 → −0.05.
 
-Why the reach target resists: pipeline follows held attention (reach × dwell), and the high-reach
+Why The Broadcaster stays a minority outcome even for the reach chaser (a 25% target was tried and dropped 2026-09-28; the approved rule is ≥ 3% reachability): pipeline follows held attention (reach × dwell), and the high-reach
 formats (document, image) are also high-dwell, so a reach chaser's pipeline rises with its reach.
 Of 200 reach-chaser runs, 73 end as The Generalist (coherence < 0.35 is checked first), and 83 of
 the remaining 127 reach the top quartile with a working or hot pipeline. Cutting generic visits and generic

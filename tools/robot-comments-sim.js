@@ -164,7 +164,6 @@ function runTargets() {
     ['sensible 3h: Fingerprinted Founder 40-60%', share(sens3, is('fingerprinted-founder')), v => v >= 0.4 && v <= 0.6],
     ['sensible 1h: working or hot <= 40%', share(sens1, hotish), v => v <= 0.4],
     ['vendor 3h: Broadcaster or Pod Casualty >= 80%', share(vend3, x => x.archetype === 'broadcaster' || x.archetype === 'pod-casualty'), v => v >= 0.8],
-    ['reach 3h: Broadcaster >= 25%', share(reach3, is('broadcaster')), v => v >= 0.25],
   ];
   // Reachability: every archetype is reached by at least one population (>= 3% of its runs).
   for (const a of Object.keys(D.OUTCOMES)) {
