@@ -146,8 +146,12 @@
   for (const k of D.CARDS) BY_ID[k.id] = k;
 
   // Derived from everything that shapes a game, so any rebalance invalidates old saves (spec §5a).
+  // Bump MODEL_REV by hand whenever a formula in resolveWeek/resolveEvent changes.
+  const MODEL_REV = 1;
   const versionOf = (config, cards) => hashStr(JSON.stringify([
+    MODEL_REV,
     config,
+    D.ARCHETYPES,
     cards.map(k => [k.id, k.fmt, k.topic, k.hook, k.sub, k.cta, !!k.bait, k.extraCost || 0]),
     D.EVENTS.map(e => e.id),
   ])) % 2147483647;
@@ -259,7 +263,7 @@
       if (S.weeksSilent % 2 === 0) S.coherence -= CONFIG.coherence.silentPenalty.v;
       S.baseline *= CONFIG.skipDecay.v;
       S.nextReachMult = 1;
-      const row = { week, kind: 'skip', card: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
+      const row = { week, kind: 'skip', card: null, lever: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
       endWeek(S, row);
       return { row, lever: null, hand };
     }
@@ -326,11 +330,12 @@
     if (card.bait && card.id !== 'bait-gatedgame') S.tax += 1;
 
     const contributions = reach * contribP * (card.id === 'bait-pod' ? CONFIG.bait['bait-pod'].contribDisplay.v : 1);
-    const row = { week, kind: 'post', card: card.id, impressions: reach, held, contributions, visits, dms };
+    const lever = leverFor(card, { supp, cadence });
+    const row = { week, kind: 'post', card: card.id, engagement: eng, lever, impressions: reach, held, contributions, visits, dms };
     S.totalImpressions += reach;
     if (!S.best || contributions > S.best.contributions) S.best = { week, card: card.id, contributions };
     endWeek(S, row);
-    return { row, lever: leverFor(card, { supp, cadence }), hand };
+    return { row, lever, hand };
   }
 
   // Weeks 5 and 9. Two distinct events per game, seeded.
@@ -343,20 +348,21 @@
     S.events.push(id);
     S.choices.push({ event: true });
     const EV = CONFIG.events;
-    const row = { week, kind: 'event', event: id, card: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
+    const e = EV[id].lever;
+    const lever = { key: 'event:' + id, stamp: e.stamp, src: e.src, mag: e.mag };
+    const row = { week, kind: 'event', event: id, card: null, lever, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
     S.nextReachMult = 1; // a popular-comments boost is spent on the event week
     if (id === 'swarm') { row.contributions = EV.swarm.contribDisplay; row.bestWeek = S.best ? S.best.week : null; }
     if (id === 'reset') { S.baseline *= EV.reset.permanent.v; S.anchor *= EV.reset.permanent.v; }
     if (id === 'gravity' && S.coherence >= EV.gravity.threshold) S.nextReachMult *= EV.gravity.boost.v;
     if (id === 'audit') S.coherence += S.headlineFit <= 0.6 ? EV.audit.low.v : S.headlineFit >= 0.8 ? EV.audit.high.v : 0;
     endWeek(S, row);
-    const e = EV[id].lever;
-    return { row, lever: { key: 'event:' + id, stamp: e.stamp, src: e.src, mag: e.mag }, event: id };
+    return { row, lever, event: id };
   }
 
   // Spec §9. bands defaults to the generated RobotBands; tests pass their own.
   function finish(S, bands) {
-    const B = (bands || BANDS)[S.setup.archetype];
+    const B = (bands || BANDS || {})[S.setup.archetype];
     if (!B) throw new Error('No bands for ' + S.setup.archetype + ': run `npm run sim:rc -- --bands`');
     const p = Math.round(S.pipeline * 10) / 10; // displayed value; band uses it too
     const band = p >= B.pipeline[2] ? 'hot' : p >= B.pipeline[1] ? 'working' : p >= B.pipeline[0] ? 'warm' : 'cold';
@@ -401,7 +407,7 @@
   }
 
   return {
-    ENGINE_VERSION, versionOf, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
+    ENGINE_VERSION, versionOf, CONFIG, cardById: id => BY_ID[id] || null, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
     nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, serialize, replay, stampEntries,
   };
 });

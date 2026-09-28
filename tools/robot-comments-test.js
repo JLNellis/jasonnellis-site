@@ -379,6 +379,21 @@ test('a popular-comments boost does not survive an event week', () => {
   assert.ok(S.nextReachMult === 1 || Math.abs(S.nextReachMult - g) < 1e-12, 'nextReachMult ' + S.nextReachMult);
 });
 
+test('rows carry the lever and engagement, so resume can restore stamps', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable);
+  for (const row of S.rows) {
+    if (row.kind === 'skip') { assert.strictEqual(row.lever, null); continue; }
+    assert.ok(['proven', 'measured', 'disputed', 'invented'].includes(row.lever.stamp), JSON.stringify(row));
+    if (row.kind === 'post') { assert.ok(E.cardById(row.card)); assert.ok(E.CONFIG.engagements.includes(row.engagement)); }
+  }
+  assert.strictEqual(E.cardById('nope'), null);
+});
+
+test('archetype connections are part of the engine version', () => {
+  assert.notStrictEqual(E.versionOf(E.CONFIG, D.CARDS), E.versionOf(E.CONFIG, D.CARDS.slice(1)));
+  assert.ok(/D\.ARCHETYPES/.test(E.versionOf.toString()), 'versionOf must hash D.ARCHETYPES');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

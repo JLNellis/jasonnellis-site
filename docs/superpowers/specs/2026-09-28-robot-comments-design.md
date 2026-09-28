@@ -45,7 +45,7 @@ Same pattern as The Feed.
 | File | Job |
 |---|---|
 | `robot-comments.html` | Standalone page (does NOT load `nav.js`; inline Plausible snippet like `the-feed.html`). Markup, game-scoped CSS tokens, UI controller. Loads `colors_and_type.css` for DM Sans / DM Mono. |
-| `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ value, stamp, source }` where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
+| `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ v, stamp, src, mag }` (mag = 'ours' when the mechanism is sourced but the magnitude is ours) where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
 | `robot-comments-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
 | `tools/robot-comments-sim.js` | Seeded policy runs + band derivation (§11). `npm run sim:rc`; exits non-zero if a target fails. |
 | `tools/robot-comments-test.js` | Engine tests (§13). `npm run test:rc`. |
@@ -54,7 +54,7 @@ Same pattern as The Feed.
 | `tool-index/robot-comments.md` | `/experiments` card. |
 
 Wiring: `_redirects` rewrite + 301 pair for `/robot-comments`; `.eleventy.js` passthrough for the
-HTML, both JS files and the OG images; sitemap picks the page up via the tools collection; share
+HTML, the three JS files (load order: `robot-comments-data.js`, `robot-comments-bands.js`, `robot-comments-engine.js`; globals `RobotData`, `RobotBands`, `RobotEngine`) and the OG images; sitemap picks the page up via the tools collection; share
 pages stay out of the sitemap. CLAUDE.md pages table gets a row.
 
 Data flow: setup → seed. Each decision week: `deal` derives the hand from the seed plus all
@@ -267,7 +267,7 @@ card: shortcuts you took on someone else's word. Not "traced to nothing": the po
 cards are Measured).
 
 Bands are per archetype (800 vs 12,000 connections cannot share a scale): cut points at the 25th /
-60th / 85th percentile of a seeded random-policy population, stored in `CONFIG.bands`, regenerated
+60th / 85th percentile of a seeded random-policy population, stored in the generated `robot-comments-bands.js` (built on the same one-decimal pipeline `finish()` grades), regenerated
 by `npm run sim:rc -- --bands`. Reach band = total impressions ÷ (anchor × 10), same percentile
 method; "top" = top quartile.
 
@@ -304,23 +304,23 @@ Step 1 (done 2026-09-28): Jason's-data multipliers re-derived from the 107-post 
 Step 2 (build gate), 200 seeded runs per population. Only `ours` coefficients may be tuned.
 The sensible and reach players take their second-best card in about 20% of decision weeks (never a
 card they refuse), so a population is 200 different games, not four.
-- **Sensible founder** (on-cluster, claim-first, document every third decision week, no bait,
+- **Sensible founder** (on-cluster, claim-first, document every third decision week, no bait except the gated-game card (the one that works),
   in-cluster comments when affordable but skipped in ~20% of weeks, 3h): ≥ 80% land working or hot;
   The Fingerprinted Founder 40–60%. Also tracked: median final coherence, aim 0.70–0.90.
 - **Sensible founder at 1h**: ≤ 40% land working or hot (hard at 1).
 - **Vendor playbook** (polls, pod, six hashtags, link in body, popular comments, always take bait):
   ≥ 80% land The Broadcaster or The Pod Casualty.
-- **Reach chaser** (on-cluster first, then the highest measured format reach; generic over named;
+- **Reach chaser** (prefers on-cluster, but a high-reach format such as a poll can outweigh topic; generic over named;
   no bait cards, no bait CTA; popular comments when affordable on on-cluster posts; never skips;
   3h): the population that has to make The Broadcaster reachable (see Reachability).
 - **Reachability**: every archetype reaches ≥ 3% in at least one population (sensible 3h, sensible
   1h, vendor 3h, reach 3h, random at 1h, 3h and 6h). The sim prints the best population for each.
 
-Calibrated 2026-09-28 (commit 2d49439): sensible 3h working/hot 97.5%, Fingerprinted Founder 56.0%
-(median final coherence 0.71); sensible 1h working/hot 15.5%; vendor Broadcaster/Pod Casualty 97.5%;
-reach chaser Broadcaster 11.5%. Reachability
-all pass: Pod Casualty 90.0% (vendor 3h), Ghost 8.0% (random 6h), Generalist 36.5% (reach 3h),
-Broadcaster 11.5% (reach 3h), Fingerprinted Founder 56.0% (sensible 3h), Control Group 80.5%
+Calibrated 2026-09-28 (bands regenerated after the final-review fixes): sensible 3h working/hot 97.5%,
+Fingerprinted Founder 57.0% (median final coherence 0.71); sensible 1h working/hot 16.0%; vendor
+Broadcaster/Pod Casualty 97.5%; reach chaser Broadcaster 11.0%. Reachability all pass: Pod Casualty
+90.0% (vendor 3h), Ghost 8.0% (random 6h), Generalist 36.5% (reach 3h), Broadcaster 11.0% (reach
+3h), Fingerprinted Founder 57.0% (sensible 3h), Control Group 80.5%
 (sensible 1h). Knobs moved: coherence decay 0.94 → 0.88 → 0.90; popular-comment coherence
 −0.08 → −0.05.
 

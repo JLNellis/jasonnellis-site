@@ -129,7 +129,7 @@ function writeBands() {
     const pipes = [], reach = [];
     for (let i = 0; i < 3000; i++) {
       const S = runGame({ archetype, budget: E.CONFIG.budgets[i % 3] }, POLICIES.random, 50000 + i);
-      pipes.push(S.pipeline);
+      pipes.push(Math.round(S.pipeline * 10) / 10); // same rounding finish() bands on
       reach.push(S.totalImpressions / (S.anchorStart * 10));
     }
     bands[archetype] = { pipeline: [pct(pipes, 0.25), pct(pipes, 0.6), pct(pipes, 0.85)].map(round3), reachTop: round3(pct(reach, 0.75)) };
