@@ -14,7 +14,7 @@ his own posts in an interview: an anecdote, not a study. The game says so rather
 intro screen carries a small unstamped circle next to the title, and the end screen stamps it
 **Invented** with the why-line "One researcher, describing his own posts, in one interview. It
 became a statistic. So did this title." Sources: `vdb` (podcast, 23:02) and `dhelin`.
-(Pending Jason's confirmation; see §18.)
+(Confirmed by Jason 2026-09-28.)
 
 A phone-first, single-page simulator of twelve weeks of LinkedIn posting decisions, at
 `/robot-comments`. A brand asset first (something people finish and screenshot), a soft on-ramp to
@@ -437,4 +437,3 @@ data, Kit bridge sequence, desktop polish, extra bait cards, more OG variety.
   taglines, intro, podcast paragraph) to the brief's house rules; Jason edits before launch.
 - Jason: Plausible goals.
 - Jason's OK: Kit custom-field creation and one test subscription.
-- Jason's confirmation: the title's self-stamp treatment (§1).
