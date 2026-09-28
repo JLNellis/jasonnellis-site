@@ -19,7 +19,18 @@ Plans 2 to 4 are written after this plan lands, because calibration can move num
 **Ground rules for this plan:**
 - Only `CONFIG` entries stamped `'ours'` (constant `O`) may be tuned in calibration. Never edit a value stamped measured (`M`), proven (`P`) or disputed (`X`).
 - Never commit `~/Downloads/dataset_linkedin-profile-posts_*.csv`.
-- Work on `main` is fine (the site deploys only on push). Do **not** push. Jason pushes.
+- Work happens on branch `robot-comments`. Do **not** push. Jason pushes.
+
+**Checkpoints (safe places to pause; everything is committed at each):**
+
+| Checkpoint | After | State |
+|---|---|---|
+| A | Task 2 | data file + engine core, 5 tests |
+| B | Task 5 | full engine incl. resume, 22 tests |
+| C | Task 6 | simulator + generated bands + baseline (uncalibrated) numbers |
+| D | Task 8 | calibrated, spec updated, final review. Plan 1 complete. |
+
+To resume in a new session: "Continue Robot Comments plan 1 from checkpoint X" (branch `robot-comments`; ticked checkboxes below show progress).
 
 ---
 
