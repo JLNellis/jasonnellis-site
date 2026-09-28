@@ -13,7 +13,7 @@ the `rc_` prefix, CSS tokens `--rc-`. (Working title in the brief was "Twelve We
 his own posts in an interview: an anecdote, not a study. The game says so rather than hiding it: the
 intro screen carries a small unstamped circle next to the title, and the end screen stamps it
 **Invented** with the why-line "One researcher, describing his own posts, in one interview. It
-became a statistic. So did this title." Sources: `vdb` (podcast, 23:02) and `dhelin`.
+became a statistic. So did this title." Source: `vdb80` (an invented-tier entry describing the van der Blom anecdote, podcast 23:02).
 (Confirmed by Jason 2026-09-28.)
 
 A phone-first, single-page simulator of twelve weeks of LinkedIn posting decisions, at
@@ -47,6 +47,7 @@ Same pattern as The Feed.
 | `robot-comments.html` | Standalone page (does NOT load `nav.js`; inline Plausible snippet like `the-feed.html`). Markup, game-scoped CSS tokens, UI controller. Loads `colors_and_type.css` for DM Sans / DM Mono. |
 | `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ v, stamp, src, mag }` (mag = 'ours' when the mechanism is sourced but the magnitude is ours) where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
 | `robot-comments-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
+| `robot-comments-copy.js` | Every player-facing string except card titles (global `RobotCopy`), linted by the tests. |
 | `tools/robot-comments-sim.js` | Seeded policy runs + band derivation (§11). `npm run sim:rc`; exits non-zero if a target fails. |
 | `tools/robot-comments-test.js` | Engine tests (§13). `npm run test:rc`. |
 | `robot-comments-share.njk` | Eleventy, paginates over the six archetypes → `/robot-comments/r/<slug>/`. Each page: `noindex`, archetype OG/Twitter tags, meta-refresh + link to `/robot-comments`. |
@@ -462,7 +463,6 @@ data, Kit bridge sequence, desktop polish, extra bait cards, more OG variety.
 
 ## 18. Open items before launch
 
-- Copy: I draft all game copy (47 card titles, why-line templates, 4 events, 6 diagnoses +
-  taglines, intro, podcast paragraph) to the brief's house rules; Jason edits before launch.
+- Copy: in `robot-comments-copy.js` and card titles in `robot-comments-data.js` (Plan 2, done).
 - Jason: Plausible goals.
 - Jason's OK: Kit custom-field creation and one test subscription.

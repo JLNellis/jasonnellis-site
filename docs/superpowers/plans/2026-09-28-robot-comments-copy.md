@@ -468,13 +468,13 @@ git commit -m "Robot Comments: card titles written as first lines"
 **Files:**
 - Modify: `docs/superpowers/specs/2026-09-28-robot-comments-design.md`
 
-- [ ] **Step 1: Update the spec**
+- [x] **Step 1: Update the spec**
 
 1. In §1, replace `Sources: \`vdb\` (podcast, 23:02) and \`dhelin\`.` with `Source: \`vdb80\` (an invented-tier entry describing the van der Blom anecdote, podcast 23:02).`
 2. In §3's file table, add a row: `| \`robot-comments-copy.js\` | Every player-facing string except card titles (global \`RobotCopy\`), linted by the tests. |`
 3. In §18, replace the line that begins `- Copy: I draft all game copy` with `- Copy: in \`robot-comments-copy.js\` and card titles in \`robot-comments-data.js\` (Plan 2, done).`
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add docs/superpowers/specs/2026-09-28-robot-comments-design.md docs/superpowers/plans/2026-09-28-robot-comments-copy.md
