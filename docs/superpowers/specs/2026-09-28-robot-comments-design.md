@@ -203,7 +203,7 @@ Displayed pipeline = pipeline rounded to one decimal; the band is computed on th
 on-cluster post +0.12 · adjacent +0.03 · off-cluster −0.15
 in-cluster comments +0.05 · popular comments −0.08
 skip: weeks_silent += 1; at every second consecutive silent week (2, 4, 6…), coherence −0.30; posting resets it
-decay: coherence *= 0.94
+decay: coherence *= 0.88   (calibrated 2026-09-28; was 0.94)
 ```
 Decay is ours, loosely motivated by FeedSR v1's 60-day training half-life (cited as v1 only).
 
@@ -309,6 +309,12 @@ Step 2 (build gate), 200 seeded runs per policy. Only `ours` coefficients may be
 - **Vendor playbook** (polls, pod, six hashtags, link in body, popular comments, always take bait):
   ≥ 80% land The Broadcaster or The Pod Casualty.
 - **Random policy**: every archetype reachable (each ≥ 3% of runs).
+
+Calibrated 2026-09-28 (commit b92304f): sensible 3h working/hot 100.0%, Fingerprinted Founder 55.0%
+(median final coherence 0.71); sensible 1h working/hot 37.5%; vendor Broadcaster/Pod Casualty 90.0%;
+random Pod Casualty 22.5%, Ghost 7.3%, Generalist 41.3%, Control Group 28.5%, **Broadcaster 0.2%
+and Fingerprinted Founder 0.2% (below the 3% target; open for Jason, not forced)**. One knob moved:
+coherence decay 0.94 → 0.88.
 
 Step 3 (v1.1): friends' exports.
 

@@ -1588,11 +1588,11 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 **Files:**
 - Modify: `docs/superpowers/specs/2026-09-28-robot-comments-design.md` (§7 tables and §11)
 
-- [ ] **Step 1: Update the spec**
+- [x] **Step 1: Update the spec**
 
 For every `CONFIG` value changed in Task 7, update the matching number in spec §7. Under §11, add a line `Calibrated 2026-MM-DD (commit <sha>): <one-line summary of each target's final %>`.
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add docs/superpowers/specs/2026-09-28-robot-comments-design.md
