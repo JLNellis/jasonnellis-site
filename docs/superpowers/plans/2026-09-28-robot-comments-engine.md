@@ -581,7 +581,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Modify: `tools/robot-comments-test.js` (add tests above the `// ---- runner` line)
 - Modify: `robot-comments-engine.js` (add functions above the final `return {`, then replace that `return`)
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Insert above the `// ---------------------------------------------------------------- runner` line:
 
@@ -713,12 +713,12 @@ test('every card reveals one of the four public stamps', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: the new tests FAIL with `E.resolveWeek is not a function` (or `E.resolveEvent`, `E.nextDecisionWeeks`, `E.leverFor`); the 5 core tests still pass.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `robot-comments-engine.js`, insert above the final `return { ENGINE_VERSION, ...` line:
 
@@ -879,12 +879,12 @@ Then replace the final return line with:
   };
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `npm run test:rc`
 Expected: `15/15 passed`. If `every hand has a card affordable ... at 1h` fails, the cheap-card fallback in `deal` ran out of regular cards costing ≤1; add cheap regular cards in the data file rather than weakening the test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-engine.js tools/robot-comments-test.js

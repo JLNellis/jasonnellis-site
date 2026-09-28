@@ -85,6 +85,132 @@ test('deal is pure, returns 3 cards, at most one bait', () => {
   assert.ok(E.deal(S).filter(k => k.bait).length <= 1);
 });
 
+// ---------------------------------------------------------------- resolveWeek + events
+test('resolveWeek rejects bad choices without changing state', () => {
+  const S = E.newGame({ archetype: 'seed', budget: 1 });
+  const before = JSON.stringify(S);
+  assert.throws(() => E.resolveWeek(S, { card: 'not-a-card', engagement: 'none' }), /not in hand/);
+  const hand = E.deal(S);
+  const pricey = hand.find(k => E.cardCost(k) > 1);
+  if (pricey) assert.throws(() => E.resolveWeek(S, { card: pricey.id, engagement: 'none' }), /over budget/);
+  const ok = hand.find(k => E.canAfford(S, k, 'none'));
+  assert.throws(() => E.resolveWeek(S, { card: ok.id, engagement: 'bogus' }), /engagement/);
+  assert.strictEqual(JSON.stringify(S), before);
+});
+
+test('every hand has a card affordable with no engagement, even at 1h', () => {
+  for (const archetype of ARCH) {
+    const S = E.newGame({ archetype, budget: 1 });
+    while (!S.done) {
+      if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+      const hand = E.deal(S);
+      assert.ok(hand.some(k => E.canAfford(S, k, 'none')), `${archetype} week ${S.week}: ${hand.map(k => k.id)}`);
+      E.resolveWeek(S, cheapest(S, hand));
+    }
+  }
+});
+
+test('no card is dealt twice in a game', () => {
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    const S = playScript({ archetype, budget }, firstAffordable);
+    assert.strictEqual(S.dealt.length, 30);
+    assert.strictEqual(new Set(S.dealt).size, 30);
+  }
+});
+
+test('about half of hands carry a bait card, never more than one', () => {
+  let hands = 0, withBait = 0;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) for (const pick of [cheapest, firstAffordable]) {
+    const S = E.newGame({ archetype, budget });
+    while (!S.done) {
+      if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+      const hand = E.deal(S);
+      const n = hand.filter(k => k.bait).length;
+      assert.ok(n <= 1);
+      hands++; withBait += n;
+      E.resolveWeek(S, pick(S, hand));
+    }
+  }
+  const rate = withBait / hands;
+  assert.ok(rate > 0.3 && rate < 0.7, 'bait rate ' + rate);
+});
+
+test('identical choices give identical games; different choices do not', () => {
+  const a = playScript({ archetype: 'fractional', budget: 3 }, firstAffordable);
+  const b = playScript({ archetype: 'fractional', budget: 3 }, firstAffordable);
+  assert.deepStrictEqual(a, b);
+  const c = playScript({ archetype: 'fractional', budget: 3 }, cheapest);
+  assert.notDeepStrictEqual(a.rows, c.rows);
+});
+
+test('baseline reach stays within 0.5x to 2x of the anchor', () => {
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    const S = E.newGame({ archetype, budget });
+    while (!S.done) {
+      if (E.weekKind(S) === 'event') E.resolveEvent(S);
+      else E.resolveWeek(S, firstAffordable(S, E.deal(S)));
+      assert.ok(S.baseline >= 0.5 * S.anchor - 1e-9 && S.baseline <= 2 * S.anchor + 1e-9, `${archetype}/${budget} w${S.week}`);
+    }
+  }
+});
+
+test('two consecutive skips cost 0.30 coherence once', () => {
+  const S = E.newGame({ archetype: 'seed', budget: 3 });
+  E.resolveWeek(S, { skip: true });
+  const afterOne = S.coherence;
+  E.resolveWeek(S, { skip: true });
+  const decay = E.CONFIG.coherence.decay.v;
+  assert.ok(Math.abs(S.coherence - Math.max(0, (afterOne - 0.30) * decay)) < 1e-9);
+  assert.strictEqual(S.skips, 2);
+  assert.strictEqual(S.rows[1].kind, 'skip');
+});
+
+test('pod suppresses the next two decision weeks, skipping event weeks', () => {
+  let found = false;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    const S = E.newGame({ archetype, budget });
+    while (!S.done && !found) {
+      if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+      const hand = E.deal(S);
+      const pod = hand.find(k => k.id === 'bait-pod');
+      if (pod) {
+        const w = S.week;
+        E.resolveWeek(S, { card: pod.id, engagement: 'none' });
+        const next = E.nextDecisionWeeks(w, 2);
+        assert.ok(next.every(n => !E.CONFIG.eventWeeks.includes(n)));
+        for (const n of next) assert.ok(S.suppress[n] <= 0.5 + 1e-9, `week ${n}: ${S.suppress[n]}`);
+        found = true;
+      } else E.resolveWeek(S, firstAffordable(S, hand));
+    }
+  }
+  assert.ok(found, 'pod never dealt in the scripted games');
+});
+
+test('folklore tax counts bait cards except the gated game', () => {
+  const played = [];
+  const S = E.newGame({ archetype: 'seed', budget: 6 });
+  while (!S.done) {
+    if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+    const hand = E.deal(S);
+    const b = hand.find(k => k.bait);
+    if (b) played.push(b.id);
+    E.resolveWeek(S, b ? { card: b.id, engagement: 'none' } : firstAffordable(S, hand));
+  }
+  assert.ok(played.length >= 2, 'expected some bait in a 6h game');
+  assert.strictEqual(S.tax, played.filter(id => id !== 'bait-gatedgame').length);
+  assert.strictEqual(S.playedGated, played.includes('bait-gatedgame'));
+});
+
+test('every card reveals one of the four public stamps', () => {
+  for (const k of D.CARDS) {
+    const l = E.leverFor(k, { supp: 1, cadence: 1 });
+    assert.ok(['proven', 'measured', 'disputed', 'invented'].includes(l.stamp), k.id + ' -> ' + l.stamp);
+    assert.ok(D.SOURCES[l.src], k.id);
+  }
+  const t = D.CARDS.find(k => k.id === 't01');
+  assert.strictEqual(E.leverFor(t, { supp: 0.5, cadence: 1 }).key, 'suppressed');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

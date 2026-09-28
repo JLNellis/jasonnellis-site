@@ -197,5 +197,154 @@
     return out;
   }
 
-  return { ENGINE_VERSION, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford, stampEntries };
+  function nextDecisionWeeks(week, n) {
+    const out = [];
+    for (let w = week + 1; w <= CONFIG.weeks && out.length < n; w++) if (!CONFIG.eventWeeks.includes(w)) out.push(w);
+    return out;
+  }
+  const suppressWeek = (S, w, f) => { S.suppress[w] = (S.suppress[w] || 1) * f; };
+
+  // The lever that most explains this card's result, among sourced levers only, so a
+  // card always reveals one of the four public stamps. Bait cards reveal their own stamp.
+  const dev = x => Math.abs(Math.log(x));
+  function leverFor(card, ctx) {
+    if (card.bait) return { key: card.id, stamp: card.stamp, src: card.src, mag: card.mag || null };
+    const F = CONFIG.formats[card.fmt], C = CONFIG.cta[card.cta];
+    const cands = [
+      ['format:' + card.fmt, dev(F.reach.v) >= dev(F.contrib.v) ? F.reach : F.contrib],
+      ['hook:' + card.hook, CONFIG.hooks[card.hook]],
+      ['sub:' + card.sub, CONFIG.substance[card.sub].contrib],
+    ];
+    for (const e of [C.reach, C.dwell, C.contrib]) cands.push(['cta:' + card.cta, e]);
+    if (ctx.supp < 1) cands.push(['suppressed', c(ctx.supp, P, 'jurka26', O)]);
+    let best = null;
+    for (const cand of cands) {
+      if (cand[1].stamp === O) continue;
+      if (!best || dev(cand[1].v) > dev(best[1].v)) best = cand;
+    }
+    const e = best[1];
+    return { key: best[0], stamp: e.stamp, src: e.src, mag: e.mag || null };
+  }
+
+  function endWeek(S, row) {
+    S.coherence = clamp(S.coherence * CONFIG.coherence.decay.v, 0, 1);
+    S.baseline = clamp(S.baseline, CONFIG.loop.lo.v * S.anchor, CONFIG.loop.hi.v * S.anchor);
+    row.coherence = S.coherence;
+    S.rows.push(row);
+    S.week += 1;
+    if (S.week > CONFIG.weeks) S.done = true;
+  }
+
+  // choice: { card, engagement } or { skip: true }. Validates before touching state.
+  function resolveWeek(S, choice) {
+    if (weekKind(S) !== 'decision') throw new Error('not a decision week');
+    const week = S.week, hand = deal(S);
+
+    if (choice && choice.skip) {
+      S.dealt.push(...hand.map(k => k.id));
+      S.choices.push({ skip: true });
+      S.posted.push(false);
+      S.skips += 1; S.weeksSilent += 1;
+      if (S.weeksSilent % 2 === 0) S.coherence -= CONFIG.coherence.silentPenalty.v;
+      S.baseline *= CONFIG.skipDecay.v;
+      S.nextReachMult = 1;
+      const row = { week, kind: 'skip', card: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
+      endWeek(S, row);
+      return { row, lever: null, hand };
+    }
+
+    const card = hand.find(k => k.id === (choice && choice.card));
+    if (!card) throw new Error('card not in hand: ' + (choice && choice.card));
+    const eng = choice.engagement || 'none';
+    if (!CONFIG.engagements.includes(eng)) throw new Error('unknown engagement ' + eng);
+    if (!canAfford(S, card, eng)) throw new Error('over budget');
+
+    S.dealt.push(...hand.map(k => k.id));
+    S.choices.push({ card: card.id, engagement: eng });
+    const r = rng(seedFor(S, 'noise'));
+    const F = CONFIG.formats[card.fmt], H = CONFIG.hooks[card.hook], SB = CONFIG.substance[card.sub], C = CONFIG.cta[card.cta];
+
+    const cadence = S.posted.length === 0 || S.posted[S.posted.length - 1] ? 1 : CONFIG.cadenceOne.v;
+    S.posted.push(true);
+    S.weeksSilent = 0;
+    const supp = S.suppress[week] || 1;
+    const offFit = card.sub === 'personal' && card.topic === 'off' ? SB.offClusterFit.v : 1;
+    const fit = S.headlineFit * (0.6 + 0.4 * S.coherence) * offFit;
+    const modReach = card.id === 'bait-hashtags6' ? CONFIG.bait['bait-hashtags6'].reach.v : 1;
+    const noise = 1 + (r() * 2 - 1) * CONFIG.noise.v;
+    const reach = S.baseline * fit * F.reach.v * cadence * supp * C.reach.v * modReach * S.nextReachMult * noise;
+    S.nextReachMult = 1;
+
+    const click = C.click.v;
+    const dwell = Math.min(CONFIG.base.dwell.v * F.dwell.v * H.v * SB.dwell.v * C.dwell.v, CONFIG.base.cap.v - click);
+    const scroll = 1 - dwell - click;
+    const contribP = CONFIG.base.contrib.v * F.contrib.v * H.v * SB.contrib.v * C.contrib.v * C.dwell.v;
+
+    const PL = CONFIG.pipeline, EN = CONFIG.engagement;
+    const held = reach * dwell;
+    const specific = card.sub === 'named' || card.sub === 'personal' ? 1 : 0;
+    let visits = held * (PL.visitsBase.v + PL.visitsSpecific.v * specific + PL.visitsDoc.v * (card.fmt === 'document' ? 1 : 0));
+    if (eng === 'popular') visits *= EN.popularVisits.v;
+    if (eng === 'cluster') visits *= EN.clusterVisits.v;
+    let dms = visits * fit * PL.dmRate.v;
+    if (card.id === 'bait-gatedgame') {
+      const G = CONFIG.bait['bait-gatedgame'];
+      dms += visits * G.startRate.v * G.startToLead.v;
+      S.playedGated = true;
+    }
+    S.pipeline += dms;
+
+    const L = CONFIG.loop;
+    S.baseline *= 1 + L.a.v * dwell + L.b.v * contribP - L.c.v * scroll;
+    if (eng === 'popular') S.nextReachMult = EN.popularNextReach.v;
+
+    if (card.id === 'bait-pod') {
+      const pod = CONFIG.bait['bait-pod'];
+      for (const w of nextDecisionWeeks(week, pod.weeks)) suppressWeek(S, w, pod.suppression.v);
+    }
+    if (card.cta === 'bait') {
+      if (S.baitCtaWeeks.some(w => week - w <= CONFIG.baitCta.window)) {
+        for (const w of nextDecisionWeeks(week, 1)) suppressWeek(S, w, CONFIG.baitCta.suppression.v);
+      }
+      S.baitCtaWeeks.push(week);
+    }
+
+    const CH = CONFIG.coherence;
+    S.coherence += CH[card.topic].v;
+    if (eng === 'cluster') S.coherence += CH.cluster.v;
+    if (eng === 'popular') S.coherence += CH.popular.v;
+    if (card.bait && card.id !== 'bait-gatedgame') S.tax += 1;
+
+    const contributions = reach * contribP * (card.id === 'bait-pod' ? CONFIG.bait['bait-pod'].contribDisplay.v : 1);
+    const row = { week, kind: 'post', card: card.id, impressions: reach, held, contributions, visits, dms };
+    S.totalImpressions += reach;
+    if (!S.best || contributions > S.best.contributions) S.best = { week, card: card.id, contributions };
+    endWeek(S, row);
+    return { row, lever: leverFor(card, { supp, cadence }), hand };
+  }
+
+  // Weeks 5 and 9. Two distinct events per game, seeded.
+  function resolveEvent(S) {
+    if (weekKind(S) !== 'event') throw new Error('not an event week');
+    const week = S.week;
+    const r = rng(seedFor(S, 'event'));
+    const pool = D.EVENTS.map(e => e.id).filter(id => !S.events.includes(id));
+    const id = pool[Math.floor(r() * pool.length)];
+    S.events.push(id);
+    S.choices.push({ event: true });
+    const EV = CONFIG.events;
+    const row = { week, kind: 'event', event: id, card: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
+    if (id === 'swarm') { row.contributions = EV.swarm.contribDisplay; row.bestWeek = S.best ? S.best.week : null; }
+    if (id === 'reset') { S.baseline *= EV.reset.permanent.v; S.anchor *= EV.reset.permanent.v; }
+    if (id === 'gravity' && S.coherence >= EV.gravity.threshold) S.nextReachMult *= EV.gravity.boost.v;
+    if (id === 'audit') S.coherence += S.headlineFit <= 0.6 ? EV.audit.low.v : S.headlineFit >= 0.8 ? EV.audit.high.v : 0;
+    endWeek(S, row);
+    const e = EV[id].lever;
+    return { row, lever: { key: 'event:' + id, stamp: e.stamp, src: e.src, mag: e.mag }, event: id };
+  }
+
+  return {
+    ENGINE_VERSION, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
+    nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, stampEntries,
+  };
 });
