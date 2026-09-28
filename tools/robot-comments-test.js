@@ -251,7 +251,8 @@ test('finish reports band, clarity word, rounded pipeline', () => {
   assert.strictEqual(at(25, 0.4).clarity, 'Faint');
   assert.strictEqual(at(25, 0.6).clarity, 'Legible');
   assert.strictEqual(at(25, 0.7).clarity, 'Sharp');
-  assert.strictEqual(at(25.4, 0.5).pipeline, 25);
+  assert.strictEqual(at(25.44, 0.5).pipeline, 25.4);
+  assert.strictEqual(at(29.96, 0.5).band, 'hot'); // band uses the displayed (rounded) value
 });
 
 test('finish refuses to score without generated bands', () => {
@@ -287,6 +288,95 @@ test('replay discards stale versions and corrupted saves', () => {
   assert.strictEqual(E.replay({ v: save.v, setup: { archetype: 'x', budget: 3 }, choices: [] }), null);
   assert.strictEqual(E.replay(null), null);
   assert.strictEqual(E.replay('garbage'), null);
+});
+
+// ---------------------------------------------------------------- review fixes (task 5b)
+test('engine version is derived from the model, so a rebalance invalidates saves', () => {
+  assert.strictEqual(typeof E.ENGINE_VERSION, 'number');
+  assert.strictEqual(E.ENGINE_VERSION, E.versionOf(E.CONFIG, D.CARDS));
+  const tweaked = JSON.parse(JSON.stringify(E.CONFIG));
+  tweaked.coherence.on.v += 0.01;
+  assert.notStrictEqual(E.versionOf(tweaked, D.CARDS), E.ENGINE_VERSION);
+});
+
+test('card data and CONFIG are frozen so the UI cannot corrupt them', () => {
+  assert.ok(Object.isFrozen(D.CARDS) && Object.isFrozen(D.CARDS[0]));
+  assert.ok(Object.isFrozen(E.CONFIG.formats.text.reach));
+  assert.throws(() => { 'use strict'; D.CARDS[0].title = 'x'; });
+});
+
+test('every stamp matches the tier of the source it cites', () => {
+  const allowed = new Set(['disputed:vdb']); // vdB's -16% is one side of the disputed link effect
+  const check = (stamp, src, what) => {
+    if (stamp === 'ours') return;
+    const tier = D.SOURCES[src].tier;
+    assert.ok(tier === stamp || allowed.has(stamp + ':' + src), `${what}: ${stamp} cites ${src} (${tier})`);
+  };
+  for (const e of E.stampEntries()) check(e.stamp, e.src, JSON.stringify(e));
+  for (const k of D.CARDS.filter(k => k.bait)) check(k.stamp, k.src, k.id);
+});
+
+test('replay matches live play under a random policy with skips and bait', () => {
+  for (let seed = 1; seed <= 30; seed++) {
+    const r = E.rng(seed);
+    const live = E.newGame({ archetype: ARCH[seed % 4], budget: [1, 3, 6][seed % 3] });
+    while (!live.done) {
+      if (E.weekKind(live) === 'event') { E.resolveEvent(live); continue; }
+      const hand = E.deal(live);
+      const opts = hand.filter(k => E.canAfford(live, k, 'none'));
+      if (r() < 0.2 || !opts.length) { E.resolveWeek(live, { skip: true }); continue; }
+      const k = opts[Math.floor(r() * opts.length)];
+      const engs = E.CONFIG.engagements.filter(e => E.canAfford(live, k, e));
+      E.resolveWeek(live, { card: k.id, engagement: engs[Math.floor(r() * engs.length)] });
+    }
+    assert.deepStrictEqual(E.replay(JSON.parse(JSON.stringify(E.serialize(live)))), live, 'seed ' + seed);
+  }
+});
+
+test('the reset lowers anchor but not anchorStart', () => {
+  let found = false;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    if (found) break;
+    const S = playScript({ archetype, budget }, firstAffordable);
+    if (S.events.includes('reset')) {
+      assert.ok(Math.abs(S.anchor - S.anchorStart * E.CONFIG.events.reset.permanent.v) < 1e-9);
+      found = true;
+    }
+  }
+  assert.ok(found, 'reset never drawn in the scripted games');
+});
+
+test('a second bait CTA within three weeks suppresses the next decision week', () => {
+  let found = false;
+  for (const archetype of ARCH) for (const budget of [1, 3, 6]) {
+    const S = E.newGame({ archetype, budget });
+    while (!S.done && !found) {
+      if (E.weekKind(S) === 'event') { E.resolveEvent(S); continue; }
+      const hand = E.deal(S);
+      const baitCta = hand.find(k => !k.bait && k.cta === 'bait' && E.canAfford(S, k, 'none'));
+      if (baitCta && S.week > 1) {
+        const w = S.week;
+        S.baitCtaWeeks.push(w - 1);
+        E.resolveWeek(S, { card: baitCta.id, engagement: 'none' });
+        const next = E.nextDecisionWeeks(w, 1)[0];
+        if (next) assert.ok(S.suppress[next] <= E.CONFIG.baitCta.suppression.v + 1e-9);
+        found = true;
+      } else E.resolveWeek(S, firstAffordable(S, hand));
+    }
+  }
+  assert.ok(found, 'no bait-CTA card dealt in the scripted games');
+});
+
+test('a popular-comments boost does not survive an event week', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable, 3);
+  const hand = E.deal(S);
+  const k = hand.find(k => E.canAfford(S, k, 'popular'));
+  assert.ok(k, 'expected a card affordable with popular comments at 3h');
+  E.resolveWeek(S, { card: k.id, engagement: 'popular' });
+  assert.strictEqual(E.weekKind(S), 'event');
+  E.resolveEvent(S);
+  const g = E.CONFIG.events.gravity.boost.v;
+  assert.ok(S.nextReachMult === 1 || Math.abs(S.nextReachMult - g) < 1e-12, 'nextReachMult ' + S.nextReachMult);
 });
 
 // ---------------------------------------------------------------- runner

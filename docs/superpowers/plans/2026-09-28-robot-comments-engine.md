@@ -1122,7 +1122,7 @@ Added after the checkpoint-B code review. Fixes: derived engine version, frozen 
 **Files:**
 - Modify: `robot-comments-data.js`, `robot-comments-engine.js`, `tools/robot-comments-test.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Insert above the runner line in `tools/robot-comments-test.js`:
 
@@ -1230,12 +1230,12 @@ with
   assert.strictEqual(at(29.96, 0.5).band, 'hot'); // band uses the displayed (rounded) value
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected failures: engine version (`E.versionOf is not a function`), frozen, stamp tier (`invented cites jurka26 (proven)` and `dhelin (review)`), finish rounding, popular boost. The replay, reset and bait-CTA tests may already pass.
 
-- [ ] **Step 3: Data fixes**
+- [x] **Step 3: Data fixes**
 
 In `robot-comments-data.js`:
 
@@ -1257,7 +1257,7 @@ In `robot-comments-data.js`:
   return deepFreeze({ SOURCES, ARCHETYPES, OUTCOMES, EVENTS, CARDS });
 ```
 
-- [ ] **Step 4: Engine fixes**
+- [x] **Step 4: Engine fixes**
 
 In `robot-comments-engine.js`:
 
@@ -1329,12 +1329,12 @@ with
 
 9. Add `versionOf` to the returned object, after `ENGINE_VERSION,`.
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `npm run test:rc`
 Expected: `29/29 passed`. If the "bait CTA" or "reset" test reports "never dealt/drawn", report it rather than editing the test.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add robot-comments-data.js robot-comments-engine.js tools/robot-comments-test.js docs/superpowers/plans/2026-09-28-robot-comments-engine.md

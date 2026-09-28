@@ -29,9 +29,6 @@
 })(typeof self !== 'undefined' ? self : this, function (D, BANDS) {
   'use strict';
 
-  // Bump whenever a change would make an old save replay into a different game.
-  const ENGINE_VERSION = 1;
-
   const P = 'proven', M = 'measured', X = 'disputed', O = 'ours';
   const c = (v, stamp, src = null, mag = null) => ({ v, stamp, src, mag });
 
@@ -76,8 +73,9 @@
       bait:        { reach: c(0.6, P, 'jurka26', O), dwell: c(1, O), contrib: c(1.1, O), click: c(0.03, O) },
     },
     base: { dwell: c(0.30, O), contrib: c(0.02, O), cap: c(0.95, O) },
-    // Distribution loop: baseline *= 1 + a*dwell + b*contrib - c*scroll, clamped to [lo, hi] x anchor.
-    loop: { a: c(0.15, O), b: c(0.20, O), c: c(0.10, O), lo: c(0.5, O), hi: c(2.0, O) },
+    // Distribution loop, relative to an average post:
+    // baseline *= 1 + a*(dwell/base.dwell - 1) + b*(contrib/base.contrib - 1), clamped to [lo, hi] x anchor.
+    loop: { a: c(0.10, O), b: c(0.05, O), lo: c(0.5, O), hi: c(2.0, O) },
     noise: c(0.08, O),
     skipDecay: c(0.95, O),
     cadenceOne: c(0.9, O), // one post in the last two decision weeks; why-line quotes vdB's "two to three a week"
@@ -88,7 +86,7 @@
       silentPenalty: c(0.30, O), decay: c(0.94, O),
     },
     // visits = reach * dwell * (base + specific + doc); dms = visits * fit * dmRate
-    pipeline: { visitsBase: c(0.07, O), visitsSpecific: c(0.10, O), visitsDoc: c(0.07, O), dmRate: c(0.04, O) },
+    pipeline: { visitsBase: c(0.07, O), visitsSpecific: c(0.10, O), visitsDoc: c(0.07, O), dmRate: c(0.12, O) },
     baitRate: c(0.5, O),
     baitCta: { window: 3, suppression: c(0.5, P, 'jurka26', O) },
     bait: {
@@ -104,6 +102,11 @@
     },
     clarity: [[0.35, 'Blurred'], [0.5, 'Faint'], [0.65, 'Legible'], [Infinity, 'Sharp']],
   };
+  const deepFreeze = o => {
+    if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); }
+    return o;
+  };
+  deepFreeze(CONFIG);
 
   // ======================= RNG =======================
   // cyrb53 string hash -> 53-bit int; mulberry32 PRNG.
@@ -141,6 +144,14 @@
   // ======================= GAME =======================
   const BY_ID = {};
   for (const k of D.CARDS) BY_ID[k.id] = k;
+
+  // Derived from everything that shapes a game, so any rebalance invalidates old saves (spec §5a).
+  const versionOf = (config, cards) => hashStr(JSON.stringify([
+    config,
+    cards.map(k => [k.id, k.fmt, k.topic, k.hook, k.sub, k.cta, !!k.bait, k.extraCost || 0]),
+    D.EVENTS.map(e => e.id),
+  ])) % 2147483647;
+  const ENGINE_VERSION = versionOf(CONFIG, D.CARDS);
 
   function newGame(setup) {
     const A = setup && D.ARCHETYPES[setup.archetype];
@@ -277,7 +288,6 @@
 
     const click = C.click.v;
     const dwell = Math.min(CONFIG.base.dwell.v * F.dwell.v * H.v * SB.dwell.v * C.dwell.v, CONFIG.base.cap.v - click);
-    const scroll = 1 - dwell - click;
     const contribP = CONFIG.base.contrib.v * F.contrib.v * H.v * SB.contrib.v * C.contrib.v * C.dwell.v;
 
     const PL = CONFIG.pipeline, EN = CONFIG.engagement;
@@ -295,7 +305,7 @@
     S.pipeline += dms;
 
     const L = CONFIG.loop;
-    S.baseline *= 1 + L.a.v * dwell + L.b.v * contribP - L.c.v * scroll;
+    S.baseline *= 1 + L.a.v * (dwell / CONFIG.base.dwell.v - 1) + L.b.v * (contribP / CONFIG.base.contrib.v - 1);
     if (eng === 'popular') S.nextReachMult = EN.popularNextReach.v;
 
     if (card.id === 'bait-pod') {
@@ -334,6 +344,7 @@
     S.choices.push({ event: true });
     const EV = CONFIG.events;
     const row = { week, kind: 'event', event: id, card: null, impressions: 0, held: 0, contributions: 0, visits: 0, dms: 0 };
+    S.nextReachMult = 1; // a popular-comments boost is spent on the event week
     if (id === 'swarm') { row.contributions = EV.swarm.contribDisplay; row.bestWeek = S.best ? S.best.week : null; }
     if (id === 'reset') { S.baseline *= EV.reset.permanent.v; S.anchor *= EV.reset.permanent.v; }
     if (id === 'gravity' && S.coherence >= EV.gravity.threshold) S.nextReachMult *= EV.gravity.boost.v;
@@ -347,7 +358,7 @@
   function finish(S, bands) {
     const B = (bands || BANDS)[S.setup.archetype];
     if (!B) throw new Error('No bands for ' + S.setup.archetype + ': run `npm run sim:rc -- --bands`');
-    const p = S.pipeline;
+    const p = Math.round(S.pipeline * 10) / 10; // displayed value; band uses it too
     const band = p >= B.pipeline[2] ? 'hot' : p >= B.pipeline[1] ? 'working' : p >= B.pipeline[0] ? 'warm' : 'cold';
     const reachMultiple = S.totalImpressions / (S.anchorStart * 10);
     const reachTop = reachMultiple >= B.reachTop;
@@ -361,7 +372,7 @@
     else if (coh >= 0.65 && band === 'hot') archetype = 'fingerprinted-founder';
     else archetype = 'control-group';
     return {
-      archetype, band, pipeline: Math.round(p), pipelineRaw: p, clarity, coherence: coh,
+      archetype, band, pipeline: p, pipelineRaw: S.pipeline, clarity, coherence: coh,
       tax: S.tax, playedGated: S.playedGated, reachMultiple, reachTop,
     };
   }
@@ -390,7 +401,7 @@
   }
 
   return {
-    ENGINE_VERSION, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
+    ENGINE_VERSION, versionOf, CONFIG, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
     nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, serialize, replay, stampEntries,
   };
 });

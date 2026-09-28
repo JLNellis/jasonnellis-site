@@ -30,7 +30,8 @@
     dataslayer: { tier: 'invented', cite: 'Dataslayer, LinkedIn algorithm February 2026 (example of the folklore: 60% link penalty, 0.07% polls)', url: 'https://www.dataslayer.ai/blog/linkedin-algorithm-february-2026-whats-working-now' },
     digitalapplied: { tier: 'invented', cite: 'Digital Applied, LinkedIn algorithm 2026 guide (example of the folklore: 60% link penalty, Depth Score)', url: 'https://www.digitalapplied.com/blog/linkedin-algorithm-2026-engagement-strategy-guide' },
     linkboost:  { tier: 'invented', cite: 'Linkboost, what content performs best 2026 (example of the folklore: Depth Score, dwell-bucket rates)', url: 'https://www.linkboost.co/blog/what-content-performs-best-linkedin-2026/' },
-    dhelin:     { tier: 'review', cite: 'Dhélin, The LinkedIn Algorithm 2026: what is proven, what is measured, what is invented, Fast Growth Advisors, Jul 2026', url: 'https://fast-growth.fr/en/white-paper/linkedin-algorithm-2026/' },
+    nosource:   { tier: 'invented', cite: "No primary source or study found (checked Sep 2026). LinkedIn's own engagement-bait examples (Jurka, 12 Mar 2026) do not include it.", url: 'https://www.linkedin.com/pulse/updates-linkedin-feed-focusing-authentic-relevant-tim-jurka-umwnc' },
+    dhelin:     { tier: 'invented', cite: 'Dhélin, The LinkedIn Algorithm 2026: what is proven, what is measured, what is invented, Fast Growth Advisors, Jul 2026', url: 'https://fast-growth.fr/en/white-paper/linkedin-algorithm-2026/' },
   };
 
   // Player setups (spec §4). headline_fit values live in engine CONFIG.
@@ -118,9 +119,13 @@
     B('bait-pod', 'text', 'on', 'claim', 'generic', 'none', 'Join a pod of twelve peers who engage in the first hour', 'proven', 'jurka26', { mag: 'ours' }),
     B('bait-firstcomment', 'text', 'on', 'claim', 'promo', 'linkcomment', 'Put the link in the first comment to dodge the 60% penalty', 'invented', 'dataslayer'),
     B('bait-hashtags6', 'text', 'on', 'claim', 'generic', 'none', 'Use six hashtags for discoverability', 'measured', 'authoredup', { mag: 'ours' }),
-    B('bait-thoughts', 'text', 'on', 'claim', 'generic', 'none', 'Ask "Thoughts?" at the end', 'invented', 'jurka26'),
+    B('bait-thoughts', 'text', 'on', 'claim', 'generic', 'none', 'Ask "Thoughts?" at the end', 'invented', 'nosource'),
     B('bait-gatedgame', 'text', 'on', 'claim', 'promo', 'linkbody', 'Build a gated game on your website to collect emails', 'measured', 'interact', { extraCost: 2 }),
   ];
 
-  return { SOURCES, ARCHETYPES, OUTCOMES, EVENTS, CARDS };
+  const deepFreeze = o => {
+    if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); }
+    return o;
+  };
+  return deepFreeze({ SOURCES, ARCHETYPES, OUTCOMES, EVENTS, CARDS });
 });
