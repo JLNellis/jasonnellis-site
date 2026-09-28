@@ -1348,7 +1348,7 @@ git commit -m "Robot Comments engine: review fixes (derived version, frozen data
 **Files:**
 - Create: `tools/robot-comments-sim.js`
 
-- [ ] **Step 1: Create the simulator**
+- [x] **Step 1: Create the simulator**
 
 ```js
 #!/usr/bin/env node
@@ -1492,22 +1492,22 @@ if (process.argv.includes('--bands')) writeBands();
 else runTargets();
 ```
 
-- [ ] **Step 2: Generate the bands**
+- [x] **Step 2: Generate the bands**
 
 Run: `npm run sim:rc -- --bands`
 Expected: `wrote .../robot-comments-bands.js` followed by four objects, each with a `pipeline` array of three ascending numbers and a `reachTop` number. If any `pipeline` array has two equal entries, the random population is degenerate for that archetype: stop and report the output instead of continuing.
 
-- [ ] **Step 3: Confirm the tests still pass with real bands loaded**
+- [x] **Step 3: Confirm the tests still pass with real bands loaded**
 
 Run: `npm run test:rc`
 Expected: `29/29 passed`.
 
-- [ ] **Step 4: Run the targets once to get a baseline**
+- [x] **Step 4: Run the targets once to get a baseline**
 
 Run: `npm run sim:rc`
 Expected: a table of 10 targets and the archetype counts. Failures are expected at this point. Save the full output; it goes in the commit message.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/robot-comments-sim.js robot-comments-bands.js
