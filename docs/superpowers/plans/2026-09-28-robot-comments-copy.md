@@ -25,10 +25,10 @@
 
 ---
 
-### Task 0: Jason reviews the copy (gate)
+### Task 0: Jason reviews the copy (gate) (approved as drafted, 2026-09-28)
 
-- [ ] **Step 1:** Jason reads the code blocks in Task 1 Step 3 (`robot-comments-copy.js`) and Task 2 Step 1 (card titles) and edits them in place in this plan file. Anything he deletes or rewrites is what ships. The only constraints: keep the object keys, keep the disclosure line verbatim, keep diagnoses 40 to 80 words, and keep the house rules above.
-- [ ] **Step 2:** Commit his edits: `git commit -am "Robot Comments plan 2: Jason's copy edits"`.
+- [x] **Step 1:** Jason reads the code blocks in Task 1 Step 3 (`robot-comments-copy.js`) and Task 2 Step 1 (card titles) and edits them in place in this plan file. Anything he deletes or rewrites is what ships. The only constraints: keep the object keys, keep the disclosure line verbatim, keep diagnoses 40 to 80 words, and keep the house rules above.
+- [x] **Step 2:** Commit his edits: `git commit -am "Robot Comments plan 2: Jason's copy edits"`.
 
 ---
 
