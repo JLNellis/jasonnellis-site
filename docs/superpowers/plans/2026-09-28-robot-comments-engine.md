@@ -54,7 +54,7 @@ To resume in a new session: "Continue Robot Comments plan 1 from checkpoint X" (
 - Create: `robot-comments-bands.js`
 - Create: `robot-comments-data.js`
 
-- [ ] **Step 1: Add npm scripts**
+- [x] **Step 1: Add npm scripts**
 
 In `package.json`, replace the `scripts` block with:
 
@@ -69,7 +69,7 @@ In `package.json`, replace the `scripts` block with:
   },
 ```
 
-- [ ] **Step 2: Create the bands stub**
+- [x] **Step 2: Create the bands stub**
 
 Create `robot-comments-bands.js`:
 
@@ -89,7 +89,7 @@ Create `robot-comments-bands.js`:
 });
 ```
 
-- [ ] **Step 3: Create the data file**
+- [x] **Step 3: Create the data file**
 
 Create `robot-comments-data.js`. Card titles are drafts; Plan 2 rewrites them. Dimension codes: `fmt` ∈ text, image, document, shortvideo, longvideo, poll, article, reshare; `topic` ∈ on, adj, off; `hook` ∈ claim, scene, question, listicle; `sub` ∈ named, generic, personal, promo; `cta` ∈ question, none, linkbody, linkcomment, bait.
 
@@ -222,12 +222,12 @@ Create `robot-comments-data.js`. Card titles are drafts; Plan 2 rewrites them. D
 });
 ```
 
-- [ ] **Step 4: Check both files load**
+- [x] **Step 4: Check both files load**
 
 Run: `node -e "const D=require('./robot-comments-data.js');const B=require('./robot-comments-bands.js');console.log(D.CARDS.length, Object.keys(D.SOURCES).length, B)"`
 Expected: `47 17 { seed: null, seriesb: null, second: null, fractional: null }`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add package.json robot-comments-data.js robot-comments-bands.js
@@ -244,7 +244,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Create: `tools/robot-comments-test.js`
 - Create: `robot-comments-engine.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `tools/robot-comments-test.js`:
 
@@ -346,12 +346,12 @@ console.log(`\n${tests.length - failed}/${tests.length} passed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: crash with `Cannot find module '../robot-comments-engine.js'`.
 
-- [ ] **Step 3: Create the engine core**
+- [x] **Step 3: Create the engine core**
 
 Create `robot-comments-engine.js`:
 
@@ -559,12 +559,12 @@ Create `robot-comments-engine.js`:
 });
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `npm run test:rc`
 Expected: `5/5 passed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-engine.js tools/robot-comments-test.js
