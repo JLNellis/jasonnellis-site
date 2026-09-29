@@ -373,8 +373,7 @@ Step 3 (v1.1): friends' exports.
   site-accent use in the game); a soft light band travels down, lingers on your block for dwell or
   slides past; contribution ticks stack beside it. No avatars, no text.
 - Strip chart: 6 rows (impressions, held attention, contributions, profile visits, DMs,
-  fingerprint) × 12 columns, shaded ink squares scaled per row, event columns hatched; tap a column
-  for its numbers.
+  fingerprint) × 12 columns, shaded ink squares scaled per row, event columns hatched. (Tap a column for its numbers: deferred to v1.1, 2026-09-29.)
 - Motion < 400 ms per transition; stamp press-in ~280 ms from 1.3x with a settle; reduced motion →
   fades. No generated imagery, no audio.
 

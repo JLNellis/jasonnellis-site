@@ -743,9 +743,9 @@ git commit -m "Robot Comments UI: resume, sheets and share verified"
 
 ### Task 4: Review
 
-- [ ] **Step 1: Dispatch a code reviewer** on `git diff <task-1 base>..HEAD -- robot-comments.html robot-comments-ui.js .eleventy.js` against spec §5, §5a, §10, §10a, §12 and this plan's scope. Ask specifically about: text that bypasses RobotCopy, analytics calls firing twice (for example on re-render or on "See your last result"), resume edge cases (reload during an event screen resumes after the event without re-showing the memo, by design; reload on the end screen), focus handling in sheets, XSS (every interpolation passes through `esc`), and anything that breaks the no-scroll rule.
-- [ ] **Step 2: Fix Critical/Important findings** via a fix subagent, re-run the affected Task 2/3 checks, commit.
-- [ ] **Step 3: Update memory and report.** Plan 3 complete; Plan 4 (integration) next.
+- [x] **Step 1: Dispatch a code reviewer** on `git diff <task-1 base>..HEAD -- robot-comments.html robot-comments-ui.js .eleventy.js` against spec §5, §5a, §10, §10a, §12 and this plan's scope. Ask specifically about: text that bypasses RobotCopy, analytics calls firing twice (for example on re-render or on "See your last result"), resume edge cases (reload during an event screen resumes after the event without re-showing the memo, by design; reload on the end screen), focus handling in sheets, XSS (every interpolation passes through `esc`), and anything that breaks the no-scroll rule.
+- [x] **Step 2: Fix Critical/Important findings** via a fix subagent, re-run the affected Task 2/3 checks, commit.
+- [x] **Step 3: Update memory and report.** Plan 3 complete; Plan 4 (integration) next.
 
 ---
 
