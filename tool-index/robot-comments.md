@@ -1,7 +1,7 @@
 ---
 title: "80% of Your Comments Are Robots"
 kind: "Game"
-tagline: "And they love you."
+tagline: "A love letter to LinkedIn."
 url: "/robot-comments"
 cta: "Play twelve weeks"
 time: "7 min"

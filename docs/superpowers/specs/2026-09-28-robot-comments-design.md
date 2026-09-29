@@ -5,7 +5,7 @@ This spec supersedes the brief wherever they differ; every difference is listed 
 
 ## 1. What it is
 
-**Name:** 80% of Your Comments Are Robots. **Tagline:** And they love you.
+**Name:** 80% of Your Comments Are Robots. **Tagline:** A love letter to LinkedIn.
 **URL / file prefix:** `/robot-comments`, `robot-comments-*`; Plausible events and Kit fields use
 the `rc_` prefix, CSS tokens `--rc-`. (Working title in the brief was "Twelve Weeks".)
 
@@ -427,7 +427,7 @@ anywhere, reduced motion, Plausible events firing, share fallback, email post sh
 | "March 2026 Authenticity Update" | event Proven, label folklore | Jurka post is real |
 | Jason's multipliers 1.25/0.8/1.3/1.5/1.2 | 1.10/0.90/1.2/2.0/1.5 | Re-derived from the CSV |
 | contrib_p = dwell_p × … | format term from measured eng ÷ reach | Avoid double-counting |
-| Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "And they love you"; `/robot-comments` | Jason, 2026-09-28; title self-stamped (§1) |
+| Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "A love letter to LinkedIn" (was "And they love you" until 2026-09-29); `/robot-comments` | Jason, 2026-09-28/29; title self-stamped (§1) |
 | Standalone page carries Plausible inline | Loads nav.js (no header rendered) | Single source for Plausible and the Kit endpoint |
 | "No saving progress" | Same-device resume via replayed choice list | Jason, 2026-09-28 |
 | Distribution loop on absolute probabilities | normalised to base dwell/contribution; scroll term dropped | Absolute form shrank reach for 39 of 47 cards and made the contribution term inert |

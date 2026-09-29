@@ -17,7 +17,7 @@
 
   const COPY = {
     title: '80% of Your Comments Are Robots',
-    tagline: 'And they love you',
+    tagline: 'A love letter to LinkedIn',
     intro: [
       'You have twelve weeks, a headline, and a feed that reads both.',
       'Most of what you have been told about the feed is wrong. Some of what you will be offered here is bait.',
@@ -34,9 +34,15 @@
       archetypeHeading: 'Who are you',
       budgetHeading: 'Hours a week for LinkedIn',
       budgets: { 1: '1 hour', 3: '3 hours', 6: '6 hours' },
-      budgetHint: 'Founders pick 1 or 3.',
+      budgetHint: 'Hours are the difficulty setting. More hours make the game easier, and less like real life. Most founders get 1 or 3.',
       start: 'Start week 1',
       connections: '{n} connections',
+    },
+
+    colophon: {
+      by: 'A game by',
+      author: 'Jason Nellis',
+      privacy: 'Privacy policy',
     },
 
     resume: {

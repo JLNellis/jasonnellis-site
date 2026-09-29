@@ -172,10 +172,12 @@
   const heroHTML = () => `<section class="hero"><span class="slot" aria-hidden="true"></span>
     <h1 tabindex="-1" data-focus>${esc(C.title)}</h1><p class="tag">${esc(C.tagline)}</p>${C.intro.map(p => `<p>${esc(p)}</p>`).join('')}</section>`;
 
+  const colophonHTML = () => `<footer class="colophon">${esc(C.colophon.by)} <a href="/">${esc(C.colophon.author)}</a> · <a href="/privacy">${esc(C.colophon.privacy)}</a></footer>`;
+
   function renderResume(game) {
     const A = D.ARCHETYPES[game.setup.archetype];
     show(heroHTML() + `<div class="resume-card"><p>${esc(fill(C.resume.line, { week: game.week, archetype: A.name, budget: C.setup.budgets[game.setup.budget] }))}</p>
-      <div class="go"><button class="btn" id="resume">${esc(C.resume.resume)}</button><button class="link" id="restart">${esc(C.resume.restart)}</button></div></div>`);
+      <div class="go"><button class="btn" id="resume">${esc(C.resume.resume)}</button><button class="link" id="restart">${esc(C.resume.restart)}</button></div></div>${colophonHTML()}`);
     app.querySelector('#resume').onclick = () => { S = game; track('rc_resume', { week: String(game.week) }); next(); };
     app.querySelector('#restart').onclick = () => { store.del('rc_run'); store.del('rc_last'); renderSetup(); };
   }
@@ -189,10 +191,10 @@
         ${lastGame && lastGame.done ? `<button class="link" id="last">${esc(C.resume.lastResult)}</button>` : ''}</p>
       <section class="pick"><h2>${esc(C.setup.archetypeHeading)}</h2><div class="tiles">
         ${Object.keys(A).map(id => `<button class="tile" data-a="${id}" aria-pressed="${setup.archetype === id}"><b>${esc(A[id].name)}</b><span class="num">${esc(fill(C.setup.connections, { n: A[id].connections.toLocaleString('en-US') }))}</span><span>${esc(A[id].headline)}</span></button>`).join('')}
-      </div><h2>${esc(C.setup.budgetHeading)}</h2><div class="tiles budget">
+      </div><h2>${esc(C.setup.budgetHeading)}</h2><p class="hint">${esc(C.setup.budgetHint)}</p><div class="tiles budget">
         ${E.CONFIG.budgets.map(b => `<button class="tile" data-b="${b}" aria-pressed="${setup.budget === b}"><b class="num">${esc(C.setup.budgets[b])}</b></button>`).join('')}
       </div></section>
-      <div class="go" style="margin-top:20px"><button class="btn" id="start">${esc(C.setup.start)}</button></div>`);
+      <div class="go" style="margin-top:20px"><button class="btn" id="start">${esc(C.setup.start)}</button></div>${colophonHTML()}`);
     app.querySelectorAll('[data-a]').forEach(b => { b.onclick = () => { setup.archetype = b.dataset.a; renderSetup(); app.querySelector(`[data-a="${b.dataset.a}"]`).focus(); }; });
     app.querySelectorAll('[data-b]').forEach(b => { b.onclick = () => { setup.budget = +b.dataset.b; renderSetup(); app.querySelector(`[data-b="${b.dataset.b}"]`).focus(); }; });
     app.querySelector('#guide').onclick = cardGuide;
@@ -358,7 +360,7 @@
           if (!ids.length) return '';
           return `<h3 class="srct">${esc(L.stamps[tier])}</h3><ol class="sources">${ids.map(id => { const s = D.SOURCES[id]; return `<li>${esc(s.cite)}${s.url ? ` <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(C.week.sourceLink)}</a>` : ''}</li>`; }).join('')}</ol>`;
         }).join('')}
-      </section>`);
+      </section>${colophonHTML()}`);
     app.querySelector('#tstamp').onclick = () => sourceSheet(titleLever, C.titleStamp.why);
     app.querySelector('#share').onclick = () => share(F);
     app.querySelector('#again').onclick = () => { track('rc_replay'); store.del('rc_last'); store.del('rc_run'); S = null; renderSetup(); };
