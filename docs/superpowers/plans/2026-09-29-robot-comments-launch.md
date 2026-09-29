@@ -260,7 +260,7 @@ git commit -m "Robot Comments: evidence page at /robot-comments/evidence/"
 **Files:**
 - Create: `robot-comments-share.njk`
 
-- [ ] **Step 1: Create the template**
+- [x] **Step 1: Create the template**
 
 ```njk
 ---
@@ -301,12 +301,12 @@ eleventyExcludeFromCollections: true
 </html>
 ```
 
-- [ ] **Step 2: Build and check**
+- [x] **Step 2: Build and check**
 
 Run: `npm run build && ls _site/robot-comments/r/ && grep -o 'og:image" content="[^"]*' _site/robot-comments/r/ghost/index.html`
 Expected: six directories (`broadcaster control-group fingerprinted-founder generalist ghost pod-casualty`); `og:image" content="https://jasonnellis.com/og-robot-comments-ghost.jpg`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add robot-comments-share.njk docs/superpowers/plans/2026-09-29-robot-comments-launch.md

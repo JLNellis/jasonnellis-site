@@ -1,0 +1,36 @@
+---
+pagination:
+  data: robotComments.outcomes
+  size: 1
+  alias: o
+permalink: "/robot-comments/r/{{ o.slug }}/"
+eleventyExcludeFromCollections: true
+---
+{%- set rc = robotComments -%}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ o.name | e }} · {{ rc.title | e }}</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="{{ o.tagline | e }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jason Nellis">
+<meta property="og:url" content="https://jasonnellis.com/robot-comments/r/{{ o.slug }}/">
+<meta property="og:title" content="{{ o.name | e }} · {{ rc.title | e }}">
+<meta property="og:description" content="{{ o.tagline | e }}">
+<meta property="og:image" content="https://jasonnellis.com{{ o.image }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ o.name | e }} · {{ rc.title | e }}">
+<meta name="twitter:description" content="{{ o.tagline | e }}">
+<meta name="twitter:image" content="https://jasonnellis.com{{ o.image }}">
+<link rel="canonical" href="https://jasonnellis.com/robot-comments">
+<meta http-equiv="refresh" content="0; url=/robot-comments">
+</head>
+<body>
+<p><a href="/robot-comments">{{ rc.evidence.backToGame | e }}</a></p>
+</body>
+</html>
