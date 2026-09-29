@@ -2,6 +2,7 @@
 title: "The Lens"
 kind: "Framework"
 tagline: "Is this creator building something, or renting attention?"
+claim: "Follower count tells you nothing about whether a creator is building a business or borrowing an audience."
 url: "/lens"
 cta: "Read it"
 time: "6 min read"

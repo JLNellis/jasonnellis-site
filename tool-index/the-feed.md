@@ -2,6 +2,7 @@
 title: "The Feed"
 kind: "Game"
 tagline: "Fifty-two weeks to turn forty views into a living."
+claim: "Reach is not an income, and the schedule that buys reach is the one that burns creators out."
 url: "/the-feed"
 cta: "Play free"
 time: "About 20 min"

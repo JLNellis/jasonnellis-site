@@ -2,6 +2,7 @@
 title: "Burn Rate"
 kind: "Calculator"
 tagline: "Can you afford your own upload schedule?"
+claim: "Most upload schedules cost more hours than the person running them has."
 url: "/burn-rate"
 cta: "Run the numbers"
 time: "2 min"
