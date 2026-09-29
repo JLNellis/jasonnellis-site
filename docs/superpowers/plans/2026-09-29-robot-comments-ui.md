@@ -661,7 +661,7 @@ git commit -m "Robot Comments: playable page and UI controller (plan 3 task 1)"
 
 Run with `preview_start` name `site`, page `http://localhost:8080/robot-comments.html`. Fix anything that fails in `robot-comments.html` / `robot-comments-ui.js` (dispatch a fix subagent with the failing check and its output), then re-run the check.
 
-- [ ] **Step 1: No console errors on load and through a full game**
+- [x] **Step 1: No console errors on load and through a full game**
 
 Clear storage (`localStorage.clear()`), reload, then run this in the page:
 
@@ -677,7 +677,7 @@ for (let i = 0; i < 80 && !document.querySelector('.end'); i++) {
 
 Expected: `[true, 72]`; `read_console_messages` with `onlyErrors: true` returns nothing.
 
-- [ ] **Step 2: Every screen fits a phone with no scroll (except the end screen) and never scrolls sideways**
+- [x] **Step 2: Every screen fits a phone with no scroll (except the end screen) and never scrolls sideways**
 
 For each viewport (390x844 via `resize_window` width/height, and 360x780), check setup, a decision week with the longest-title card selected (`t04`/`d01` if dealt, else the card whose `h3` is tallest), a resolve screen, and an event memo. Measure with:
 
@@ -687,13 +687,13 @@ For each viewport (390x844 via `resize_window` width/height, and 360x780), check
 
 Expected: `[true, true]` on every one of those screens at both sizes; on the end screen only the second value must be true. If a screen overflows vertically, reduce in this order until it fits: `.hero h1` font-size (38px to 34px), `.card .in` min-height (104px to 92px), `.feed` height (196px to 176px), `.strip .c` height (11px to 9px). Never remove content.
 
-- [ ] **Step 3: Screenshot the four key screens at 390x844** (setup, week with a selected card, resolve after the stamp lands, end) and look for: the red rule under every title, no text under the stamp, the stamp word inside its band, the memo's torn edge and tape.
+- [x] **Step 3: Screenshot the four key screens at 390x844** (setup, week with a selected card, resolve after the stamp lands, end) and look for: the red rule under every title, no text under the stamp, the stamp word inside its band, the memo's torn edge and tape.
 
-- [ ] **Step 4: Reduced motion**
+- [x] **Step 4: Reduced motion**
 
 Check the CSS rule exists and that the stamp appears without animation when reduced motion is set: run `matchMedia('(prefers-reduced-motion: reduce)').matches` after emulating it if the pane supports it. If emulation is unavailable, confirm by reading the code path (`reduce` branch in `renderResolve`) and note that in the report.
 
-- [ ] **Step 5: Commit any fixes**
+- [x] **Step 5: Commit any fixes**
 
 ```bash
 git add robot-comments.html robot-comments-ui.js docs/superpowers/plans/2026-09-29-robot-comments-ui.md
@@ -706,38 +706,38 @@ git commit -m "Robot Comments UI: layout fixes from browser verification"
 
 ### Task 3: Browser verification: resume, sheets, share (controller)
 
-- [ ] **Step 1: Resume**
+- [x] **Step 1: Resume**
 
 `localStorage.clear()`, reload, start a game as Series B, 3 hours, play 3 decision weeks, then reload. Expected: a resume card reading "Week 4 of 12 · Series B exec · 3 hours". Press Resume. Expected: the week-4 hand, with the strip chart showing 3 filled columns. Reload again and press Start over. Expected: the setup screen, and `localStorage.getItem('rc_run')` is `null`.
 
-- [ ] **Step 2: Stale and corrupted saves are discarded**
+- [x] **Step 2: Stale and corrupted saves are discarded**
 
 Run `localStorage.setItem('rc_run', JSON.stringify({v: 1, setup: {archetype: 'seed', budget: 3}, choices: [{card: 't01', engagement: 'none'}]}))` then reload. Expected: the setup screen (no resume card) and `rc_run` removed. Repeat with `localStorage.setItem('rc_run', '{not json')`. Expected: the same.
 
-- [ ] **Step 3: Last result**
+- [x] **Step 3: Last result**
 
 Finish a game (Task 2 Step 1 script), reload. Expected: setup shows "See your last result"; pressing it renders the same archetype, pipeline and strip chart as before the reload.
 
-- [ ] **Step 4: Sheets open, close and return focus**
+- [x] **Step 4: Sheets open, close and return focus**
 
 On a week screen: select a card, press "What these mean" (expect a sheet with five definitions), press Escape (sheet gone, focus back on the button). Press a strip-chart label (expect its definition). Press "How to read a card" on week 1 (expect the annotated card, numbered markers 1 to 4, four stamps). After posting, press the landed stamp and "Read the source" (expect the source sheet with the stamp, why-line, meaning and citation link). On the end screen press Pipeline, the band word, Fingerprint clarity, Folklore tax and the title stamp (each opens a sheet). Clicking the dim backdrop closes a sheet.
 
-- [ ] **Step 5: Share fallback**
+- [x] **Step 5: Share fallback**
 
 On the end screen in the desktop pane (no `navigator.share`), press Share. Expected: a "Link copied" toast, or the prompt fallback if clipboard access is denied. Confirm the text matches `{Archetype} · pipeline: {band} · folklore tax: {n} http://localhost:8080/robot-comments/r/{slug}/`.
 
-- [ ] **Step 6: Keyboard pass**
+- [x] **Step 6: Keyboard pass**
 
 From a fresh setup screen, reach Start, pick a card, pick an engagement, Post and Next week using only Tab / Shift+Tab / Enter. Expected: every control reachable, focus ring visible, focus stays on the pressed tile or card after re-render.
 
-- [ ] **Step 7: Commit fixes and tick boxes**
+- [x] **Step 7: Commit fixes and tick boxes**
 
 ```bash
 git add robot-comments.html robot-comments-ui.js docs/superpowers/plans/2026-09-29-robot-comments-ui.md
 git commit -m "Robot Comments UI: resume, sheets and share verified"
 ```
 
-**Checkpoint B.** Reset the viewport with `resize_window` preset `desktop`.
+**Checkpoint B.** Verified 2026-09-29: full game with no console errors; every screen fits 390x844 and 360x780 across all 12 setups and every selectable card (after a short-screen `@media (max-height:800px)` block); resume, stale/corrupted discard, last result, all sheets, focus return, share fallback. Keyboard: every control is a real button or link; reduced motion verified by code path (the pane cannot emulate it). Reset the viewport with `resize_window` preset `desktop`.
 
 ---
 

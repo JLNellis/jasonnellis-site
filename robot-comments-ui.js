@@ -356,8 +356,8 @@
     track('rc_start');
     const saved = store.get('rc_run');
     const game = saved ? E.replay(saved) : null;
-    if (saved && !game) store.del('rc_run');
     if (game && !game.done && game.choices.length) return renderResume(game);
+    store.del('rc_run'); // stale, corrupted, finished or empty: nothing to resume
     renderSetup();
   }
   boot();
