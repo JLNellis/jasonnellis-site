@@ -65,6 +65,7 @@
       sourceLink: 'Read the source',
       oursNote: 'The size of this effect is ours.',
       defineTags: 'What these mean',
+      feedCaption: 'Your post in the feed. The light is attention, the ticks are comments.',
       titleBlock: { project: 'Project', week: 'Week', hours: 'Hours' },
     },
 
@@ -72,7 +73,7 @@
       stamps: { proven: 'Proven', measured: 'Measured', disputed: 'Disputed', invented: 'Invented' },
       stampMeaning: {
         proven: 'LinkedIn published it.',
-        measured: 'An independent study with a published sample.',
+        measured: 'Someone outside LinkedIn counted and said how. Vendor data or one account, biases included.',
         disputed: 'Credible studies disagree.',
         invented: 'Circulates widely, traces to nothing.',
       },
@@ -170,7 +171,7 @@
     evidence: {
       title: 'The evidence behind 80% of Your Comments Are Robots',
       description: 'Every mechanic in the LinkedIn posting game, stamped Proven, Measured, Disputed or Invented, with its source.',
-      intro: 'Every mechanic in the game, with how much evidence stands behind it. Proven means LinkedIn published it. Measured means an independent study with a published sample. Disputed means credible studies disagree. Invented means it circulates widely and traces to nothing. Where the mechanism is sourced but the size of the effect is ours, the entry says so.',
+      intro: 'Every mechanic in the game, with how much evidence stands behind it. Proven means LinkedIn published it. Measured means someone outside LinkedIn counted and said how: vendor data or one account, biases included. Disputed means credible studies disagree. Invented means it circulates widely and traces to nothing. Where the mechanism is sourced but the size of the effect is ours, the entry says so.',
       fromIntro: 'Read the evidence first. It gives the game away.',
       fromEnd: 'See all the evidence',
       leverHeading: 'Lever',

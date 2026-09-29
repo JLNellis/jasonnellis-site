@@ -218,7 +218,7 @@
   function renderWeek() {
     const hand = E.deal(S);
     const card = hand.find(k => k.id === sel);
-    const engOK = e => (card ? E.canAfford(S, card, e) : e === 'none');
+    const engOK = e => (card ? E.canAfford(S, card, e) : true);
     show(titleBlock(S.week) + stripHTML(false) +
       `<h2 class="sr" tabindex="-1" data-focus>${esc(C.week.handHeading)}</h2>
        <div class="hand">${hand.map(k => cardHTML(k, { sel: k.id === sel, disabled: !E.canAfford(S, k, 'none') })).join('')}</div>
@@ -269,11 +269,12 @@
            <dt>${esc(L.metrics.visits)}</dt><dd>${r.visits.toFixed(1)}</dd>
            <dt>${esc(L.metrics.dms)}</dt><dd>${r.dms.toFixed(2)}</dd>
          </dl>
+         <p class="feedcap">${esc(C.week.feedCaption)}</p>
        </div>
-       <p class="why" hidden>${esc(C.why[lv.key] || '')}</p>
+       <p class="why">${esc(C.why[lv.key] || '')}</p>
        <p class="src" hidden>${esc(L.stampMeaning[lv.stamp])} <button class="link" id="srcbtn">${esc(C.week.sourceLink)}</button></p>
        <div class="go" style="margin-top:14px"><button class="btn" id="nx">${esc(S.done ? C.week.toResults : C.week.next)}</button></div>`);
-    const whyEl = app.querySelector('.why'), srcEl = app.querySelector('.src'), nx = app.querySelector('#nx');
+    const srcEl = app.querySelector('.src'), nx = app.querySelector('#nx');
     nx.disabled = true;
     const played = app.querySelector('.played .card'), light = app.querySelector('.light'), ticks = app.querySelector('.ticks');
     const reduce = reduceMotion() || !light.animate;
@@ -287,7 +288,6 @@
       st.innerHTML = stampSVG(lv.stamp, lv.src);
       st.onclick = () => sourceSheet(lv);
       played.appendChild(st);
-      whyEl.hidden = false;
       srcEl.hidden = false;
       nx.disabled = false;
     };
@@ -296,11 +296,11 @@
       for (let i = 0; i < nTicks; i++) ticks.appendChild(document.createElement('b'));
       land();
     } else {
-      const hold = dwell > 0.33 ? 520 : 90;
+      const hold = dwell > 0.33 ? 360 : 60;
       light.animate([{ top: '-80px' }, { top: '72px', offset: 0.35 }, { top: '72px', offset: 0.35 + hold / 1400 }, { top: '260px' }],
-        { duration: 900 + hold, easing: 'ease-in-out', fill: 'forwards' });
+        { duration: 700 + hold, easing: 'ease-in-out', fill: 'forwards' });
       for (let i = 0; i < nTicks; i++) setTimeout(() => ticks.appendChild(document.createElement('b')), 380 + i * 45);
-      setTimeout(land, 1000 + hold);
+      setTimeout(land, 760 + hold);
     }
     app.querySelector('#srcbtn').onclick = () => sourceSheet(lv);
     nx.onclick = next;

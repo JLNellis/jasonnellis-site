@@ -371,7 +371,8 @@ Step 3 (v1.1): friends' exports.
 - Event card: charcoal stock, torn top edge (SVG mask), translucent tape strip.
 - Feed abstraction: narrow column of grey rounded blocks, your block outlined Signal Green (the only
   site-accent use in the game); a soft light band travels down, lingers on your block for dwell or
-  slides past; contribution ticks stack beside it. No avatars, no text.
+  slides past; contribution ticks stack beside it. No avatars; one caption line under it names
+  what the light and the ticks are (added 2026-09-29, the column read as decoration without it).
 - Strip chart: 6 rows (impressions, held attention, contributions, profile visits, DMs,
   fingerprint) × 12 columns, shaded ink squares scaled per row, event columns hatched. (Tap a column for its numbers: deferred to v1.1, 2026-09-29.)
 - Motion < 400 ms per transition; stamp press-in ~280 ms from 1.3x with a settle; reduced motion →
