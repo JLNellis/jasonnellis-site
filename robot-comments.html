@@ -17,7 +17,7 @@
 :root{
   --rc-paper:#E3E9DF; --rc-grid:rgba(52,104,74,.12); --rc-grid-strong:rgba(52,104,74,.22);
   --rc-card:#FBFAF5; --rc-rule:#D9DCD4; --rc-margin:#C8423A;
-  --rc-ink:#1B2630; --rc-ink-2:#46535C; --rc-ink-3:#76828A;
+  --rc-ink:#1B2630; --rc-ink-2:#46535C; --rc-ink-3:#5C6870;
   --rc-proven:#1F6B45; --rc-measured:#99620E; --rc-disputed:#6E3A6B; --rc-invented:#B3261E;
   --rc-carbon:#2A2E31; --rc-carbon-ink:#E9E6DC; --rc-tape:rgba(236,226,190,.72);
   --rc-feed:#C9CFC7; --rc-you:var(--color-accent-vivid);
@@ -32,7 +32,9 @@ button{font:inherit;color:inherit}
   background-size:18px 18px;background-position:-1px -1px;
   padding:0 16px 24px;display:flex;flex-direction:column;overflow-x:hidden}
 .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
-:focus-visible{outline:2px solid var(--rc-you);outline-offset:2px}
+:focus-visible{outline:2px solid var(--rc-ink);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
 
 /* title block: an engineering pad header that records real state */
 .tb{display:grid;grid-template-columns:1fr auto auto;border:1.5px solid var(--rc-ink);border-top:0;margin:0 -16px 14px;background:rgba(251,250,245,.55)}
@@ -162,6 +164,7 @@ button{font:inherit;color:inherit}
 .srch{font-size:14px;font-weight:500;margin:18px 0 6px}
 .sources{font-size:12.5px;line-height:1.5;color:var(--rc-ink-2);padding-left:18px;margin:0}
 .sources a{color:inherit}
+.srct{font-size:12.5px;font-weight:500;margin:10px 0 2px;color:var(--rc-ink-2)}
 
 /* sheets: definitions, sources, card guide */
 .sheet-bg{position:fixed;inset:0;background:rgba(10,20,30,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}

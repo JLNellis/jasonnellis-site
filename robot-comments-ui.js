@@ -1,8 +1,9 @@
 /*
  * 80% OF YOUR COMMENTS ARE ROBOTS: page controller (browser only)
  * ------------------------------------------------------------------
- * Renders every screen from RobotEngine state. Every string comes from
- * RobotCopy or RobotData; none is written here.
+ * Renders every screen from RobotEngine state. Every word comes from
+ * RobotCopy or RobotData; the controller only adds units and punctuation
+ * (h, /12, ': ').
  * Load order: robot-comments-data.js, -bands.js, -engine.js, -copy.js, then this.
  * Saves: localStorage 'rc_run' (in progress) and 'rc_last' (finished game),
  * both E.serialize() output, restored with E.replay() (spec §5a).
@@ -23,15 +24,23 @@
   const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
   const short = src => (D.SOURCES[src] ? D.SOURCES[src].cite.split(',')[0].split(':')[0] : '');
   const tilt = key => (E.hashStr(String(key)) % 19) - 9;
-  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const shareUrl = slug => location.origin + '/robot-comments/r/' + slug + '/';
+  const reduceMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const shareUrl = slug => 'https://jasonnellis.com/robot-comments/r/' + slug + '/';
   const track = (name, props) => { try { if (window.plausible) window.plausible(name, props ? { props } : undefined); } catch (e) {} };
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
     del(k) { try { localStorage.removeItem(k); } catch (e) {} },
   };
-  const show = html => { app.innerHTML = html; window.scrollTo(0, 0); };
+  let lastShow = 0;
+  const show = html => {
+    app.innerHTML = html;
+    lastShow = performance.now();
+    window.scrollTo(0, 0);
+    const f = app.querySelector('[data-focus]');
+    if (f) f.focus({ preventScroll: true });
+  };
+  document.addEventListener('click', e => { if (performance.now() - lastShow < 350 && app.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
 
   let S = null, sel = null, eng = 'none';
   const setup = { archetype: 'seriesb', budget: 3 };
@@ -104,6 +113,15 @@
     bg.querySelector('.x').onclick = closeSheet;
     document.body.appendChild(bg);
     bg.querySelector('.x').focus();
+    const sheet = bg.querySelector('.sheet');
+    sheet.addEventListener('keydown', e => {
+      if (e.key !== 'Tab') return;
+      const f = [...sheet.querySelectorAll('button, a[href]')];
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
   }
   function closeSheet() {
     const bg = document.querySelector('.sheet-bg');
@@ -152,14 +170,14 @@
 
   // ------------------------------------------------------------ screens
   const heroHTML = () => `<section class="hero"><span class="slot" aria-hidden="true"></span>
-    <h1>${esc(C.title)}</h1><p class="tag">${esc(C.tagline)}</p>${C.intro.map(p => `<p>${esc(p)}</p>`).join('')}</section>`;
+    <h1 tabindex="-1" data-focus>${esc(C.title)}</h1><p class="tag">${esc(C.tagline)}</p>${C.intro.map(p => `<p>${esc(p)}</p>`).join('')}</section>`;
 
   function renderResume(game) {
     const A = D.ARCHETYPES[game.setup.archetype];
     show(heroHTML() + `<div class="resume-card"><p>${esc(fill(C.resume.line, { week: game.week, archetype: A.name, budget: C.setup.budgets[game.setup.budget] }))}</p>
       <div class="go"><button class="btn" id="resume">${esc(C.resume.resume)}</button><button class="link" id="restart">${esc(C.resume.restart)}</button></div></div>`);
     app.querySelector('#resume').onclick = () => { S = game; track('rc_resume', { week: String(game.week) }); next(); };
-    app.querySelector('#restart').onclick = () => { store.del('rc_run'); renderSetup(); };
+    app.querySelector('#restart').onclick = () => { store.del('rc_run'); store.del('rc_last'); renderSetup(); };
   }
 
   function renderSetup() {
@@ -200,7 +218,8 @@
     const card = hand.find(k => k.id === sel);
     const engOK = e => (card ? E.canAfford(S, card, e) : e === 'none');
     show(titleBlock(S.week) + stripHTML(false) +
-      `<div class="hand">${hand.map(k => cardHTML(k, { sel: k.id === sel, disabled: !E.canAfford(S, k, 'none') })).join('')}</div>
+      `<h2 class="sr" tabindex="-1" data-focus>${esc(C.week.handHeading)}</h2>
+       <div class="hand">${hand.map(k => cardHTML(k, { sel: k.id === sel, disabled: !E.canAfford(S, k, 'none') })).join('')}</div>
        <div class="handnote">${S.week === 1 ? `<button class="link" id="guide">${esc(C.cardGuide.open)}</button>` : ''}
          ${card ? `<button class="link define" id="define">${esc(C.week.defineTags)}</button>` : ''}</div>
        <p class="eng-h">${esc(C.week.engagementHeading)}</p>
@@ -241,7 +260,7 @@
       `<div class="played">${cardHTML(k, { static: true })}</div>
        <div class="resolve">
          <div class="feed" aria-hidden="true"><i></i><i></i><i class="you"></i><i></i><i></i><i></i><div class="light"></div><div class="ticks"></div></div>
-         <dl class="nums">
+         <dl class="nums" tabindex="-1" data-focus>
            <dt>${esc(L.metrics.impressions)}</dt><dd>${Math.round(r.impressions).toLocaleString('en-US')}</dd>
            <dt>${esc(L.metrics.held)}</dt><dd>${Math.round(r.held).toLocaleString('en-US')}</dd>
            <dt>${esc(L.metrics.contributions)}</dt><dd>${r.contributions.toFixed(1)}</dd>
@@ -252,9 +271,12 @@
        <p class="why" hidden>${esc(C.why[lv.key] || '')}</p>
        <p class="src" hidden>${esc(L.stampMeaning[lv.stamp])} <button class="link" id="srcbtn">${esc(C.week.sourceLink)}</button></p>
        <div class="go" style="margin-top:14px"><button class="btn" id="nx">${esc(S.done ? C.week.toResults : C.week.next)}</button></div>`);
+    const whyEl = app.querySelector('.why'), srcEl = app.querySelector('.src'), nx = app.querySelector('#nx');
+    nx.disabled = true;
     const played = app.querySelector('.played .card'), light = app.querySelector('.light'), ticks = app.querySelector('.ticks');
-    const reduce = reduceMotion();
+    const reduce = reduceMotion() || !light.animate;
     const land = () => {
+      if (!played.isConnected) return;
       const st = document.createElement('button');
       st.type = 'button';
       st.className = 'stamp stamp-btn' + (reduce ? '' : ' land');
@@ -263,8 +285,9 @@
       st.innerHTML = stampSVG(lv.stamp, lv.src);
       st.onclick = () => sourceSheet(lv);
       played.appendChild(st);
-      app.querySelector('.why').hidden = false;
-      app.querySelector('.src').hidden = false;
+      whyEl.hidden = false;
+      srcEl.hidden = false;
+      nx.disabled = false;
     };
     const nTicks = Math.min(12, Math.round((r.contributions / Math.max(1, r.impressions)) * 400));
     if (reduce) {
@@ -278,7 +301,7 @@
       setTimeout(land, 1000 + hold);
     }
     app.querySelector('#srcbtn').onclick = () => sourceSheet(lv);
-    app.querySelector('#nx').onclick = next;
+    nx.onclick = next;
     bindCommon();
   }
 
@@ -292,7 +315,7 @@
     if (res.event === 'gravity') conseq = S.nextReachMult > 1 ? ev.consequence.clear : ev.consequence.blurred;
     if (res.event === 'audit') conseq = S.headlineFit >= 0.8 ? ev.consequence.up : ev.consequence.down;
     show(titleBlock(res.row.week) + stripHTML(false) +
-      `<article class="memo"><h3>${esc(ev.name)}</h3><p>${esc(body)}</p><p class="conseq">${esc(conseq)}</p></article>
+      `<article class="memo"><h3 tabindex="-1" data-focus>${esc(ev.name)}</h3><p>${esc(body)}</p><p class="conseq">${esc(conseq)}</p></article>
        <p class="why">${esc(C.why['event:' + res.event])}</p>
        <p class="src">${esc(L.stamps[res.lever.stamp])}. ${esc(L.stampMeaning[res.lever.stamp])} <button class="link" id="srcbtn">${esc(C.week.sourceLink)}</button></p>
        <div class="go" style="margin-top:14px"><button class="btn" id="nx">${esc(S.done ? C.week.toResults : C.week.next)}</button></div>`);
@@ -313,7 +336,7 @@
     show(`<section class="end">
         <p class="gametitle">${esc(C.title)}<button type="button" class="stamp stamp-btn land titlestamp" style="--r:11deg" id="tstamp"
           aria-label="${esc(L.stamps[titleLever.stamp] + ': ' + short(titleLever.src) + '. ' + C.week.sourceLink)}">${stampSVG(titleLever.stamp, titleLever.src)}</button></p>
-        <h1>${esc(O.name)}</h1><p class="tagline">${esc(O.tagline)}</p>
+        <h1 tabindex="-1" data-focus>${esc(O.name)}</h1><p class="tagline">${esc(O.tagline)}</p>
         <div class="score"><div><span class="big">${F.pipeline.toFixed(1)}</span>
           <small><button class="term" data-term="pipeline">${esc(C.end.pipelineLabel)}</button>: ${esc(C.end.pipelineUnit)}</small></div>
           <button class="term band" data-term="band">${esc(L.bands[F.band])}</button></div>
@@ -330,7 +353,11 @@
         <div id="notify"></div>
         <p class="podcast">${esc(C.end.podcast)} <a href="/building-value">${esc(C.end.podcastLink)}</a></p>
         <h2 class="srch">${esc(C.end.sourcesHeading)}</h2>
-        <ol class="sources">${used.map(id => { const s = D.SOURCES[id]; return `<li>${esc(s.cite)}${s.url ? ` <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(C.week.sourceLink)}</a>` : ''}</li>`; }).join('')}</ol>
+        ${['proven', 'measured', 'disputed', 'invented'].map(tier => {
+          const ids = used.filter(id => D.SOURCES[id].tier === tier);
+          if (!ids.length) return '';
+          return `<h3 class="srct">${esc(L.stamps[tier])}</h3><ol class="sources">${ids.map(id => { const s = D.SOURCES[id]; return `<li>${esc(s.cite)}${s.url ? ` <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(C.week.sourceLink)}</a>` : ''}</li>`; }).join('')}</ol>`;
+        }).join('')}
       </section>`);
     app.querySelector('#tstamp').onclick = () => sourceSheet(titleLever, C.titleStamp.why);
     app.querySelector('#share').onclick = () => share(F);
@@ -356,8 +383,9 @@
     track('rc_start');
     const saved = store.get('rc_run');
     const game = saved ? E.replay(saved) : null;
-    if (game && !game.done && game.choices.length) return renderResume(game);
-    store.del('rc_run'); // stale, corrupted, finished or empty: nothing to resume
+    if (game && game.done) { S = game; return renderEnd(false); }
+    if (game && game.choices.length) return renderResume(game);
+    store.del('rc_run'); // stale, corrupted or empty: nothing to resume
     renderSetup();
   }
   boot();
