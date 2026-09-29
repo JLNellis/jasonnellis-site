@@ -1,6 +1,6 @@
 ---
 title: "80% of Your Comments Are Robots"
-kind: "Game"
+kind: "Playable model"
 tagline: "A love letter to LinkedIn."
 claim: "Almost everything you have been told about the LinkedIn algorithm is folklore, and the part LinkedIn published is short."
 url: "/robot-comments"
