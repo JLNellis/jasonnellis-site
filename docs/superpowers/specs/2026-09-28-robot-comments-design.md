@@ -44,7 +44,8 @@ Same pattern as The Feed.
 
 | File | Job |
 |---|---|
-| `robot-comments.html` | Standalone page (does NOT load `nav.js`; inline Plausible snippet like `the-feed.html`). Markup, game-scoped CSS tokens, UI controller. Loads `colors_and_type.css` for DM Sans / DM Mono. |
+| `robot-comments.html` | Standalone page (does NOT load `nav.js`): head, game-only CSS tokens and styles, the SVG ink filter, script tags. Plan 4 adds the inline Plausible snippet and OG tags. |
+| `robot-comments-ui.js` | Browser-only controller: renders every screen from engine state, all text from RobotCopy/RobotData; saves `rc_run`/`rc_last`. |
 | `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ v, stamp, src, mag }` (mag = 'ours' when the mechanism is sourced but the magnitude is ours) where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
 | `robot-comments-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
 | `robot-comments-copy.js` | Every player-facing string except card titles (global `RobotCopy`), linted by the tests. |

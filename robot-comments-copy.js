@@ -59,6 +59,7 @@
       sourceLink: 'Read the source',
       oursNote: 'The size of this effect is ours.',
       defineTags: 'What these mean',
+      titleBlock: { project: 'Project', week: 'Week', hours: 'Hours' },
     },
 
     labels: {

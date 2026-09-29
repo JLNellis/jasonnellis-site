@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>80% of Your Comments Are Robots: a LinkedIn posting game</title>
+<meta name="description" content="Twelve weeks of LinkedIn posting decisions. Every mechanic is stamped Proven, Measured, Disputed or Invented, with its source.">
+<link rel="canonical" href="https://jasonnellis.com/robot-comments">
+<meta name="theme-color" content="#0A2540">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Plan 4 adds: Plausible snippet, Open Graph / Twitter tags -->
+<link rel="stylesheet" href="/colors_and_type.css">
+<style>
+/* Game-only tokens (spec §12): engineering pad, index cards, four stamp inks. Site tokens untouched. */
+:root{
+  --rc-paper:#E3E9DF; --rc-grid:rgba(52,104,74,.12); --rc-grid-strong:rgba(52,104,74,.22);
+  --rc-card:#FBFAF5; --rc-rule:#D9DCD4; --rc-margin:#C8423A;
+  --rc-ink:#1B2630; --rc-ink-2:#46535C; --rc-ink-3:#76828A;
+  --rc-proven:#1F6B45; --rc-measured:#99620E; --rc-disputed:#6E3A6B; --rc-invented:#B3261E;
+  --rc-carbon:#2A2E31; --rc-carbon-ink:#E9E6DC; --rc-tape:rgba(236,226,190,.72);
+  --rc-feed:#C9CFC7; --rc-you:var(--color-accent-vivid);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg-base);-webkit-font-smoothing:antialiased;scroll-behavior:auto}
+body{font-family:var(--font-sans);color:var(--rc-ink)}
+button{font:inherit;color:inherit}
+.pad{max-width:430px;min-height:100dvh;margin:0 auto;position:relative;
+  background-color:var(--rc-paper);
+  background-image:linear-gradient(var(--rc-grid) 1px,transparent 1px),linear-gradient(90deg,var(--rc-grid) 1px,transparent 1px);
+  background-size:18px 18px;background-position:-1px -1px;
+  padding:0 16px 24px;display:flex;flex-direction:column;overflow-x:hidden}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--rc-you);outline-offset:2px}
+
+/* title block: an engineering pad header that records real state */
+.tb{display:grid;grid-template-columns:1fr auto auto;border:1.5px solid var(--rc-ink);border-top:0;margin:0 -16px 14px;background:rgba(251,250,245,.55)}
+.tb>div{padding:7px 10px;border-left:1px solid var(--rc-ink)}
+.tb>div:first-child{border-left:0}
+.tb small{display:block;font-size:10.5px;color:var(--rc-ink-3);letter-spacing:.01em}
+.tb b{font-weight:500;font-size:14px}
+.tb .num{font-size:15px}
+
+/* strip chart */
+.strip{display:grid;grid-template-columns:78px repeat(12,1fr);gap:2px;align-items:center;margin-bottom:14px}
+.strip .lab{font-size:11px;color:var(--rc-ink-2);white-space:nowrap;background:none;border:0;padding:0;text-align:left;cursor:help;
+  text-decoration:underline dotted var(--rc-ink-3);text-underline-offset:2px}
+.strip .c{height:11px;border-radius:1.5px;outline:1px solid var(--rc-grid-strong);outline-offset:-1px}
+.strip .c.ev{background:repeating-linear-gradient(135deg,var(--rc-grid-strong) 0 2px,transparent 2px 5px)}
+.strip.big{grid-template-columns:96px repeat(12,1fr)}
+.strip.big .c{height:18px}
+
+/* index cards */
+.hand{display:flex;flex-direction:column;margin:2px 0 8px}
+.card{position:relative;display:block;width:100%;text-align:left;border:0;padding:0;cursor:pointer;border-radius:3px;background:var(--rc-card);
+  box-shadow:0 1px 0 rgba(0,0,0,.05),0 8px 16px -9px rgba(20,40,30,.5);transition:transform .22s ease,box-shadow .22s ease}
+.hand .card:nth-child(1){transform:rotate(-.7deg)} .hand .card:nth-child(2){transform:rotate(.5deg)} .hand .card:nth-child(3){transform:rotate(-.3deg)}
+.card+.card{margin-top:-14px}
+.card .in{padding:14px 14px 14px 60px;min-height:104px;display:flex;flex-direction:column}
+.card .cost{position:absolute;top:13px;right:13px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--rc-ink-2)}
+.card .slot{position:absolute;left:12px;top:14px;width:38px;height:38px;border-radius:50%;border:1.5px dashed var(--rc-ink-3);opacity:.55}
+.card h3{margin:0 42px 0 0;font-size:19px;line-height:1.28;font-weight:500;letter-spacing:-.01em;padding-bottom:10px;border-bottom:1.5px solid var(--rc-margin)}
+.card .tags{display:none;padding-top:6px;font-size:12.5px;color:var(--rc-ink-2);line-height:22px;
+  background-image:repeating-linear-gradient(transparent 0 21px,var(--rc-rule) 21px 22px);background-position:0 6px}
+.card .tags span+span::before{content:" · ";color:var(--rc-ink-3)}
+.hand .card.sel,.card.sel{transform:translateY(-4px) rotate(0deg);box-shadow:0 0 0 2px var(--rc-ink),0 14px 22px -10px rgba(20,40,30,.55);z-index:5}
+.card.sel .tags{display:block}
+.card.static{cursor:default}
+.card[disabled]{cursor:not-allowed}
+.card[disabled] .in{opacity:.42}
+.card .need{display:none}
+.card[disabled] .need{display:inline;position:absolute;right:11px;bottom:8px;font-size:11.5px;color:var(--rc-invented)}
+.handnote{display:flex;justify-content:space-between;gap:12px;min-height:30px;margin-bottom:6px}
+.handnote .link{font-size:13px}
+.handnote .define{margin-left:auto}
+
+/* engagement: three ruled boxes, one inked */
+.eng-h{font-size:12px;color:var(--rc-ink-2);margin:0 0 6px}
+.eng{display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid var(--rc-ink);border-radius:3px;overflow:hidden;background:rgba(251,250,245,.6);margin-bottom:12px}
+.eng button{border:0;border-left:1px solid var(--rc-ink);background:transparent;padding:9px 6px;font-size:12.5px;line-height:1.25;cursor:pointer}
+.eng button:first-child{border-left:0}
+.eng button[aria-pressed=true]{background:var(--rc-ink);color:var(--rc-card)}
+.eng button[disabled]{color:var(--rc-ink-3);cursor:not-allowed;text-decoration:line-through}
+
+.go{display:flex;align-items:center;gap:16px;margin-top:auto}
+.btn{appearance:none;border:0;border-radius:3px;background:var(--rc-ink);color:var(--rc-card);font-weight:500;font-size:16px;padding:14px 18px;cursor:pointer;flex:1;text-align:center;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--rc-ink);box-shadow:inset 0 0 0 1.5px var(--rc-ink)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.link{background:none;border:0;padding:6px 0;font-size:14px;color:var(--rc-ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.term{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:help;text-decoration:underline dotted var(--rc-ink-3);text-underline-offset:3px}
+
+/* resolve: abstract feed */
+.resolve{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:start;margin-bottom:12px}
+.feed{position:relative;height:196px;overflow:hidden;border-radius:4px;background:rgba(27,38,48,.06);padding:8px}
+.feed i{display:block;height:24px;border-radius:5px;background:var(--rc-feed);margin-bottom:8px}
+.feed i.you{height:34px;background:var(--rc-card);box-shadow:0 0 0 2px var(--rc-you)}
+.feed .light{position:absolute;left:0;right:0;height:70px;top:-80px;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(255,255,240,.9),transparent 70%);mix-blend-mode:screen}
+.feed .ticks{position:absolute;right:2px;top:88px;display:flex;flex-direction:column;gap:2px}
+.feed .ticks b{width:6px;height:2px;background:var(--rc-ink)}
+.nums{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px;margin:6px 0 10px}
+.nums dt{color:var(--rc-ink-2)} .nums dd{margin:0;text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.why{font-size:14.5px;line-height:1.5;color:var(--rc-ink);margin:0 0 6px}
+.src{font-size:12px;color:var(--rc-ink-3);margin:0 0 6px}
+.src a,.src .link{color:inherit;font-size:12px;padding:0}
+
+/* the stamp (signature) */
+.stamp{position:absolute;width:96px;height:96px;left:-8px;top:-10px;pointer-events:none;z-index:6;mix-blend-mode:multiply;transform:rotate(var(--r));opacity:.92}
+.stamp svg{width:100%;height:100%;overflow:visible;display:block}
+.stamp.land{animation:land .3s cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes land{from{transform:scale(1.45) rotate(var(--r));opacity:0}to{transform:scale(1) rotate(var(--r));opacity:.92}}
+.stamp-btn{pointer-events:auto;background:none;border:0;padding:0;border-radius:50%;cursor:pointer;z-index:7}
+.played{margin:20px 0 12px}
+.played .card .in{padding-left:100px;min-height:96px}
+
+/* event: carbon-copy memo, taped in */
+.memo{position:relative;background:var(--rc-carbon);color:var(--rc-carbon-ink);padding:26px 18px 20px;margin:18px 4px 16px;
+  clip-path:polygon(0 6px,4% 0,9% 5px,15% 1px,22% 6px,30% 0,37% 4px,45% 1px,53% 6px,61% 2px,68% 5px,76% 0,84% 6px,91% 1px,100% 5px,100% 100%,0 100%);
+  box-shadow:0 10px 20px -12px rgba(0,0,0,.6)}
+.memo::before{content:"";position:absolute;top:-6px;left:50%;width:92px;height:22px;transform:translateX(-50%) rotate(-3deg);background:var(--rc-tape)}
+.memo .kind{font-size:12px;opacity:.7;margin:0 0 4px}
+.memo h3{margin:0 0 10px;font-size:22px;font-weight:700;letter-spacing:-.01em}
+.memo p{margin:0 0 10px;font-size:15.5px;line-height:1.5}
+.memo .conseq{border-top:1px dashed rgba(233,230,220,.35);padding-top:10px;font-size:14px}
+
+/* setup and resume */
+.hero{padding:30px 0 6px;position:relative}
+.hero h1{font-size:38px;line-height:1.02;letter-spacing:-.03em;margin:0 64px 8px 0;font-weight:700}
+.hero .tag{font-size:17px;color:var(--rc-ink-2);margin:0 0 14px;font-style:italic}
+.hero p{font-size:15.5px;line-height:1.5;margin:0 0 8px}
+.hero .slot{position:absolute;right:0;top:32px;width:58px;height:58px;border-radius:50%;border:1.5px dashed var(--rc-ink-3);opacity:.6}
+.introlinks{display:flex;flex-wrap:wrap;gap:0 16px;margin:0 0 4px}
+.introlinks .link{font-size:13.5px}
+.pick h2{font-size:14px;font-weight:500;margin:14px 0 8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border:1.5px solid var(--rc-ink);border-radius:3px;background:rgba(251,250,245,.7);text-align:left;padding:9px 10px;cursor:pointer}
+.tile b{display:block;font-weight:500;font-size:14.5px}
+.tile span{display:block;font-size:12px;color:var(--rc-ink-2);margin-top:2px}
+.tile[aria-pressed=true]{background:var(--rc-ink);color:var(--rc-card)}
+.tile[aria-pressed=true] span{color:rgba(251,250,245,.75)}
+.budget{grid-template-columns:repeat(3,1fr)}
+.resume-card{border:1.5px solid var(--rc-ink);border-radius:3px;background:rgba(251,250,245,.85);padding:14px;margin:18px 0}
+.resume-card p{margin:0 0 12px;font-size:15.5px}
+
+/* end */
+.gametitle{position:relative;font-size:13.5px;color:var(--rc-ink-2);margin:22px 0 0;padding-right:80px}
+.titlestamp{left:auto;right:6px;top:-26px;width:78px;height:78px}
+.end h1{font-size:44px;line-height:.98;letter-spacing:-.035em;margin:18px 0 8px;font-weight:700}
+.end .tagline{font-style:italic;font-size:17px;color:var(--rc-ink-2);margin:0 0 18px}
+.score{display:grid;grid-template-columns:1fr auto;align-items:end;border-top:1.5px solid var(--rc-ink);border-bottom:1.5px solid var(--rc-ink);padding:10px 0;margin-bottom:14px}
+.score .big{font-variant-numeric:tabular-nums;font-weight:700;font-size:60px;line-height:.9;letter-spacing:-.03em}
+.score small{display:block;font-size:12.5px;color:var(--rc-ink-2);margin-top:4px}
+.score .band{font-size:22px;font-weight:700;text-align:right}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:13px}
+.facts b{display:block;font-size:18px;font-weight:500}
+.disc{font-size:13px;line-height:1.5;color:var(--rc-ink-2);border-left:3px solid var(--rc-margin);padding-left:10px;margin:6px 0 0}
+.after{margin-top:26px}
+.actions{display:flex;gap:10px;margin:16px 0 8px}
+.podcast{border-top:1.5px solid var(--rc-ink);margin-top:18px;padding-top:14px;font-size:15px;line-height:1.55}
+.podcast a{color:var(--rc-ink)}
+.srch{font-size:14px;font-weight:500;margin:18px 0 6px}
+.sources{font-size:12.5px;line-height:1.5;color:var(--rc-ink-2);padding-left:18px;margin:0}
+.sources a{color:inherit}
+
+/* sheets: definitions, sources, card guide */
+.sheet-bg{position:fixed;inset:0;background:rgba(10,20,30,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{position:relative;width:100%;max-width:430px;max-height:86dvh;overflow:auto;background:var(--rc-card);border-radius:10px 10px 0 0;
+  padding:18px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+.sheet .x{position:absolute;top:10px;right:14px}
+.sheet h2{font-size:19px;margin:0 70px 10px 0;font-weight:700;letter-spacing:-.01em}
+.sheet dl{margin:0}
+.sheet dt{font-weight:500;margin-top:10px}
+.sheet dd{margin:2px 0 0;color:var(--rc-ink-2);font-size:14.5px;line-height:1.45}
+.sheet .bigstamp{position:relative;left:auto;top:auto;width:120px;height:120px;margin:0 auto 8px}
+.sheet .tiers{display:grid;grid-template-columns:56px 1fr;gap:8px 12px;align-items:center;margin-top:8px}
+.sheet .tiers .stamp{position:relative;left:auto;top:auto;width:56px;height:56px}
+.guide{position:relative;margin:6px 0 12px}
+.guide .mk{position:absolute;z-index:8;width:20px;height:20px;border-radius:50%;background:var(--rc-ink);color:var(--rc-card);font-size:12px;font-weight:700;display:grid;place-items:center}
+.guide ol{margin:0;padding-left:22px}
+.guide li{font-size:14.5px;line-height:1.45;margin:0 0 6px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--rc-ink);color:var(--rc-card);padding:9px 14px;border-radius:3px;font-size:14px;z-index:30}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="pad" id="app"><noscript><p style="padding:24px 0">This game needs JavaScript.</p></noscript></main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.3" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.35" numOctaves="1" seed="3" result="m"/>
+      <feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.3 1.55" result="mask"/>
+      <feComposite in="d" in2="mask" operator="in"/>
+    </filter>
+    <path id="ring" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1 -70,0"/>
+  </defs>
+</svg>
+
+<script src="/robot-comments-data.js"></script>
+<script src="/robot-comments-bands.js"></script>
+<script src="/robot-comments-engine.js"></script>
+<script src="/robot-comments-copy.js"></script>
+<script src="/robot-comments-ui.js"></script>
+</body>
+</html>

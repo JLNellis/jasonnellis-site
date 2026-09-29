@@ -33,7 +33,7 @@
 - Create: `robot-comments.html`, `robot-comments-ui.js`
 - Modify: `.eleventy.js`
 
-- [ ] **Step 1: Create `robot-comments.html`**
+- [x] **Step 1: Create `robot-comments.html`**
 
 ```html
 <!doctype html>
@@ -247,7 +247,7 @@ button{font:inherit;color:inherit}
 </html>
 ```
 
-- [ ] **Step 2: Create `robot-comments-ui.js`**
+- [x] **Step 2: Create `robot-comments-ui.js`**
 
 ```js
 /*
@@ -616,7 +616,7 @@ button{font:inherit;color:inherit}
 })();
 ```
 
-- [ ] **Step 2a: Title-block labels in the copy file**
+- [x] **Step 2a: Title-block labels in the copy file**
 
 In `robot-comments-copy.js`, inside `week`, after `defineTags: 'What these mean',` add:
 
@@ -624,7 +624,7 @@ In `robot-comments-copy.js`, inside `week`, after `defineTags: 'What these mean'
       titleBlock: { project: 'Project', week: 'Week', hours: 'Hours' },
 ```
 
-- [ ] **Step 3: Passthrough**
+- [x] **Step 3: Passthrough**
 
 In `.eleventy.js`, directly after the line `  eleventyConfig.addPassthroughCopy("the-feed-engine.js");`, add:
 
@@ -637,16 +637,16 @@ In `.eleventy.js`, directly after the line `  eleventyConfig.addPassthroughCopy(
   eleventyConfig.addPassthroughCopy("robot-comments-copy.js");
 ```
 
-- [ ] **Step 4: Build and check the output**
+- [x] **Step 4: Build and check the output**
 
 Run: `npm run build && ls _site/robot-comments* && node -e "new Function(require('fs').readFileSync('robot-comments-ui.js','utf8'))" && npm run test:rc`
 Expected: Eleventy completes; `_site/` lists `robot-comments.html` and the five `robot-comments-*.js` files; the syntax check prints nothing; `41/41 passed`.
 
-- [ ] **Step 5: Spec row**
+- [x] **Step 5: Spec row**
 
 In `docs/superpowers/specs/2026-09-28-robot-comments-design.md` §3, replace the `robot-comments.html` row's description with: `Standalone page (does NOT load \`nav.js\`): head, game-only CSS tokens and styles, the SVG ink filter, script tags. Plan 4 adds the inline Plausible snippet and OG tags.` and add a row after it: `| \`robot-comments-ui.js\` | Browser-only controller: renders every screen from engine state, all text from RobotCopy/RobotData; saves \`rc_run\`/\`rc_last\`. |`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add robot-comments.html robot-comments-ui.js robot-comments-copy.js .eleventy.js docs/superpowers/specs/2026-09-28-robot-comments-design.md docs/superpowers/plans/2026-09-29-robot-comments-ui.md
