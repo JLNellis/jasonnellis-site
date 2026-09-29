@@ -186,7 +186,7 @@
       'control-group': {
         name: 'The Control Group',
         tagline: 'Every experiment needs one.',
-        diagnosis: 'No bait, no long silences, and no standout result. Your fingerprint was legible but not sharp, and your pipeline sat in the middle of the range. The two things this model rewards were both available to you: one subject held for twelve weeks, and specifics in the first line. Neither was pulled far enough to show up.',
+        diagnosis: 'No long silences and no standout result. Your fingerprint was legible but not sharp, and your pipeline sat in the middle of the range. The two things this model rewards were both available to you: one subject held for twelve weeks, and specifics in the first line. Neither was pulled far enough to show up.',
       },
     },
 
