@@ -145,7 +145,7 @@
     const src = D.SOURCES[lever.src] || {};
     openSheet(L.stamps[lever.stamp], `<div class="stamp bigstamp" style="--r:${tilt(lever.key)}deg">${stampSVG(lever.stamp, lever.src)}</div>
       <p class="why">${esc(why || C.why[lever.key] || '')}</p>
-      <p class="src">${esc(L.stampMeaning[lever.stamp])}${lever.mag === 'ours' ? ' ' + esc(C.week.oursNote) : ''}</p>
+      <p class="src">${esc(L.stampMeaning[lever.stamp])}${lever.mag === 'ours' && !/\bours\b/.test(why || C.why[lever.key] || '') ? ' ' + esc(C.week.oursNote) : ''}</p>
       <p class="src">${esc(src.cite || '')}${src.url ? ` <a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(C.week.sourceLink)}</a>` : ''}</p>`);
   }
 

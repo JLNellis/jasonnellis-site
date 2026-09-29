@@ -590,7 +590,7 @@ In `privacy.html`, in the "Podcast updates" paragraph, replace `on the writing p
 
 In §3, replace the `robot-comments.html` row's description with: `Standalone page: head, game-only CSS tokens and styles, the SVG ink filter, script tags. Loads \`nav.js\` for Plausible and \`SITE_CONFIG\` (it renders no header or footer).` In §15 add a row: `| Standalone page carries Plausible inline | Loads nav.js (no header rendered) | Single source for Plausible and the Kit endpoint |`. In §18, mark the Kit and Plausible items with the outcome of Tasks 7 and 8 when they are done.
 
-- [x] **Step 7: Build and check locally** (browser check pending)
+- [x] **Step 7: Build and check locally** (browser check done 2026-09-29)
 
 Run: `npm run build && grep -c "robot-comments" _site/sitemap.xml && grep -n "robot-comments" _redirects && ls _site/experiments/index.html`
 Expected: build succeeds; sitemap count `2` (`/robot-comments` and `/robot-comments/evidence/`); the two redirect lines; experiments page exists.

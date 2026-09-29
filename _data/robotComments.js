@@ -11,7 +11,8 @@ const source = id => ({ id, cite: D.SOURCES[id].cite, url: D.SOURCES[id].url });
 const row = (key, label, entry) => ({
   key, label,
   stamp: entry.stamp, stampLabel: L.stamps[entry.stamp],
-  ours: entry.mag === 'ours',
+  // Add the 'size is ours' note only where the why-line does not already say so.
+  ours: entry.mag === 'ours' && !/\bours\b/.test(C.why[key]),
   why: C.why[key],
   source: source(entry.src),
 });
