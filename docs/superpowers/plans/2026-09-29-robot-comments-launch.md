@@ -441,7 +441,7 @@ git commit -m "Robot Comments: share cards (default + six archetypes) and render
 **Files:**
 - Modify: `robot-comments.html`, `robot-comments-ui.js`
 
-- [ ] **Step 1: Head**
+- [x] **Step 1: Head**
 
 In `robot-comments.html`, replace the line `<!-- Plan 4 adds: Plausible snippet, Open Graph / Twitter tags -->` with:
 
@@ -462,7 +462,7 @@ In `robot-comments.html`, replace the line `<!-- Plan 4 adds: Plausible snippet,
 <script src="/nav.js"></script>
 ```
 
-- [ ] **Step 2: Email-box styles**
+- [x] **Step 2: Email-box styles**
 
 In `robot-comments.html`, after the `.srct{...}` rule, add:
 
@@ -475,7 +475,7 @@ In `robot-comments.html`, after the `.srct{...}` rule, add:
 .notify [role=status]{margin-top:8px}
 ```
 
-- [ ] **Step 3: `renderNotify` in `robot-comments-ui.js`**
+- [x] **Step 3: `renderNotify` in `robot-comments-ui.js`**
 
 Add this function directly above `async function share(F) {`:
 
@@ -522,12 +522,12 @@ In `renderEnd`, directly after the line `app.querySelector('#ev').onclick = () =
     renderNotify(F);
 ```
 
-- [ ] **Step 4: Check (no submission)**
+- [x] **Step 4: Check (no submission)**
 
 Run: `node -e "new Function(require('fs').readFileSync('robot-comments-ui.js','utf8'))" && npm run test:rc && npm run build`
 Expected: no syntax output, `42/42 passed`, build succeeds.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments.html robot-comments-ui.js docs/superpowers/plans/2026-09-29-robot-comments-launch.md

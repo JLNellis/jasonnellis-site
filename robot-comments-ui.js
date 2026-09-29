@@ -363,7 +363,43 @@
     app.querySelector('#share').onclick = () => share(F);
     app.querySelector('#again').onclick = () => { track('rc_replay'); store.del('rc_last'); store.del('rc_run'); S = null; renderSetup(); };
     app.querySelector('#ev').onclick = () => track('rc_evidence_opened', { from: 'end' });
+    renderNotify(F);
     bindCommon();
+  }
+
+  // Optional Building Value notify box (spec §10.3, §14). Posts straight to Kit, no Kit script, no cookie.
+  // The four fields are Kit custom fields; Kit ignores them if they do not exist.
+  function renderNotify(F) {
+    const box = app.querySelector('#notify');
+    if (!box || typeof SITE_CONFIG === 'undefined') return;
+    box.innerHTML = `<form class="notify" novalidate>
+        <label for="rc-email">${esc(C.end.emailLine)}</label>
+        <div class="notify-row"><input id="rc-email" type="email" name="email_address" required autocomplete="email" placeholder="${esc(C.end.emailPlaceholder)}">
+          <button class="btn" type="submit">${esc(C.end.emailButton)}</button></div>
+        <p class="src" role="status" aria-live="polite"></p>
+      </form>`;
+    const form = box.querySelector('form'), input = form.querySelector('input'), btn = form.querySelector('button'), status = form.querySelector('[role=status]');
+    form.onsubmit = async e => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      btn.disabled = true;
+      const body = new URLSearchParams({
+        email_address: input.value.trim(),
+        'fields[rc_archetype]': F.archetype,
+        'fields[rc_budget]': String(S.setup.budget),
+        'fields[rc_tax]': String(F.tax),
+        'fields[rc_headline]': S.setup.archetype,
+      });
+      try {
+        await fetch(SITE_CONFIG.newsletterPost, { method: 'POST', mode: 'no-cors', body });
+        status.textContent = C.end.emailDone;
+        input.disabled = true;
+        track('rc_email');
+      } catch (err) {
+        status.textContent = C.end.emailError;
+        btn.disabled = false;
+      }
+    };
   }
 
   async function share(F) {

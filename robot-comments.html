@@ -10,7 +10,20 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<!-- Plan 4 adds: Plausible snippet, Open Graph / Twitter tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jason Nellis">
+<meta property="og:url" content="https://jasonnellis.com/robot-comments">
+<meta property="og:title" content="80% of Your Comments Are Robots">
+<meta property="og:description" content="And they love you. Twelve weeks of LinkedIn posting decisions, every mechanic stamped Proven, Measured, Disputed or Invented.">
+<meta property="og:image" content="https://jasonnellis.com/og-robot-comments.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="80% of Your Comments Are Robots">
+<meta name="twitter:description" content="And they love you. Twelve weeks of LinkedIn posting decisions, every mechanic stamped Proven, Measured, Disputed or Invented.">
+<meta name="twitter:image" content="https://jasonnellis.com/og-robot-comments.jpg">
+<!-- nav.js supplies Plausible and SITE_CONFIG (Kit endpoint). No header or footer renders: this page has no site-header/site-footer tags. -->
+<script src="/nav.js"></script>
 <link rel="stylesheet" href="/colors_and_type.css">
 <style>
 /* Game-only tokens (spec §12): engineering pad, index cards, four stamp inks. Site tokens untouched. */
@@ -165,6 +178,12 @@ button{font:inherit;color:inherit}
 .sources{font-size:12.5px;line-height:1.5;color:var(--rc-ink-2);padding-left:18px;margin:0}
 .sources a{color:inherit}
 .srct{font-size:12.5px;font-weight:500;margin:10px 0 2px;color:var(--rc-ink-2)}
+.notify{margin:18px 0 6px}
+.notify label{display:block;font-size:15px;margin:0 0 8px}
+.notify-row{display:flex;gap:8px}
+.notify input{flex:1;min-width:0;font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--rc-ink);border-radius:3px;background:var(--rc-card);color:var(--rc-ink)}
+.notify .btn{flex:0 0 auto}
+.notify [role=status]{margin-top:8px}
 
 /* sheets: definitions, sources, card guide */
 .sheet-bg{position:fixed;inset:0;background:rgba(10,20,30,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
