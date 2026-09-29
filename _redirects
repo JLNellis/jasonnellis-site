@@ -10,6 +10,7 @@
 /lens.html       /lens      301!
 /the-feed.html   /the-feed  301!
 /burn-rate.html  /burn-rate 301!
+/robot-comments.html /robot-comments 301!
 /building-value.html /building-value 301!
 /privacy.html    /privacy   301!
 /thanks.html     /thanks    301!
@@ -37,6 +38,7 @@
 /lens       /lens.html       200
 /the-feed   /the-feed.html   200
 /burn-rate  /burn-rate.html  200
+/robot-comments  /robot-comments.html  200
 
 # The Feed on its own subdomain: serve the game at thefeed.jasonnellis.com root.
 # Only the exact root is rewritten, so /the-feed-engine.js and /the-feed-assets/*

@@ -542,11 +542,11 @@ git commit -m "Robot Comments: OG tags, nav.js for Plausible + Kit endpoint, Bui
 - Modify: `_redirects`, `sitemap.njk`, `privacy.html`, `CLAUDE.md`, spec
 - Create: `tool-index/robot-comments.md`
 
-- [ ] **Step 1: `_redirects`**
+- [x] **Step 1: `_redirects`**
 
 After the line `/burn-rate.html  /burn-rate 301!` add `/robot-comments.html /robot-comments 301!`. After the line `/burn-rate  /burn-rate.html  200` add `/robot-comments  /robot-comments.html  200`.
 
-- [ ] **Step 2: `/experiments` card** (the tools collection also puts `/robot-comments` in the sitemap)
+- [x] **Step 2: `/experiments` card** (the tools collection also puts `/robot-comments` in the sitemap)
 
 Create `tool-index/robot-comments.md`:
 
@@ -564,7 +564,7 @@ order: 4
 Twelve weeks of LinkedIn posting decisions for a founder with a headline and a pipeline to fill. Every result is stamped Proven, Measured, Disputed or Invented, with the source one tap away. No login, and your progress stays in your browser.
 ```
 
-- [ ] **Step 3: Sitemap**
+- [x] **Step 3: Sitemap**
 
 In `sitemap.njk`, after the `{%- endfor %}` that closes the `collections.tools` loop, add:
 
@@ -572,11 +572,11 @@ In `sitemap.njk`, after the `{%- endfor %}` that closes the `collections.tools` 
   <url><loc>https://jasonnellis.com/robot-comments/evidence/</loc></url>
 ```
 
-- [ ] **Step 4: Privacy**
+- [x] **Step 4: Privacy**
 
 In `privacy.html`, in the "Podcast updates" paragraph, replace `on the writing pages, the homepage, the experiments index and the podcast page` with `on the writing pages, the homepage, the experiments index, the podcast page and the end of the <a href="/robot-comments">80% of Your Comments Are Robots</a> game`. Then, directly after the sentence ending `send the occasional update.`, add: ` The box at the end of the game also sends four details about the game you just played (the result you got, the weekly hours you picked, how many bait cards you played and your headline type) so I can see which results people sign up from. Your game itself never leaves your browser.` Update the hero eyebrow date `Last updated 22 September 2026` to today's date in the same format.
 
-- [ ] **Step 5: CLAUDE.md**
+- [x] **Step 5: CLAUDE.md**
 
 1. In the "Pages" table, add a row after the `burn-rate.html` row:
 
@@ -586,18 +586,18 @@ In `privacy.html`, in the "Podcast updates" paragraph, replace `on the writing p
 
 2. In "Analytics & privacy", in the Forms bullet, after the sentence about the Building Value notify form, add: `The Robot Comments end screen posts the same Kit form in the background with four custom fields (\`rc_archetype\`, \`rc_budget\`, \`rc_tax\`, \`rc_headline\`); /privacy lists them.`
 
-- [ ] **Step 6: Spec**
+- [x] **Step 6: Spec**
 
 In §3, replace the `robot-comments.html` row's description with: `Standalone page: head, game-only CSS tokens and styles, the SVG ink filter, script tags. Loads \`nav.js\` for Plausible and \`SITE_CONFIG\` (it renders no header or footer).` In §15 add a row: `| Standalone page carries Plausible inline | Loads nav.js (no header rendered) | Single source for Plausible and the Kit endpoint |`. In §18, mark the Kit and Plausible items with the outcome of Tasks 7 and 8 when they are done.
 
-- [ ] **Step 7: Build and check locally**
+- [x] **Step 7: Build and check locally** (browser check pending)
 
 Run: `npm run build && grep -c "robot-comments" _site/sitemap.xml && grep -n "robot-comments" _redirects && ls _site/experiments/index.html`
 Expected: build succeeds; sitemap count `2` (`/robot-comments` and `/robot-comments/evidence/`); the two redirect lines; experiments page exists.
 
 Then with `preview_start` name `site`: open `http://localhost:8080/experiments/` (the new card is there and links to `/robot-comments`), `http://localhost:8080/robot-comments/evidence/` (site header and footer, 30 rows on the paper panel, stamps coloured by tier, no console errors), `http://localhost:8080/robot-comments/r/ghost/` (redirects to `/robot-comments`, which 404s locally because the dev server ignores `_redirects`; that is expected), and finish a game at `http://localhost:8080/robot-comments.html` (the email box renders under "See all the evidence"; do not submit it). Confirm `typeof SITE_CONFIG` is `'object'` on the game page and no `<site-header>` renders.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add _redirects tool-index/robot-comments.md sitemap.njk privacy.html CLAUDE.md docs/superpowers/specs/2026-09-28-robot-comments-design.md docs/superpowers/plans/2026-09-29-robot-comments-launch.md

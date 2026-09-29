@@ -44,7 +44,7 @@ Same pattern as The Feed.
 
 | File | Job |
 |---|---|
-| `robot-comments.html` | Standalone page (does NOT load `nav.js`): head, game-only CSS tokens and styles, the SVG ink filter, script tags. Plan 4 adds the inline Plausible snippet and OG tags. |
+| `robot-comments.html` | Standalone page: head, game-only CSS tokens and styles, the SVG ink filter, script tags. Loads `nav.js` for Plausible and `SITE_CONFIG` (it renders no header or footer). |
 | `robot-comments-ui.js` | Browser-only controller: renders every screen from engine state, all text from RobotCopy/RobotData; saves `rc_run`/`rc_last`. |
 | `robot-comments-engine.js` | Pure model, no DOM. Importable by Node. One `CONFIG` block; every coefficient is `{ v, stamp, src, mag }` (mag = 'ours' when the mechanism is sourced but the magnitude is ours) where `stamp ∈ {proven, measured, disputed, invented, ours}` and `source` is a `SOURCES` id (null only for `ours`). Exports `newGame(setup)`, `deal(state)`, `resolveWeek(state, choice)`, `resolveEvent(state)`, `finish(state)`. |
 | `robot-comments-data.js` | Card pool, bait cards, events, archetype copy, why-line templates, `SOURCES` table. |
@@ -428,6 +428,7 @@ anywhere, reduced motion, Plausible events firing, share fallback, email post sh
 | Jason's multipliers 1.25/0.8/1.3/1.5/1.2 | 1.10/0.90/1.2/2.0/1.5 | Re-derived from the CSV |
 | contrib_p = dwell_p × … | format term from measured eng ÷ reach | Avoid double-counting |
 | Title "Twelve Weeks" | "80% of Your Comments Are Robots" / "And they love you"; `/robot-comments` | Jason, 2026-09-28; title self-stamped (§1) |
+| Standalone page carries Plausible inline | Loads nav.js (no header rendered) | Single source for Plausible and the Kit endpoint |
 | "No saving progress" | Same-device resume via replayed choice list | Jason, 2026-09-28 |
 | Distribution loop on absolute probabilities | normalised to base dwell/contribution; scroll term dropped | Absolute form shrank reach for 39 of 47 cards and made the contribution term inert |
 | DM rate 0.04, integer pipeline | 0.12, one decimal | Integer rounding showed 0 or 1 for small archetypes |
