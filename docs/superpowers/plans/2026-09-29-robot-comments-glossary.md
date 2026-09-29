@@ -25,7 +25,7 @@
 - Modify: `robot-comments-copy.js`
 - Modify: `tools/robot-comments-test.js`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Insert above the runner line in `tools/robot-comments-test.js`:
 
@@ -57,12 +57,12 @@ test('card guide and evidence copy are complete', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `npm run test:rc`
 Expected: the three new tests FAIL (`Cannot read properties of undefined (reading 'formats')` and similar); 38 others pass.
 
-- [ ] **Step 3: Add the copy**
+- [x] **Step 3: Add the copy**
 
 In `robot-comments-copy.js`:
 
@@ -160,12 +160,12 @@ In `robot-comments-copy.js`:
     },
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `npm run test:rc`
 Expected: `41/41 passed`. If the house-rules or neutrality test flags a string, rewrite that string minimally and report it; never loosen a test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add robot-comments-copy.js tools/robot-comments-test.js docs/superpowers/plans/2026-09-29-robot-comments-glossary.md

@@ -471,6 +471,32 @@ test('copy: house rules hold across all copy and card titles', () => {
   for (const k of D.CARDS) assert.ok(k.title.length <= 100, 'title too long: ' + k.id);
 });
 
+// ---------------------------------------------------------------- glossary (plan 2b, spec §10a)
+test('glossary: every term the player sees has a definition', () => {
+  const G = C.glossary;
+  for (const k of Object.keys(E.CONFIG.formats)) assert.ok(G.formats[k], 'format ' + k);
+  for (const k of ['on', 'adj', 'off']) assert.ok(G.topics[k], 'topic ' + k);
+  for (const k of Object.keys(E.CONFIG.hooks)) assert.ok(G.hooks[k], 'hook ' + k);
+  for (const k of Object.keys(E.CONFIG.substance)) assert.ok(G.substance[k], 'substance ' + k);
+  for (const k of Object.keys(E.CONFIG.cta)) assert.ok(G.cta[k], 'cta ' + k);
+  for (const k of E.CONFIG.engagements) assert.ok(G.engagement[k], 'engagement ' + k);
+  for (const k of Object.keys(C.labels.metrics)) assert.ok(G.metrics[k], 'metric ' + k);
+  for (const k of ['hours', 'pipeline', 'band', 'folkloreTax', 'clarity', 'event', 'cluster']) assert.ok(G.terms[k], 'term ' + k);
+});
+
+test('glossary: definitions describe, they do not advise', () => {
+  const banned = /\b(best|better|worse|good|bad|boost|boosts|penalty|penalises|hurts|helps|should)\b/i;
+  for (const s of allStrings(C.glossary)) assert.ok(!banned.test(s), 'evaluative definition: ' + s);
+});
+
+test('card guide and evidence copy are complete', () => {
+  const g = C.cardGuide;
+  for (const k of ['title', 'open', 'firstLine', 'tags', 'cost', 'slot', 'stampsIntro', 'close']) assert.ok(g[k], 'cardGuide.' + k);
+  const ev = C.evidence;
+  for (const k of ['title', 'description', 'intro', 'fromIntro', 'fromEnd', 'leverHeading', 'effectHeading', 'sourceHeading', 'titleStampHeading', 'backToGame']) assert.ok(ev[k], 'evidence.' + k);
+  assert.ok(C.week.defineTags, 'week.defineTags');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
