@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{--paper:#E3E9DF;--grid:rgba(52,104,74,.14);--ink:#1B2630;--ink2:#46535C;--card:#FBFAF5;--margin:#C8423A;--invented:#B3261E}
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:630px;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;
+  background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:30px 30px}
+.card{position:absolute;left:70px;top:64px;width:1060px;height:500px;background:var(--card);border-radius:6px;
+  box-shadow:0 22px 44px -26px rgba(20,40,30,.6);transform:rotate(-.6deg);padding:54px 64px}
+.kicker{font-size:28px;color:var(--ink2);padding-bottom:18px;border-bottom:3px solid var(--margin);margin-bottom:30px;max-width:720px}
+.kicker:empty{display:none}
+h1{font-size:80px;line-height:.98;letter-spacing:-.035em;font-weight:700;max-width:800px}
+.tag{font-size:36px;font-style:italic;color:var(--ink2);margin-top:22px;max-width:800px}
+.url{position:absolute;left:64px;bottom:42px;font-size:24px;color:var(--ink2)}
+.stamp{position:absolute;right:50px;top:34px;width:230px;height:230px;transform:rotate(11deg);opacity:.92;mix-blend-mode:multiply}
+.stamp svg{width:100%;height:100%;overflow:visible}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.3" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.35" numOctaves="1" seed="3" result="m"/>
+    <feColorMatrix in="m" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.3 1.55" result="mask"/>
+    <feComposite in="d" in2="mask" operator="in"/>
+  </filter>
+  <path id="ring" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1 -70,0"/>
+</defs></svg>
+<div class="card"><p class="kicker" id="k"></p><h1 id="h"></h1><p class="tag" id="t"></p><p class="url">jasonnellis.com/robot-comments</p><div class="stamp" id="s"></div></div>
+<script src="../../robot-comments-data.js"></script>
+<script src="../../robot-comments-copy.js"></script>
+<script>
+  const D = RobotData, C = RobotCopy;
+  const a = new URLSearchParams(location.search).get('a') || 'default';
+  const o = C.outcomes[a];
+  document.getElementById('k').textContent = o ? C.title : '';
+  document.getElementById('h').textContent = o ? o.name : C.title;
+  document.getElementById('t').textContent = o ? o.tagline : C.tagline;
+  const src = C.titleStamp.src, name = D.SOURCES[src].cite.split(',')[0].split(':')[0].toUpperCase();
+  const ring = (name + ' · ' + name).slice(0, 44), word = C.labels.stamps[C.titleStamp.stamp].toUpperCase();
+  document.getElementById('s').innerHTML = `<svg viewBox="0 0 100 100"><g filter="url(#ink)" fill="none" stroke="var(--invented)" style="color:var(--invented)">
+    <circle cx="50" cy="50" r="46" stroke-width="3.6"/><circle cx="50" cy="50" r="41" stroke-width="1.2"/>
+    <text font-family="DM Sans" font-weight="700" font-size="7.2" letter-spacing="1.1" fill="currentColor" stroke="none"><textPath href="#ring" startOffset="2%">${ring}</textPath></text>
+    <rect x="6" y="40" width="88" height="20" fill="var(--card)" stroke-width="2.2"/>
+    <text x="50" y="55" text-anchor="middle" font-family="DM Sans" font-weight="700" font-size="11.5" letter-spacing="0.8" fill="currentColor" stroke="none">${word}</text></g></svg>`;
+</script>
+</body></html>

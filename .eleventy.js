@@ -52,6 +52,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("robot-comments-bands.js");
   eleventyConfig.addPassthroughCopy("robot-comments-engine.js");
   eleventyConfig.addPassthroughCopy("robot-comments-copy.js");
+  eleventyConfig.addPassthroughCopy("og-robot-comments*.jpg");
   // The Feed assets: only the WebP derivatives, sounds and credits ship. The PNG art library
   // (the-feed-assets/the-feed-art-library-v2, ~95 MB of originals) is gitignored and not deployed.
   eleventyConfig.addPassthroughCopy("the-feed-assets/imgs");

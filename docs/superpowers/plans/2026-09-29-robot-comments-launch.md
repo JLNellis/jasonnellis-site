@@ -324,7 +324,7 @@ git commit -m "Robot Comments: six noindex share pages with archetype cards"
 - Create: seven `og-robot-comments*.jpg` at the repo root
 - Modify: `.eleventy.js`
 
-- [ ] **Step 1: Create `tools/robot-comments-og/og.html`**
+- [x] **Step 1: Create `tools/robot-comments-og/og.html`**
 
 ```html
 <!doctype html><html><head><meta charset="utf-8">
@@ -375,7 +375,7 @@ h1{font-size:92px;line-height:.98;letter-spacing:-.035em;font-weight:700;max-wid
 </body></html>
 ```
 
-- [ ] **Step 2: Create `tools/robot-comments-og/render.sh`** and make it executable (`chmod +x`)
+- [x] **Step 2: Create `tools/robot-comments-og/render.sh`** and make it executable (`chmod +x`)
 
 ```sh
 #!/bin/sh
@@ -395,7 +395,7 @@ for a in default pod-casualty ghost generalist broadcaster fingerprinted-founder
 done
 ```
 
-- [ ] **Step 3: Create `tools/robot-comments-og/README.md`**
+- [x] **Step 3: Create `tools/robot-comments-og/README.md`**
 
 ```markdown
 # 80% of Your Comments Are Robots: share cards
@@ -411,12 +411,12 @@ Writes `og-robot-comments.jpg` (the game page, the evidence page) and `og-robot-
 the `og-robot-comments*.jpg` glob in `.eleventy.js`.
 ```
 
-- [ ] **Step 4: Render and check**
+- [x] **Step 4: Render and check**
 
 Run: `tools/robot-comments-og/render.sh && python3 -c "from PIL import Image; import glob; print(sorted((f, Image.open(f).size) for f in glob.glob('og-robot-comments*.jpg')))"`
 Expected: seven `wrote ...` lines, then seven files each `(1200, 630)`. Open `og-robot-comments.jpg` and `og-robot-comments-control-group.jpg` with the Read tool and confirm: the title/archetype is legible, the stamp reads INVENTED, nothing is clipped. If the archetype name wraps past three lines, lower `h1` font-size in `og.html` to 80px and rerender.
 
-- [ ] **Step 5: Passthrough**
+- [x] **Step 5: Passthrough**
 
 In `.eleventy.js`, after `  eleventyConfig.addPassthroughCopy("robot-comments-copy.js");` add:
 
@@ -427,7 +427,7 @@ In `.eleventy.js`, after `  eleventyConfig.addPassthroughCopy("robot-comments-co
 Run: `npm run build && ls _site/og-robot-comments*.jpg | wc -l`
 Expected: `7`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/robot-comments-og og-robot-comments*.jpg .eleventy.js docs/superpowers/plans/2026-09-29-robot-comments-launch.md
