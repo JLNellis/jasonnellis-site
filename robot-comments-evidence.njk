@@ -1,0 +1,89 @@
+---
+permalink: /robot-comments/evidence/
+eleventyExcludeFromCollections: true
+---
+{%- set rc = robotComments -%}
+{%- set ev = rc.evidence -%}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ ev.title | e }}</title>
+<meta name="description" content="{{ ev.description | e }}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jason Nellis">
+<meta property="og:url" content="https://jasonnellis.com/robot-comments/evidence/">
+<meta property="og:title" content="{{ ev.title | e }}">
+<meta property="og:description" content="{{ ev.description | e }}">
+<meta property="og:image" content="https://jasonnellis.com/og-robot-comments.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ ev.title | e }}">
+<meta name="twitter:description" content="{{ ev.description | e }}">
+<meta name="twitter:image" content="https://jasonnellis.com/og-robot-comments.jpg">
+<link rel="canonical" href="https://jasonnellis.com/robot-comments/evidence/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<script src="/nav.js"></script>
+<style>
+  /* The game's paper and stamp inks, scoped to this page (spec §12 game-only tokens). */
+  .ev{--paper:#E3E9DF;--grid:rgba(52,104,74,.12);--ink:#1B2630;--ink2:#46535C;--ink3:#5C6870;--margin:#C8423A;
+      --proven:#1F6B45;--measured:#99620E;--disputed:#6E3A6B;--invented:#B3261E}
+  .ev{max-width:820px;margin:0 auto;padding:56px 16px 72px}
+  .ev-hero h1{font-size:clamp(34px,5vw,54px);line-height:1.05;letter-spacing:-.025em;font-weight:700;margin:0 0 18px;max-width:18ch}
+  .ev-hero .lede{font-size:18px;line-height:1.6;color:var(--fg-2);margin:0 0 24px;max-width:40em}
+  .ev-paper{margin-top:40px;background-color:var(--paper);color:var(--ink);border-radius:6px;padding:28px 22px;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px}
+  .ev-tier+.ev-tier{margin-top:36px}
+  .ev-tier h2{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:17px;font-weight:500;color:var(--ink2);margin:0 0 14px;
+    padding-bottom:10px;border-bottom:1.5px solid var(--margin)}
+  .ev-stamp{display:inline-block;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;
+    border:2.5px solid currentColor;border-radius:4px;transform:rotate(-3deg)}
+  .ev-proven{color:var(--proven)} .ev-measured{color:var(--measured)} .ev-disputed{color:var(--disputed)} .ev-invented{color:var(--invented)}
+  .ev-row{padding:14px 0;border-bottom:1px solid rgba(27,38,48,.12)}
+  .ev-row:last-child{border-bottom:0}
+  .ev-row h3{font-size:18px;font-weight:500;margin:0 0 6px;color:var(--ink)}
+  .ev-row p{margin:0 0 6px;font-size:15.5px;line-height:1.55;color:var(--ink)}
+  .ev-row .ev-src{font-size:13px;color:var(--ink3)}
+  .ev-row .ev-src a{color:inherit}
+</style>
+</head>
+<body>
+<site-header></site-header>
+<main class="ev">
+  <section class="ev-hero">
+    <h1>{{ ev.title | e }}</h1>
+    <p class="lede">{{ ev.intro | e }}</p>
+    <a class="btn primary" href="/robot-comments">{{ ev.backToGame | e }}</a>
+  </section>
+
+  <div class="ev-paper">
+    <section class="ev-tier" id="title">
+      <h2><span class="ev-stamp ev-{{ rc.titleStamp.stamp }}">{{ rc.titleStamp.stampLabel | e }}</span> {{ ev.titleStampHeading | e }}</h2>
+      <article class="ev-row">
+        <h3>{{ rc.title | e }}</h3>
+        <p>{{ rc.titleStamp.why | e }}</p>
+        <p class="ev-src">{{ rc.titleStamp.source.cite | e }}{% if rc.titleStamp.source.url %} <a href="{{ rc.titleStamp.source.url }}" target="_blank" rel="noopener">{{ rc.sourceLink | e }}</a>{% endif %}</p>
+      </article>
+    </section>
+    {%- for g in rc.tiers %}
+    <section class="ev-tier" id="{{ g.tier }}">
+      <h2><span class="ev-stamp ev-{{ g.tier }}">{{ g.label | e }}</span> {{ g.meaning | e }}</h2>
+      {%- for r in g.rows %}
+      <article class="ev-row">
+        <h3>{{ r.label | e }}</h3>
+        <p>{{ r.why | e }}{% if r.ours %} {{ rc.oursNote | e }}{% endif %}</p>
+        <p class="ev-src">{{ r.source.cite | e }}{% if r.source.url %} <a href="{{ r.source.url }}" target="_blank" rel="noopener">{{ rc.sourceLink | e }}</a>{% endif %}</p>
+      </article>
+      {%- endfor %}
+    </section>
+    {%- endfor %}
+  </div>
+</main>
+<site-footer></site-footer>
+</body>
+</html>

@@ -147,7 +147,7 @@ git commit -m "Robot Comments: evidence data for Eleventy, built from the game's
 **Files:**
 - Create: `robot-comments-evidence.njk`
 
-- [ ] **Step 1: Create the template**
+- [x] **Step 1: Create the template**
 
 ```njk
 ---
@@ -241,12 +241,12 @@ eleventyExcludeFromCollections: true
 </html>
 ```
 
-- [ ] **Step 2: Build and check**
+- [x] **Step 2: Build and check**
 
 Run: `npm run build && grep -c 'class="ev-row"' _site/robot-comments/evidence/index.html && grep -c "&amp;amp;" _site/robot-comments/evidence/index.html`
 Expected: build succeeds; `30` rows (29 levers + the title); `0` double-escaped ampersands (if non-zero, Eleventy autoescape is on: drop the `| e` filters and rebuild).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add robot-comments-evidence.njk docs/superpowers/plans/2026-09-29-robot-comments-launch.md
