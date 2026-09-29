@@ -36,6 +36,7 @@ eleventyExcludeFromCollections: true
   .ev{max-width:820px;margin:0 auto;padding:56px 16px 72px}
   .ev-hero h1{font-size:clamp(34px,5vw,54px);line-height:1.05;letter-spacing:-.025em;font-weight:700;margin:0 0 18px;max-width:18ch}
   .ev-hero .lede{font-size:18px;line-height:1.6;color:var(--fg-2);margin:0 0 24px;max-width:40em}
+  .ev-ctas{display:flex;flex-wrap:wrap;gap:12px}
   .ev-paper{margin-top:40px;background-color:var(--paper);color:var(--ink);border-radius:6px;padding:28px 22px;
     background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px}
   .ev-tier+.ev-tier{margin-top:36px}
@@ -58,7 +59,10 @@ eleventyExcludeFromCollections: true
   <section class="ev-hero">
     <h1>{{ ev.title | e }}</h1>
     <p class="lede">{{ ev.intro | e }}</p>
-    <a class="btn primary" href="/robot-comments">{{ ev.backToGame | e }}</a>
+    <div class="ev-ctas">
+      <a class="btn primary" href="/robot-comments">{{ ev.backToGame | e }}</a>
+      <a class="btn ghost" href="/blog/who-counted-and-what-are-they-selling/">{{ ev.essay | e }}</a>
+    </div>
   </section>
 
   <div class="ev-paper">

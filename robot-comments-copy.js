@@ -179,6 +179,7 @@
       sourceHeading: 'Source',
       titleStampHeading: 'The title',
       backToGame: 'Play the game',
+      essay: 'Read what the sourcing turned up',
       suppressedLabel: 'Reach cut by an earlier pod or bait',
     },
 
