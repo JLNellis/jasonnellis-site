@@ -38,7 +38,7 @@
 - Create: `_data/robotComments.js`
 - Modify: `robot-comments-copy.js`, `tools/robot-comments-test.js`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Insert above the runner line in `tools/robot-comments-test.js`:
 
@@ -58,12 +58,12 @@ test('evidence data: one row per why-line, every row sourced, grouped into the f
 });
 ```
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `npm run test:rc`
 Expected: the new test FAILS with `Cannot find module '../_data/robotComments.js'`; 41 pass.
 
-- [ ] **Step 3: Add the copy line**
+- [x] **Step 3: Add the copy line**
 
 In `robot-comments-copy.js`, inside `evidence`, after `backToGame: 'Play the game',` add:
 
@@ -71,7 +71,7 @@ In `robot-comments-copy.js`, inside `evidence`, after `backToGame: 'Play the gam
       suppressedLabel: 'Reach cut by an earlier pod or bait',
 ```
 
-- [ ] **Step 4: Create `_data/robotComments.js`**
+- [x] **Step 4: Create `_data/robotComments.js`**
 
 ```js
 // Eleventy global data (robotComments): the evidence page and the share pages are
@@ -128,12 +128,12 @@ module.exports = () => {
 };
 ```
 
-- [ ] **Step 5: Run the tests**
+- [x] **Step 5: Run the tests**
 
 Run: `npm run test:rc`
 Expected: `42/42 passed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add _data/robotComments.js robot-comments-copy.js tools/robot-comments-test.js docs/superpowers/plans/2026-09-29-robot-comments-launch.md

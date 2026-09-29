@@ -172,6 +172,7 @@
       sourceHeading: 'Source',
       titleStampHeading: 'The title',
       backToGame: 'Play the game',
+      suppressedLabel: 'Reach cut by an earlier pod or bait',
     },
 
     // Keyed by the lever key the engine returns (leverFor / resolveEvent). Flat and sourced.

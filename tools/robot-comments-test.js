@@ -497,6 +497,20 @@ test('card guide and evidence copy are complete', () => {
   assert.ok(C.week.defineTags, 'week.defineTags');
 });
 
+// ---------------------------------------------------------------- evidence data (plan 4)
+test('evidence data: one row per why-line, every row sourced, grouped into the four tiers', () => {
+  const RC = require('../_data/robotComments.js')();
+  assert.deepStrictEqual(RC.rows.map(r => r.key).sort(), Object.keys(C.why).sort());
+  for (const r of RC.rows) {
+    assert.ok(r.label && r.why && r.stampLabel, r.key);
+    assert.ok(D.SOURCES[r.source.id], r.key);
+    assert.ok(['proven', 'measured', 'disputed', 'invented'].includes(r.stamp), r.key);
+  }
+  assert.strictEqual(RC.tiers.reduce((n, g) => n + g.rows.length, 0), RC.rows.length);
+  assert.deepStrictEqual(RC.outcomes.map(o => o.slug).sort(), Object.keys(D.OUTCOMES).sort());
+  assert.strictEqual(RC.titleStamp.stamp, 'invented');
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {
