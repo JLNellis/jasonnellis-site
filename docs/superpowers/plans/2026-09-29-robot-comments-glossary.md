@@ -12,10 +12,10 @@
 
 ---
 
-### Task 0: Jason reviews the glossary (gate)
+### Task 0: Jason reviews the glossary (gate) (approved as drafted, 2026-09-29)
 
-- [ ] **Step 1:** Jason edits the strings in Task 1 Step 3 in place.
-- [ ] **Step 2:** `git commit -am "Robot Comments plan 2b: Jason's glossary edits"` (skip if no edits).
+- [x] **Step 1:** Jason edits the strings in Task 1 Step 3 in place.
+- [x] **Step 2:** `git commit -am "Robot Comments plan 2b: Jason's glossary edits"` (skip if no edits).
 
 ---
 
