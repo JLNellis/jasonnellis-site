@@ -610,11 +610,11 @@ git commit -m "Robot Comments: clean URL, experiments card, sitemap, privacy lin
 
 ### Task 7: Kit custom fields and one test subscription (controller, needs Jason)
 
-- [ ] **Step 1:** Ask Jason for OK to create four custom fields in his Kit account: `rc_archetype`, `rc_budget`, `rc_tax`, `rc_headline`. On a yes, create them with the Kit connector (`list_custom_fields` first; skip any that exist; then `create_custom_field` for each missing one, label exactly as named). Report the keys Kit returns: if a key differs from the label, update the four `fields[...]` names in `renderNotify` to match and commit.
-- [ ] **Step 2:** Ask Jason for an address to use for one test subscription (his own or a `+test` alias). On the local game page, finish a game, enter it, press Notify me. Then look the subscriber up with the Kit connector and confirm the four fields are set. Report the result. If Kit ignored the fields, follow spec §14's fallback: remove the four `fields[...]` entries from `renderNotify`, remove the extra sentence from `/privacy`, and commit.
-- [ ] **Step 3:** Commit any changes: `git commit -am "Robot Comments: Kit custom fields confirmed"` (or the fallback message).
+- [x] **Step 1:** Ask Jason for OK to create four custom fields in his Kit account: `rc_archetype`, `rc_budget`, `rc_tax`, `rc_headline`. On a yes, create them with the Kit connector (`list_custom_fields` first; skip any that exist; then `create_custom_field` for each missing one, label exactly as named). Report the keys Kit returns: if a key differs from the label, update the four `fields[...]` names in `renderNotify` to match and commit.
+- [x] **Step 2:** Ask Jason for an address to use for one test subscription (his own or a `+test` alias). On the local game page, finish a game, enter it, press Notify me. Then look the subscriber up with the Kit connector and confirm the four fields are set. Report the result. If Kit ignored the fields, follow spec §14's fallback: remove the four `fields[...]` entries from `renderNotify`, remove the extra sentence from `/privacy`, and commit.
+- [x] **Step 3:** Commit any changes: `git commit -am "Robot Comments: Kit custom fields confirmed"` (or the fallback message).
 
-**Checkpoint C.**
+**Checkpoint C.** Done 2026-09-29: Kit connector unavailable on the current plan, so Jason created the four fields in the Kit UI; a test subscription (hello+rctest@jasonnellis.com, Series B, 3h, Control Group, tax 2) arrived with all four values set. No code change needed.
 
 ---
 

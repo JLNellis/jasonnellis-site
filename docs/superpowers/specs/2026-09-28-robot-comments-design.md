@@ -489,4 +489,4 @@ data, Kit bridge sequence, desktop polish, extra bait cards, more OG variety.
 
 - Copy: in `robot-comments-copy.js` and card titles in `robot-comments-data.js` (Plan 2, done).
 - Jason: Plausible goals.
-- Jason's OK: Kit custom-field creation and one test subscription.
+- Kit custom fields: created by Jason in the Kit UI 2026-09-29; a test subscription confirmed all four values land.
