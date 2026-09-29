@@ -620,9 +620,9 @@ git commit -m "Robot Comments: clean URL, experiments card, sitemap, privacy lin
 
 ### Task 8: Final review and handoff
 
-- [ ] **Step 1:** Dispatch a final code reviewer over `git diff main..robot-comments` limited to the Plan 4 files (listed in the file map), checking: nothing in the evidence page or share pages is hand-written that should come from the data; escaping in the templates; OG URLs absolute; `noindex` on share pages only; the evidence page indexed; privacy text matches what the code sends; no cookie or third-party script added beyond Plausible (via nav.js) and the Google Fonts link inside the build-only OG template.
-- [ ] **Step 2:** Fix Critical/Important findings, rebuild, recheck, commit.
-- [ ] **Step 3:** Run everything once more: `npm run test:rc && npm run sim:rc && npm test && npm run build`. Expected: all pass, sim exits 0.
+- [x] **Step 1:** Dispatch a final code reviewer over `git diff main..robot-comments` limited to the Plan 4 files (listed in the file map), checking: nothing in the evidence page or share pages is hand-written that should come from the data; escaping in the templates; OG URLs absolute; `noindex` on share pages only; the evidence page indexed; privacy text matches what the code sends; no cookie or third-party script added beyond Plausible (via nav.js) and the Google Fonts link inside the build-only OG template.
+- [x] **Step 2:** Fix Critical/Important findings, rebuild, recheck, commit.
+- [x] **Step 3:** Run everything once more: `npm run test:rc && npm run sim:rc && npm test && npm run build`. Expected: all pass, sim exits 0.
 - [ ] **Step 4:** Hand off to Jason with: the branch is ready to merge into `main` (he merges and pushes); after the Netlify deploy, check `https://jasonnellis.com/robot-comments`, `/robot-comments/evidence/` and one share link in a link-preview tool; add these Plausible custom-event goals with custom properties enabled: `rc_start`, `rc_setup_complete`, `rc_turn_resolved`, `rc_event_shown`, `rc_completed`, `rc_share`, `rc_replay`, `rc_email`, `rc_resume`, `rc_evidence_opened`, `rc_card_guide_opened`.
 - [ ] **Step 5:** Use superpowers:finishing-a-development-branch.
 

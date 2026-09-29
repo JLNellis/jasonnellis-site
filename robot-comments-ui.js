@@ -7,7 +7,7 @@
  * Load order: robot-comments-data.js, -bands.js, -engine.js, -copy.js, then this.
  * Saves: localStorage 'rc_run' (in progress) and 'rc_last' (finished game),
  * both E.serialize() output, restored with E.replay() (spec §5a).
- * Analytics: track() is a no-op until Plan 4 adds the Plausible snippet.
+ * Analytics: track() sends Plausible events; Plausible is loaded by nav.js.
  * Spec: docs/superpowers/specs/2026-09-28-robot-comments-design.md
  * ------------------------------------------------------------------
  */
@@ -379,6 +379,7 @@
         <p class="src" role="status" aria-live="polite"></p>
       </form>`;
     const form = box.querySelector('form'), input = form.querySelector('input'), btn = form.querySelector('button'), status = form.querySelector('[role=status]');
+    const budget = String(S.setup.budget), headline = S.setup.archetype; // snapshot the finished game
     form.onsubmit = async e => {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -386,9 +387,9 @@
       const body = new URLSearchParams({
         email_address: input.value.trim(),
         'fields[rc_archetype]': F.archetype,
-        'fields[rc_budget]': String(S.setup.budget),
+        'fields[rc_budget]': budget,
         'fields[rc_tax]': String(F.tax),
-        'fields[rc_headline]': S.setup.archetype,
+        'fields[rc_headline]': headline,
       });
       try {
         await fetch(SITE_CONFIG.newsletterPost, { method: 'POST', mode: 'no-cors', body });
