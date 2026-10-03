@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0A2540;--deep:#0F172A;--edge:#00E676;--fg3:#8892AA}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased;overflow:hidden}
+.card{position:relative;width:1200px;height:630px;overflow:hidden;background:
+  radial-gradient(ellipse 30% 40% at 14% 22%,rgba(0,230,118,.10),transparent 70%),
+  radial-gradient(ellipse 45% 50% at 92% 95%,rgba(15,77,140,.45),transparent 65%),var(--bg)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(148,163,184,.10) 1.2px,transparent 1.2px);background-size:30px 30px}
+.id{position:absolute;left:72px;top:267px;display:flex;align-items:center;gap:22px}
+.mark{width:96px;height:96px;border-radius:22px;background:var(--deep);border:1px solid rgba(0,230,118,.35);display:grid;place-items:center}
+.mark svg{width:64px;height:64px}
+h1{font-size:66px;font-weight:700;letter-spacing:-.035em;line-height:1}
+.tag{display:flex;align-items:center;gap:14px;margin-top:22px;font-family:'DM Mono',monospace;font-size:16px;letter-spacing:.2em;text-transform:uppercase;color:var(--edge)}
+.tag::before{content:'';width:32px;height:1.5px;background:var(--edge)}
+.url{position:absolute;right:72px;bottom:52px;font-family:'DM Mono',monospace;font-size:15px;color:var(--fg3);letter-spacing:.06em}
+</style></head><body><div class="card"><div class="dots"></div>
+<div class="id">
+  <div class="mark"><svg viewBox="0 0 1024 1024"><path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/><path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/></svg></div>
+  <div><h1>Jason Nellis</h1><div class="tag">Product &amp; GTM Executive · Creator Economy</div></div>
+</div>
+<div class="url">jasonnellis.com</div>
+</div></body></html>

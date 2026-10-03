@@ -23,7 +23,7 @@ narrativeArc:
   - title: "What a real point of view looks like"
     body: "A test the audience can apply on Monday morning to their own AI roadmap."
 evidence:
-  - label: "BoltOS — Director of Innovation"
+  - label: "BoltOS · Head of Innovation & GTM"
     body: "Currently shaping product and go-to-market strategy for AI-native operating infrastructure — the live version of this argument, not a retrospective."
   - label: "SuperBam — CPO → Interim CEO"
     body: "Built an AI deepfake enforcement product from the ground up, where AI had to hold up against real-world stakes, not just demo well."

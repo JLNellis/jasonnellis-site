@@ -124,7 +124,7 @@ c.drawCentredString(M + 13, y(top + 0.5), "J")
 
 c.setFont("DMSans-Bold", 27); c.setFillColor(FG1)
 c.drawString(M + 38, y(top + 2), "Jason Nellis")
-mono_label(M + 38, top + 16, "Strategist · Operator · Speaker", size=8, color=GREEN, tracking=1.6)
+mono_label(M + 38, top + 16, "Product & GTM Executive · Speaker", size=8, color=GREEN, tracking=1.6)
 c.setFont("DMMono", 7.5); c.setFillColor(FG3)
 c.drawString(M + 38, y(top + 30), "jasonnellis.com  ·  hello@jasonnellis.com  ·  Cannes, FR", charSpace=0.4)
 
@@ -142,14 +142,14 @@ c.drawRightString(W - M, y(iy_top + img_h + 12), "JN · IFA BERLIN 2026", charSp
 text_w = CW - img_w - 26
 top = 116
 c.setFont("DMSans-Medium", 12.5); c.setFillColor(FG1)
-c.drawString(M, y(top), "Keynotes, leadership workshops, and advisory")
-c.drawString(M, y(top + 17), "for media and the creator economy.")
+c.drawString(M, y(top), "Keynotes and moderated panels from a product and")
+c.drawString(M, y(top + 17), "go-to-market executive in media and creator tech.")
 
 top += 38
 bio = ("Building at the intersection of media, technology, and the creator economy since 2008. "
        "Co-founder of Packagd (acquired by Meta, 2019). Former Content Partner Manager at Hulu. "
-       "Chief Product Officer and Interim CEO at SuperBam. Currently leading innovation at BoltOS "
-       "and building Akaeon Corp from Cannes, France.")
+       "Chief Product Officer and Interim CEO at SuperBam. Head of Innovation & GTM at BoltOS, "
+       "based in Cannes, France.")
 top = para(M, top, bio, "DMSans", 9.5, 14.5, FG2, text_w)
 
 # ---- stats row --------------------------------------------------------------
@@ -157,9 +157,9 @@ top = 222
 tile_gap = 10
 tile_w = (CW - 3 * tile_gap) / 4
 stats = [("2008", "Building in media since", FG1),
-         ("3", "Companies co-founded", FG1),
-         ("2019", "Packagd acquired by Meta", GREEN),
-         ("2", "Now building: BoltOS & Akaeon", FG1)]
+         ("2", "Companies built and sold", GREEN),
+         ("25+", "Live Shopping partners", FG1),
+         ("5×", "BoltOS pipeline, 6 mo", FG1)]
 for i, (v, l, colr) in enumerate(stats):
     x = M + i * (tile_w + tile_gap)
     c.setFillColor(CARD); c.setStrokeColor(BORDER); c.setLineWidth(1)
@@ -225,7 +225,7 @@ section_eyebrow("03", "Track record", top)
 top += 16
 bullets = [
     "Co-founded Packagd — acquired by Meta (2019)",
-    "Built & launched Facebook Live Shopping in Meta's Commerce org",
+    "Built & launched Facebook Live Shopping at Meta",
     "CPO, then Interim CEO at SuperBam — creator IP",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",
@@ -244,8 +244,8 @@ for i, b in enumerate(bullets):
 # ---- pull quote -------------------------------------------------------------
 qy = 104
 c.setFont("DMSans-Medium", 11.5); c.setFillColor(FG1)
-c.drawCentredString(W / 2, qy + 14, '“The early, unnamed, is-this-even-a-business part')
-c.drawCentredString(W / 2, qy, 'is the part I’m good at.”')
+c.drawCentredString(W / 2, qy + 14, '“My best work happens where a product')
+c.drawCentredString(W / 2, qy, 'has to start paying for itself.”')
 
 # ---- footer -----------------------------------------------------------------
 fy = 54
@@ -254,7 +254,7 @@ c.line(M, fy + 22, W - M, fy + 22)
 c.setFont("DMMono-Medium", 7.5); c.setFillColor(GREEN)
 c.drawString(M, fy + 6, "BOOK A TALK:  JASONNELLIS.COM/SPEAKING", charSpace=1)
 c.setFont("DMMono", 7.5); c.setFillColor(FG3)
-c.drawRightString(W - M, fy + 6, "CANNES, FR  ·  EUROPE BY TRAIN  ·  REMOTE WORLDWIDE", charSpace=1)
+c.drawRightString(W - M, fy + 6, "CANNES, FR  ·  EUROPE AND NORTH AMERICA", charSpace=1)
 
 c.save()
 print("wrote", OUT, os.path.getsize(OUT), "bytes")

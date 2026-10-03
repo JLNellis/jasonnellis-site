@@ -28,6 +28,19 @@
   plausible.init();
 })();
 
+// ---- Dated content: any element with data-expires="YYYY-MM-DD" is removed from
+//      that day on (visitor's local time), so event notices retire themselves
+//      without a rebuild. A "Where I'll be" strip with no rows left goes too. ----
+document.addEventListener('DOMContentLoaded', function () {
+  var now = new Date();
+  document.querySelectorAll('[data-expires]').forEach(function (el) {
+    if (now >= new Date(el.getAttribute('data-expires') + 'T00:00:00')) el.remove();
+  });
+  document.querySelectorAll('.where-section').forEach(function (sec) {
+    if (!sec.querySelector('.where-row')) sec.remove();
+  });
+});
+
 const SITE_CONFIG = {
   newsletterUrl:  '/building-value', // newsletter home on this site (Kit's own hosted form page is unbranded — don't link it)
   newsletterPost: 'https://app.kit.com/forms/9920578/subscriptions', // form POST endpoint (field: email_address)
