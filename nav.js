@@ -12,20 +12,27 @@
 //  No other files need to change.
 // ============================================================
 
-// ---- Privacy-friendly analytics (Plausible) — single source for the whole site.
-//      Cookieless + GDPR/ePrivacy compliant, so no consent banner is required.
-//      Standalone pages that don't load nav.js (the-feed.html, ascii.html) carry
-//      this same snippet inline in their own <head>. ----
+// ---- Privacy-friendly analytics (Umami Cloud) — single source for the whole site.
+//      Cookieless, so no consent banner is required. Standalone pages that don't
+//      load nav.js (the-feed.html, ascii.html) carry the same tag inline in <head>.
+//      data-domains stops localhost and Netlify deploy previews being counted.
+//      Custom events: window.siteTrack(name, data). Umami has no pre-load queue,
+//      so a call made before the tracker arrives retries for up to 10 seconds. ----
 (function () {
-  if (window.__plausibleLoaded) return;
-  window.__plausibleLoaded = true;
+  if (window.__umamiLoaded) return;
+  window.__umamiLoaded = true;
   var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://plausible.io/js/pa-FUfzYY9D62KrzjacQWAWo.js';
+  s.defer = true;
+  s.src = 'https://cloud.umami.is/script.js';
+  s.setAttribute('data-website-id', '9a9424b4-d604-4e86-87ba-beb2c77ddd5e');
+  s.setAttribute('data-domains', 'jasonnellis.com,www.jasonnellis.com,thefeed.jasonnellis.com');
   (document.head || document.documentElement).appendChild(s);
-  window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments); };
-  plausible.init = plausible.init || function (i) { plausible.o = i || {}; };
-  plausible.init();
+  window.siteTrack = function track(name, data, tries) {
+    try {
+      if (window.umami) window.umami.track(name, data);
+      else if ((tries || 0) < 20) setTimeout(function () { track(name, data, (tries || 0) + 1); }, 500);
+    } catch (e) {}
+  };
 })();
 
 // ---- Dated content: any element with data-expires="YYYY-MM-DD" is removed from

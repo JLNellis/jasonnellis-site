@@ -7,7 +7,7 @@
  * Load order: robot-comments-data.js, -bands.js, -engine.js, -copy.js, then this.
  * Saves: localStorage 'rc_run' (in progress) and 'rc_last' (finished game),
  * both E.serialize() output, restored with E.replay() (spec §5a).
- * Analytics: track() sends Plausible events; Plausible is loaded by nav.js.
+ * Analytics: track() sends Umami events through window.siteTrack, defined in nav.js.
  * Spec: docs/superpowers/specs/2026-09-28-robot-comments-design.md
  * ------------------------------------------------------------------
  */
@@ -26,7 +26,7 @@
   const tilt = key => (E.hashStr(String(key)) % 19) - 9;
   const reduceMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const shareUrl = slug => 'https://jasonnellis.com/robot-comments/r/' + slug + '/';
-  const track = (name, props) => { try { if (window.plausible) window.plausible(name, props ? { props } : undefined); } catch (e) {} };
+  const track = (name, props) => { try { if (window.siteTrack) window.siteTrack(name, props); } catch (e) {} };
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },

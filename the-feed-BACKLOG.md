@@ -34,7 +34,7 @@ the deferred leaderboard.
 - **Sound** — eight Pixabay-licensed MP3 cues in `the-feed-assets/sfx/` (see
   `CREDITS.md`), mute persisted. Two old cue names alias onto shared files.
 - **Capture** — end-screen CTA links to Substack; no email touches the game.
-- **Analytics** — Plausible, inline snippet (page doesn't load `nav.js`).
+- **Analytics** — Umami (Plausible until 2026-10-11), inline tag (page doesn't load `nav.js`).
 - **Assets/licenses** — `the-feed-assets/CREDITS.md`.
 
 ## The game, mechanically (after sub-project A)

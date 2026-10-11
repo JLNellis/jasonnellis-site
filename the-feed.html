@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-FUfzYY9D62KrzjacQWAWo.js"></script>
-<script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-</script>
+<!-- Privacy-friendly analytics by Umami (cookieless). Same tag nav.js loads. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="9a9424b4-d604-4e86-87ba-beb2c77ddd5e" data-domains="jasonnellis.com,www.jasonnellis.com,thefeed.jasonnellis.com"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Feed: a creator life sim</title>
@@ -759,10 +755,11 @@
   const $ = id => document.getElementById(id);
   const pick = a => a[Math.floor(Math.random()*a.length)];
 
-  // Plausible custom events (cookieless; the tag is loaded inline in <head>). Guarded so a blocked
+  // Umami custom events (cookieless; the tag is loaded inline in <head>). Guarded so a blocked
   // analytics script never breaks the game. Fires a "where do people quit?" funnel: start → week
   // milestones → end:<key> → share. See /privacy ("what I collect") — page-level analytics only.
-  function track(name, props){ try{ if(window.plausible) window.plausible(name, props?{props}:undefined); }catch(e){} }
+  // Umami has no pre-load queue, so a call made before the tracker arrives retries for up to 10s.
+  function track(name, props, tries){ try{ if(window.umami) umami.track(name, props); else if((tries||0)<20) setTimeout(()=>track(name, props, (tries||0)+1), 500); }catch(e){} }
   // run summary (UI-only): the route the player took, shown on the end screen so the ending feels earned
   let run = { restWeeks:0, peakStress:0, events:0 };
 
@@ -912,7 +909,7 @@
   }
 
   // Resume a saved run: rehydrate S + the four UI arrays, restore derived UI, close the overlay.
-  // Does NOT re-fire the Plausible 'start' event (a resume is not a new run) and does NOT re-deal
+  // Does NOT re-fire the analytics 'start' event (a resume is not a new run) and does NOT re-deal
   // the hand (S.hand was saved). Transient per-week UI (weekLog/queue/…) resets to a clean week.
   function resumeGame(saved){
     SFX.unlock();

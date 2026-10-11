@@ -490,7 +490,7 @@
     history.replaceState(null, '', hash);
     // analytics: anonymous, no free text
     const key = `${s.p.id}|${s.f.id}|${s.band.name}`;
-    if (key !== lastKey){ lastKey = key; clearTimeout(render._t); render._t = setTimeout(()=>{ try{ window.plausible && plausible('Burn Rate result', {props:{platform:s.p.id, format:s.f.id, verdict:s.band.name}}); }catch(e){} }, 1500); }
+    if (key !== lastKey){ lastKey = key; clearTimeout(render._t); render._t = setTimeout(()=>{ try{ window.siteTrack && siteTrack('Burn Rate result', {platform:s.p.id, format:s.f.id, verdict:s.band.name}); }catch(e){} }, 1500); }
     queueLog(s);
   }
 
@@ -558,7 +558,7 @@
 
   // ---------------- gate ----------------
   const gate = $('gate');
-  function unlock(src){ flushLog(); gate.classList.remove('locked'); try{ localStorage.setItem('br_unlocked','1'); }catch(e){} try{ window.plausible && plausible('Burn Rate unlock', {props:{via:src}}); }catch(e){} }
+  function unlock(src){ flushLog(); gate.classList.remove('locked'); try{ localStorage.setItem('br_unlocked','1'); }catch(e){} try{ window.siteTrack && siteTrack('Burn Rate unlock', {via:src}); }catch(e){} }
   $('unlockBtn').addEventListener('click', () => setTimeout(()=>unlock('subscribe'), 400));
   $('alreadyBtn').addEventListener('click', () => unlock('already'));
   try{ if (localStorage.getItem('br_unlocked') === '1') gate.classList.remove('locked'); }catch(e){}
