@@ -22,183 +22,136 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="stylesheet" href="site.css">
 <style>
-  /* ---- Hero ---- */
-  .adv-hero { padding: 88px 0 56px; }
+  /* Advisory deliberately runs without the numbered section eyebrows and
+     card labels used elsewhere: headings only, Jason's lines as headings. */
+
+  /* ---- Hero: text left, IFA panel photo right ---- */
+  .adv-hero {
+    display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 64px;
+    align-items: center; padding: 80px 0 56px;
+  }
   .adv-hero h1 {
     font-size: clamp(42px, 6vw, 68px);
     font-weight: 700; line-height: 1.05; letter-spacing: -0.025em;
-    margin: 16px 0 20px; max-width: 16ch;
+    margin: 0 0 24px; max-width: 14ch;
   }
   .adv-hero h1 .accent { color: var(--color-accent-vivid); }
-  .adv-hero .lede { font-size: 18px; line-height: 1.65; color: var(--fg-2); max-width: 620px; margin: 0 0 32px; }
+  .adv-hero .lede { font-size: 18px; line-height: 1.65; color: var(--fg-2); max-width: 580px; margin: 0 0 32px; }
   .adv-hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-  .adv-hero .cta-note { font-size: 13.5px; color: var(--fg-3); margin: 14px 0 0; }
+  .adv-hero .cta-note { font-size: 14px; color: var(--fg-3); margin: 14px 0 0; }
   .adv-hero .cta-note strong { color: var(--fg-2); font-weight: 500; }
-  .adv-hero .terms {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px;
+  .adv-photo { margin: 0; }
+  .adv-photo img {
+    display: block; width: 100%; height: auto; aspect-ratio: 930 / 1180; object-fit: cover;
+    border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);
+    /* High-key stage shot; pull it toward the navy like the /about portrait. */
+    filter: contrast(1.04) saturate(0.9) brightness(0.9);
   }
-  .adv-hero .terms span {
-    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--fg-2); border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 11px;
-  }
+  .adv-photo figcaption { font-size: 13px; color: var(--fg-3); margin-top: 10px; }
 
   /* ---- Proof band ---- */
   .stat-band {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
-    margin: 8px 0 0;
   }
   .stat-band .stat { padding: 26px 24px 26px 0; }
   .stat-band .stat + .stat { padding-left: 24px; border-left: 1px solid var(--border-subtle); }
   .stat-band .fig {
-    display: block; font-size: 23px; font-weight: 700; color: #FFF;
+    display: block; font-size: 23px; font-weight: 700; color: var(--fg-1);
     letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.15;
-    margin-bottom: 8px; white-space: nowrap;
+    margin-bottom: 6px; white-space: nowrap;
   }
   .stat-band .fig em { font-style: normal; color: var(--color-accent-vivid); font-weight: 400; }
-  .stat-band .who {
-    display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
-    color: var(--fg-2); margin-bottom: 10px;
-  }
-  .stat-band .unit {
-    display: block; font-family: var(--font-mono); font-size: 11px; line-height: 1.6;
-    letter-spacing: 0.04em; color: var(--fg-3);
-  }
-  .page-wrap p.steward-note {
-    font-size: 14.5px; line-height: 1.7; color: var(--fg-2);
-    max-width: 660px; margin: -22px 0 40px;
-    padding-left: 20px; border-left: 2px solid var(--color-accent-vivid);
-  }
-  .steward-note strong { color: var(--fg-1); font-weight: 500; }
-  .page-wrap p.stat-note { font-size: 12px; color: var(--fg-3); line-height: 1.6; margin: 14px 0 0; max-width: 620px; }
+  .stat-band .unit { display: block; font-size: 14px; line-height: 1.5; color: var(--fg-2); }
 
   /* ---- Shared section shell ---- */
   .adv-section { padding: 72px 0 64px; border-top: 1px solid var(--border-subtle); }
-  .adv-section h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 10px; }
-  .adv-section .sub { font-size: 15px; color: var(--fg-2); max-width: 560px; line-height: 1.65; margin: 0 0 40px; }
+  .stat-band + .adv-section { border-top: 0; }
+  .adv-section h2 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; margin: 0 0 12px; max-width: 24ch; }
+  .adv-section .sub { font-size: 16px; color: var(--fg-2); max-width: 560px; line-height: 1.65; margin: 0 0 36px; }
+  .adv-section a.inline { color: var(--fg-1); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--color-accent-vivid); }
+  .adv-section a.inline:hover { color: var(--color-accent-vivid); }
 
-  /* ---- Who it's for ---- */
-  .fit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .fit-card { padding: 26px 24px; }
-  .fit-card .ix { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: 0.1em; margin-bottom: 14px; }
-  .fit-card h3 { font-size: 17px; font-weight: 600; color: #FFF; line-height: 1.3; margin: 0 0 8px; }
-  .fit-card p { font-size: 13.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+  /* ---- First two weeks ---- */
+  .intake-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .intake-steps li { padding: 22px 22px 24px; }
+  .intake-steps h3 { font-size: 16px; font-weight: 600; color: var(--fg-1); line-height: 1.3; margin: 0 0 8px; }
+  .intake-steps p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+
+  /* ---- Jason's own paragraph ---- */
+  .in-my-words { max-width: 660px; margin: 56px 0 0; padding-left: 24px; border-left: 2px solid var(--color-accent-vivid); }
+  .in-my-words p { font-size: 18px; line-height: 1.7; color: var(--fg-1); margin: 0 0 18px; }
+  .in-my-words p:last-child { margin-bottom: 0; }
+
+  /* ---- Moments ---- */
+  .moments { list-style: none; padding: 0; margin: 0; max-width: 760px; }
+  .moments li { padding: 22px 0; border-top: 1px solid var(--border-subtle); font-size: 18px; line-height: 1.6; color: var(--fg-2); }
+  .moments li:last-child { border-bottom: 1px solid var(--border-subtle); }
+  .moments strong { color: var(--fg-1); font-weight: 600; }
 
   /* ---- Engagements ---- */
   .eng-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .eng-card { display: flex; flex-direction: column; padding: 28px 26px; position: relative; overflow: hidden; }
-  .eng-card.lead { border-color: rgba(0,230,118,0.35); background: linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,0.05) 170%); }
-  .eng-card .num { position: absolute; top: 20px; right: 20px; font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); letter-spacing: 0.1em; }
-  .eng-card .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-vivid); margin-bottom: 12px; }
-  .eng-card h3 { font-size: 22px; font-weight: 700; color: #FFF; line-height: 1.2; letter-spacing: -0.01em; margin: 0 0 6px; }
-  .eng-card .shape { font-size: 13px; color: var(--fg-2); font-family: var(--font-mono); margin: 0 0 18px; }
-  .eng-card p.desc { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 18px; }
-  .eng-card .field-label { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px; }
-  .eng-card .deliverable { font-size: 13px; color: var(--fg-2); line-height: 1.55; margin: 0 0 22px; }
-  .eng-card .deliverable strong { color: var(--fg-1); font-weight: 500; }
-  .eng-card .foot {
-    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);
-    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  }
-  .eng-card .price { font-size: 15px; font-weight: 600; color: #FFF; font-variant-numeric: tabular-nums; }
-  .eng-card .price small { display: block; font-size: 11px; font-weight: 400; color: var(--fg-3); margin-top: 2px; }
-  .page-wrap p.eng-note { font-size: 13.5px; color: var(--fg-2); line-height: 1.7; margin: 24px 0 0; max-width: 720px; }
-  /* ---- Intake ---- */
-  .intake { margin: 40px 0 0; padding-top: 36px; border-top: 1px solid var(--border-subtle); }
-  .intake h3 { font-size: 22px; font-weight: 700; color: #FFF; letter-spacing: -0.01em; margin: 8px 0 8px; }
-  .intake .sub { margin-bottom: 28px; }
-  .intake-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: step; }
-  .intake-steps li { padding: 22px 22px 24px; counter-increment: step; }
-  .intake-steps li::before { content: "0" counter(step); display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--color-accent-vivid); margin-bottom: 14px; }
-  .intake-steps h4 { font-size: 15px; font-weight: 600; color: #FFF; line-height: 1.3; margin: 0 0 8px; }
-  .intake-steps p { font-size: 13.5px; color: var(--fg-2); line-height: 1.65; margin: 0; }
-  .eng-extras { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0 0; }
-  .side-callout { display: flex; flex-direction: column; padding: 24px 26px; border: 1px solid var(--border-subtle); border-left: 2px solid var(--color-accent-vivid); border-radius: var(--radius-lg); background: var(--bg-card); }
-  .side-callout h3 { font-size: 18px; font-weight: 600; color: #FFF; margin: 8px 0 10px; }
-  .side-callout p { font-size: 14px; color: var(--fg-2); line-height: 1.7; margin: 0 0 16px; }
-  .side-callout .foot {
-    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);
-    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  }
-  .side-callout .price { font-size: 15px; font-weight: 600; color: #FFF; font-variant-numeric: tabular-nums; }
-  .side-callout .price small { display: block; font-size: 11px; font-weight: 400; color: var(--fg-3); margin-top: 2px; }
-  .eng-extras--single { grid-template-columns: 1fr; }
-  .full-time-note { font-size: 14px; color: var(--fg-3); line-height: 1.7; margin: 20px 0 0; max-width: 62ch; }
-  .full-time-note a { color: var(--fg-2); text-decoration: underline; text-underline-offset: 2px; }
+  .eng-card { padding: 28px 26px; }
+  .eng-card.lead { border-color: rgba(0,230,118,0.35); }
+  .eng-card h3 { font-size: 22px; font-weight: 700; color: var(--fg-1); letter-spacing: -0.01em; margin: 0 0 4px; }
+  .eng-card .shape { font-size: 14px; color: var(--fg-3); margin: 0 0 16px; }
+  .eng-card p.desc { font-size: 15px; color: var(--fg-2); line-height: 1.65; margin: 0; }
+  .eng-after { font-size: 15px; color: var(--fg-2); line-height: 1.7; margin: 24px 0 0; max-width: 680px; }
 
-  /* ---- How I work ---- */
-  .how-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
-  .how-list li { padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
-  .how-list li:nth-child(-n+2) { border-top: 1px solid var(--border-subtle); }
-  .how-list h3 { font-size: 15px; font-weight: 600; color: #FFF; margin: 0 0 6px; display: flex; gap: 10px; align-items: baseline; }
-  .how-list h3::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; }
-  .how-list p { font-size: 14px; color: var(--fg-2); line-height: 1.65; margin: 0 0 0 22px; }
+  /* ---- Terms ---- */
+  .terms-list { list-style: none; padding: 0; margin: 0; max-width: 760px; }
+  .terms-list li { padding: 18px 0; border-top: 1px solid var(--border-subtle); font-size: 16px; line-height: 1.65; color: var(--fg-2); }
+  .terms-list li:last-child { border-bottom: 1px solid var(--border-subtle); }
+  .terms-list strong { color: var(--fg-1); font-weight: 600; }
 
   /* ---- Proof ---- */
-  .quote-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 0 0 16px; }
-  .quote-card { margin: 0; padding: 28px 30px; }
+  .page-wrap p.steward-note {
+    font-size: 16px; line-height: 1.7; color: var(--fg-2); max-width: 660px; margin: 0 0 32px;
+    padding-left: 20px; border-left: 2px solid var(--color-accent-vivid);
+  }
+  .steward-note strong { color: var(--fg-1); font-weight: 500; }
+  .quote-card { margin: 0 0 16px; padding: 28px 30px; }
   .quote-card blockquote { margin: 0 0 18px; font-size: 17px; line-height: 1.65; color: var(--fg-1); }
-  .quote-card figcaption { font-size: 13px; color: var(--fg-2); line-height: 1.5; }
-  .quote-card figcaption strong { color: #FFF; font-weight: 600; }
-  .quote-card figcaption span { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--fg-3); margin-top: 2px; }
+  .quote-card figcaption { font-size: 14px; color: var(--fg-2); }
+  .quote-card figcaption strong { color: var(--fg-1); font-weight: 600; }
   .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .proof-card { display: flex; flex-direction: column; padding: 24px; text-decoration: none; color: inherit; }
-  .proof-card .era { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 12px; }
-  .proof-card h3 { font-size: 16px; font-weight: 600; color: #FFF; line-height: 1.35; margin: 0 0 8px; }
-  .proof-card p { font-size: 13px; color: var(--fg-2); line-height: 1.6; margin: 0 0 18px; }
-  .proof-card .go { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--fg-1); transition: color var(--dur-fast); }
+  .proof-card .era { font-size: 13px; color: var(--fg-3); margin-bottom: 8px; }
+  .proof-card h3 { font-size: 17px; font-weight: 600; color: var(--fg-1); line-height: 1.35; margin: 0 0 18px; }
+  .proof-card .go { margin-top: auto; font-size: 14px; font-weight: 600; color: var(--fg-2); transition: color var(--dur-fast); }
   .proof-card:hover .go { color: var(--color-accent-vivid); }
 
   /* ---- CTA ---- */
-  .adv-cta { padding: 72px 0 96px; }
+  .adv-cta { padding: 24px 0 96px; }
   .adv-cta-inner {
+    border: 1px solid rgba(0,230,118,0.2); border-radius: 16px; padding: 56px 64px;
     background: linear-gradient(135deg, rgba(0,230,118,0.05) 0%, rgba(15,23,42,0.95) 60%);
-    border: 1px solid rgba(0,230,118,0.2);
-    border-radius: 16px; padding: 56px 64px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
-    position: relative; overflow: hidden;
   }
-  .adv-cta-inner::before {
-    content: ""; position: absolute; top: -80px; left: -80px;
-    width: 280px; height: 280px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,230,118,0.08), transparent 70%);
-    pointer-events: none;
-  }
-  .adv-cta-inner h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 16px; line-height: 1.15; }
-  .adv-cta-inner p { font-size: 15px; color: var(--fg-2); line-height: 1.7; margin: 0 0 28px; }
+  .adv-cta-inner h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 14px; line-height: 1.15; }
+  .adv-cta-inner p { font-size: 16px; color: var(--fg-2); line-height: 1.7; margin: 0 0 28px; max-width: 560px; }
   .adv-cta-inner .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  .check-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
-  .check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--fg-2); line-height: 1.5; }
-  .check-list li::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-
-  /* ---- Inline links ---- */
-  a.bolt { color: var(--color-accent-vivid); text-decoration: none; font-weight: 600; font-size: 13px; }
-  a.bolt:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ---- Responsive ---- */
   @media (max-width: 900px) {
-    .fit-grid, .eng-grid, .proof-grid, .eng-extras { grid-template-columns: 1fr; }
+    .adv-hero { grid-template-columns: 1fr; gap: 40px; }
+    .adv-photo { max-width: 420px; }
+    .adv-photo img { aspect-ratio: 4 / 3; object-position: 30% 22%; }
+    .eng-grid, .proof-grid { grid-template-columns: 1fr; }
     .intake-steps { grid-template-columns: 1fr 1fr; }
     .stat-band { grid-template-columns: 1fr; }
     .stat-band .stat { padding: 20px 0; }
     .stat-band .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--border-subtle); }
     .stat-band .fig { font-size: 20px; }
-    .how-list { grid-template-columns: 1fr; }
-    .how-list li:nth-child(2) { border-top: 0; }
-    .adv-cta-inner { grid-template-columns: 1fr; padding: 40px 32px; }
-    .adv-cta-inner::before { display: none; }
+    .adv-cta-inner { padding: 40px 32px; }
   }
   @media (max-width: 640px) {
-    .adv-hero { padding: 64px 0 40px; }
-    /* Tighter rhythm through the middle run (engagements → terms); Receipts and the CTA keep the wider reset. */
+    .adv-hero { padding: 56px 0 40px; }
     .adv-section { padding: 56px 0 48px; }
-    .adv-section#proof { padding: 72px 0 64px; }
-    .intake { margin-top: 32px; padding-top: 28px; }
     .intake-steps { grid-template-columns: 1fr; gap: 12px; }
     .intake-steps li { padding: 18px 18px 20px; }
-    .eng-grid, .eng-extras { gap: 12px; }
-    .eng-extras { margin-top: 12px; }
+    .moments li { font-size: 17px; }
+    .adv-cta-inner { padding: 32px 24px; }
   }
 </style>
 <script type="application/ld+json">
@@ -233,9 +186,7 @@
 <script src="nav.js"></script>
 </head>
 <body class="bolt-os">
-
 <a href="#main" class="skip-link">Skip to main content</a>
-
 <site-header></site-header>
 
 <main class="atmos" data-screen-label="advisory" id="main">
@@ -243,199 +194,133 @@
 
     <!-- HERO -->
     <div class="adv-hero">
-      <div class="section-eyebrow"><span class="num">01</span> Advisory</div>
-      <h1>I make the call you've been <span class="accent">putting off.</span></h1>
-      <p class="lede">I work mostly with founders in media, creator and rights businesses, usually right around the time a decision has sat on the table too long. What helps then is one person in the room with no position to protect: someone who'll say the thing out loud, and who you can be wrong in front of first. I've been the CPO and the interim CEO at SuperBam, and a founder on the acquired side when Meta bought Packagd. I know what the call costs because I've paid for it.</p>
-      <div class="ctas">
-        <a href="/contact?topic=advisory" class="btn primary">Ask for the first call
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <a href="#engagements" class="btn ghost">See the engagements</a>
+      <div>
+        <h1>I make the call you've been <span class="accent">putting off.</span></h1>
+        <p class="lede">I work with founders in media, creator and rights businesses when a decision has sat on the table too long. I've been the CPO and the interim CEO at SuperBam, and a founder on the acquired side when Meta bought Packagd. I know what the call costs, and I can help you make it cost less.</p>
+        <div class="ctas">
+          <a href="/contact?topic=advisory" class="btn primary">Ask for the first call
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+        <p class="cta-note"><strong>Ninety minutes, free.</strong> Then I read everything and write you an assessment.</p>
       </div>
-      <p class="cta-note"><strong>Ninety minutes, free.</strong> You do most of the talking.</p>
-      <div class="terms">
-        <span>Fixed fee</span>
-        <span>Scoped up front</span>
-        <span>24h turnaround</span>
-        <span>No juniors</span>
-        <span>Remote-first · Cannes, FR</span>
-      </div>
+      <figure class="adv-photo">
+        <img src="advisory-panel.jpg" alt="Jason Nellis seated on a panel at IFA Berlin, holding a microphone and listening" width="930" height="1180">
+        <figcaption>On a panel at IFA Berlin, September 2026.</figcaption>
+      </figure>
     </div>
 
     <!-- PROOF BAND -->
     <div class="stat-band">
       <div class="stat">
-        <span class="who">Packagd &middot; co-founder</span>
         <span class="fig">Acquired by Meta</span>
-        <span class="unit">2019, after the pivot to building for creators</span>
+        <span class="unit">Packagd, which I co-founded, 2019</span>
       </div>
       <div class="stat">
-        <span class="who">Jogg &middot; CPO</span>
         <span class="fig">12 wks <em>&rarr;</em> 4 wks</span>
-        <span class="unit">product cycle time, rebuilt from zero</span>
+        <span class="unit">Product cycle time at Jogg, as CPO</span>
       </div>
       <div class="stat">
-        <span class="who">BoltOS &middot; go-to-market</span>
         <span class="fig">5&times;</span>
-        <span class="unit">qualified pipeline, on a go-to-market I ran</span>
+        <span class="unit">Qualified pipeline at BoltOS, on a go-to-market I ran</span>
       </div>
     </div>
-    <p class="stat-note">The bases behind the numbers are on the call.</p>
 
-    <!-- WHO IT'S FOR -->
-    <section class="adv-section" id="fit">
-      <div class="section-eyebrow"><span class="num">02</span> Who it's for</div>
-      <h2>Three moments I'm useful in.</h2>
-      <p class="sub">Timing matters more than company size. If one of these is where you are this quarter, we should talk.</p>
-      <div class="fit-grid">
-        <article class="card fit-card">
-          <div class="ix">001</div>
-          <h3>You're raising</h3>
-          <p>The story has to survive investors who've heard a hundred creator-economy pitches this year. Your own team has to agree on it first, and right now they'd each tell a different version.</p>
-        </article>
-        <article class="card fit-card">
-          <div class="ix">002</div>
-          <h3>You're deciding what the company is</h3>
-          <p>The roadmap turned into a wish list (the creator tool, the licensing deal, the FAST channel) and every item on it is somebody's favorite. Someone has to say which things die, and it can't be the person who has to work with everyone on Monday.</p>
-        </article>
-        <article class="card fit-card">
-          <div class="ix">003</div>
-          <h3>You're mid-transition</h3>
-          <p>A leader left, two teams merged, or a platform changed its terms overnight. The work now is holding it steady and keeping people moving while the new shape gets decided.</p>
-        </article>
+    <!-- FIRST TWO WEEKS -->
+    <section class="adv-section" id="intake">
+      <h2>The first two weeks are the same for everyone.</h2>
+      <p class="sub">No money moves until you've read what I think.</p>
+      <ol class="intake-steps">
+        <li class="card">
+          <h3>The first call</h3>
+          <p>Ninety minutes, free. You walk me through what's in the way. I take notes.</p>
+        </li>
+        <li class="card">
+          <h3>I read</h3>
+          <p>Your calendar, your tools, your investor updates, the reports you actually run the company from. We sign a mutual NDA first.</p>
+        </li>
+        <li class="card">
+          <h3>The assessment</h3>
+          <p>A written read of what's in the way, what I'd do first, and what nobody's saying.</p>
+        </li>
+        <li class="card">
+          <h3>The agreement</h3>
+          <p>If the assessment is right, you sign it and we start. If it isn't, you keep it, and I'll tell you who to call instead.</p>
+        </li>
+      </ol>
+
+      <div class="in-my-words">
+        <p>In my experience, the hardest thing about running a business isn't managing P&amp;L or personnel. It's managing emotions. As a leader, it's easy to get caught up in everybody else's needs while being unable to be detached and figure out what the business needs. That's where I come in.</p>
+        <p>My superpower is being able to take a realistic and detached view of what's happening in your world, and not just give you a straightforward, clear perspective on it, but help you ride those emotions to greater success. The problem isn't pushing them away. The problem is figuring out which ones to listen to. It's figuring out how to filter out the noise and turn your voice and their voices into one singular, unified voice and direction.</p>
+        <p>My job isn't to rally your team. It's not to make them feel good. It's not even necessarily to help them do their jobs better. My job is to help you diagnose the thing that's holding your business back and build a strategic and operationally sound plan to get past it.</p>
       </div>
+    </section>
+
+    <!-- MOMENTS -->
+    <section class="adv-section" id="fit">
+      <h2>Three moments I'm useful in.</h2>
+      <ul class="moments">
+        <li><strong>You're raising.</strong> Your team would each tell investors a different version of the story, and it has to be one story before it's in front of them.</li>
+        <li><strong>You're deciding what the company is.</strong> The roadmap became a wish list. Someone has to say which things die, and it can't be the person who has to work with everyone on Monday.</li>
+        <li><strong>You're mid-transition.</strong> A leader left or a platform changed its terms overnight. Someone has to hold it steady while the new shape gets decided.</li>
+      </ul>
     </section>
 
     <!-- ENGAGEMENTS -->
     <section class="adv-section" id="engagements">
-      <div class="section-eyebrow"><span class="num">03</span> Engagements</div>
       <h2>Two ways to work together.</h2>
       <p class="sub">The difference is whether I'm your counsel, or your counsel and your builder.</p>
       <div class="eng-grid">
         <article class="card eng-card lead">
-          <span class="num">01</span>
-          <span class="kind">Counsel</span>
           <h3>The Second Chair</h3>
-          <p class="shape">Three months · Fixed fee</p>
-          <p class="desc">I sit next to you in the meetings that matter: the board, the term sheet, the hire you can't get wrong. Afterwards I tell you what you missed. Between meetings I'm on your phone, so you can be wrong out loud with me before you have to be right in the room.</p>
-          <span class="field-label">You get</span>
-          <p class="deliverable"><strong>Prep and a second read on every meeting that matters</strong>, and a line that answers inside 24 hours, for three months.</p>
-          <div class="foot">
-            <a href="/contact?topic=advisory" class="bolt">Ask about the second chair →</a>
-          </div>
+          <p class="shape">Three months, fixed fee</p>
+          <p class="desc">I sit next to you in the meetings that matter, then tell you what you missed. Between them I'm on your phone, so you can be wrong out loud with me before you have to be right in the room.</p>
         </article>
         <article class="card eng-card">
-          <span class="num">02</span>
-          <span class="kind">Build</span>
           <h3>The Six-Month Sprint</h3>
-          <p class="shape">Six months · Fixed fee + equity</p>
-          <p class="desc">Everything in the Second Chair, plus I take a team and ship one thing: the market you're entering, the product you're launching, the line of business that has to exist by spring. We write the goal down before we start, specific enough that we'll both know on day 180 whether it shipped.</p>
-          <span class="field-label">You get</span>
-          <p class="deliverable"><strong>A named outcome, shipped</strong>, by a team that can keep running it after I leave.</p>
-          <div class="foot">
-            <a href="/contact?topic=advisory" class="bolt">Ask about a sprint →</a>
-          </div>
+          <p class="shape">Six months, fixed fee plus equity</p>
+          <p class="desc">Everything in the Second Chair, plus I take a team and ship one thing. We write the goal down before we start, specific enough that we'll both know on day 180 whether it shipped.</p>
         </article>
       </div>
-      <p class="full-time-note">Full time is a separate conversation, and a much shorter list of companies. If yours might be on it, <a href="/contact?topic=advisory">say so</a>.</p>
-      <div class="eng-extras eng-extras--single">
-        <div class="side-callout" id="workshop">
-          <div class="section-eyebrow"><span class="num">+</span> Standalone workshop</div>
-          <h3>A leadership workshop around one decision.</h3>
-          <p>Bring one strategic question: your AI roadmap, your go-to-market, or how you make money from an audience. Your leadership team is in the room for half a day or a full one, and leaves with a decision and next steps. Think of it as a sprint with the middle taken out.</p>
-          <div class="foot">
-            <span class="price">Half or full day<small>Remote or in person, plus travel if it's in person</small></span>
-            <a href="/contact?topic=advisory" class="bolt">Tell me the question &rarr;</a>
-          </div>
-        </div>
-      </div>
-      <div class="intake" id="intake">
-        <div class="section-eyebrow"><span class="num">+</span> Before any money moves</div>
-        <h3>The first two weeks are the same for everyone.</h3>
-        <p class="sub">Every engagement starts with a call, and the engagement itself is the last thing we get to.</p>
-        <ol class="intake-steps">
-          <li class="card">
-            <h4>The first call</h4>
-            <p>Ninety minutes, free. You walk me through everything that's in the way, and I take notes.</p>
-          </li>
-          <li class="card">
-            <h4>I read</h4>
-            <p>Your calendar, your tools, what you're telling investors, whatever reports you actually run the company from. Send all of it. We sign a mutual NDA before I open any of it.</p>
-          </li>
-          <li class="card">
-            <h4>The assessment</h4>
-            <p>A written read of what I see: what's in the way, what I'd do first, what nobody's saying, and the cadence we'd work to.</p>
-          </li>
-          <li class="card">
-            <h4>The agreement</h4>
-            <p>If the assessment is right, you sign it and we start. If it isn't, you keep it, and I'll tell you who to call instead.</p>
-          </li>
-        </ol>
-      </div>
+      <p class="eng-after">Or bring one strategic question to a half-day or full-day workshop with your leadership team, and leave with a decision. <a class="inline" href="/contact?topic=advisory">Tell me the question.</a></p>
+      <p class="eng-after">Full time is a separate conversation, and a much shorter list of companies. If yours might be on it, <a class="inline" href="/contact?topic=advisory">say so</a>.</p>
     </section>
 
-    <!-- HOW I WORK -->
+    <!-- TERMS -->
     <section class="adv-section" id="how">
-      <div class="section-eyebrow"><span class="num">04</span> How I work</div>
       <h2>The terms, before you ask.</h2>
-      <ul class="how-list">
-        <li>
-          <h3>I'm not here to fix your culture.</h3>
-          <p>I'm here to find what's standing between your team and the money, and stay until it moves. If that turns out to be how you work, we'll deal with it, and the number stays the target.</p>
-        </li>
-        <li>
-          <h3>Fixed fee, scoped at the start.</h3>
-          <p>No hourly billing and no surprise invoices; the assessment sets scope and cadence before any money moves.</p>
-        </li>
-        <li>
-          <h3>Reachable, with a stated turnaround.</h3>
-          <p>Text me and you'll hear back inside 24 hours, unless I've told you ahead of time that I'm away. I'm in Cannes, so my mornings overlap the US East Coast. Emergency calls can happen at any hour with a little warning.</p>
-        </li>
-        <li>
-          <h3>I do the work.</h3>
-          <p>There's no associate or junior team behind me learning on your budget. You get me, in the room.</p>
-        </li>
-        <li>
-          <h3>Confidential by default.</h3>
-          <p>The first conversation needs no paperwork. Before I read a single document of yours, we sign a standard mutual NDA, mine or yours, within 24 hours.</p>
-        </li>
+      <ul class="terms-list">
+        <li><strong>I'm not here to fix your culture.</strong> I'm here to find what's standing between your team and the money, and stay until it moves.</li>
+        <li><strong>Fixed fee, scoped by the assessment.</strong> No hourly billing and no juniors. You get me, in the room.</li>
+        <li><strong>Text me and you'll hear back inside 24 hours.</strong> I'm in Cannes, so my mornings overlap the US East Coast.</li>
       </ul>
     </section>
 
     <!-- PROOF -->
     <section class="adv-section" id="proof">
-      <div class="section-eyebrow"><span class="num">05</span> Case studies</div>
       <h2>Read the work before you hire it.</h2>
-      <p class="sub">Three case studies, written from the inside, about what the decision looked like at the time and what it cost.</p>
       <p class="steward-note">Making the decision is half of it. The other half is whether the team is still standing to run it. When I stepped into the interim seat, there were <strong>no team exits during my tenure</strong>. That never shows up in a strategy memo, and it's the part I'm proudest of.</p>
-      <!-- Testimonials: one .quote-card per quote; the grid takes a second card side by side. -->
-      <div class="quote-strip">
-        <figure class="card quote-card">
-          <blockquote>&ldquo;He proposed and executed a full rebuild of our ingestion technology, and the resulting efficiencies and speed enabled a strategic shift in both our operations and our sales. Both teams could now go after large libraries, bringing in more revenue at higher margins.&rdquo;</blockquote>
-          <figcaption><strong>Jeremy Rosen</strong><span>Fmr. General Manager, SuperBam</span></figcaption>
-        </figure>
-      </div>
+      <figure class="card quote-card">
+        <blockquote>&ldquo;He proposed and executed a full rebuild of our ingestion technology, and the resulting efficiencies and speed enabled a strategic shift in both our operations and our sales. Both teams could now go after large libraries, bringing in more revenue at higher margins.&rdquo;</blockquote>
+        <figcaption><strong>Jeremy Rosen</strong>, former General Manager, SuperBam</figcaption>
+      </figure>
       <div class="proof-grid">
         <a class="card proof-card" href="/blog/the-call-to-start-over-at-superbam/">
-          <span class="era">SuperBam · 2024 – 2026</span>
+          <span class="era">SuperBam, 2024 to 2026</span>
           <h3>The call to start over at SuperBam</h3>
-          <p>Four half-built ingestion projects stitched into one slow process. Stopping all of it, and what that decided about the company.</p>
-          <span class="go">Read the case study →</span>
+          <span class="go">Read it &rarr;</span>
         </a>
         <a class="card proof-card" href="/blog/what-you-learn-when-you-stop-building-and-start-listening/">
-          <span class="era">Packagd → Meta · 2017 – 2023</span>
+          <span class="era">Packagd, 2017 to 2023</span>
           <h3>What you learn when you stop building and start listening</h3>
-          <p>Two products nobody asked for, the pivot that came from finally listening to creators, and the acquisition that followed.</p>
-          <span class="go">Read the case study →</span>
+          <span class="go">Read it &rarr;</span>
         </a>
         <a class="card proof-card" href="/blog/comedy-time-and-the-format-problem-at-hulu/">
-          <span class="era">Hulu · 2008 – 2012</span>
+          <span class="era">Hulu, 2008 to 2012</span>
           <h3>Comedy Time and the format problem at Hulu</h3>
-          <p>An early lesson in packaging: why how content is shaped matters as much as the content, and what it taught me about product.</p>
-          <span class="go">Read the case study →</span>
+          <span class="go">Read it &rarr;</span>
         </a>
       </div>
-      <p class="eng-note">Want the thinking before the engagement? <a href="/lens" class="bolt">The Lens</a> walks through how I read a creator's business in three questions, with real examples.</p>
     </section>
 
   </div>
@@ -444,31 +329,19 @@
   <section class="adv-cta">
     <div class="page-wrap">
       <div class="adv-cta-inner">
-        <div>
-          <div class="section-eyebrow"><span class="num">06</span> Start here</div>
-          <h2>Tell me the problem.</h2>
-          <p>If you're not sure which shape fits, don't pick one. Ask for the call, tell me what's not working, and you'll hear within 48 hours whether I can help.</p>
-          <div class="ctas">
-            <a href="/contact?topic=advisory" class="btn primary">Ask for the first call
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-            <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
-          </div>
-        </div>
-        <div>
-          <ul class="check-list">
-            <li>A board meeting you're not sure you'll walk out of with the answer</li>
-            <li>A hire you can't get wrong</li>
-            <li>A decision you can't take back</li>
-          </ul>
+        <h2>Tell me the problem.</h2>
+        <p>If you're not sure which shape fits, don't pick one. Tell me what's not working, and you'll hear within 48 hours whether I can help.</p>
+        <div class="ctas">
+          <a href="/contact?topic=advisory" class="btn primary">Ask for the first call
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
         </div>
       </div>
     </div>
   </section>
-
 </main>
 
 <site-footer></site-footer>
-
 </body>
 </html>

@@ -45,6 +45,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("burn-rate.html");
   eleventyConfig.addPassthroughCopy("og-burn-rate.jpg");
   eleventyConfig.addPassthroughCopy("og-advisory.jpg");
+  eleventyConfig.addPassthroughCopy("advisory-panel.jpg");
   eleventyConfig.addPassthroughCopy("the-feed-engine.js");
   eleventyConfig.addPassthroughCopy("robot-comments.html");
   eleventyConfig.addPassthroughCopy("robot-comments-ui.js");
