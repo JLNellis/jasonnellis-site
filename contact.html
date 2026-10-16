@@ -127,6 +127,7 @@
   .clock .place { font-size: 11px; color: var(--fg-2); margin-top: 4px; font-family: var(--font-mono); }
 
   .faq-section { padding: 64px 0 96px; border-top: 1px solid var(--border-subtle); }
+  .faq-section .faq-title { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 20px; }
   .faq-list { display: flex; flex-direction: column; }
   details.faq { border-bottom: 1px solid var(--border-subtle); padding: 20px 0; }
   details.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 17px; font-weight: 500; color: #FFF; transition: color var(--dur-fast); }
@@ -155,7 +156,6 @@
 <main class="atmos" data-screen-label="01 contact" id="main">
   <div class="page-wrap">
     <div class="contact-hero">
-      <div class="section-eyebrow"><span class="num">01</span> Contact · responds within 48h</div>
       <h1>Let's figure out<br>if we're a fit.</h1>
       <p class="lede">I read everything that comes through, and most replies go out within 48 hours. Tell me what you're working on and where you think I can help.</p>
     </div>
@@ -185,7 +185,7 @@
 
         <div class="speaking-fields" id="speakingFields">
           <p class="talk-note u-hidden" id="talkNote"></p>
-          <p class="section-note">Tell me about the event — this helps me answer honestly and fast.</p>
+          <p class="section-note">Tell me about the event so I can give you a straight answer quickly.</p>
           <div class="field">
             <label for="talk_interest">Talk of interest</label>
             <input id="talk_interest" name="talk_interest" type="text" placeholder="e.g. Your AI Strategy Is Probably Theater">
@@ -234,7 +234,7 @@
             <input id="org" name="org" type="text" placeholder="Optional, but useful" autocomplete="organization">
           </div>
           <div class="field">
-            <label for="budget">Budget / scope <span style="text-transform:none;letter-spacing:0;color:var(--fg-3)">(optional — skip it if it's early)</span></label>
+            <label for="budget">What you have in mind <span style="text-transform:none;letter-spacing:0;color:var(--fg-3)">(optional)</span></label>
             <select id="budget" name="budget">
               <option>—</option>
               <option>The Second Chair (three months)</option>
@@ -262,7 +262,7 @@
         <div class="toast" id="toast">
           <svg class="icon-ok" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           <svg class="icon-err" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <div class="msg"><strong>Message queued.</strong> I usually reply within 48 hours. Talk soon.</div>
+          <div class="msg"><strong>Got it.</strong> I'll get back to you soon.</div>
         </div>
       </form>
 
@@ -270,12 +270,8 @@
       <aside class="info-stack">
 
         <div class="card availability">
-          <div class="head">
-            <span class="live-dot"></span>
-            <span class="t">Availability · 2026</span>
-          </div>
-          <h2>Open to the right conversations.</h2>
-          <p>Based in the south of France, working with teams in Europe and the US. Tell me what you're working on and I'll get back to you quickly.</p>
+          <h2>Availability</h2>
+          <p>I'm near Cannes and work with teams in Europe and the US.</p>
           <div class="row"><span class="k">Speaking</span><span class="v ok">Open</span></div>
           <div class="row"><span class="k">Advisory</span><span class="v">Limited</span></div>
         </div>
@@ -284,7 +280,7 @@
           <h3>Direct channels</h3>
           <a href="mailto:hello@jasonnellis.com" class="channel">
             <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
-            <div><div class="t">hello@jasonnellis.com</div><div class="s">Plain email · responds in &lt;48h</div></div>
+            <div><div class="t">hello@jasonnellis.com</div><div class="s">Plain email</div></div>
             <span class="meta">↗</span>
           </a>
           <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="channel">
@@ -317,7 +313,7 @@
 
     <!-- FAQ -->
     <section class="faq-section">
-      <div class="section-eyebrow"><span class="num">02</span> A few common questions</div>
+      <h2 class="faq-title">Common questions</h2>
       <div class="faq-list">
         <details class="faq" open>
           <summary>What does "advisory" actually look like?<span class="chev">+</span></summary>
@@ -329,20 +325,20 @@
         <details class="faq">
           <summary>What topics do you speak on?<span class="chev">+</span></summary>
           <div class="body">
-            <p>The creator economy, the future of media, product strategy, and the intersection of AI with the above. I've spoken at industry events and on podcasts — if you're looking for a keynote, a panel contribution, or a fireside chat, I'm open to the conversation.</p>
-            <p>For corporate events: yes, I charge. For genuinely independent meetups, university talks, and conferences where tickets cap below $300, there's a sliding scale to zero. Travel is always covered.</p>
+            <p>Three talks right now: AI strategy, how media cycles repeat, and why some creators break through. They're on the <a href="/speaking" class="bolt">speaking page</a>. I also moderate panels and MC events.</p>
+            <p>Corporate events pay a fee. For independent meetups, university talks and low-cost community conferences, I'm flexible down to free. Either way, travel is covered by the organizer.</p>
           </div>
         </details>
         <details class="faq">
           <summary>Will you sign an NDA before we talk?<span class="chev">+</span></summary>
           <div class="body">
-            <p>For the first conversation, no — a one-page NDA is more friction than the conversation is worth, and I keep introductions confidential by default. For project work, yes, gladly. I have a standard mutual NDA I can send you in &lt;24h.</p>
+            <p>For the first conversation, no. A one-page NDA is more friction than the conversation is worth, and I keep introductions confidential by default. For project work, yes, gladly. I have a standard mutual NDA I can send you in &lt;24h.</p>
           </div>
         </details>
         <details class="faq">
           <summary>I sent something a week ago and haven't heard back.<span class="chev">+</span></summary>
           <div class="body">
-            <p>Apologies — please send it again with <code>nudge</code> in the subject. The most common cause is an over-eager spam filter; the second is me being on a flight without working wifi.</p>
+            <p>Sorry about that. Send it again with <code>nudge</code> in the subject. The most common cause is an over-eager spam filter; the second is me being on a flight without working wifi.</p>
           </div>
         </details>
       </div>
@@ -412,7 +408,7 @@
       const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
       if (!res.ok) throw new Error('Form submission failed: ' + res.status);
       toast.classList.remove('error');
-      msg.innerHTML = '<strong>Message queued.</strong> I usually reply within 48 hours. Talk soon.';
+      msg.innerHTML = '<strong>Got it.</strong> I'll get back to you soon.';
       form.reset();
     } catch (err) {
       toast.classList.add('error');
