@@ -146,10 +146,9 @@ c.drawString(M, y(top), "Keynotes and moderated panels from a product and")
 c.drawString(M, y(top + 17), "go-to-market executive in media and creator tech.")
 
 top += 38
-bio = ("Building at the intersection of media, technology, and the creator economy since 2008. "
-       "Co-founder of Packagd (acquired by Meta, 2019). Former Content Partner Manager at Hulu. "
-       "Chief Product Officer and Interim CEO at SuperBam. Head of Innovation & GTM at BoltOS, "
-       "based in Cannes, France.")
+bio = ("Started at Hulu in 2008, in the early days of streaming. Co-founded Packagd, acquired by "
+       "Meta in 2019, where his team built Facebook Live Shopping. Chief Product Officer at Jogg and "
+       "SuperBam, and interim CEO at SuperBam. Now Head of Innovation & GTM at BoltOS, based near Cannes.")
 top = para(M, top, bio, "DMSans", 9.5, 14.5, FG2, text_w)
 
 # ---- stats row --------------------------------------------------------------
@@ -170,24 +169,23 @@ for i, (v, l, colr) in enumerate(stats):
     c.drawString(x + 12, y(top + 40), l.upper(), charSpace=0.3)
 
 # ---- section: talks ---------------------------------------------------------
-def section_eyebrow(num, label, top):
-    c.setStrokeColor(GREEN); c.setLineWidth(1)
-    c.line(M, y(top - 2.5), M + 18, y(top - 2.5))
-    mono_label(M + 26, top, f"{num}  ·  {label}", size=7.5, color=GREEN)
+def section_label(label, top):
+    c.setFont("DMSans-Bold", 11); c.setFillColor(FG1)
+    c.drawString(M, y(top), label)
 
 top = 306
-section_eyebrow("01", "Flagship talks — ready to give", top)
+section_label("Talks", top)
 top += 16
 
 talks = [
     ("Your AI Strategy Is Probably Theater",
-     "A practical test for separating real AI leverage from expensive performance — built from running AI strategy inside an operating company.",
+     "Most organizations have an AI strategy that's really a press release. How to tell real leverage from theater.",
      "KEYNOTE · 45–60 MIN · EXECUTIVE & PRODUCT AUDIENCES"),
     ("The Media Cycle No One Believes Is a Cycle",
-     "Every wave looks like a revolution from the inside. What twenty years inside three of them says about where this one goes next.",
+     "Every wave looks like a revolution from the inside, until you've lived through three of them.",
      "KEYNOTE · 45–60 MIN · MEDIA & STRATEGY AUDIENCES"),
     ("Why Some Creators Break Through and Most Don't",
-     "After 100+ creator conversations on Building Value, the same handful of patterns keeps showing up. A lens for spotting them early.",
+     "After 100+ creator conversations on Building Value, the same few patterns keep showing up.",
      "KEYNOTE · 45–60 MIN · CREATOR-ECONOMY PLATFORMS & BRANDS"),
 ]
 card_h = 62
@@ -207,9 +205,9 @@ for title, desc, meta in talks:
 
 # ---- section: formats -------------------------------------------------------
 top += 8
-section_eyebrow("02", "Formats", top)
+section_label("Formats", top)
 top += 16
-chips = ["KEYNOTE 45–60", "PANEL 30–45", "FIRESIDE 20–40", "WORKSHOP HALF/FULL DAY", "PODCAST / REMOTE OK"]
+chips = ["KEYNOTE 45–60", "MODERATOR / MC", "PANEL 30–45", "FIRESIDE 20–40", "WORKSHOP", "PODCAST"]
 x = M
 for chip in chips:
     wch = pdfmetrics.stringWidth(chip, "DMMono", 7) + 0.8 * len(chip) + 22
@@ -221,15 +219,15 @@ for chip in chips:
 
 # ---- section: track record --------------------------------------------------
 top += 40
-section_eyebrow("03", "Track record", top)
+section_label("Track record", top)
 top += 16
 bullets = [
-    "Co-founded Packagd — acquired by Meta (2019)",
+    "Co-founded Packagd, acquired by Meta in 2019",
     "Built & launched Facebook Live Shopping at Meta",
-    "CPO, then Interim CEO at SuperBam — creator IP",
+    "CPO, then interim CEO, at SuperBam",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",
-    "Hosted Building Value — 100+ creator conversations",
+    "Hosts Building Value, 100+ creator conversations",
 ]
 col_w = (CW - 20) / 2
 for i, b in enumerate(bullets):

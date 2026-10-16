@@ -309,6 +309,20 @@
     .format-row { grid-template-columns: 1fr; gap: 6px; }
     .speak-hero { padding: 64px 0 48px; }
   }
+
+  /* ---- Oct 2026 strip-back: no eyebrows, card numbers, icons or badges ---- */
+  .speak-hero h1 { margin-top: 0; }
+  .stage-proof figcaption .live-dot { display: none; }
+  .topic-card.flagship .hook { font-size: 15px; color: var(--fg-1); }
+  .topic-card .fit { font-size: 13.5px; color: var(--fg-3); line-height: 1.55; margin: 0 0 20px; }
+  .topic-card .talk-footer { margin-top: auto; }
+  .also-list { list-style: none; padding: 0; margin: 0; max-width: 760px; }
+  .also-list li { padding: 18px 0; border-top: 1px solid var(--border-subtle); font-size: 15px; line-height: 1.65; color: var(--fg-2); }
+  .also-list li:last-child { border-bottom: 1px solid var(--border-subtle); }
+  .also-list strong { color: var(--fg-1); font-weight: 600; display: block; margin-bottom: 2px; }
+  .topics-section h3.also { font-size: 20px; font-weight: 700; margin: 0 0 14px; }
+  .book-inner.single { grid-template-columns: 1fr; }
+  .book-inner.single p { max-width: 620px; }
 </style>
 <script type="application/ld+json">
 {
@@ -359,14 +373,13 @@
 
     <!-- HERO -->
     <div class="speak-hero">
-      <div class="section-eyebrow"><span class="num">01</span> Speaking &amp; Media</div>
       <h1>I speak from inside<br><span class="accent">the things I built.</span></h1>
-      <p class="lede">I've been in the creator economy long enough to watch it rename itself twice — early streaming at Hulu, social commerce at a company Facebook bought, now AI and creator IP. The talks aren't a survey of other people's frameworks. They're what I watched happen from the inside, and what it cost.</p>
+      <p class="lede">I've been in the creator economy long enough to watch it rename itself twice: streaming at Hulu, social commerce at a company Facebook bought, now AI and creator IP. Every talk comes from something I built, sold or had to fix.</p>
       <div class="ctas">
-        <a href="/contact" class="btn primary">Book me for your event
+        <a href="/contact?topic=speaking" class="btn primary">Book me for your event
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="/building-value" class="btn ghost">The podcast</a>
+        <a href="/press-kit" class="btn ghost">Speaker kit</a>
       </div>
     </div>
 
@@ -374,192 +387,121 @@
     <div class="stage-proofs">
       <figure class="stage-proof">
         <img src="speaking-ifa-panel.jpg" alt="Jason Nellis on stage at IFA 2026 in Berlin for the panel &quot;AI Tools Powering the Next Generation of Content Creation&quot;, with the speaker line-up on the screen behind him" width="1600" height="857" loading="lazy">
-        <figcaption><span class="live-dot"></span>IFA · Berlin 2026</figcaption>
+        <figcaption>IFA Berlin, 2026</figcaption>
       </figure>
       <figure class="stage-proof">
         <img src="latitude59.jpg" alt="Jason Nellis speaking on the main stage at Latitude59 2018 in Tallinn" width="1280" height="853" loading="lazy">
-        <figcaption><span class="live-dot"></span>Latitude59 · Tallinn 2018</figcaption>
+        <figcaption>Latitude59, Tallinn, 2018</figcaption>
       </figure>
       <figure class="stage-proof">
         <img src="zest-malta.jpg" alt="Jason Nellis speaking on a panel at ZEST Malta 2017" width="1600" height="1066" loading="lazy">
-        <figcaption><span class="live-dot"></span>ZEST · Malta 2017</figcaption>
+        <figcaption>ZEST, Malta, 2017</figcaption>
       </figure>
     </div>
 
-    <!-- TRACK RECORD / SOCIAL PROOF -->
+    <!-- TRACK RECORD -->
     <section class="proof-strip">
-      <div class="proof-eyebrow">Track record</div>
       <div class="proof-stats">
         <div class="proof-stat">
           <span class="v">2008</span>
-          <span class="l">In media &amp; the creator economy since</span>
+          <span class="l">Building in media and the creator economy since</span>
         </div>
         <div class="proof-stat">
           <span class="v">100<small>+</small></span>
-          <span class="l">Building Value conversations &mdash; podcast relaunching Q4 2026</span>
+          <span class="l">Building Value conversations</span>
         </div>
         <div class="proof-stat">
           <span class="v">50<small>+</small></span>
-          <span class="l">VidCon interviews, hosted on Meta's Super platform</span>
+          <span class="l">VidCon interviews hosted on Meta's Super</span>
         </div>
         <div class="proof-stat">
           <span class="v">3</span>
-          <span class="l">Universities &mdash; guest lectures</span>
+          <span class="l">Guest lectures: Northwestern, Howard and Georgetown</span>
         </div>
       </div>
-      <p class="proof-line">Guest lectures at <strong>Northwestern</strong>, <strong>Howard</strong>, and <strong>Georgetown</strong> · Conference stages across Europe, from <strong>Latitude59</strong> in Tallinn to <strong>PAKCon</strong> in Berlin and <strong>IFA</strong> · Co-founded <strong>Packagd</strong> (acquired by <strong>Meta</strong>), and spoke across internal Meta events including the Games Day broadcast.</p>
 
       <div class="logo-strip">
         <img src="logo-ifa.png" alt="IFA Berlin" width="329" height="96" loading="lazy">
         <img src="logo-latitude59.png" alt="Latitude59" width="278" height="96" loading="lazy">
         <img src="logo-zest.png" alt="ZEST Malta" width="252" height="96" loading="lazy">
-        <img class="logo-stacked" src="logo-pakcon.svg" alt="PAKCon — Project A Knowledge Conference, Berlin" width="353" height="101" loading="lazy">
+        <img class="logo-stacked" src="logo-pakcon.svg" alt="PAKCon, Project A Knowledge Conference, Berlin" width="353" height="101" loading="lazy">
         <img class="logo-stacked" src="logo-vidcon.png" alt="VidCon Now" width="303" height="240" loading="lazy">
       </div>
     </section>
 
-    <!-- TOPICS -->
+    <!-- TALKS -->
     <section class="topics-section">
-      <div class="section-eyebrow"><span class="num">02</span> Talks I'm ready to give</div>
       <h2>Pick a talk. I'll bring the rest.</h2>
-      <p class="sub">Each one is a real talk I can give tomorrow — not a title I'd have to go build a deck for. I'll shape it to your room and your run of show.</p>
+      <p class="sub">Three talks I can give tomorrow, shaped to your room and your run of show.</p>
 
-      <div class="topics-subhead">Flagship talks</div>
       <div class="flagship-grid">
 
         <div class="topic-card flagship">
-          <span class="num">01</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
           <h3><a class="talk-title-link" href="/speaking/your-ai-strategy-is-probably-theater/">Your AI Strategy Is Probably Theater</a></h3>
           <p class="hook">Most organizations have an AI strategy that's really a press release.</p>
-          <div class="best-for">
-            <span class="field-label">Best for</span>
-            <span class="field-value">Executive teams · product leaders · innovation &amp; AI-focused conferences</span>
-          </div>
-          <ul class="takeaways">
-            <li>A test for telling real AI leverage from expensive theater</li>
-            <li>Where AI creates a real advantage today, and where it's still noise</li>
-            <li>How to hold a point of view that survives the next hype cycle</li>
-          </ul>
+          <p class="fit">Keynote, 45 to 60 minutes. For executive teams, product leaders, and AI or innovation conferences.</p>
           <div class="talk-footer">
-            <span class="talk-pill">Keynote · 45–60 min</span>
-            <a href="/contact?topic=speaking&amp;talk=your-ai-strategy-is-probably-theater&amp;talkTitle=Your%20AI%20Strategy%20Is%20Probably%20Theater" class="bolt">Ask about this talk →</a>
+            <a href="/speaking/your-ai-strategy-is-probably-theater/" class="bolt">See the talk →</a>
+            <a href="/contact?topic=speaking&amp;talk=your-ai-strategy-is-probably-theater&amp;talkTitle=Your%20AI%20Strategy%20Is%20Probably%20Theater" class="bolt">Ask about it →</a>
           </div>
         </div>
 
         <div class="topic-card flagship">
-          <span class="num">02</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          </div>
           <h3><a class="talk-title-link" href="/speaking/the-media-cycle-no-one-believes-is-a-cycle/">The Media Cycle No One Believes Is a Cycle</a></h3>
-          <p class="hook">Every wave looks like a revolution from the inside — until you've lived through three of them.</p>
-          <div class="best-for">
-            <span class="field-label">Best for</span>
-            <span class="field-value">Media &amp; technology executives · strategy teams · industry conferences</span>
-          </div>
-          <ul class="takeaways">
-            <li>The pattern media waves keep repeating</li>
-            <li>How to tell where we really are in the current one</li>
-            <li>What nearly twenty years inside three of them says about the next</li>
-          </ul>
+          <p class="hook">Every wave looks like a revolution from the inside, until you've lived through three of them.</p>
+          <p class="fit">Keynote, 45 to 60 minutes. For media and technology executives, strategy teams, and industry conferences.</p>
           <div class="talk-footer">
-            <span class="talk-pill">Keynote · 45–60 min</span>
-            <a href="/contact?topic=speaking&amp;talk=the-media-cycle-no-one-believes-is-a-cycle&amp;talkTitle=The%20Media%20Cycle%20No%20One%20Believes%20Is%20a%20Cycle" class="bolt">Ask about this talk →</a>
+            <a href="/speaking/the-media-cycle-no-one-believes-is-a-cycle/" class="bolt">See the talk →</a>
+            <a href="/contact?topic=speaking&amp;talk=the-media-cycle-no-one-believes-is-a-cycle&amp;talkTitle=The%20Media%20Cycle%20No%20One%20Believes%20Is%20a%20Cycle" class="bolt">Ask about it →</a>
           </div>
         </div>
 
         <div class="topic-card flagship">
-          <span class="num">03</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          </div>
           <h3><a class="talk-title-link" href="/speaking/why-some-creators-break-through-and-most-dont/">Why Some Creators Break Through and Most Don't</a></h3>
-          <p class="hook">After 100+ conversations with creators on Building Value, the same handful of patterns keep showing up.</p>
-          <div class="best-for">
-            <span class="field-label">Best for</span>
-            <span class="field-value">Creator-economy platforms · brand &amp; marketing teams · creator-focused conferences</span>
-          </div>
-          <ul class="takeaways">
-            <li>The handful of patterns that separate the ones who break out</li>
-            <li>Why most creator-economy advice talks right past them</li>
-            <li>A lens platforms and brands can use to spot it early</li>
-          </ul>
+          <p class="hook">After 100+ conversations with creators on Building Value, the same few patterns keep showing up.</p>
+          <p class="fit">Keynote, 45 to 60 minutes. For creator platforms, brand and marketing teams, and creator conferences.</p>
           <div class="talk-footer">
-            <span class="talk-pill">Keynote · 45–60 min</span>
-            <a href="/lens" class="bolt">Read the three questions →</a>
-            <a href="/contact?topic=speaking&amp;talk=why-some-creators-break-through-and-most-dont&amp;talkTitle=Why%20Some%20Creators%20Break%20Through%20and%20Most%20Don%27t" class="bolt">Ask about this talk →</a>
+            <a href="/speaking/why-some-creators-break-through-and-most-dont/" class="bolt">See the talk →</a>
+            <a href="/contact?topic=speaking&amp;talk=why-some-creators-break-through-and-most-dont&amp;talkTitle=Why%20Some%20Creators%20Break%20Through%20and%20Most%20Don%27t" class="bolt">Ask about it →</a>
           </div>
         </div>
 
       </div>
 
-      <div class="topics-subhead">Additional topics — available on request</div>
-      <div class="topics-grid-compact">
-
-        <div class="topic-card">
-          <span class="num">04</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>Fandoms Are Infrastructure, Not Marketing</h3>
-          <p>Audiences don't become fans by accident — they become fans through infrastructure most companies never think to build. How creator-platform relationships are being rebuilt from the ground up, and what comes after the influencer era.</p>
-        </div>
-
-        <div class="topic-card">
-          <span class="num">05</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-          </div>
-          <h3>What It's Like to Sell the Thing You Built</h3>
-          <p>An operator's view of building a product org from zero, navigating an acquisition from the acquired side, and the strange experience of handing your work to someone else — and what that teaches you about building the next thing.</p>
-        </div>
-
-        <div class="topic-card">
-          <span class="num">06</span>
-          <div class="icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <h3>Leading From a Different Time Zone</h3>
-          <p>Operating at an executive level from Europe, building for global teams and US-based companies. What remote-first leadership demands once the time-zone gap stops being a scheduling problem and starts being a strategic one.</p>
-        </div>
-
-      </div>
+      <h3 class="also">Also on request</h3>
+      <ul class="also-list">
+        <li><strong>Fandom Is Infrastructure</strong>What it takes to build fandom on purpose, and what comes after the influencer era.</li>
+        <li><strong>What It's Like to Sell the Thing You Built</strong>Packagd from zero to the Meta acquisition, seen from the acquired side, and what handing your work to someone else teaches you about the next thing.</li>
+        <li><strong>Leading From a Different Time Zone</strong>What I've learned leading US companies and global teams from the south of France, including what quietly breaks across a nine-hour gap.</li>
+      </ul>
     </section>
 
     <!-- MEDIA -->
     <section class="media-section" id="media">
-      <div class="section-eyebrow"><span class="num">03</span> Watch &amp; listen</div>
       <h2>Watch me host.</h2>
-      <p class="sub">A reel from the creator interviews I hosted on Meta's Super, and a couple of Building Value episodes. The full podcast archive lives on its own page.</p>
+      <p class="sub">A reel from the creator interviews I hosted on Meta's Super, and two Building Value episodes.</p>
 
       <div class="media-grid">
 
         <div class="media-slot media-feature">
           <div class="video-wrap">
-            <video controls preload="none" playsinline poster="reel-super-2022.jpg" title="Jason Nellis hosting creator interviews on Meta's Super platform — 2022 highlight reel">
+            <video controls preload="none" playsinline poster="reel-super-2022.jpg" title="Jason Nellis hosting creator interviews on Meta's Super platform, 2022 highlight reel">
               <source src="reel-super-2022.mp4" type="video/mp4">
             </video>
           </div>
           <div class="media-info">
-            <span class="badge">Meta · Super</span>
-            <h3>Hosting on Super — 2022 highlight reel</h3>
-            <p>A cut from the creator interviews I hosted live on Super, the platform I built and launched at Meta. This is the on-camera hosting the track record above is counting — 50-plus of these conversations.</p>
+            <h3>Hosting on Super, 2022</h3>
+            <p>Creator interviews I hosted live on Super, the platform I built and launched at Meta.</p>
           </div>
         </div>
-
-        <div class="media-subhead">Building Value — the podcast</div>
 
         <div class="media-slot">
           <div class="video-wrap">
             <iframe src="https://www.youtube-nocookie.com/embed/qDVd_kNMwXY" title="The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Building Value</span>
             <h3>The TikTok Magic of a Former McDonald's Chef! [Chef Mike Haracz]</h3>
-            <p>A former McDonald's corporate chef on building a following on TikTok from scratch — what brands get wrong about authenticity, and how a personal voice can outperform a marketing budget.</p>
+            <p>A former McDonald's corporate chef on building a TikTok following from scratch, and how a personal voice can outperform a marketing budget.</p>
           </div>
         </div>
 
@@ -568,9 +510,8 @@
             <iframe src="https://www.youtube-nocookie.com/embed/L0AFy_TM6Cs" title="Hulu's First PM [Betina Chan-Martin]" allowfullscreen loading="lazy"></iframe>
           </div>
           <div class="media-info">
-            <span class="badge">Building Value</span>
             <h3>Hulu's First PM [Betina Chan-Martin]</h3>
-            <p>Hulu's first product manager on what it took to build a streaming product from zero — and the lessons from an early-stage team that don't survive the transition to scale.</p>
+            <p>Hulu's first product manager on building a streaming product from zero, and which early-team lessons don't survive scale.</p>
           </div>
         </div>
 
@@ -583,61 +524,58 @@
 
     <!-- FORMATS -->
     <section class="formats-section">
-      <div class="section-eyebrow"><span class="num">04</span> Formats</div>
       <h2>How I show up.</h2>
       <div class="formats-list">
         <div class="format-row">
           <span class="type">Keynote</span>
-          <span class="desc">A single sustained argument built around one thesis — not a tour of the landscape. Best for rooms that want a point of view, not a recap of one.</span>
-          <span class="pill">45–60 min</span>
+          <span class="desc">One argument built around one thesis, for rooms that want a point of view.</span>
+          <span class="pill">45 to 60 min</span>
         </div>
         <div class="format-row">
           <span class="type">Moderator / MC</span>
-          <span class="desc">Running the panel rather than sitting on it, or holding a whole day together from the front. I prep the panelists, cut the throat-clearing, and ask the second question — the one that gets the answer the first question was fishing for.</span>
-          <span class="pill">Panel · Half day · Full day</span>
+          <span class="desc">Running the panel instead of sitting on it, or holding a whole day together from the front. I prep the panelists, cut the throat-clearing, and ask the second question, the one that gets the answer the first question was fishing for.</span>
+          <span class="pill">Panel, half or full day</span>
         </div>
         <div class="format-row">
           <span class="type">Panel</span>
-          <span class="desc">I hold a position in a panel. I bring a clear point of view, listen closely, and make the disagreements useful to the room — that's where the value is.</span>
-          <span class="pill">30–45 min</span>
+          <span class="desc">I hold a position, listen closely, and make the disagreements useful to the room.</span>
+          <span class="pill">30 to 45 min</span>
         </div>
         <div class="format-row">
           <span class="type">Fireside</span>
-          <span class="desc">A conversation rather than a presentation. Works best when the interviewer is willing to go somewhere unscripted. I prefer this format when the audience is relatively small.</span>
-          <span class="pill">20–40 min</span>
+          <span class="desc">A conversation instead of a presentation. Best with a small audience and an interviewer willing to go off script.</span>
+          <span class="pill">20 to 40 min</span>
         </div>
         <div class="format-row">
           <span class="type">Podcast / Interview</span>
-          <span class="desc">I host <a href="/building-value" class="bolt">Building Value</a> — 100+ conversations and now relaunching Q4 2026. I'm also open to guest appearances on podcasts that take strategy and media seriously — not just creator-economy hype cycles.</span>
-          <span class="pill">Remote · In-person</span>
+          <span class="desc">I host <a href="/building-value" class="bolt">Building Value</a>, relaunching Q4 2026, and I'm a guest on shows that take strategy and media seriously.</span>
+          <span class="pill">Remote or in person</span>
         </div>
         <div class="format-row">
           <span class="type">Workshop</span>
-          <span class="desc">Hands-on sessions for leadership teams working through a specific strategic question — go-to-market, product direction, audience monetization. Limited availability.</span>
+          <span class="desc">A leadership team and one strategic question, such as go-to-market, product direction or audience monetization.</span>
           <span class="pill">Half or full day</span>
         </div>
       </div>
 
       <div class="mod-callout">
-        <div class="section-eyebrow"><span class="num">+</span> On moderating</div>
         <h3>The best panel in the program is usually the one someone ran properly.</h3>
-        <p>Most panels fail the same way: four smart people take turns giving prepared answers and nobody disagrees out loud. I've hosted <strong>150+ recorded conversations</strong> &mdash; 50-plus VidCon interviews on Meta's Super platform and 100-plus episodes of <a href="/building-value" class="bolt">Building Value</a> &mdash; plus internal Meta events up to the Games Day broadcast. It's a different job from speaking: the room should leave remembering the panelists, not the moderator.</p>
+        <p>Most panels fail the same way: four smart people take turns giving prepared answers and nobody disagrees out loud. I've hosted <strong>150+ recorded conversations</strong>, including 50-plus VidCon interviews on Meta's Super and 100-plus episodes of <a href="/building-value" class="bolt">Building Value</a>, plus internal Meta events up to the Games Day broadcast. When I've done the job well, the room remembers the panelists.</p>
         <p class="mod-ask">If you've got a session that matters and nobody obvious to hold it, that's the one to call me about.</p>
       </div>
 
       <div class="mod-proof">
-        <div class="media-subhead" style="margin:0 0 16px; padding:0;">The job, on camera — with Austin Evans &amp; team, 2017</div>
+        <div class="media-subhead" style="margin:0 0 16px; padding:0;">Hosting Austin Evans and team, 2017</div>
         <div class="media-grid">
           <div class="media-slot">
             <div class="video-wrap">
-              <video controls preload="none" playsinline poster="austin-evans-favorite-tech.jpg" title="Jason Nellis hosting Austin Evans and team — Favorite Tech">
+              <video controls preload="none" playsinline poster="austin-evans-favorite-tech.jpg" title="Jason Nellis hosting Austin Evans and team: Favorite Tech">
                 <source src="austin-evans-favorite-tech.mp4" type="video/mp4">
               </video>
             </div>
             <div class="media-info">
-              <span class="badge">Interview · 2017</span>
-              <h3>Favorite Tech — Austin Evans &amp; Co.</h3>
-              <p>Running a multi-guest segment with one of tech's biggest YouTubers and his team — keeping four people moving, funny, and on point.</p>
+              <h3>Favorite Tech</h3>
+              <p>A multi-guest segment with one of tech's biggest YouTubers and his team, keeping four people moving, funny and on point.</p>
             </div>
           </div>
           <div class="media-slot">
@@ -647,26 +585,11 @@
               </video>
             </div>
             <div class="media-info">
-              <span class="badge">Interview · 2017</span>
-              <h3>Rapid Fire Q&amp;A — Austin Evans &amp; Co.</h3>
-              <p>The faster format: quick questions, real answers, a room that stays with you. This is what "running the panel" looks like in practice.</p>
+              <h3>Rapid Fire Q&amp;A</h3>
+              <p>Quick questions, real answers, and a room that stays with you.</p>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- WHERE I'LL BE -->
-    <section class="where-section">
-      <div class="section-eyebrow"><span class="num">05</span> Where I'll be</div>
-      <h2>On the ground, not on a flight.</h2>
-      <p class="sub">I live twenty minutes from the Palais des Festivals. MIPCOM, MIPTV, Cannes Lions, and Monaco are a train ride, not a transatlantic flight. For the rest of Europe and North America, I travel.</p>
-      <div class="where-list">
-        <a class="where-row" href="/contact" data-expires="2026-10-16">
-          <span class="date"><span class="live-dot"></span>12–15 Oct 2026</span>
-          <span class="what"><strong>MIPCOM 2026</strong> · Palais des Festivals, Cannes<span class="note">If you're in town and have a point of view worth arguing with, let's find a table.</span></span>
-          <span class="pill">Meet me there →</span>
-        </a>
       </div>
     </section>
 
@@ -675,29 +598,16 @@
   <!-- BOOK ME -->
   <section class="book-section">
     <div class="page-wrap">
-      <div class="book-inner">
+      <div class="book-inner single">
         <div>
-          <div class="section-eyebrow"><span class="num">06</span> Work with me</div>
           <h2>Tell me about your event.</h2>
-          <p>Tell me who's in the audience and what you want them walking out believing — I'll tell you fast whether I'm the right fit. For European events, travel is a train ticket, not a business-class fare.</p>
+          <p>Tell me who's in the audience and what you want them walking out believing, and I'll tell you fast whether I'm the right fit. I live twenty minutes from the Palais des Festivals, so MIPCOM, MIPTV and Cannes Lions are local. For the rest of Europe and North America, I travel.</p>
           <div class="ctas">
-            <a href="/contact" class="btn primary">Get in touch
+            <a href="/contact?topic=speaking" class="btn primary">Get in touch
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <a href="https://linkedin.com/in/jasonnellis" target="_blank" rel="noopener" class="btn ghost">LinkedIn ↗</a>
+            <a href="/press-kit" class="btn ghost">Speaker kit</a>
           </div>
-          <p style="margin-top:16px;"><a href="/press-kit" class="bolt">Download speaker kit →</a></p>
-        </div>
-        <div>
-          <ul class="check-list">
-            <li>Conferences and industry summits in media and technology</li>
-            <li>Panel moderation and event MC &mdash; single sessions or a full program</li>
-            <li>Executive off-sites and leadership team sessions</li>
-            <li>Podcasts and long-form interview formats</li>
-            <li><a href="/advisory" class="bolt">Advisory engagements</a> with founders and exec teams building in this space</li>
-            <li>University and professional development programs</li>
-            <li>Based in Cannes. Europe and North America.</li>
-          </ul>
         </div>
       </div>
     </div>

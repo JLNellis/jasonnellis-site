@@ -23,77 +23,44 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="stylesheet" href="/site.css">
 <style>
+  /* Talk pages run without section eyebrows or field labels: plain h2s. */
   .talk-header { padding: 72px 0 8px; max-width: 720px; }
-  .talk-header .back-link { font-size: 13px; }
-  .talk-header .section-eyebrow { margin-top: 22px; }
+  .talk-header .back-link { font-size: 13px; display: inline-block; margin-bottom: 22px; }
   .talk-header h1 {
     font-size: clamp(32px, 5vw, 48px); font-weight: 700;
     line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px;
   }
-  .talk-header .hook { font-size: 18px; line-height: 1.6; color: var(--fg-1); margin: 0; }
+  .talk-header .hook { font-size: 19px; line-height: 1.55; color: var(--fg-1); margin: 0 0 12px; }
+  .talk-header .fit { font-size: 14px; line-height: 1.6; color: var(--fg-3); margin: 0; }
 
-  .talk-body { max-width: 720px; padding: 24px 0 8px; }
-  .talk-body p { font-size: 16px; line-height: 1.75; color: var(--fg-2); margin: 0 0 18px; }
+  .talk-body { max-width: 720px; padding: 24px 0 0; }
+  .talk-body p { font-size: 17px; line-height: 1.75; color: var(--fg-2); margin: 0 0 18px; }
 
-  .talk-meta-block {
-    max-width: 720px; margin: 24px 0 0; padding: 24px 26px;
-    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px;
-  }
-  .talk-meta-block .field-label {
-    display: block; font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px;
-  }
-  .talk-meta-block .field-value { display: block; font-size: 14px; color: var(--fg-1); margin-bottom: 20px; }
-  .talk-meta-block .takeaways { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  .talk-meta-block .takeaways li { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--fg-2); line-height: 1.5; }
-  .talk-meta-block .takeaways li::before {
-    content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono);
-    font-size: 11px; flex-shrink: 0; margin-top: 1px;
-  }
+  .talk-section { max-width: 720px; margin: 44px 0 0; }
+  .talk-section h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 16px; }
 
-  .talk-section { max-width: 720px; margin: 40px 0 0; }
-  .talk-section .section-eyebrow { margin: 0 0 14px; }
-  .talk-section p { font-size: 15px; line-height: 1.75; color: var(--fg-2); margin: 0; }
+  .takeaways { margin: 0; padding-left: 20px; }
+  .takeaways li { font-size: 16px; color: var(--fg-2); line-height: 1.6; margin-bottom: 6px; }
 
-  .talk-argument {
-    max-width: 720px; margin: 40px 0 0; padding: 26px 28px;
-    background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
-    border-left: 2px solid var(--color-accent-vivid);
-  }
-  .talk-argument p { font-size: 17px; line-height: 1.6; color: var(--fg-1); margin: 0; }
+  .talk-arc { margin: 0; padding-left: 22px; }
+  .talk-arc li { font-size: 15px; color: var(--fg-3); padding-left: 4px; margin-bottom: 14px; }
+  .talk-arc .arc-title { color: var(--fg-1); font-weight: 600; font-size: 16px; margin: 0 0 2px; }
+  .talk-arc .arc-body { color: var(--fg-2); font-size: 15px; line-height: 1.6; margin: 0; }
 
-  .talk-arc { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
-  .talk-arc li { display: flex; gap: 14px; align-items: flex-start; }
-  .talk-arc .arc-num {
-    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-    border: 1px solid var(--border-strong); color: var(--fg-3);
-    font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; justify-content: center;
-  }
-  .talk-arc .arc-title { color: #FFF; font-weight: 500; font-size: 15px; margin: 0 0 4px; }
-  .talk-arc .arc-body { color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 0; }
-
-  .talk-evidence { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+  .talk-evidence { list-style: none; padding: 0; margin: 0; }
   .talk-evidence li { padding: 16px 0; border-top: 1px solid var(--border-subtle); }
   .talk-evidence li:first-child { border-top: none; padding-top: 0; }
-  .talk-evidence .ev-label { color: #FFF; font-weight: 500; font-size: 14px; }
-  .talk-evidence .ev-body { color: var(--fg-2); font-size: 14px; line-height: 1.6; margin: 4px 0 0; }
+  .talk-evidence .ev-label { color: var(--fg-1); font-weight: 600; font-size: 15px; }
+  .talk-evidence .ev-body { color: var(--fg-2); font-size: 15px; line-height: 1.6; margin: 4px 0 0; }
   .talk-evidence .ev-link { font-size: 13px; margin-top: 6px; display: inline-block; }
 
-  .talk-adaptations { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  .talk-adaptations li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--fg-2); line-height: 1.55; }
-  .talk-adaptations li::before { content: "→"; color: var(--color-accent-vivid); font-family: var(--font-mono); font-size: 12px; flex-shrink: 0; margin-top: 2px; }
-  .talk-adaptations strong { color: #FFF; font-weight: 500; }
-
-  .talk-related { max-width: 720px; margin: 24px 0 0; font-size: 14px; color: var(--fg-2); }
+  .talk-related { max-width: 720px; margin: 32px 0 0; font-size: 15px; color: var(--fg-2); }
 
   .talk-footer {
     display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
     max-width: 720px; margin: 32px 0 96px; padding-top: 24px; border-top: 1px solid var(--border-subtle);
   }
-  .talk-pill {
-    font-size: 11px; padding: 4px 10px; border-radius: 999px;
-    border: 1px solid var(--border-strong); color: var(--fg-2); white-space: nowrap;
-  }
+  .talk-footer p { font-size: 15px; color: var(--fg-2); margin: 0; }
 </style>
 <script src="/nav.js"></script>
 </head>
@@ -107,32 +74,17 @@
   <div class="page-wrap page-wrap--narrow">
     <div class="talk-header">
       <a href="/speaking" class="bolt back-link">← All talks</a>
-      <div class="section-eyebrow"><span class="num">Talk</span> {{ length }}</div>
       <h1>{{ title }}</h1>
       <p class="hook">{{ hook }}</p>
+      <p class="fit">{{ length }}. For {{ bestFor }}.</p>
     </div>
 
     <div class="talk-body">
       {{ content | safe }}
     </div>
 
-    {%- if whyNow %}
     <div class="talk-section">
-      <div class="section-eyebrow"><span class="num">Why this talk, now</span></div>
-      <p>{{ whyNow }}</p>
-    </div>
-    {%- endif %}
-
-    {%- if argument %}
-    <div class="talk-argument">
-      <p>{{ argument }}</p>
-    </div>
-    {%- endif %}
-
-    <div class="talk-meta-block">
-      <span class="field-label">Best for</span>
-      <span class="field-value">{{ bestFor }}</span>
-      <span class="field-label">Audience leaves with</span>
+      <h2>What the room leaves with</h2>
       <ul class="takeaways">
         {%- for t in takeaways %}
         <li>{{ t }}</li>
@@ -142,15 +94,12 @@
 
     {%- if narrativeArc %}
     <div class="talk-section">
-      <div class="section-eyebrow"><span class="num">How the talk unfolds</span></div>
+      <h2>How it runs</h2>
       <ol class="talk-arc">
         {%- for section in narrativeArc %}
         <li>
-          <span class="arc-num">{{ loop.index }}</span>
-          <div>
-            <p class="arc-title">{{ section.title }}</p>
-            <p class="arc-body">{{ section.body }}</p>
-          </div>
+          <p class="arc-title">{{ section.title }}</p>
+          <p class="arc-body">{{ section.body }}</p>
         </li>
         {%- endfor %}
       </ol>
@@ -159,7 +108,7 @@
 
     {%- if evidence %}
     <div class="talk-section">
-      <div class="section-eyebrow"><span class="num">Where this comes from</span></div>
+      <h2>Where it comes from</h2>
       <ul class="talk-evidence">
         {%- for item in evidence %}
         <li>
@@ -174,23 +123,12 @@
     </div>
     {%- endif %}
 
-    {%- if adaptations %}
-    <div class="talk-section">
-      <div class="section-eyebrow"><span class="num">Built to adapt</span></div>
-      <ul class="talk-adaptations">
-        {%- for a in adaptations %}
-        <li><strong>{{ a.audience }}</strong> — {{ a.body }}</li>
-        {%- endfor %}
-      </ul>
-    </div>
-    {%- endif %}
-
     {%- if relatedEssaySlug %}
     <p class="talk-related">Related reading: <a class="bolt" href="/blog/{{ relatedEssaySlug }}/">{{ relatedEssayTitle }}</a></p>
     {%- endif %}
 
     <div class="talk-footer">
-      <span class="talk-pill">{{ length }}</span>
+      <p>I shape every talk to the room and the run of show.</p>
       <a href="/contact?topic=speaking&amp;talk={{ page.fileSlug }}&amp;talkTitle={{ title | urlencode }}" class="btn primary">Book this talk</a>
     </div>
   </div>

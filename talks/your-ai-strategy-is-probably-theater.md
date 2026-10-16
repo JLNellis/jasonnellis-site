@@ -1,38 +1,32 @@
 ---
 title: "Your AI Strategy Is Probably Theater"
 hook: "Most organizations have an AI strategy that's really a press release."
-bestFor: "Executive teams · product leaders · innovation & AI-focused conferences"
+bestFor: "executive teams, product leaders, and AI or innovation conferences"
 takeaways:
-  - "A practical test for separating real AI leverage from costly performance"
-  - "Where AI creates defensible advantage today, and where it's still noise"
-  - "How to build a point of view that survives the next hype cycle"
-length: "Keynote · 45–60 min"
+  - "A test for telling real AI leverage from expensive theater"
+  - "Where AI creates an advantage today, and where it's still noise"
+  - "A point of view that survives the next hype cycle"
+length: "Keynote, 45 to 60 minutes"
 order: 1
 ogImage: "/og-talk-ai-strategy.jpg"
-whyNow: "Every organization has an AI initiative and a slide deck now; few have a working definition of where AI actually changes the P&L. Saying no to a pilot has started to look riskier than funding one that never ships anything real — which is exactly backwards."
-argument: "This isn't a tools showcase or a hype-versus-skepticism debate. It's an argument about executive judgment: as AI implementation gets cheaper, the cost of weak direction goes up, not down. The organizations getting real leverage aren't the ones running the most pilots — they're the ones with someone senior enough, and specific enough, to say where AI doesn't belong."
 narrativeArc:
   - title: "The press release problem"
-    body: "Most AI strategies are communications documents wearing a strategy's clothes — a slide, a pilot, a quote for the annual report. How to tell the difference from the outside."
-  - title: "Where the leverage actually is"
-    body: "A practical test, built from running AI strategy for an operating company today, for separating implementation from advantage."
+    body: "A slide, a pilot, a quote for the annual report. How to spot a strategy that's really a communications document."
+  - title: "Where the leverage is"
+    body: "The test I use at BoltOS to separate implementing AI from getting an advantage out of it."
   - title: "The deepfake case"
-    body: "What it took to build an AI enforcement product at SuperBam — where the cost of being wrong wasn't a bad demo, it was a bad legal outcome."
+    body: "Building an AI enforcement product at SuperBam, where a wrong call meant a legal problem."
   - title: "The judgment gap"
-    body: "Why cheaper implementation raises the cost of a wrong call instead of lowering it, and why most orgs are set up to miss that."
+    body: "Why cheaper implementation raises the cost of a wrong call, and why most companies are set up to miss it."
   - title: "What a real point of view looks like"
-    body: "A test the audience can apply on Monday morning to their own AI roadmap."
+    body: "A test the audience can run on their own AI roadmap the next morning."
 evidence:
-  - label: "BoltOS · Head of Innovation & GTM"
-    body: "Currently shaping product and go-to-market strategy for AI-native operating infrastructure — the live version of this argument, not a retrospective."
-  - label: "SuperBam — CPO → Interim CEO"
-    body: "Built an AI deepfake enforcement product from the ground up, where AI had to hold up against real-world stakes, not just demo well."
-adaptations:
-  - audience: "Executive / board"
-    body: "condensed to a decision framework for a leadership offsite"
-  - audience: "Product & engineering"
-    body: "focused on implementation judgment and where AI creates defensible leverage vs. busywork"
-  - audience: "General business / association"
-    body: "a practical filter for separating AI signal from AI noise, no technical background assumed"
+  - label: "BoltOS, Head of Innovation & GTM"
+    body: "I'm shaping product and go-to-market for AI-native infrastructure right now. This is the live version of the argument."
+  - label: "SuperBam, CPO then interim CEO"
+    body: "Built an AI deepfake enforcement product from the ground up, where the output had real legal stakes."
+    url: "/blog/the-call-to-start-over-at-superbam/"
 ---
-A practical breakdown of where AI creates real product leverage today, where it's still noise, and how to build a defensible point of view before the next cycle makes yours obsolete.
+Every company has an AI initiative and a slide about it. Few can tell you where AI actually changes the P&L. Meanwhile, saying no to a pilot has started to look riskier than funding one that never ships, which is exactly backwards.
+
+As AI gets cheaper to implement, weak direction gets more expensive. The companies getting real leverage have someone senior enough, and specific enough, to say where AI doesn't belong. This talk is about being that person.
