@@ -1,6 +1,6 @@
 ---
 title: "The call to start over at SuperBam"
-description: "Four half-built ingestion projects stitched into one slow process. The fix wasn't finishing them. It was stopping, and deciding what kind of company SuperBam was."
+description: "Four half-built ingestion projects stitched into one slow process. Stopping all of them decided what kind of company SuperBam was."
 date: 2026-09-21
 category: "Case Study"
 readTime: "6 min"

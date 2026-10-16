@@ -1,6 +1,6 @@
 ---
 title: "We moved to Europe to change our lives"
-description: "Not for a vacation. Not for an adventure. For a different answer to what a life is for."
+description: "Why we left LA for the south of France, and what we were actually trying to change."
 date: 2025-07-14
 category: "Life"
 readTime: "2 min"

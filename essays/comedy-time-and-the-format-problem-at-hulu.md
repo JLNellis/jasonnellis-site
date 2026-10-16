@@ -1,6 +1,6 @@
 ---
 title: "Comedy Time and the format problem at Hulu"
-description: "A stand-up comedy library was stuck at $400 a month in revenue. The fix wasn't the content — it was the format."
+description: "A stand-up comedy library was stuck at $400 a month in revenue. Repackaging the same footage took it to $4,000."
 date: 2026-07-13
 category: "Case Study"
 readTime: "2 min"

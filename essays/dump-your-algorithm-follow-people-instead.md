@@ -1,6 +1,6 @@
 ---
 title: "Dump your algorithm. Follow people instead."
-description: "The Discover tab is optimized for engagement, not for you. There's a better way."
+description: "The Discover tab is optimized for engagement. Following people you chose works better."
 date: 2026-02-09
 category: "Strategy"
 readTime: "1 min"

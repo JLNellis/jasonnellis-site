@@ -235,7 +235,7 @@ site does. Keep it true. Conventions that keep it true:
 - `localStorage` is fine for on-device state (games, mute, unlock flags).
   It never leaves the browser and the policy already covers it.
 - When any of the above changes, update the "Last updated" date in the
-  `/privacy` hero eyebrow.
+  `/privacy` hero (the `.policy-updated` line).
 
 ## Pages
 
@@ -281,12 +281,12 @@ hardcode hex values.
   not decorative.
 
 **Conventions seen across pages:**
-- **No numbered section eyebrows** on the homepage, About, Contact, Speaking,
-  the talk pages, Advisory, Press kit or Building Value (retired Oct 2026, along
+- **No numbered section eyebrows** anywhere (retired Oct 2026, along
   with card numbers, status chips, tag rows and decorative readouts). Use plain
   `<h2>`s, and put the page's best line in the heading. New copy also avoids
-  "not X, it's Y" constructions, em dashes and triplet lists. Some older pages
-  (privacy, experiments, games) still carry eyebrows; don't add new ones.
+  "not X, it's Y" constructions, em dashes and triplet lists. Eyebrows are
+  retired site-wide except the Lens page name; `/privacy` keeps numbered h2s
+  because a legal policy is easier to reference that way. Don't add new ones.
 - Cards: `--bg-card` background, `--border-subtle`, `--radius-lg` (10px),
   hover state brightens border to accent green at low opacity.
 - CTAs: `.btn.primary` (filled green) and `.btn.ghost` (outlined) button

@@ -1,6 +1,6 @@
 ---
 title: "Every generation blames the next medium"
-description: "Why moral panic about new media is as old as the printing press — and what the BAFTAs had to do with it."
+description: "Moral panic about new media is as old as the printing press. What the BAFTAs had to do with it."
 date: 2026-02-17
 category: "Creator Economy"
 readTime: "1 min"

@@ -1,6 +1,6 @@
 ---
 title: "Live video still can't figure out the money"
-description: "Ten years of trying to make live commerce work — and why the economics keep breaking the same way."
+description: "Ten years of trying to make live commerce work, and why the economics keep breaking the same way."
 date: 2025-09-19
 category: "Product"
 readTime: "1 min"

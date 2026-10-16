@@ -1,6 +1,6 @@
 ---
 title: "Hulu made my career. Now it's really gone."
-description: "What it meant to be there in the beginning — and what it means to watch it end."
+description: "What it meant to be there at the beginning, and what it means to watch it end."
 date: 2025-08-13
 category: "Reflection"
 readTime: "2 min"

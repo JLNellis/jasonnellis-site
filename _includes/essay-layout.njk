@@ -39,7 +39,7 @@
 <style>
   .post-header { padding: 72px 0 8px; max-width: 720px; }
   .post-header .back-link { font-size: 13px; }
-  .post-header .section-eyebrow { margin-top: 22px; }
+  .post-header .post-meta { margin: 22px 0 12px; font-size: 14px; color: var(--fg-3); }
   .post-header h1 {
     font-size: clamp(32px, 5vw, 48px); font-weight: 700;
     line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px;
@@ -91,7 +91,7 @@
   <div class="page-wrap page-wrap--narrow">
     <div class="post-header">
       <a href="/blog" class="bolt back-link">← All essays</a>
-      <div class="section-eyebrow"><span class="num">{{ category }}</span> {{ date | readableDate }} · {{ readTime }}</div>
+      <p class="post-meta">{{ category }}, {{ date | readableDate }}, {{ readTime }} read</p>
       <h1>{{ title }}</h1>
       <p class="post-desc">{{ description }}</p>
     </div>
@@ -120,9 +120,8 @@
       {%- endif %}
       <div class="subscribe-banner">
         <div class="sub-content">
-          <span class="sub-eyebrow">The podcast</span>
           <p class="sub-headline">Hear <em>Building Value</em> when it's back.</p>
-          <p class="sub-body"><em>Building Value</em> &mdash; the podcast on how creative work becomes a business, relaunching Q4 2026. Leave your email and I'll tell you the moment it drops.</p>
+          <p class="sub-body">The podcast on how creative work becomes a business, relaunching Q4 2026. Leave your email and I'll tell you when it's back.</p>
           <form class="sub-form" action="https://app.kit.com/forms/9920578/subscriptions" method="post" target="_blank">
             <input type="email" name="email_address" placeholder="your@email.com" required class="sub-input" autocomplete="email" aria-label="Email address">
             <button type="submit" class="btn primary sub-btn">Get notified</button>
