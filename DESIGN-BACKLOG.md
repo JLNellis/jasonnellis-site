@@ -23,6 +23,10 @@ no new figure or claim without Jason's approval.
 - [x] **Item 1, YouTube click-to-load** (2026-10-24). All six embeds on
   `/speaking` and `/building-value` are now `.yt-facade` posters that nav.js
   swaps for the player on click. `/privacy` wording and date updated.
+- [x] **Item 2, About career ledger** (2026-10-24). One always-open row per
+  employer, newest first, with titles and month ranges from Jason's 2026
+  résumé. Narrative paragraphs moved into a "The longer version" `<details>`
+  under each row. Status colours, pulse, cursor and toggle JS removed.
 
 ---
 

@@ -198,11 +198,8 @@
     margin-bottom: 8px;
   }
   .bio-narrative-label h2 {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--fg-2);
-    margin: 0;
-    line-height: 1.4;
+    font-size: 28px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.15; color: var(--fg-1); margin: 0;
   }
   .bio-narrative-body {
     max-width: 640px;
@@ -249,146 +246,61 @@
     position: sticky;
     top: 96px;
   }
-  .bio-timeline-label .num {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--color-accent-vivid);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
-  }
   .bio-timeline-label h2 {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--fg-2);
-    margin: 0;
-    line-height: 1.4;
+    font-size: 28px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.15; color: var(--fg-1); margin: 0 0 12px;
   }
-  .bio-timeline-label .log-hint {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--fg-3); margin: 18px 0 0;
-  }
-  .bio-timeline-label .log-hint::before { content: "→"; color: var(--color-accent-vivid); }
+  .bio-timeline-label .ledger-source { font-size: 14px; line-height: 1.6; color: var(--fg-2); margin: 0; }
 
-  /* ---- Process log ---- */
-  .log-trace { position: relative; display: flex; flex-direction: column; }
-  .log-trace::before {
-    content: ""; position: absolute;
-    left: 12px; top: 26px; bottom: 26px; width: 1px;
-    background: var(--border-subtle);
+  /* ---- Career ledger: one open row per employer, newest first, dates as on LinkedIn ---- */
+  .ledger { list-style: none; margin: 0; padding: 0; }
+  .ledger-row {
+    display: grid; grid-template-columns: 172px 1fr; gap: 6px 32px;
+    padding: 32px 0; border-top: 1px solid var(--border-subtle);
   }
-
-  .log-entry { position: relative; border-bottom: 1px solid var(--border-subtle); }
-  .log-entry:last-child { border-bottom: none; }
-
-  .log-head {
-    display: grid;
-    grid-template-columns: 24px auto 1fr 20px;
-    align-items: center; gap: 16px;
-    width: 100%; padding: 22px 0;
-    background: none; border: none; cursor: pointer;
-    font: inherit; color: inherit; text-align: left;
-    -webkit-tap-highlight-color: transparent;
+  .ledger-row:first-child { padding-top: 0; border-top: none; }
+  .ledger-when {
+    margin: 6px 0 0; font-family: var(--font-mono); font-size: 13px;
+    color: var(--fg-2); font-variant-numeric: tabular-nums; white-space: nowrap;
   }
-  .log-entry:first-child .log-head { padding-top: 0; }
-
-  .log-node {
-    position: relative;
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--bg-base); border: 2px solid var(--fg-3);
-    justify-self: center;
+  .ledger-when .is-now { color: var(--color-accent-vivid); }
+  .ledger-org {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.25; color: var(--fg-1); margin: 0 0 8px;
   }
-  .log-entry[data-status="acquired"]     .log-node { border-color: var(--color-status-info); }
-  .log-entry[data-status="sunset"]       .log-node { border-color: var(--color-status-error); }
-  .log-entry[data-status="restructured"] .log-node { border-color: var(--color-status-warning); }
-  .log-entry[data-status="shipped"]      .log-node,
-  .log-entry[data-status="in-flight"]    .log-node { border-color: var(--color-accent-vivid); }
-  .log-entry[data-status="in-flight"]    .log-node {
-    background: var(--color-accent-vivid);
-    box-shadow: 0 0 0 4px rgba(0,230,118,0.16);
-    animation: pulse 1.6s ease-in-out infinite;
+  .ledger-org .org-note { font-size: 15px; font-weight: 400; letter-spacing: 0; color: var(--fg-2); }
+  .ledger-roles { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+  .ledger-roles li {
+    display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px;
+    font-size: 16px; font-weight: 500; line-height: 1.45; color: var(--fg-1);
   }
-
-  .log-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .log-time {
-    font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
-    letter-spacing: 0.06em; white-space: nowrap;
+  .ledger-roles .role-when {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 400;
+    color: var(--fg-3); font-variant-numeric: tabular-nums; white-space: nowrap;
   }
-  .log-time.is-live { color: var(--color-accent-vivid); }
-  .log-status {
-    font-family: var(--font-mono); font-size: 9px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
-    padding: 4px 10px; border-radius: 999px; border: 1px solid currentColor;
-  }
-  .log-entry[data-status="shipped"]      .log-status { color: var(--color-accent-vivid);   background: rgba(0,230,118,0.08); }
-  .log-entry[data-status="acquired"]     .log-status { color: var(--color-status-info);    background: rgba(59,130,246,0.08); }
-  .log-entry[data-status="sunset"]       .log-status { color: var(--color-status-error);   background: rgba(239,68,68,0.08); }
-  .log-entry[data-status="restructured"] .log-status { color: var(--color-status-warning); background: rgba(245,158,11,0.08); }
-  .log-entry[data-status="in-flight"]    .log-status { color: var(--color-accent-vivid);   background: rgba(0,230,118,0.08); }
-
-  .log-title { min-width: 0; }
-  .log-title strong {
-    display: block; font-size: 15px; font-weight: 500; color: var(--fg-1);
+  .ledger-outcome { font-size: 15px; line-height: 1.65; color: var(--fg-2); max-width: 620px; margin: 0; }
+  .ledger-link { display: inline-block; margin-top: 8px; padding: 6px 0; font-size: 14px; }
+  .ledger-more { margin-top: 4px; max-width: 620px; }
+  .ledger-more summary {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 0;
+    font-size: 14px; color: var(--fg-2); cursor: pointer; list-style: none;
     transition: color var(--dur-fast);
   }
-  .log-head:hover .log-title strong { color: var(--color-accent-vivid); }
-  .log-org {
-    display: block; margin-top: 3px;
-    font-size: 12px; color: var(--fg-3);
-    font-family: var(--font-mono); letter-spacing: 0.04em;
+  .ledger-more summary::-webkit-details-marker { display: none; }
+  .ledger-more summary:hover { color: var(--fg-1); }
+  .ledger-more summary svg {
+    width: 12px; height: 12px; fill: none; stroke: var(--color-accent-vivid); stroke-width: 2;
+    transition: transform var(--dur-base) var(--ease-standard);
   }
-  .log-cursor {
-    display: inline-block; width: 7px; height: 13px; margin-left: 6px;
-    background: var(--color-accent-vivid); vertical-align: -2px;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  .log-chev {
-    font-family: var(--font-mono); font-size: 16px; line-height: 1;
-    color: var(--fg-3); justify-self: end;
-    transition: transform var(--dur-base) var(--ease-standard), color var(--dur-fast);
-  }
-  .log-entry.open .log-chev { transform: rotate(90deg); color: var(--color-accent-vivid); }
-
-  .log-body {
-    display: grid; grid-template-rows: 0fr; overflow: hidden;
-    transition: grid-template-rows 360ms var(--ease-standard);
-  }
-  .log-entry.open .log-body { grid-template-rows: 1fr; }
-  .log-body-inner {
-    min-height: 0; overflow: hidden;
-    margin-left: 12px; padding: 0 0 26px 28px;
-    border-left: 1px solid var(--border-subtle);
-  }
-  .log-body-inner p {
-    font-size: 14px; line-height: 1.7; color: var(--fg-2);
-    max-width: 620px; margin: 0 0 16px;
-  }
-  .log-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-  .log-tags span {
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--fg-3);
-    border: 1px solid var(--border-subtle); border-radius: 999px; padding: 4px 10px;
-  }
-  .log-cta { display: inline-block; margin-top: 14px; font-size: 13px; }
+  .ledger-more[open] summary svg { transform: rotate(90deg); }
+  .ledger-more summary:focus-visible,
+  .ledger-link:focus-visible { outline: 2px solid var(--color-accent-vivid); outline-offset: 3px; border-radius: 2px; }
+  .ledger-more p { font-size: 14px; line-height: 1.7; color: var(--fg-2); margin: 4px 0 8px; }
 
   @media (max-width: 720px) {
-    .log-trace::before { left: 10px; }
-    .log-head {
-      grid-template-columns: 20px 1fr 20px;
-      grid-template-rows: auto auto;
-      row-gap: 8px; padding: 18px 0;
-    }
-    .log-entry:first-child .log-head { padding-top: 0; }
-    .log-node { grid-column: 1; grid-row: 1 / 3; align-self: start; margin-top: 4px; }
-    .log-meta { grid-column: 2; grid-row: 1; }
-    .log-title { grid-column: 2; grid-row: 2; }
-    .log-chev { grid-column: 3; grid-row: 1 / 3; }
-    .log-body-inner { margin-left: 10px; padding-left: 22px; }
+    .ledger-row { grid-template-columns: 1fr; padding: 26px 0; }
+    .ledger-when { margin: 0; }
+    .ledger-org { font-size: 20px; }
   }
 
   /* ---- Responsive ---- */
@@ -530,111 +442,124 @@
     <div class="bio-timeline-inner">
 
       <div class="bio-timeline-label">
-        <h2>Career<br>log.</h2>
-        <p class="log-hint">Click an entry to expand</p>
+        <h2>Career log.</h2>
+        <p class="ledger-source">Newest first. The same history is on <a href="https://linkedin.com/in/jasonnellis" class="bolt" target="_blank" rel="noopener">LinkedIn ↗</a></p>
       </div>
 
-      <div class="log-trace">
-
-        <article class="log-entry" data-status="shipped">
-          <button class="log-head" aria-expanded="false" aria-controls="log-body-hulu">
-            <span class="log-node" aria-hidden="true"></span>
-            <span class="log-meta">
-              <span class="log-time">2008 → 2012</span>
-            </span>
-            <span class="log-title">
-              <strong>Content Partnerships → Product</strong>
-              <span class="log-org">Hulu</span>
-            </span>
-            <span class="log-chev" aria-hidden="true">›</span>
-          </button>
-          <div class="log-body" id="log-body-hulu">
-            <div class="log-body-inner">
-              <p>Joined during Hulu's formative years and started in content partnerships, running content strategy for accounts from the White House to NBCUniversal, before moving into product and growth as streaming scaled. Across a book of seventy-plus partners I grew revenue and viewership by as much as 200% over goal, and built the go-to-market for <em>If I Can Dream</em>, Hulu's first exclusive original.</p>
-              <a href="/blog/comedy-time-and-the-format-problem-at-hulu/" class="bolt log-cta">Read the case study →</a>
-            </div>
+      <ol class="ledger">
+        <li class="ledger-row">
+          <p class="ledger-when">Apr 2026 – <span class="is-now">Present</span></p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">BoltOS</h3>
+            <ul class="ledger-roles">
+              <li>Head of Innovation &amp; GTM</li>
+            </ul>
+            <p class="ledger-outcome">I lead innovation and go-to-market: the product and the commercial team selling creator intelligence to Premier League and Bundesliga clubs and global media brands. Qualified pipeline grew fivefold in my first six months.</p>
           </div>
-        </article>
+        </li>
 
-        <article class="log-entry" data-status="acquired">
-          <button class="log-head" aria-expanded="false" aria-controls="log-body-pbs">
-            <span class="log-node" aria-hidden="true"></span>
-            <span class="log-meta">
-              <span class="log-time">2012 → 2017</span>
-            </span>
-            <span class="log-title">
-              <strong>Editorial product → Founder → Product marketing</strong>
-              <span class="log-org">PBS · Marketing agency · Vizio</span>
-            </span>
-            <span class="log-chev" aria-hidden="true">›</span>
-          </button>
-          <div class="log-body" id="log-body-pbs">
-            <div class="log-body-inner">
-              <p>Ran editorial product at PBS, then left to found a marketing agency: a solo consultancy that grew into a four-person shop, from $35k of revenue in year one to $125k in year two. Sold it to Brllnt in 2016 and left three months after the deal. That October I joined Vizio as Senior Product Marketing Manager, and in March 2017 I left to co-found Packagd.</p>
-            </div>
+        <li class="ledger-row">
+          <p class="ledger-when">Oct 2024 – Apr 2026</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">SuperBam</h3>
+            <ul class="ledger-roles">
+              <li>Interim CEO <span class="role-when">Jan 2026 – Apr 2026</span></li>
+              <li>Chief Product Officer <span class="role-when">Oct 2024 – Apr 2026</span></li>
+            </ul>
+            <p class="ledger-outcome">Rebuilt content ingestion from the ground up, then ran the company as interim CEO. There were no team exits during my tenure.</p>
+            <a href="/blog/the-call-to-start-over-at-superbam/" class="bolt ledger-link">Read the case study →</a>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>Product spanned creator IP protection, content monetization and AI deepfake enforcement. Alongside the ingestion rebuild I shipped an AI deepfake-analysis platform and new payment and client-reporting systems. Later I stepped into the interim CEO seat, and the no-exits part is what I&#8217;m proudest of.</p>
+            </details>
           </div>
-        </article>
+        </li>
 
-        <article class="log-entry" data-status="acquired">
-          <button class="log-head" aria-expanded="false" aria-controls="log-body-packagd">
-            <span class="log-node" aria-hidden="true"></span>
-            <span class="log-meta">
-              <span class="log-time">2017 → 2023</span>
-            </span>
-            <span class="log-title">
-              <strong>Co-founder → Acquisition</strong>
-              <span class="log-org">Packagd → Meta (Facebook)</span>
-            </span>
-            <span class="log-chev" aria-hidden="true">›</span>
-          </button>
-          <div class="log-body" id="log-body-packagd">
-            <div class="log-body-inner">
-              <p>Co-founded Packagd. The decision that mattered was killing a finished iPhone app nobody was using and rebuilding around the creators themselves. That produced the relationships, and sixty of the top hundred tech creators on YouTube, that made the rest possible. After Facebook acquired the company in 2019, the team built Live Shopping for the Commerce group and a native gift-certificate platform that gave small businesses a way to take cash during lockdown. Then, on Meta's New Product Experimentation team, I built and launched Super, a live streaming app, and became the team's first Founder in Residence: a startup operator's seat inside a very large machine.</p>
-              <a href="/blog/what-you-learn-when-you-stop-building-and-start-listening/" class="bolt log-cta">Read the case study →</a>
-            </div>
+        <li class="ledger-row">
+          <p class="ledger-when">Jun 2023 – Sep 2024</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">Jogg</h3>
+            <ul class="ledger-roles">
+              <li>Chief Product Officer</li>
+            </ul>
+            <p class="ledger-outcome">Rebuilt the product process from nothing and cut development time on most feature sets from twelve weeks to four.</p>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>That meant PRD standards, TAM discipline and a real QA cadence, none of which existed when I arrived.</p>
+            </details>
           </div>
-        </article>
+        </li>
 
-        <article class="log-entry" data-status="restructured">
-          <button class="log-head" aria-expanded="false" aria-controls="log-body-superbam">
-            <span class="log-node" aria-hidden="true"></span>
-            <span class="log-meta">
-              <span class="log-time">2023 → 2026</span>
-            </span>
-            <span class="log-title">
-              <strong>CPO → Interim CEO</strong>
-              <span class="log-org">Jogg · SuperBam</span>
-            </span>
-            <span class="log-chev" aria-hidden="true">›</span>
-          </button>
-          <div class="log-body" id="log-body-superbam">
-            <div class="log-body-inner">
-              <p>Signed on as Chief Product Officer, first at Jogg, then SuperBam, running product across creator IP protection, content monetization, and AI deepfake enforcement. At Jogg I rebuilt the product process from nothing (PRD standards, TAM discipline, a real QA cadence) and cut development time on most feature sets from twelve weeks to four. At SuperBam I rebuilt content ingestion from the ground up and shipped an AI deepfake-analysis platform alongside new payment and client-reporting systems. Later I stepped into the interim CEO seat. There were no team exits during my tenure, and that's the part I'm proudest of.</p>
-              <a href="/blog/the-call-to-start-over-at-superbam/" class="bolt log-cta">Read the case study →</a>
-            </div>
+        <li class="ledger-row">
+          <p class="ledger-when">Sep 2019 – Apr 2023</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">Meta</h3>
+            <ul class="ledger-roles">
+              <li>Founder in Residence, New Product Experimentation <span class="role-when">Dec 2022 – Apr 2023</span></li>
+              <li>Product Lead → Product Director, Super <span class="role-when">Feb 2021 – Dec 2022</span></li>
+              <li>Strategic Partner Manager, Commerce Partnerships <span class="role-when">Sep 2019 – Feb 2021</span></li>
+            </ul>
+            <p class="ledger-outcome">Built Live Shopping&#8217;s first managed partner program for the Commerce group, then built and launched Super, a live streaming app, on the New Product Experimentation team.</p>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>The team also built a native gift-certificate platform that gave small businesses a way to take cash during lockdown. After Super I became New Product Experimentation&#8217;s first Founder in Residence: a startup operator&#8217;s seat inside a very large machine.</p>
+            </details>
           </div>
-        </article>
+        </li>
 
-        <article class="log-entry" data-status="in-flight">
-          <button class="log-head" aria-expanded="false" aria-controls="log-body-now">
-            <span class="log-node" aria-hidden="true"></span>
-            <span class="log-meta">
-              <span class="log-time is-live">Now →</span>
-            </span>
-            <span class="log-title">
-              <strong>Head of Innovation &amp; GTM</strong>
-              <span class="log-org">BoltOS</span>
-            </span>
-            <span class="log-chev" aria-hidden="true">›</span>
-          </button>
-          <div class="log-body" id="log-body-now">
-            <div class="log-body-inner">
-              <p>At BoltOS I lead innovation and go-to-market: the product and the commercial team that turn creator and brand relationships into revenue, selling creator intelligence to Premier League and Bundesliga clubs and global media brands. Qualified pipeline grew fivefold in my first six months.</p>
-            </div>
+        <li class="ledger-row">
+          <p class="ledger-when">Mar 2017 – Aug 2019</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">Packagd <span class="org-note">acquired by Meta</span></h3>
+            <ul class="ledger-roles">
+              <li>Co-Founder, Creator Engagement &amp; Product</li>
+            </ul>
+            <p class="ledger-outcome">Rebuilt the company around creators, brought on sixty of the top hundred tech creators on YouTube, and was acquired by Facebook in 2019.</p>
+            <a href="/blog/what-you-learn-when-you-stop-building-and-start-listening/" class="bolt ledger-link">Read the case study →</a>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>The decision that mattered was killing a finished iPhone app nobody was using and rebuilding around the creators themselves. That produced the relationships that made the rest possible.</p>
+            </details>
           </div>
-        </article>
+        </li>
 
-      </div>
+        <li class="ledger-row">
+          <p class="ledger-when">Nov 2016 – Apr 2017</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">VIZIO</h3>
+            <ul class="ledger-roles">
+              <li>Senior Manager, Product Marketing</li>
+            </ul>
+            <p class="ledger-outcome">Joined after selling my agency, and left to co-found Packagd.</p>
+          </div>
+        </li>
+
+        <li class="ledger-row">
+          <p class="ledger-when">Feb 2013 – Apr 2016</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">Overachiever Media <span class="org-note">acquired by Brllnt</span></h3>
+            <ul class="ledger-roles">
+              <li>Founder &amp; Owner</li>
+            </ul>
+            <p class="ledger-outcome">Grew a solo consultancy into a four-person shop, from $35k of revenue in year one to $125k in year two, and sold it to Brllnt in 2016.</p>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>After Hulu I ran editorial product at PBS, then left to found the agency. I stayed three months after the sale to see the deal through.</p>
+            </details>
+          </div>
+        </li>
+
+        <li class="ledger-row">
+          <p class="ledger-when">Jan 2008 – Aug 2012</p>
+          <div class="ledger-main">
+            <h3 class="ledger-org">Hulu</h3>
+            <ul class="ledger-roles">
+              <li>Content Partner Manager <span class="role-when">Nov 2009 – Aug 2012</span></li>
+              <li>Technology Coordinator <span class="role-when">Jan 2008 – Nov 2009</span></li>
+            </ul>
+            <p class="ledger-outcome">Ran content strategy for a book of seventy-plus partners, from the White House to NBCUniversal, growing revenue and viewership by as much as 200% over goal.</p>
+            <a href="/blog/comedy-time-and-the-format-problem-at-hulu/" class="bolt ledger-link">Read the case study →</a>
+            <details class="ledger-more"><summary><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4"/></svg>The longer version</summary>
+              <p>I joined during Hulu&#8217;s formative years, and built the go-to-market for <em>If I Can Dream</em>, Hulu&#8217;s first exclusive original.</p>
+            </details>
+          </div>
+        </li>
+      </ol>
     </div>
   </div>
 </section>
@@ -667,16 +592,6 @@
 <!-- ===================== FOOTER ===================== -->
 <site-footer></site-footer>
 
-<script>
-  document.querySelectorAll('.log-head').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const entry = btn.closest('.log-entry');
-      const expanded = entry.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(expanded));
-    });
-  });
-
-</script>
 
 </body>
 </html>
