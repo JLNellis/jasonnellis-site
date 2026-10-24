@@ -48,6 +48,23 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+// ---- Click-to-load YouTube: <a class="yt-facade" data-yt="ID" href="…watch?v=ID">
+//      is a plain YouTube link without JS. With JS, a click swaps in the
+//      privacy-enhanced player, so nothing loads from Google until the visitor
+//      asks for it (which is what /privacy promises). ----
+document.addEventListener('click', function (e) {
+  var link = e.target.closest && e.target.closest('a.yt-facade[data-yt]');
+  if (!link || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  var frame = document.createElement('iframe');
+  frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(link.dataset.yt) + '?autoplay=1';
+  frame.title = link.dataset.title || 'YouTube video';
+  frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+  frame.allowFullscreen = true;
+  link.replaceWith(frame);
+  frame.focus();
+});
+
 const SITE_CONFIG = {
   newsletterUrl:  '/building-value', // newsletter home on this site (Kit's own hosted form page is unbranded — don't link it)
   newsletterPost: 'https://app.kit.com/forms/9920578/subscriptions', // form POST endpoint (field: email_address)

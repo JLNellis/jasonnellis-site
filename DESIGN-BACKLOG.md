@@ -20,6 +20,9 @@ no new figure or claim without Jason's approval.
   `contact.html`'s inline script, which disabled the prefill, the topic toggle,
   the clocks and the AJAX submit. Fixed in `72aa977`, which also added a build
   check that fails the deploy on any inline script syntax error.
+- [x] **Item 1, YouTube click-to-load** (2026-10-24). All six embeds on
+  `/speaking` and `/building-value` are now `.yt-facade` posters that nav.js
+  swaps for the player on click. `/privacy` wording and date updated.
 
 ---
 
