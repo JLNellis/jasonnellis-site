@@ -332,6 +332,10 @@ claims deliberately *not* being pursued (and why). Check it before proposing
 new proof-led copy: the answer to "we should add testimonials here" is usually
 already tracked there.
 
+Design fixes from the 2026-10-24 full-site review live in
+**`DESIGN-BACKLOG.md`**, in the order to do them, each with the
+`/impeccable` command to run. Check it before starting design work.
+
 ## Working preferences
 
 - **Minimal maintenance is the priority.** Don't propose solutions that
