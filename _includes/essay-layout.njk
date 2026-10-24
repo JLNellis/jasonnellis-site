@@ -49,7 +49,7 @@
   .post-hero img { display: block; width: 100%; height: auto; }
 
   .post-body { padding: 0 0 96px; max-width: 720px; }
-  .post-body h3 { font-size: 24px; font-weight: 500; margin: 36px 0 12px; color: #FFF; }
+  .post-body h2 { font-size: 24px; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; margin: 44px 0 12px; color: var(--fg-1); }
   .post-body p, .post-body ul, .post-body ol { font-size: 16px; line-height: 1.75; color: var(--fg-2); margin: 0 0 18px; }
   .post-body p:first-of-type { color: var(--fg-1); font-size: 18px; }
   .post-body strong { color: #FFF; font-weight: 500; }
@@ -58,20 +58,34 @@
   .post-body .testimonial { margin: 28px 0; padding: 4px 0 4px 20px; border-left: 2px solid var(--color-accent-vivid); }
   .post-body .testimonial blockquote { border: 0; padding: 0; margin: 0 0 10px; }
   .post-body .testimonial blockquote p { font-size: 17px; line-height: 1.7; color: var(--fg-1); margin: 0; }
-  .post-body .testimonial figcaption { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--fg-3); }
+  .post-body .testimonial figcaption { font-size: 14px; color: var(--fg-3); }
   .post-body ul li { padding-left: 4px; }
   .post-body ul li::marker { color: var(--color-accent-vivid); }
   .post-body .footnote { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--fg-3); display: flex; gap: 12px; flex-wrap: wrap; }
-  .post-body .footnote span::before { content: "▸ "; color: var(--color-accent-vivid); }
+  .post-body .footnote > span::before { content: "▸ "; color: var(--color-accent-vivid); }
 
   .speaking-cta {
     margin-top: 36px; padding: 24px 26px;
     background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
   }
-  .speaking-cta h3 { font-size: 16px; font-weight: 500; color: #FFF; margin: 0 0 8px; }
-  .speaking-cta p { font-size: 14px; line-height: 1.65; color: var(--fg-2); margin: 0 0 14px; }
+  .speaking-cta h2 { font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: 0; color: var(--fg-1); margin: 0 0 8px; }
+  .post-body .speaking-cta p { font-size: 14px; line-height: 1.65; color: var(--fg-2); margin: 0 0 14px; }
   .speaking-cta a.bolt { font-size: 14px; }
   .speaking-cta .cta-advisory { margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+
+  .next-essay { margin-top: 36px; }
+  .next-essay a {
+    display: block; padding: 20px 0 22px; text-decoration: none;
+    border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+  }
+  .next-essay .next-label { display: block; font-size: 14px; color: var(--fg-3); margin: 0 0 6px; }
+  .next-essay .next-title {
+    display: block; font-size: 20px; font-weight: 500; line-height: 1.35; color: var(--fg-1);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+  .next-essay .next-title .arrow { color: var(--color-accent-vivid); margin-left: 6px; }
+  .next-essay .next-desc { display: block; font-size: 15px; line-height: 1.6; color: var(--fg-2); margin: 6px 0 0; }
+  .next-essay a:hover .next-title, .next-essay a:focus-visible .next-title { color: var(--color-accent-vivid); }
 
   /* Neutralize .post-body p/em rules inside the shared subscribe banner */
   .post-body .sub-content .sub-headline { font-size: 22px; color: var(--fg-1); margin: 0 0 8px; }
@@ -90,8 +104,8 @@
 <main class="atmos" data-screen-label="essay" id="main">
   <div class="page-wrap page-wrap--narrow">
     <div class="post-header">
-      <a href="/blog" class="bolt back-link">← All essays</a>
-      <p class="post-meta">{{ category }}, {{ date | readableDate }}, {{ readTime }} read</p>
+      <a href="/blog" class="bolt back-link"><span aria-hidden="true">←</span> All essays</a>
+      <p class="post-meta">{{ category | capitalize }} · {{ date | readableDate }} · {{ readTime }} read</p>
       <h1>{{ title }}</h1>
       <p class="post-desc">{{ description }}</p>
     </div>
@@ -103,20 +117,32 @@
       {%- if originalUrl %}
       <div class="footnote">
         <span>Originally published on LinkedIn · {{ originalDate }}</span>
-        <span><a class="bolt" href="{{ originalUrl }}" target="_blank" rel="noopener">View original ↗</a></span>
+        <span><a class="bolt" href="{{ originalUrl }}" target="_blank" rel="noopener">View original <span aria-hidden="true">↗</span></a></span>
       </div>
       {%- endif %}
       {%- if category == "Case Study" %}
       <div class="speaking-cta">
-        <h3>Bring this story to your audience</h3>
-        <p>This case study informs how Jason talks about product strategy, media, and building under uncertainty on stage.</p>
+        <h2>Bring this story to your audience</h2>
+        <p>I tell this story on stage, in talks about product and media decisions made under uncertainty.</p>
         {%- if relatedTalkSlug %}
-        <a class="bolt" href="/speaking/{{ relatedTalkSlug }}/">{{ relatedTalkTitle }} →</a>
+        <a class="bolt" href="/speaking/{{ relatedTalkSlug }}/">{{ relatedTalkTitle }} <span aria-hidden="true">→</span></a>
         {%- else %}
-        <a class="bolt" href="/speaking">Explore speaking topics →</a>
+        <a class="bolt" href="/speaking">Explore speaking topics <span aria-hidden="true">→</span></a>
         {%- endif %}
-        <p class="cta-advisory">Facing a similar product or leadership decision? <a class="bolt" href="/advisory">Explore advisory →</a></p>
+        <p class="cta-advisory">Facing a similar product or leadership decision? <a class="bolt" href="/advisory">Explore advisory <span aria-hidden="true">→</span></a></p>
       </div>
+      {%- endif %}
+      {#- Read next: the next-older essay (the collection is newest first); the
+          oldest essay wraps round to the newest so no essay ends in a dead end. #}
+      {%- set nextEssay = (collections.essays | getNextCollectionItem(page)) or (collections.essays | first) %}
+      {%- if nextEssay and nextEssay.url != page.url %}
+      <nav class="next-essay" aria-label="Next essay">
+        <a href="{{ nextEssay.url }}">
+          <span class="next-label">Read next</span>
+          <span class="next-title">{{ nextEssay.data.title }}<span class="arrow" aria-hidden="true">→</span></span>
+          <span class="next-desc">{{ nextEssay.data.description }}</span>
+        </a>
+      </nav>
       {%- endif %}
       <div class="subscribe-banner">
         <div class="sub-content">

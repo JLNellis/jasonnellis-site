@@ -32,21 +32,20 @@
   /* ---- hero ---- */
   .br-hero{ padding: 72px 0 36px; }
   .br-hero h1{ font-size: clamp(38px, 5.4vw, 60px); font-weight:700; line-height:1.05; letter-spacing:-.025em; margin:14px 0 20px; max-width:18ch; text-wrap:balance; }
-  .br-hero h1 .accent{ color: var(--color-accent-vivid); }
   .br-hero .lede{ font-size:19px; line-height:1.6; color:var(--fg-2); margin:0; max-width:36em; }
   .br-hero .lede strong{ color:var(--fg-1); font-weight:500; }
-  .br-hero .meta{ display:flex; gap:18px; flex-wrap:wrap; margin-top:22px; font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3); }
+  .br-hero .meta{ display:flex; gap:18px; flex-wrap:wrap; margin-top:22px; font-size:14px; color:var(--fg-3); }
 
   /* ---- calculator ---- */
   .br-calc{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start; padding-bottom:48px; }
   .br-panel{ padding:26px 26px 22px; }
-  .br-panel h2{ font-size:13px; font-family:var(--font-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-vivid); margin:0 0 16px; font-weight:400; }
+  .br-panel h2{ font-size:18px; font-weight:600; letter-spacing:-.01em; color:var(--fg-1); margin:0 0 16px; }
   .field{ display:grid; gap:6px; margin-bottom:16px; }
   .field label{ font-size:13.5px; font-weight:500; color:var(--fg-1); }
   .field .hint{ font-size:12.5px; color:var(--fg-3); line-height:1.45; }
   .field .hint b{ color:var(--fg-2); font-weight:500; }
   select, input[type=number]{ width:100%; font:inherit; font-size:15px; color:var(--fg-1); background:var(--bg-deep); border:1px solid var(--border-strong); border-radius:6px; padding:10px 12px; }
-  select:focus, input:focus{ outline:2px solid var(--color-accent-vivid); outline-offset:1px; border-color:var(--color-accent-vivid); }
+  select:focus, input:focus{ outline:var(--focus-ring); outline-offset:2px; border-color:var(--color-accent-vivid); }
   input[type=number]{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .stages{ display:grid; gap:8px; margin-top:4px; }
@@ -56,19 +55,19 @@
   .stage input{ padding:8px 10px; font-size:14px; text-align:right; }
   .stage-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin:22px 0 8px; }
   .stage-head label{ font-size:13.5px; font-weight:500; }
-  .chip{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-3); border:1px solid var(--border-subtle); border-radius:999px; padding:3px 8px; }
+  .chip{ font-size:12px; color:var(--fg-3); border:1px solid var(--border-subtle); border-radius:999px; padding:3px 8px; }
   .chip.edited{ color:var(--br-warn); border-color:rgba(255,202,75,.4); }
   .linkbtn{ background:none; border:0; padding:0; font:inherit; font-size:12.5px; color:var(--fg-2); cursor:pointer; border-bottom:1px solid var(--border-strong); }
   .linkbtn:hover{ color:var(--color-accent-vivid); border-color:var(--color-accent-vivid); }
   .stagebar{ display:flex; height:10px; border-radius:999px; overflow:hidden; background:var(--bg-deep); border:1px solid var(--border-subtle); margin-top:14px; }
   .stagebar i{ display:block; height:100%; min-width:0; transition:width .25s ease; }
-  .stagekey{ display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; font-family:var(--font-mono); font-size:10.5px; color:var(--fg-3); }
+  .stagekey{ display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--fg-3); }
   .stagekey i{ display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
 
   /* ---- results ---- */
   .br-results{ position:sticky; top:84px; display:grid; gap:14px; }
   .verdict{ padding:24px 26px; border-color:rgba(0,230,118,.3); }
-  .verdict .k{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg-3); }
+  .verdict .k{ font-size:14px; font-weight:500; color:var(--fg-2); }
   .verdict .big{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:6px 0 2px; }
   .verdict .big b{ font-size:clamp(40px,6vw,56px); font-weight:700; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums; }
   .verdict .big span{ font-size:15px; color:var(--fg-2); }
@@ -92,7 +91,7 @@
   .sharecard .f b{ color:var(--fg-1); font-weight:600; }
   .sharecard .b{ font-size:clamp(28px,4vw,38px); font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-top:10px; }
   .sharecard .m{ font-family:var(--font-mono); font-size:13px; color:var(--fg-2); margin-top:10px; font-variant-numeric:tabular-nums; }
-  .sharecard .foot{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; font-family:var(--font-mono); font-size:10.5px; color:var(--fg-3); letter-spacing:.06em; }
+  .sharecard .foot{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; font-family:var(--font-mono); font-size:11px; color:var(--fg-3); letter-spacing:.06em; }
   .sharecard.ok .b{ color:var(--br-ok);} .sharecard.warn .b{ color:var(--br-warn);} .sharecard.hot .b{ color:var(--br-hot);}
   .sharerow{ display:flex; gap:8px; flex-wrap:wrap; }
   .sharerow .btn{ font-size:13px; padding:9px 14px; }
@@ -129,7 +128,7 @@
   th{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-3); font-weight:400; background:rgba(15,23,42,.5); }
   td{ color:var(--fg-2); } td:first-child{ color:var(--fg-1); }
   td.num{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .conf{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; }
+  .conf{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
   .conf.hi{ color:var(--br-ok);} .conf.med{ color:var(--br-warn);} .conf.lo{ color:var(--br-hot);}
   .src{ font-size:13px; color:var(--fg-3); line-height:1.7; }
   .src a{ color:var(--fg-2); border-bottom:1px solid var(--border-strong); }
@@ -139,8 +138,7 @@
   .br-cta{ padding:64px 0; border-top:1px solid var(--border-subtle); }
   .br-cta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .br-cta-grid .card{ padding:30px; display:flex; flex-direction:column; gap:12px; }
-  .br-cta-grid .card.lead{ border-color:rgba(0,230,118,.35); background:linear-gradient(180deg, var(--bg-card) 0%, rgba(0,230,118,.05) 170%); }
-  .br-cta-grid .kind{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-vivid); }
+  .br-cta-grid .card.lead{ border-color:rgba(0,230,118,.35); }
   .br-cta-grid h3{ font-size:21px; font-weight:700; letter-spacing:-.01em; margin:0; }
   .br-cta-grid p{ font-size:14.5px; color:var(--fg-2); line-height:1.65; margin:0; }
   .br-cta-grid .btn{ align-self:flex-start; margin-top:auto; }
@@ -170,7 +168,7 @@
     <div class="br-wrap">
 
       <section class="br-hero">
-        <h1>How many hours a week does your channel <span class="accent">actually cost?</span></h1>
+        <h1>How many hours a week does your channel actually cost?</h1>
         <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs, whether you can afford it, and what to cut.</strong> No login. No email needed to see your result.</p>
         <div class="meta"><span>2 minutes</span><span>Numbers dated 14 Sept 2026</span><span>Deterministic, no AI</span></div>
       </section>
@@ -199,7 +197,7 @@
 
           <div class="stage-head">
             <label>Hours per upload, by stage</label>
-            <span><span class="chip" id="stageChip">Estimate</span> &nbsp;<button class="linkbtn" id="resetStages" type="button">Reset</button></span>
+            <span><span class="chip" id="stageChip">Estimate</span> &nbsp;<button class="linkbtn tap" id="resetStages" type="button">Reset</button></span>
           </div>
           <div class="stages" id="stages"></div>
           <div class="stagebar" id="stagebar" aria-hidden="true"></div>
@@ -253,9 +251,9 @@
               <ol class="plan-list" id="plan"></ol>
             </div>
             <div class="lock">
-              <p><b>Free to unlock.</b> Get on the list for Building Value, my podcast on the creator economy — relaunching Q4 2026. The button opens the signup in a new tab and unlocks the plan here.</p>
+              <p><b>Free to unlock.</b> Get on the list for Building Value, my podcast of conversations with operators, founders and creators, relaunching Q4 2026. The button opens the signup in a new tab and unlocks the plan here.</p>
               <a class="btn primary" id="unlockBtn" href="/building-value" target="_blank" rel="noopener">Get notified &amp; unlock</a>
-              <button class="linkbtn" id="alreadyBtn" type="button">Already subscribed? Show it.</button>
+              <button class="linkbtn tap" id="alreadyBtn" type="button">Already subscribed? Show it.</button>
             </div>
           </div>
         </div>
@@ -314,17 +312,15 @@
     <div class="page-wrap"><div class="br-wrap">
       <div class="br-cta-grid">
         <div class="card lead">
-          <div class="kind">Building Value</div>
           <h3>The podcast behind the calculator</h3>
           <p>Building Value: the creator economy up close — what platforms reward, what they say they reward, and what it costs the people making the content. Relaunching Q4 2026.</p>
           <a class="btn primary" href="/building-value" target="_blank" rel="noopener">Get notified</a>
         </div>
         <div class="card">
-          <div class="kind">The Feed</div>
           <h3>Now play the year</h3>
-          <p>A creator life sim. Five platforms, one stress meter, eight endings, about twenty minutes. The same math, with consequences.</p>
+          <p>The Feed: a creator life sim. Five platforms, one stress meter, eight endings, about twenty minutes. The same math, with consequences.</p>
           <a class="btn ghost" href="/the-feed">Play free</a>
-          <p class="more-tools"><a href="/experiments">All experiments →</a></p>
+          <p class="more-tools"><a href="/experiments" class="tap">All experiments →</a></p>
         </div>
       </div>
     </div></div>

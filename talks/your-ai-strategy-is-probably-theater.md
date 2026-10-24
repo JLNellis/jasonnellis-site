@@ -1,5 +1,5 @@
 ---
-title: "Your AI Strategy Is Probably Theater"
+title: "Your AI strategy is probably theater"
 hook: "Most organizations have an AI strategy that's really a press release."
 bestFor: "executive teams, product leaders, and AI or innovation conferences"
 takeaways:
@@ -9,6 +9,12 @@ takeaways:
 length: "Keynote, 45 to 60 minutes"
 order: 1
 ogImage: "/og-talk-ai-strategy.jpg"
+stagePhoto:
+  src: "/speaking-ifa.jpg"
+  width: 1600
+  height: 1065
+  alt: "Jason Nellis on stage at IFA 2026 in Berlin, seen from the audience, during the panel “AI Tools Powering the Next Generation of Content Creation”"
+  caption: "IFA Berlin, 2026"
 narrativeArc:
   - title: "The press release problem"
     body: "A slide, a pilot, a quote for the annual report. How to spot a strategy that's really a communications document."

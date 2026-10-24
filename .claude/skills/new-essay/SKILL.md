@@ -24,8 +24,8 @@ essays and the templates from scratch each time.
    |---|---|---|
    | `title` | quoted string | Short, declarative — matches existing titles' punchy one-liner style |
    | `description` | quoted string | One sentence, used for meta/OG/JSON-LD |
-   | `date` | **unquoted** YAML date (`2025-02-10`) | Must be a real date literal, not a string — the `readableDate`/`monthYear`/`isoDate` filters break otherwise. For a LinkedIn repost, use the original post's date. For fresh content, use today. |
-   | `category` | quoted string | **Reuse one of the existing six** — `Creator Economy`, `Strategy`, `Product`, `Leadership`, `Reflection`, `Life`. Don't invent a new one: `blog.njk`'s filter chips are hardcoded HTML, not derived from the collection — a novel category is unreachable from the filter bar (visible under "All" only). If nothing fits, pick the closest existing category, or flag it to Jason and update the filter chips in `blog.njk` together. |
+   | `date` | **unquoted** YAML date (`2025-02-10`) | Must be a real date literal, not a string — the `readableDate`/`isoDate` filters break otherwise. For a LinkedIn repost, use the original post's date. For fresh content, use today. |
+   | `category` | quoted string | **Reuse an existing category** — `Case Study`, `Creator Economy`, `Strategy`, `Product`, `Leadership`, `Reflection`, `Life`. `blog.njk` builds its filter chips from the collection, showing only categories that hold more than one essay, so a one-off category is reachable under "All" only. Prefer one that already has a chip; if nothing fits, flag it to Jason. |
    | `readTime` | quoted string, e.g. `"5 min"` | word count ÷ 50, rounded (verified against all six existing essays — they run a slow, reflective ~50 wpm, not a skim-reading ~200 wpm) |
    | `originalDate` | quoted string, e.g. `"Feb 2025"` | LinkedIn reposts only — omit entirely for content written directly for the site |
    | `originalUrl` | quoted string | LinkedIn reposts only — omit entirely otherwise. The footnote in `_includes/essay-layout.njk` is conditional on this field, so omitting it cleanly drops the "Originally published on LinkedIn" line instead of rendering broken |
@@ -57,8 +57,8 @@ template edit has a different blast radius than adding one content file.
 
 - Quoting `date` as a string instead of a bare YAML date literal — breaks
   the date filters.
-- Inventing a category not in the filter-chip list — makes the essay
-  unfilterable.
+- Inventing a one-off category — the essay is visible under "All" only
+  until a second essay shares it.
 - Fabricating a LinkedIn URL for content that didn't originate there —
   omit `originalDate`/`originalUrl` instead.
 - Reusing the same sentence for both body prose and the pull-quote — pick

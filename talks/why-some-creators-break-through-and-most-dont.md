@@ -1,6 +1,6 @@
 ---
-title: "Why Some Creators Break Through and Most Don't"
-hook: "After 100+ conversations with creators on Building Value, the same few patterns keep showing up."
+title: "Why some creators break through and most don't"
+hook: "After 100+ Building Value conversations, the same few patterns keep showing up."
 bestFor: "creator platforms, brand and marketing teams, and creator conferences"
 takeaways:
   - "The few patterns that separate creators who break through"
@@ -11,6 +11,12 @@ relatedEssaySlug: "what-you-learn-when-you-stop-building-and-start-listening"
 relatedEssayTitle: "What you learn when you stop building and start listening"
 order: 3
 ogImage: "/og-talk-creators.jpg"
+stagePhoto:
+  src: "/zest-malta.jpg"
+  width: 1600
+  height: 1066
+  alt: "Jason Nellis speaking on a panel at ZEST Malta 2017"
+  caption: "ZEST, Malta, 2017"
 narrativeArc:
   - title: "Two products nobody asked for"
     body: "Building for creators at Packagd before listening to any of them, and what it cost."
@@ -27,7 +33,7 @@ evidence:
     body: "Co-founded a company built for creators, and learned to listen to them the hard way."
     url: "/blog/what-you-learn-when-you-stop-building-and-start-listening/"
   - label: "Building Value"
-    body: "100+ conversations with creators, and the source material for this talk. The three questions are written up in The Lens."
+    body: "100+ conversations with operators, founders and creators, and the source material for this talk. The three questions are written up in The Lens."
     url: "/lens"
   - label: "SuperBam, CPO then interim CEO, 2024 to 2026"
     body: "Ran product on the IP-protection side of the creator economy."

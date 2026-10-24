@@ -13,7 +13,7 @@ The decision took about two years to fully form and about forty-eight hours to e
 
 We chose France for reasons that sound romantic and are also practical: the quality of life is genuinely high in ways that matter to us — food, pace, outdoor space, proximity to places we want to take our kids. The tax situation for Americans abroad is complicated and not particularly favorable, and we did that math. We did it anyway.
 
-### What we gave up
+## What we gave up
 
 A network that took twenty years to build. The ability to grab coffee with people who are building interesting things. The casual density of information that comes from being in the right rooms. These are real costs. I'm not pretending they aren't.
 

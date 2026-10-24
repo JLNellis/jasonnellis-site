@@ -21,7 +21,6 @@
     font-size: clamp(40px, 6vw, 64px); font-weight: 700;
     line-height: 1.1; letter-spacing: -0.02em; margin: 16px 0 20px;
   }
-  .notfound-hero h1 .accent { color: var(--color-accent-vivid); }
   .notfound-hero .lede {
     font-size: 17px; line-height: 1.65; color: var(--fg-2);
     max-width: 480px; margin: 0 0 36px;
@@ -49,7 +48,7 @@
 <main class="atmos" data-screen-label="404" id="main">
   <div class="page-wrap">
     <div class="notfound-hero">
-      <h1>This page <span class="accent">doesn't exist.</span></h1>
+      <h1>This page doesn't exist.</h1>
       <p class="lede">The link's broken, the page moved, or you took a wrong turn. Here's where you probably meant to go.</p>
       <div class="ctas">
         <a href="/" class="btn primary">Back to home</a>
@@ -60,7 +59,7 @@
         <a href="/blog">Writing</a>
         <a href="/contact">Contact</a>
       </div>
-      <a href="/ascii" class="egg-link" aria-label="hidden">?</a>
+      <a href="/ascii" class="egg-link" tabindex="-1" aria-hidden="true">?</a>
     </div>
   </div>
 </main>

@@ -13,7 +13,7 @@ The myth of synchrony — the belief that real work requires people to be presen
 
 Time zones break this assumption by force. And that, it turns out, is a feature.
 
-### What distributed time actually gives you
+## What distributed time actually gives you
 
 When you can't be in the same room (or the same Zoom), you have to write things down. Decisions get documented because they have to be communicated, not just announced. Context gets written because it can't be absorbed by osmosis. The work becomes legible in a way that co-located work often isn't.
 

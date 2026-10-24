@@ -46,7 +46,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("og-image.png");
   eleventyConfig.addPassthroughCopy("og-image-speaking.png");
   eleventyConfig.addPassthroughCopy("jason-headshot.jpg");
-  eleventyConfig.addPassthroughCopy("jason-headshot-blog.jpg");
   eleventyConfig.addPassthroughCopy("officeheadshot.jpg");
   eleventyConfig.addPassthroughCopy("superbam.jpg");
   eleventyConfig.addPassthroughCopy("hulu.jpg");
@@ -99,6 +98,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("jason-nellis-headshot-stage.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-headshot-stage-2400.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-stage-portrait.jpg");
+  eleventyConfig.addPassthroughCopy("jason-nellis-stage-3x4-600.jpg");
   eleventyConfig.addPassthroughCopy("og-speaking-ifa.jpg");
   eleventyConfig.addPassthroughCopy("logo-ifa.png");
   eleventyConfig.addPassthroughCopy("logo-latitude59.png");
@@ -125,28 +125,27 @@ module.exports = function (eleventyConfig) {
   // files must not render as pages under /tools/ next to the Tools index.
   eleventyConfig.ignores.add("tools/**");
 
+  // The one human-readable essay date, used everywhere a date is shown:
+  // "Sep 29, 2026". Month-only dates elsewhere follow the same "Sep 2026" form.
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return new Date(dateObj).toLocaleDateString("en-US", {
-      year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+      year: "numeric", month: "short", day: "numeric", timeZone: "UTC",
     });
   });
-  eleventyConfig.addFilter("monthYear", (dateObj) => {
-    return new Date(dateObj).toLocaleDateString("en-US", {
-      year: "numeric", month: "short", timeZone: "UTC",
-    });
+  // Blog filter chips: only categories that hold more than one essay, most
+  // posts first, so the chips grow on their own as the archive does.
+  eleventyConfig.addFilter("sharedCategories", (essays) => {
+    const counts = {};
+    essays.forEach((e) => { counts[e.data.category] = (counts[e.data.category] || 0) + 1; });
+    return Object.keys(counts)
+      .filter((cat) => counts[cat] > 1)
+      .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
   });
   eleventyConfig.addFilter("isoDate", (dateObj) => {
     return new Date(dateObj).toISOString();
   });
   eleventyConfig.addFilter("w3cDate", (dateObj) => {
     return new Date(dateObj).toISOString().slice(0, 10);
-  });
-  eleventyConfig.addFilter("dotDate", (dateObj) => {
-    const d = new Date(dateObj);
-    const yyyy = d.getUTCFullYear();
-    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-    const dd = String(d.getUTCDate()).padStart(2, "0");
-    return `${yyyy} · ${mm} · ${dd}`;
   });
 
   eleventyConfig.addCollection("essays", (collectionApi) => {

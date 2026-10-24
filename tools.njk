@@ -30,9 +30,6 @@ eleventyExcludeFromCollections: true
   .tools-hero h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; margin: 16px 0 16px; }
   .tools-hero .lede { font-size: 18px; line-height: 1.6; color: var(--fg-2); margin: 0; }
   .tools-hero .lede + .lede { margin-top: 12px; }
-  .tools-count { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: 0 0 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
-  .tools-count .l { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-2); }
-  .tools-count .n { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); }
   .tools-why { margin: 64px 0 0; max-width: 640px; }
   .tools-why h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin: 14px 0 12px; }
   .tools-why p { font-size: 15px; line-height: 1.7; color: var(--fg-2); margin: 0 0 14px; }
@@ -61,13 +58,12 @@ eleventyExcludeFromCollections: true
       <div class="tool-grid">
         {%- for tool in collections.tools %}
         <a class="tool-card" href="{{ tool.data.url }}">
-          <span class="kind">{{ tool.data.kind }}</span>
-          <h3>{{ tool.data.title }}</h3>
+          <h2>{{ tool.data.title }}</h2>
           <p class="tagline">{{ tool.data.tagline }}</p>
           <p class="claim">{{ tool.data.claim }}</p>
           <div class="desc">{{ tool.templateContent | safe }}</div>
           <div class="foot">
-            <span class="meta">{{ tool.data.time }}</span>
+            <span class="meta">{{ tool.data.kind }} · {{ tool.data.time }}</span>
             <span class="go">{{ tool.data.cta }} →</span>
           </div>
         </a>

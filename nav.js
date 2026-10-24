@@ -74,17 +74,18 @@ const SITE_CONFIG = {
   email:          'hello@jasonnellis.com',
 };
 
-const LOGO_MARK_SVG = `<svg viewBox="0 0 1024 1024" role="img" aria-label="Jason Nellis"><path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/><path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/></svg>`;
+const LOGO_MARK_SVG = `<svg viewBox="0 0 1024 1024" aria-hidden="true" focusable="false"><path fill="#00E676" d="M300 145H790V675C790 825 680 900 520 900C360 900 250 820 250 675H410C410 755 450 792 520 792C590 792 630 750 630 675V292H300Z"/><path fill="#FFFFFF" d="M300 145H700L555 292H300Z"/></svg>`;
 
-// Order: the audience-building work first, then the paid offers, then About.
+// Order: About first (the operating history leads), then Speaking, then the
+// writing, podcast and experiments, with Advisory last.
 const NAV_LINKS = [
   { href: '/',         label: 'Home', footerOnly: true },
+  { href: '/about',    label: 'About'    },
+  { href: '/speaking', label: 'Speaking' },
   { href: '/blog',     label: 'Writing'  },
   { href: '/building-value', label: 'Podcast' },
   { href: '/experiments', label: 'Experiments' },
-  { href: '/speaking', label: 'Speaking' },
   { href: '/advisory', label: 'Advisory' },
-  { href: '/about',    label: 'About'    },
   { href: '/contact',  label: 'Contact', footerOnly: true },
 ];
 
@@ -100,11 +101,19 @@ function activePage() {
   return path || '/';
 }
 
+// A link is current on its own path and on anything beneath it, so
+// /speaking/<slug> lights Speaking and /blog/<slug> lights Writing.
+// "/" matches only the homepage.
+function isCurrent(page, href) {
+  if (href === '/') return page === '/';
+  return page === href || page.startsWith(href + '/');
+}
+
 // ---- <site-header> ----------------------------------------
 class SiteHeader extends HTMLElement {
   connectedCallback() {
     const page = activePage();
-    const current = (href) => page === href ? ' aria-current="page"' : '';
+    const current = (href) => isCurrent(page, href) ? ' aria-current="page"' : '';
     const links = NAV_LINKS.filter(({ footerOnly }) => !footerOnly).map(({ href, label }) =>
       `<a href="${href}"${current(href)}>${label}</a>`
     ).join('\n      ');
@@ -117,8 +126,8 @@ class SiteHeader extends HTMLElement {
       <span class="name">Jason Nellis</span>
     </a>
     <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
-      <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      <svg class="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <svg class="icon-menu" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg class="icon-close" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <nav class="site-nav" id="site-nav">
       ${links}
@@ -130,9 +139,24 @@ class SiteHeader extends HTMLElement {
     const header = document.querySelector('.site-header');
     const toggle = header.querySelector('.nav-toggle');
     const nav = header.querySelector('.site-nav');
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
+    const isOpen = () => nav.classList.contains('is-open');
+    const setOpen = (open) => {
+      nav.classList.toggle('is-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+    };
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
+    // The mobile menu closes on Escape (focus goes back to the toggle), on a
+    // tap anywhere outside the header, and when Tab moves focus past it.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !isOpen()) return;
+      setOpen(false);
+      toggle.focus();
+    });
+    document.addEventListener('click', (e) => {
+      if (isOpen() && !header.contains(e.target)) setOpen(false);
+    });
+    header.addEventListener('focusout', (e) => {
+      if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setOpen(false);
     });
   }
 }
@@ -142,7 +166,6 @@ class SiteFooter extends HTMLElement {
   connectedCallback() {
     const { newsletterUrl, linkedIn, twitter, podcast, email } = SITE_CONFIG;
     const subUrl = newsletterUrl;
-    const activeMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     const siteLinks = NAV_LINKS.map(({ href, label }) =>
       `<a href="${href}">${label}</a>`
@@ -159,24 +182,23 @@ class SiteFooter extends HTMLElement {
         <span class="mark">${LOGO_MARK_SVG}</span>
         <span class="name">Jason Nellis</span>
       </a>
-      <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 18px;max-width:320px">Product strategy for media and creator businesses. Plus writing, a podcast, and the occasional strong opinion.</p>
-      <span class="live-pill"><span class="live-dot"></span>Currently active · ${activeMonth}</span>
+      <p style="color:var(--fg-2);font-size:14px;line-height:1.6;margin:14px 0 0;max-width:320px">Product and go-to-market executive in creator economy, media and consumer tech. Plus writing, a podcast, and the occasional strong opinion.</p>
     </div>
     <div>
-      <h4>Site</h4>
+      <h2 class="col-title">Site</h2>
       ${siteLinks}
     </div>
     <div>
-      <h4>Elsewhere</h4>
-      <a href="${linkedIn}" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="${twitter}" target="_blank" rel="noopener">X / Twitter ↗</a>
-      <a href="${podcast}" target="_blank" rel="noopener">Building Value on YouTube ↗</a>
-      <a href="mailto:${email}">Email ↗</a>
+      <h2 class="col-title">Elsewhere</h2>
+      <a href="${linkedIn}" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>
+      <a href="${twitter}" target="_blank" rel="noopener">X / Twitter <span aria-hidden="true">↗</span></a>
+      <a href="${podcast}" target="_blank" rel="noopener">Building Value on YouTube <span aria-hidden="true">↗</span></a>
+      <a href="mailto:${email}">Email <span aria-hidden="true">↗</span></a>
     </div>
     <div>
-      <h4>Subscribe</h4>
+      <h2 class="col-title">Subscribe</h2>
       <a href="${subUrl}">Building Value</a>
-      <a href="/feed.xml">RSS feed ↗</a>
+      <a href="/feed.xml">RSS feed <span aria-hidden="true">↗</span></a>
       <a href="/contact">Get in touch</a>
     </div>
   </div>

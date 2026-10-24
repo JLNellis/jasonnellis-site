@@ -1,5 +1,5 @@
 ---
-title: "The Media Cycle No One Believes Is a Cycle"
+title: "The media cycle no one believes is a cycle"
 hook: "Every wave looks like a revolution from the inside, until you've lived through three of them."
 bestFor: "media and technology executives, strategy teams, and industry conferences"
 takeaways:
@@ -11,6 +11,12 @@ relatedEssaySlug: "every-generation-blames-the-next-medium"
 relatedEssayTitle: "Every generation blames the next medium"
 order: 2
 ogImage: "/og-talk-media-cycle.jpg"
+stagePhoto:
+  src: "/latitude59.jpg"
+  width: 1280
+  height: 853
+  alt: "Jason Nellis speaking on the main stage at Latitude59 2018 in Tallinn"
+  caption: "Latitude59, Tallinn, 2018"
 narrativeArc:
   - title: "Wave one: the streaming era"
     body: "Hulu, 2008 to 2012. The platform-versus-content fight nobody thought would resolve, and how it did."

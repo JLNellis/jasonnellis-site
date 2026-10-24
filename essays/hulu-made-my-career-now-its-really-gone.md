@@ -13,7 +13,7 @@ I joined Hulu when it was genuinely weird. Not weird in a startup-cool way — w
 
 What I learned there — and this is the thing I've carried into every job since — is that there's a difference between a good idea and a product people will actually use. The early streaming wars were full of good ideas that nobody used. Hulu survived because it built something with a real wedge: the back catalog, the next-day episodes, the experience that was just good enough to make you stop torrenting.
 
-### What being early actually means
+## What being early actually means
 
 Being early to a platform shift is not the same as being smart. A lot of people were early to streaming. What being early at Hulu gave me was a front-row seat to what happens when an industry has to reinvent itself faster than it wants to — and a set of instincts about where the real leverage is in those moments that I've used ever since.
 

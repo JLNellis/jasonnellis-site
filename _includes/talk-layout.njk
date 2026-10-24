@@ -33,6 +33,17 @@
   .talk-header .hook { font-size: 19px; line-height: 1.55; color: var(--fg-1); margin: 0 0 12px; }
   .talk-header .fit { font-size: 14px; line-height: 1.6; color: var(--fg-3); margin: 0; }
 
+  /* Stage photo, chosen per talk via `stagePhoto` front matter. The navy
+     background holds the 3:2 box if the file ever fails to load. */
+  .talk-photo { max-width: 720px; margin: 32px 0 0; }
+  .talk-photo img {
+    display: block; width: 100%; height: auto; aspect-ratio: 3 / 2;
+    object-fit: cover; object-position: center 35%;
+    border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);
+    background: var(--bg-deep);
+  }
+  .talk-photo figcaption { margin-top: 10px; font-size: 13px; line-height: 1.5; color: var(--fg-3); }
+
   .talk-body { max-width: 720px; padding: 24px 0 0; }
   .talk-body p { font-size: 17px; line-height: 1.75; color: var(--fg-2); margin: 0 0 18px; }
 
@@ -79,6 +90,19 @@
       <p class="fit">{{ length }}. For {{ bestFor }}.</p>
     </div>
 
+    {#- Fallback: the square IFA stage shot, for any talk without its own photo. #}
+    {%- set photo = stagePhoto or {
+      "src": "/jason-nellis-headshot-stage.jpg", "width": 1199, "height": 1200,
+      "alt": "Jason Nellis speaking on a panel at IFA 2026 in Berlin, microphone in hand",
+      "caption": "IFA Berlin, 2026"
+    } %}
+    <figure class="talk-photo">
+      <img src="{{ photo.src }}" alt="{{ photo.alt | escape }}" width="{{ photo.width }}" height="{{ photo.height }}" decoding="async">
+      {%- if photo.caption %}
+      <figcaption>{{ photo.caption | escape }}</figcaption>
+      {%- endif %}
+    </figure>
+
     <div class="talk-body">
       {{ content | safe }}
     </div>
@@ -115,7 +139,7 @@
           <div class="ev-label">{{ item.label }}</div>
           <p class="ev-body">{{ item.body }}</p>
           {%- if item.url %}
-          <a class="bolt ev-link" href="{{ item.url }}">Read more →</a>
+          <a class="bolt ev-link" href="{{ item.url }}">Read more<span class="sr-only"> about {{ item.label }}</span> →</a>
           {%- endif %}
         </li>
         {%- endfor %}

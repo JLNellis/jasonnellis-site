@@ -13,7 +13,7 @@ I've been in this conversation in various forms since 2019, when I was building 
 
 The shopping experience breaks the viewing experience. The viewing experience breaks the shopping experience. The creator has to choose which one they're doing every thirty seconds. The viewer has to do the same. And the platform is in the middle trying to capture both moments with one interface.
 
-### Why it keeps breaking
+## Why it keeps breaking
 
 The platforms keep reaching for the TikTok Shop comparison, but TikTok Shop works (to the degree it works) because the content is short, the purchase intent is high, and the friction from "video" to "buy" is minimal. Live video is different. The attention and the transaction are fighting over the same window.
 

@@ -27,6 +27,50 @@ no new figure or claim without Jason's approval.
   employer, newest first, with titles and month ranges from Jason's 2026
   résumé. Narrative paragraphs moved into a "The longer version" `<details>`
   under each row. Status colours, pulse, cursor and toggle JS removed.
+- [x] **Item 3, homepage career** (2026-10-24). BoltOS "Now" card leads,
+  then four chapters newest first (2013–2017 now covered), Hulu line matched
+  to the résumé, experiments teaser cut to a compact list, and
+  `/blog#case-study` scrolls straight to the filtered case studies.
+- [x] **Item 4, header, footer and contact** (2026-10-24). Executive footer
+  line, "Currently active" pill removed, nav reordered About-first, prefix
+  active state, "Full-time role" contact topic, `budget` select renamed
+  `scope` without the honorarium option.
+- [x] **Item 5, speaker proof** (2026-10-24), except captions (needs
+  transcripts). Posters now show Jason, stage photo on each talk page,
+  durations on mobile, sentence-case talk titles.
+- [x] **Item 8, press kit** (2026-10-24). Action bar, copy buttons, stage
+  hero, email on the one-pager, PDF regenerated.
+- [x] **Item 10, essay pages only** (2026-10-24). Case-study headings and
+  sign-off, h2 headings in every essay, "Read next" link. Dates, the blog
+  filter and the Building Value description are still open.
+- [x] **Item 6, keyboard, screen-reader and touch** (2026-10-24). One
+  site-wide focus ring, closed mobile menu hidden from the tab order and
+  closes on Escape or outside tap, readable placeholders, no skipped heading
+  levels, 44px tap targets, no functional text under 11px.
+- [x] **Item 11, image weight** (2026-10-24). 23 shipped images recompressed
+  and right-sized in place (6.3MB → 3.7MB), same names and aspect ratios.
+- [x] **Item 7, dashboard tics** (2026-10-24). Mono uppercase kicker labels,
+  thick left borders, glows and the /speaking stat band removed; green H1
+  clause kept on the homepage only; essay cursor gone.
+- [x] **Item 9, portraits** (2026-10-24), except the case-study images
+  (Jason's call). New IFA crop on /blog, sharper press-kit headshots;
+  homepage keeps the seated portrait.
+- [x] **Item 10, the rest** (2026-10-24), except the advisory "Text me" line
+  (Jason's call). One date format ("Sep 29, 2026"), blog filter cut to 3
+  chips, Building Value described the same everywhere, PDF labels in
+  sentence case.
+- [x] **Item 12, final pass** (2026-10-24). Re-critique scored 28/40 (from
+  25/40); detector findings 96 → 21, none on the main pages. Polish applied:
+  contact has no default topic, an announced toast and a sending state; the
+  advisory full-time link opens the role topic; About's `<main>` wraps the
+  whole page; 44px buttons; case-study role lines match the résumé; the
+  `/experiments` grid is two columns.
+
+Still open after the 2026-10-24 pass (Jason's call): the case-study images,
+the "2 companies" stat, the advisory "Text me" line, captions, one wording
+for the Live Shopping claim (About says "first managed partner program";
+the press kit and homepage say "built" or "launched"), and self-hosted stills
+for the two YouTube posters on /speaking and /building-value.
 
 ---
 
@@ -83,7 +127,10 @@ grid.
 **Fix:** make BoltOS the first, highlighted "Now" card. Add a line that
 covers 2012–2017. Shrink the experiments teaser (one row, or a compact list).
 Point the primary "Read the case studies" CTA straight at the first case study
-instead of `/blog#case-study`, where the podcast banner comes first.
+instead of `/blog#case-study`, where the podcast banner comes first. Drop
+"moved into product and growth as streaming scaled" from the Hulu card
+(`index.njk:308`); the résumé titles are Technology Coordinator then Content
+Partner Manager, as About and the press kit now say.
 
 **Files:** `index.njk`, `site.css`.
 

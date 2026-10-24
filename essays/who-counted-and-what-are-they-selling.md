@@ -9,13 +9,13 @@ When I built [a playable model of the LinkedIn feed](/robot-comments), I set one
 
 I expected posting frequency to be the most reliable lever there is. Every other platform taught me that: post more, post often, feed the machine. I couldn't find a source that says LinkedIn rewards volume. What LinkedIn has published points somewhere else. Its retrieval matches posts on meaning, and your headline, company and industry are part of the text that describes every post you write. A steady drumbeat on one subject you can own lines up with that. Ten topics a week scatter it.
 
-### The short list
+## The short list
 
 Here is everything I could stamp Proven. LinkedIn filters engagement bait, and quotes "Comment 'Yes' if you agree" as its own example. It is making pods and automated comments ineffective. It reads your headline into every post. Time spent reading counts. That is the list. It is short and a little boring: don't bait, don't pod, write about what your headline says you do, and write something worth finishing.
 
 I misread the last one at first. I decided that spending more of my own time on LinkedIn, reading for research, would lift my posts. Nothing says that. Dwell time is the reader's time on your post, not yours on the site. I had invented a rule while stamping everyone else's. The research habit is still good for the writing; it just isn't a ranking signal.
 
-### The long list
+## The long list
 
 Most of the model is Measured, and every Measured number comes from someone who sells something. AuthoredUp counted 3 million posts and sells a posting tool. Documents reach 1.39x a typical post, images 1.20x with the best engagement, and video reach fell 36% in a year. Richard van der Blom sells a paid report; he puts reach for active creators down about 60% over two years. Interact sells quizzes, and reports that 40.1% of quiz starts become leads. You are playing one.
 
@@ -23,7 +23,7 @@ The numbers are real, and they are pointed. Polls reach 1.78x a typical post and
 
 The reach number surprised me most. LinkedIn says it chose relevance over reach, which is defensible for a feed and hard on anyone who hasn't been discovered yet. The next voice worth hearing now starts with less room than the last one did. I haven't repeated a vendor number as fact, as far as I know. I have repeated stale advice. "Post more" was burned into me on other platforms, and I passed it along on this one.
 
-### Disputed, and invented
+## Disputed, and invented
 
 Only one topic landed in Disputed: links, which is also where the advice is most confident. Van der Blom measures 16% less reach for a post with an external link. Ordinal, which sells a first-comment tool, says personal profiles see almost none. Nobody has published how a link in the first comment behaves. I put mine there anyway, like almost everyone. It may be another "post more," a habit we all carry because someone once said it with conviction.
 
@@ -31,7 +31,7 @@ Three cards in the model are Invented outright: +21% for commenting on three pos
 
 I kept it anyway. The number is invented, but the feeling it names is real. More of what fills a comment section now is copy written by a program to pass as a person, and that is where the internet is heading. The model's last screen stamps its own title Invented, which seemed like the only honest way to use it.
 
-### The turn
+## The turn
 
 My own 107 posts sit in Measured with every caveat I put on AuthoredUp: one account, engagement rather than reach, one person doing the coding. I'm not trying to get you to buy something, but I am selling something: a podcast, this model, this essay. My data says promotional posts draw 0.75x my median. You are reading one.
 

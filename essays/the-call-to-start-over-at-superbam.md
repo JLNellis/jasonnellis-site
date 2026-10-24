@@ -6,13 +6,13 @@ category: "Case Study"
 readTime: "6 min"
 heroImage: "/superbam.jpg"
 ---
-*Chief Product Officer, SuperBam · October 2024 – 2026*
+*Chief Product Officer, then interim CEO, SuperBam · Oct 2024 – Apr 2026*
 
 SuperBam is a Los Angeles-based intellectual property and video rights management company. It helps creators find unauthorized uses of their work across YouTube, Facebook, and other platforms, and recover the value those uses generate: when a platform supports it, by redirecting the ad revenue from an infringing upload back to the rights holder; when it doesn't, by pursuing takedowns.
 
 The mechanism underneath all of that is the reference file. Every video a creator wants protected has to be delivered to each platform's rights system as a reference, along with the policies that say what should happen when a match is found: monetize, block, or track, and in which territories. Get the reference files in fast and correctly and the business scales. Get them in slowly and it doesn't.
 
-### Situation
+## Situation
 
 I joined in October 2024 as the company's first Chief Product Officer. The CEO had built a real services business and knew that scaling it meant building infrastructure. He had tried before, with contractors who were engineers rather than product people, and had ended up with tools instead of a system.
 
@@ -20,7 +20,7 @@ The first thing I did was look hard at ingestion, because it was where every cre
 
 There was a workflow in place, and a second one being built to replace it. The second one was exactly as slow and cumbersome as the first. Looking closer, it wasn't one project at all. It was four different people's starting ideas, from four different moments, stitched together into a single thing that moved, but only just.
 
-### Decision
+## Decision
 
 At the end of November 2024, after working through it with the CEO and the department heads, I made the call to stop. Not to finish the replacement, and not to patch the original: pause all of it and design the system from scratch.
 
@@ -30,7 +30,7 @@ The work that existed wasn't bad. That was the hard part of the conversation. Ea
 
 That decision turned out to be bigger than ingestion. Once we'd agreed that the core process had to become a technical one, the CEO and I made the larger call in the same conversation: SuperBam needed to think of itself as a technology company, not a services company with some tools, and make dramatic shifts in that direction. Ingestion was the first proof of whether we meant it.
 
-### What Shipped
+## What shipped
 
 I worked with the fractional CTO, the VP of Operations, and the head of ingestion. The engineering capacity was a pair of contract engineers the CTO brought in, part-time and not always available, which meant the design had to be right before much code was written. We didn't have the budget to iterate our way there.
 
@@ -42,7 +42,7 @@ The piece I'm proudest of is timecode-specific policy. A song in a video is usua
 
 The remote desktop in an employee's home went away.
 
-### Result
+## Result
 
 Throughput went up roughly four times, by our own count. We hadn't instrumented the old process well enough to claim more precision than that, and I'd rather give you the honest number than an impressive one.
 
@@ -50,14 +50,14 @@ The claim I'll make without hedging is about people. Onboarding a creator with t
 
 <figure class="testimonial">
 <blockquote><p>&ldquo;He proposed and executed a full rebuild of our ingestion technology, and the resulting efficiencies and speed enabled a strategic shift in both our operations and our sales. Both teams could now go after large libraries, bringing in more revenue at higher margins.&rdquo;</p></blockquote>
-<figcaption>Jeremy Rosen, Fmr. General Manager, SuperBam</figcaption>
+<figcaption>Jeremy Rosen, former General Manager, SuperBam</figcaption>
 </figure>
 
 It was also, for the first time, a secure and scalable system: one source of truth for every reference file and every policy, instead of a machine in a house.
 
 And it became the foundation. The client dashboard, the new reporting, the rethink of the payment engine, and the administration of all of it were built on the ingestion platform over the following year. None of that would have been possible on what we'd stopped.
 
-### What I'd Teach
+## What I'd teach
 
 The instinct when you inherit half-built work is to finish it. It's already paid for, people are attached to it, and stopping feels like an admission that time was wasted. Sometimes it should be finished. But you have to ask a different question first: was this designed, or did it accumulate?
 

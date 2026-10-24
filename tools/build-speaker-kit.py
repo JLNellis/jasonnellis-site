@@ -81,7 +81,7 @@ M = 46
 CW = W - 2 * M
 
 c = canvas.Canvas(str(OUT), pagesize=letter)
-c.setTitle("Jason Nellis — Speaker One-Pager")
+c.setTitle("Jason Nellis, speaker one-pager")
 c.setAuthor("Jason Nellis")
 c.setSubject("Speaker press kit one-pager: bio, talks, formats, track record")
 
@@ -90,11 +90,6 @@ c.rect(0, 0, W, H, stroke=0, fill=1)
 
 def y(top):          # top-down coordinate helper
     return H - top
-
-def mono_label(x, top, text, size=7.5, color=FG3, tracking=1.2):
-    c.setFont("DMMono-Medium", size)
-    c.setFillColor(color)
-    c.drawString(x, y(top), text.upper(), charSpace=tracking)
 
 def wrap(text, font, size, width):
     words, lines, cur = text.split(), [], ""
@@ -124,9 +119,11 @@ c.drawCentredString(M + 13, y(top + 0.5), "J")
 
 c.setFont("DMSans-Bold", 27); c.setFillColor(FG1)
 c.drawString(M + 38, y(top + 2), "Jason Nellis")
-mono_label(M + 38, top + 16, "Product & GTM Executive · Speaker", size=8, color=GREEN, tracking=1.6)
-c.setFont("DMMono", 7.5); c.setFillColor(FG3)
-c.drawString(M + 38, y(top + 30), "jasonnellis.com  ·  hello@jasonnellis.com  ·  Cannes, FR", charSpace=0.4)
+# Sentence case throughout, no uppercase mono labels (matches the site).
+c.setFont("DMSans-Medium", 10); c.setFillColor(FG2)
+c.drawString(M + 38, y(top + 17), "Product & GTM executive and speaker")
+c.setFont("DMSans", 8.5); c.setFillColor(FG3)
+c.drawString(M + 38, y(top + 31), "jasonnellis.com  ·  hello@jasonnellis.com  ·  Cannes, France")
 
 # headshot, top right
 img_w, img_h = 120, 120
@@ -135,8 +132,8 @@ c.drawImage(str(REPO / "jason-nellis-headshot-stage.jpg"), ix, y(iy_top + img_h)
             preserveAspectRatio=True, anchor="c", mask="auto")
 c.setStrokeColor(BORDER); c.setLineWidth(1)
 c.rect(ix, y(iy_top + img_h), img_w, img_h, stroke=1, fill=0)
-c.setFont("DMMono", 6.5); c.setFillColor(FG3)
-c.drawRightString(W - M, y(iy_top + img_h + 12), "JN · IFA BERLIN 2026", charSpace=1)
+c.setFont("DMSans", 7.5); c.setFillColor(FG3)
+c.drawRightString(W - M, y(iy_top + img_h + 12), "IFA Berlin 2026")
 
 # ---- positioning + bio (left of headshot) -----------------------------------
 text_w = CW - img_w - 26
@@ -147,7 +144,7 @@ c.drawString(M, y(top + 17), "go-to-market executive in media and creator tech."
 
 top += 38
 bio = ("Started at Hulu in 2008, in the early days of streaming. Co-founded Packagd, acquired by "
-       "Meta in 2019, where his team built Facebook Live Shopping. Chief Product Officer at Jogg and "
+       "Meta in 2019, where his team built Facebook Live Shopping. Chief product officer at Jogg and "
        "SuperBam, and interim CEO at SuperBam. Now Head of Innovation & GTM at BoltOS, based near Cannes.")
 top = para(M, top, bio, "DMSans", 9.5, 14.5, FG2, text_w)
 
@@ -158,15 +155,15 @@ tile_w = (CW - 3 * tile_gap) / 4
 stats = [("2008", "Building in media since", FG1),
          ("2", "Companies built and sold", GREEN),
          ("25+", "Live Shopping partners", FG1),
-         ("5×", "BoltOS pipeline, 6 mo", FG1)]
+         ("5×", "BoltOS pipeline in 6 months", FG1)]
 for i, (v, l, colr) in enumerate(stats):
     x = M + i * (tile_w + tile_gap)
     c.setFillColor(CARD); c.setStrokeColor(BORDER); c.setLineWidth(1)
     c.roundRect(x, y(top + 52), tile_w, 52, 5, stroke=1, fill=1)
     c.setFont("DMSans-Bold", 19); c.setFillColor(colr)
     c.drawString(x + 12, y(top + 24), v)
-    c.setFont("DMMono", 6.3); c.setFillColor(FG3)
-    c.drawString(x + 12, y(top + 40), l.upper(), charSpace=0.3)
+    c.setFont("DMSans", 7.8); c.setFillColor(FG3)
+    c.drawString(x + 12, y(top + 40), l)
 
 # ---- section: talks ---------------------------------------------------------
 def section_label(label, top):
@@ -178,15 +175,15 @@ section_label("Talks", top)
 top += 16
 
 talks = [
-    ("Your AI Strategy Is Probably Theater",
+    ("Your AI strategy is probably theater",
      "Most organizations have an AI strategy that's really a press release. How to tell real leverage from theater.",
-     "KEYNOTE · 45–60 MIN · EXECUTIVE & PRODUCT AUDIENCES"),
-    ("The Media Cycle No One Believes Is a Cycle",
+     "Keynote · 45–60 min · Executive and product audiences"),
+    ("The media cycle no one believes is a cycle",
      "Every wave looks like a revolution from the inside, until you've lived through three of them.",
-     "KEYNOTE · 45–60 MIN · MEDIA & STRATEGY AUDIENCES"),
-    ("Why Some Creators Break Through and Most Don't",
-     "After 100+ creator conversations on Building Value, the same few patterns keep showing up.",
-     "KEYNOTE · 45–60 MIN · CREATOR-ECONOMY PLATFORMS & BRANDS"),
+     "Keynote · 45–60 min · Media and strategy audiences"),
+    ("Why some creators break through and most don't",
+     "After 100+ Building Value conversations, the same few patterns keep showing up.",
+     "Keynote · 45–60 min · Creator platforms and brands"),
 ]
 card_h = 62
 for title, desc, meta in talks:
@@ -199,26 +196,21 @@ for title, desc, meta in talks:
     dt = top + 31
     for line in dl[:2]:
         c.drawString(M + 16, y(dt), line); dt += 11.5
-    c.setFont("DMMono", 6.3); c.setFillColor(GREEN)
-    c.drawString(M + 16, y(top + card_h - 9), meta, charSpace=0.8)
+    c.setFont("DMSans", 7.8); c.setFillColor(FG3)
+    c.drawString(M + 16, y(top + card_h - 9), meta)
     top += card_h + 9
 
 # ---- section: formats -------------------------------------------------------
 top += 8
 section_label("Formats", top)
 top += 16
-chips = ["KEYNOTE 45–60", "MODERATOR / MC", "PANEL 30–45", "FIRESIDE 20–40", "WORKSHOP", "PODCAST"]
-x = M
-for chip in chips:
-    wch = pdfmetrics.stringWidth(chip, "DMMono", 7) + 0.8 * len(chip) + 22
-    c.setStrokeColor(BORDER); c.setFillColor(BG); c.setLineWidth(1)
-    c.roundRect(x, y(top + 18), wch, 18, 9, stroke=1, fill=0)
-    c.setFont("DMMono", 7); c.setFillColor(FG2)
-    c.drawString(x + 11, y(top + 12), chip, charSpace=0.8)
-    x += wch + 8
+formats = ("Keynote, 45–60 min  ·  Moderator or MC  ·  Panel, 30–45 min  ·  "
+           "Fireside chat, 20–40 min  ·  Workshop  ·  Podcast")
+c.setFont("DMSans", 8.8); c.setFillColor(FG2)
+c.drawString(M, y(top + 2), formats)
 
 # ---- section: track record --------------------------------------------------
-top += 40
+top += 26
 section_label("Track record", top)
 top += 16
 bullets = [
@@ -227,17 +219,22 @@ bullets = [
     "CPO, then interim CEO, at SuperBam",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",
-    "Hosts Building Value, 100+ creator conversations",
+    "Hosts Building Value, 100+ conversations with operators, founders and creators",
 ]
 col_w = (CW - 20) / 2
-for i, b in enumerate(bullets):
-    col, row = i % 2, i // 2
-    x = M + col * (col_w + 20)
-    t = top + row * 17
-    c.setFont("DMMono", 7); c.setFillColor(GREEN)
-    c.drawString(x, y(t), ">")
-    c.setFont("DMSans", 8.8); c.setFillColor(FG2)
-    c.drawString(x + 11, y(t), b)
+row_top = top
+for i in range(0, len(bullets), 2):
+    row_h = 17
+    for col, b in enumerate(bullets[i:i + 2]):
+        x = M + col * (col_w + 20)
+        c.setFont("DMSans", 8.8); c.setFillColor(GREEN)
+        c.drawString(x, y(row_top), "–")
+        lines = wrap(b, "DMSans", 8.8, col_w - 11)
+        c.setFillColor(FG2)
+        for j, line in enumerate(lines):
+            c.drawString(x + 11, y(row_top + j * 11.5), line)
+        row_h = max(row_h, 17 + (len(lines) - 1) * 11.5)
+    row_top += row_h
 
 # ---- pull quote -------------------------------------------------------------
 qy = 104
@@ -249,10 +246,14 @@ c.drawCentredString(W / 2, qy, 'has to start paying for itself.”')
 fy = 54
 c.setStrokeColor(BORDER); c.setLineWidth(1)
 c.line(M, fy + 22, W - M, fy + 22)
-c.setFont("DMMono-Medium", 7.5); c.setFillColor(GREEN)
-c.drawString(M, fy + 6, "BOOK A TALK:  JASONNELLIS.COM/SPEAKING", charSpace=1)
-c.setFont("DMMono", 7.5); c.setFillColor(FG3)
-c.drawRightString(W - M, fy + 6, "CANNES, FR  ·  EUROPE AND NORTH AMERICA", charSpace=1)
+# Email first: a forwarded copy has to carry a way to reply.
+book = "Book a talk:  "
+c.setFont("DMSans-Medium", 9); c.setFillColor(FG1)
+c.drawString(M, fy + 6, book)
+c.setFillColor(GREEN)
+c.drawString(M + pdfmetrics.stringWidth(book, "DMSans-Medium", 9), fy + 6, "hello@jasonnellis.com")
+c.setFont("DMSans", 8.5); c.setFillColor(FG3)
+c.drawRightString(W - M, fy + 6, "Cannes, France  ·  Europe and North America")
 
 c.save()
 print("wrote", OUT, os.path.getsize(OUT), "bytes")

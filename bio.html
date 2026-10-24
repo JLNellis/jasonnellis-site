@@ -43,9 +43,6 @@
     object-fit: cover;
     object-position: 58% 18%;
     display: block;
-    /* Stage shot is high-key; pull it toward the Bolt OS palette so it
-       doesn't read as a white slab against the navy. */
-    filter: contrast(1.06) saturate(0.88) brightness(0.86);
   }
   /* Navy wash over the blown-out background, then a vignette blending the
      left edge into the text column. */
@@ -59,61 +56,12 @@
       linear-gradient(to bottom, transparent 82%, rgba(10,37,64,0.6) 100%),
       linear-gradient(160deg, rgba(10,37,64,0.42) 0%, rgba(10,37,64,0.16) 55%, rgba(10,37,64,0.38) 100%);
   }
-  /* Coordinate readout — top-right corner label */
-  .bio-portrait-wrap .coords {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-align: right;
-    z-index: 2;
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(148,163,184,0.7);
-    line-height: 1.8;
-  }
-  /* Scan line — purely decorative */
-  .bio-portrait-wrap .scan {
-    position: absolute;
-    left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(0,230,118,0.35), transparent);
-    animation: scandown 7s linear infinite;
-    z-index: 3;
-    pointer-events: none;
-  }
-  @keyframes scandown {
-    0%   { top: 0%; opacity: 0; }
-    5%   { opacity: 1; }
-    95%  { opacity: 0.6; }
-    100% { top: 100%; opacity: 0; }
-  }
-
   /* Left: intro text — left edge aligns with .page-wrap's content column */
   .bio-intro {
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 80px 56px 80px max(32px, calc((100vw - 1180px) / 2 + 32px));
-  }
-  .bio-intro .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-accent-vivid);
-    margin: 0 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .bio-intro .eyebrow::before {
-    content: "";
-    display: inline-block;
-    width: 28px;
-    height: 1px;
-    background: var(--color-accent-vivid);
   }
   .bio-intro h1 {
     font-size: clamp(36px, 4.5vw, 60px);
@@ -149,20 +97,11 @@
   .bio-facts .fact {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--fg-2);
     border: 1px solid var(--border-strong);
     border-radius: 999px;
     padding: 6px 14px;
-    letter-spacing: 0.04em;
-  }
-  .bio-facts .fact .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--color-accent-vivid);
-    box-shadow: 0 0 8px rgba(0,230,118,0.6);
-    flex-shrink: 0;
   }
 
   /* CTA row */
@@ -187,15 +126,6 @@
   .bio-narrative-label {
     position: sticky;
     top: 96px;
-  }
-  .bio-narrative-label .num {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--color-accent-vivid);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
   }
   .bio-narrative-label h2 {
     font-size: 28px; font-weight: 700; letter-spacing: -0.01em;
@@ -293,8 +223,6 @@
     transition: transform var(--dur-base) var(--ease-standard);
   }
   .ledger-more[open] summary svg { transform: rotate(90deg); }
-  .ledger-more summary:focus-visible,
-  .ledger-link:focus-visible { outline: 2px solid var(--color-accent-vivid); outline-offset: 3px; border-radius: 2px; }
   .ledger-more p { font-size: 14px; line-height: 1.7; color: var(--fg-2); margin: 4px 0 8px; }
 
   @media (max-width: 720px) {
@@ -310,7 +238,7 @@
   .bio-next .sub { font-size: 15px; color: var(--fg-2); line-height: 1.65; max-width: 600px; margin: 0 0 32px; }
   .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .next-card { display: flex; flex-direction: column; padding: 22px 24px; text-decoration: none; color: inherit; }
-  .next-card .kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-vivid); margin-bottom: 10px; }
+  .next-card h3 { font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--fg-1); margin: 0 0 8px; }
   .next-card p { font-size: 14px; color: var(--fg-2); line-height: 1.6; margin: 0 0 16px; }
   .next-card .go { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--fg-1); transition: color var(--dur-fast); }
   .next-card:hover .go { color: var(--color-accent-vivid); }
@@ -334,6 +262,7 @@
   }
   @media (max-width: 600px) {
     .bio-intro h1 { font-size: 34px; }
+    .bio-intro h1 br { display: none; }
   }
 
 </style>
@@ -360,10 +289,10 @@
       </p>
 
       <div class="bio-facts">
-        <span class="fact"><span class="dot"></span>Near Cannes, France</span>
-        <span class="fact"><span class="dot"></span>Father of two</span>
-        <span class="fact"><span class="dot"></span>Northwestern '06</span>
-        <span class="fact"><span class="dot"></span>Builder since Hulu</span>
+        <span class="fact">Near Cannes, France</span>
+        <span class="fact">Father of two</span>
+        <span class="fact">Northwestern '06</span>
+        <span class="fact">Builder since Hulu</span>
       </div>
 
       <div class="bio-ctas">
@@ -374,12 +303,11 @@
 
     <!-- Portrait column -->
     <div class="bio-portrait-wrap">
-      <img src="jason-nellis-stage-portrait.jpg" alt="Jason Nellis speaking with a microphone on a panel at IFA Berlin" width="1200" height="1800">
+      <img class="stage-photo" src="jason-nellis-stage-portrait.jpg" alt="Jason Nellis speaking with a microphone on a panel at IFA Berlin" width="1200" height="1800">
     </div>
 
   </div>
 
-</main>
 
 <!-- ===================== NARRATIVE ===================== -->
 <section class="bio-narrative" data-screen-label="02 narrative">
@@ -571,23 +499,25 @@
     <p class="sub">I write about what I've built, speak about it, and take on a small number of advisory engagements with founders in media and creator businesses.</p>
     <div class="next-grid">
       <a class="card next-card" href="/blog">
-        <span class="kind">Writing</span>
+        <h3>Writing</h3>
         <p>Essays and case studies, including the long versions of the log above.</p>
         <span class="go">Read the writing →</span>
       </a>
       <a class="card next-card" href="/speaking">
-        <span class="kind">Speaking</span>
+        <h3>Speaking</h3>
         <p>Keynotes, moderated panels, and leadership workshops built from things I built.</p>
         <span class="go">See the talks →</span>
       </a>
       <a class="card next-card" href="/advisory">
-        <span class="kind">Advisory</span>
+        <h3>Advisory</h3>
         <p>Three months as counsel next to the CEO, or six leading one named outcome with your team.</p>
         <span class="go">How advisory works →</span>
       </a>
     </div>
   </div>
 </section>
+
+</main>
 
 <!-- ===================== FOOTER ===================== -->
 <site-footer></site-footer>
