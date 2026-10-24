@@ -1,4 +1,36 @@
+const fs = require("fs");
+const path = require("path");
+const vm = require("vm");
+
+// Compile (never run) every inline <script> in the built HTML and parse every
+// JSON-LD block. A syntax error throws, which fails the Netlify build instead
+// of shipping a page whose JS is dead (an unescaped apostrophe in contact.html
+// once killed its whole script).
+function checkInlineScripts(dir) {
+  const errors = [];
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((entry) => {
+    const p = path.join(d, entry.name);
+    if (entry.isDirectory()) return walk(p);
+    if (!entry.name.endsWith(".html")) return;
+    const html = fs.readFileSync(p, "utf8");
+    for (const [, attrs, code] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+      if (/\bsrc=/i.test(attrs) || !code.trim()) continue;
+      const file = path.relative(dir, p);
+      try {
+        if (/application\/ld\+json/i.test(attrs)) JSON.parse(code);
+        else if (!/\btype=/i.test(attrs) || /javascript/i.test(attrs)) new vm.Script(code, { filename: file });
+      } catch (err) {
+        errors.push(`${file}: ${err.message}`);
+      }
+    }
+  });
+  walk(dir);
+  if (errors.length) throw new Error("Inline script syntax check failed:\n  " + errors.join("\n  "));
+}
+
 module.exports = function (eleventyConfig) {
+  eleventyConfig.on("eleventy.after", ({ dir }) => checkInlineScripts(dir.output));
+
   // Static assets used by the hand-authored pages — copied through untouched.
   eleventyConfig.addPassthroughCopy("site.css");
   eleventyConfig.addPassthroughCopy("colors_and_type.css");

@@ -408,7 +408,7 @@
       const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
       if (!res.ok) throw new Error('Form submission failed: ' + res.status);
       toast.classList.remove('error');
-      msg.innerHTML = '<strong>Got it.</strong> I'll get back to you soon.';
+      msg.innerHTML = '<strong>Got it.</strong> I’ll get back to you soon.';
       form.reset();
     } catch (err) {
       toast.classList.add('error');
