@@ -113,6 +113,10 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("austin-evans-favorite-tech.jpg");
   eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.mp4");
   eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.jpg");
+  // Captions (WebVTT) for the self-hosted videos, transcribed locally with Whisper.
+  eleventyConfig.addPassthroughCopy("reel-super-2022.vtt");
+  eleventyConfig.addPassthroughCopy("austin-evans-favorite-tech.vtt");
+  eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.vtt");
   eleventyConfig.addPassthroughCopy("building-value-piano.mp4");
   eleventyConfig.addPassthroughCopy("building-value-piano.jpg");
   // Self-hosted posters for the click-to-load YouTube episodes (nothing loads from Google until play).

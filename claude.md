@@ -220,6 +220,13 @@ site does. Keep it true. Conventions that keep it true:
   self-hosted copy of the episode's thumbnail (`bv-ep-<guest>.jpg`, 960x540,
   listed in `addPassthroughCopy`); never hotlink `i.ytimg.com`, which would
   contact Google on page load.
+- **Self-hosted videos carry WebVTT captions** (`<name>.vtt` next to each
+  `.mp4`, a `<track kind="captions" … default>` in the player, and a
+  passthrough entry). They were transcribed locally with mlx-whisper
+  (`uvx --offline --python 3.11 --from mlx-whisper mlx_whisper <file>.mp4
+  --model mlx-community/whisper-large-v3-turbo --language en --output-format
+  vtt`), then proofread for names. If a video is replaced, regenerate its
+  captions the same way.
 - **No Google Fonts CDN, no third-party CSS/JS CDNs.** Fonts are self-hosted
   in `/fonts` with `@font-face` declarations (`colors_and_type.css` for the
   site faces; `the-feed.html` inline for its own Space Grotesk / Anton).

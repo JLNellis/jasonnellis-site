@@ -71,7 +71,8 @@ photo; "2 companies" stat kept; advisory "rally your team" sentence cut and
 the reply promise changed to email within 48 hours; Live Shopping is "helped
 launch" in short copy, with the precise version on About; YouTube posters now
 use self-hosted copies of the episodes' own thumbnails. The Hulu image stays
-for now. Still open: captions (needs transcripts).
+for now. Captions added 2026-10-25 for the three self-hosted videos
+(local Whisper, proofread), so the backlog is closed.
 
 ---
 
