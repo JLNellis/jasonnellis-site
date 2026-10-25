@@ -66,11 +66,12 @@ no new figure or claim without Jason's approval.
   whole page; 44px buttons; case-study role lines match the résumé; the
   `/experiments` grid is two columns.
 
-Still open after the 2026-10-24 pass (Jason's call): the case-study images,
-the "2 companies" stat, the advisory "Text me" line, captions, one wording
-for the Live Shopping claim (About says "first managed partner program";
-the press kit and homepage say "built" or "launched"), and self-hosted stills
-for the two YouTube posters on /speaking and /building-value.
+Jason's calls (2026-10-25): `superbam.jpg` replaced with his own office
+photo; "2 companies" stat kept; advisory "rally your team" sentence cut and
+the reply promise changed to email within 48 hours; Live Shopping is "helped
+launch" in short copy, with the precise version on About; YouTube posters now
+use self-hosted copies of the episodes' own thumbnails. The Hulu image stays
+for now. Still open: captions (needs transcripts).
 
 ---
 

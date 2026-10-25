@@ -144,7 +144,7 @@ c.drawString(M, y(top + 17), "go-to-market executive in media and creator tech."
 
 top += 38
 bio = ("Started at Hulu in 2008, in the early days of streaming. Co-founded Packagd, acquired by "
-       "Meta in 2019, where his team built Facebook Live Shopping. Chief product officer at Jogg and "
+       "Meta in 2019, where he helped launch Facebook Live Shopping. Chief product officer at Jogg and "
        "SuperBam, and interim CEO at SuperBam. Now Head of Innovation & GTM at BoltOS, based near Cannes.")
 top = para(M, top, bio, "DMSans", 9.5, 14.5, FG2, text_w)
 
@@ -215,7 +215,7 @@ section_label("Track record", top)
 top += 16
 bullets = [
     "Co-founded Packagd, acquired by Meta in 2019",
-    "Built & launched Facebook Live Shopping at Meta",
+    "Helped launch Facebook Live Shopping at Meta",
     "CPO, then interim CEO, at SuperBam",
     "Guest lecturer: Northwestern, Howard, Georgetown",
     "50+ VidCon interviews hosted on Meta's Super platform",

@@ -216,7 +216,10 @@ site does. Keep it true. Conventions that keep it true:
   one on `/speaking`). nav.js swaps in the `youtube-nocookie.com` player on
   click, so nothing loads from Google until the visitor presses play, which
   is what the policy promises. Even nocookie iframes fetch from Google as
-  soon as they render, so they don't qualify on their own.
+  soon as they render, so they don't qualify on their own. The poster is a
+  self-hosted copy of the episode's thumbnail (`bv-ep-<guest>.jpg`, 960x540,
+  listed in `addPassthroughCopy`); never hotlink `i.ytimg.com`, which would
+  contact Google on page load.
 - **No Google Fonts CDN, no third-party CSS/JS CDNs.** Fonts are self-hosted
   in `/fonts` with `@font-face` declarations (`colors_and_type.css` for the
   site faces; `the-feed.html` inline for its own Space Grotesk / Anton).

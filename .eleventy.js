@@ -115,6 +115,11 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("austin-evans-rapid-fire.jpg");
   eleventyConfig.addPassthroughCopy("building-value-piano.mp4");
   eleventyConfig.addPassthroughCopy("building-value-piano.jpg");
+  // Self-hosted posters for the click-to-load YouTube episodes (nothing loads from Google until play).
+  eleventyConfig.addPassthroughCopy("bv-ep-chef-mike-haracz.jpg");
+  eleventyConfig.addPassthroughCopy("bv-ep-betina-chan-martin.jpg");
+  eleventyConfig.addPassthroughCopy("bv-ep-ken-bolido.jpg");
+  eleventyConfig.addPassthroughCopy("bv-ep-jacklyn-dallas.jpg");
   eleventyConfig.addPassthroughCopy("zest-malta.jpg");
   eleventyConfig.addPassthroughCopy("latitude59.jpg");
   eleventyConfig.addPassthroughCopy("jason-nellis-speaker-kit.pdf");
