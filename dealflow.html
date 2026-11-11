@@ -1,0 +1,1651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Creator Dealflow</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* Layout: a creator's deal desk. "Needs attention" first (one list across every deal), then the stage board, money and rates. Each deal opens in a side sheet. Palette follows DESIGN-SYSTEM.md: light workspace by default, navy workspace in dark mode. */
+:root {
+  --bg: #F5F7F5;
+  --surface: #FFFFFF;
+  --surface-2: #EAF0ED;
+  --line: #D3DDD8;
+  --input-line: #7A8798;
+  --fg: #0A2540;
+  --muted: #52627A;
+  --accent: #166246;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E6F3EB;
+  --good: #166246;
+  --good-soft: #E6F3EB;
+  --warn: #754400;
+  --warn-soft: #FFF4DA;
+  --bad: #B02C19;
+  --bad-soft: #FFF1EE;
+  --scrim: rgba(10, 37, 64, 0.38);
+  --shadow: rgba(10, 37, 64, 0.12);
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A2540; --surface: #1E293B; --surface-2: #0F172A; --line: #33445C; --input-line: #687C98;
+    --fg: #FFFFFF; --muted: #94A3B8; --accent: #00E676; --accent-ink: #0F172A; --accent-soft: #12392C;
+    --good: #99DBB7; --good-soft: #18382F; --warn: #FFD078; --warn-soft: #3C2D16; --bad: #FFB4A6; --bad-soft: #442626;
+    --scrim: rgba(0, 0, 0, 0.55); --shadow: rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A2540; --surface: #1E293B; --surface-2: #0F172A; --line: #33445C; --input-line: #687C98;
+  --fg: #FFFFFF; --muted: #94A3B8; --accent: #00E676; --accent-ink: #0F172A; --accent-soft: #12392C;
+  --good: #99DBB7; --good-soft: #18382F; --warn: #FFD078; --warn-soft: #3C2D16; --bad: #FFB4A6; --bad-soft: #442626;
+  --scrim: rgba(0, 0, 0, 0.55); --shadow: rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); color: var(--fg); }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { text-wrap: balance; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { max-width: 1480px; margin: 0 auto; padding-block: 20px 64px; display: flex; flex-direction: column; gap: 18px; }
+
+/* top bar */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.mark { display: flex; align-items: baseline; gap: 10px; margin-right: auto; flex-wrap: wrap; }
+.mark h1 { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+.mark .tag { font-size: 0.85rem; color: var(--muted); }
+nav.views { display: flex; flex-wrap: wrap; gap: 2px; background: var(--surface-2); padding: 4px; border-radius: 10px; }
+nav.views a { padding: 7px 14px; border-radius: 7px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+nav.views a[aria-current="page"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 2px var(--shadow); }
+nav.views .n { font-family: var(--font-mono); font-size: 0.75rem; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: var(--bad-soft); color: var(--bad); }
+
+.btn { font: inherit; font-weight: 600; font-size: 0.9rem; border-radius: 6px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; min-height: 40px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.quiet:hover { color: var(--fg); border-color: var(--line); }
+.btn.small { min-height: 32px; padding: 4px 10px; font-size: 0.84rem; }
+
+/* banners */
+.banner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 16px; border-radius: var(--radius); background: var(--accent-soft); color: var(--fg); }
+.banner.bad { background: var(--bad-soft); }
+.banner.warn { background: var(--warn-soft); }
+.banner p { margin: 0; flex: 1 1 320px; min-width: 0; }
+.banner .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* figures */
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.fig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.fig .num { font-family: var(--font-mono); font-weight: 500; font-size: 1.55rem; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1.25; }
+.fig.bad .num { color: var(--bad); }
+.fig .sub { color: var(--muted); font-size: 0.84rem; }
+
+/* toolbar */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.toolbar .hint { color: var(--muted); font-size: 0.84rem; margin-left: auto; }
+.search { max-width: 260px; }
+.check { display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--muted); cursor: pointer; }
+.check input { width: 18px; height: 18px; min-height: 0; accent-color: var(--accent); }
+
+/* today */
+.today { display: flex; flex-direction: column; gap: 18px; max-width: 920px; }
+.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px; }
+.view-title { font-weight: 700; font-size: 1.75rem; letter-spacing: -0.02em; margin: 0; line-height: 1.15; }
+.view-head p { margin: 4px 0 0; color: var(--muted); }
+.group { display: flex; flex-direction: column; gap: 6px; }
+.group > h3, .group > summary { font-size: 1.05rem; font-weight: 700; margin: 0; display: flex; align-items: baseline; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.group > summary { cursor: pointer; list-style-position: inside; }
+.group .count { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 400; color: var(--muted); }
+.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: 0; }
+.item-main { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.when { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.when.bad { color: var(--bad); }
+.when.warn { color: var(--warn); }
+.item-title { font-size: 1rem; }
+.item-sub { font-size: 0.86rem; color: var(--muted); overflow-wrap: anywhere; }
+.item-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.item.done .item-title { color: var(--muted); text-decoration: line-through; }
+.intake { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.intake h3 { margin: 0; font-size: 1.05rem; }
+.err { color: var(--bad); font-size: 0.84rem; margin: 0; font-weight: 600; }
+
+/* board */
+.board-wrap { overflow-x: auto; padding-bottom: 6px; }
+.board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(236px, 1fr); gap: 10px; min-width: min-content; }
+.col { background: var(--surface-2); border-radius: var(--radius); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 260px; min-width: 0; }
+.col.drop { outline: 2px dashed var(--accent); outline-offset: -2px; }
+.col-head { display: flex; flex-direction: column; gap: 1px; padding: 2px 4px 6px; }
+.col-head .grp { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+.col-head .ttl { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.col-head h2 { font-weight: 700; font-size: 1rem; margin: 0; }
+.col-head .count, .col-head .sum { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.col.declined { opacity: 0.85; }
+.empty-col { font-size: 0.82rem; color: var(--muted); padding: 6px 4px; }
+
+.card { text-align: left; font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 100%; }
+.card:hover { border-color: var(--accent); }
+.card.dragging { opacity: 0.5; }
+.card .brand { font-weight: 700; font-size: 0.95rem; overflow-wrap: anywhere; }
+.card .what { font-size: 0.8rem; color: var(--muted); }
+.card .money { font-family: var(--font-mono); font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.card .next { font-size: 0.8rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-size: 0.74rem; font-weight: 600; line-height: 1.5; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+.card .chip { background: var(--bg); }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* panels (money, rates) */
+.curtabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel.wide { grid-column: 1 / -1; }
+.panel h2 { font-weight: 700; font-size: 1.12rem; margin: 0; }
+.panel .lede { margin: 0; color: var(--muted); font-size: 0.9rem; max-width: 68ch; }
+.panel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.callout { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 8px; background: var(--surface-2); }
+.callout.good { background: var(--good-soft); }
+.callout.warn { background: var(--warn-soft); }
+.callout.bad { background: var(--bad-soft); }
+.callout strong { font-size: 1.02rem; }
+.callout.good strong { color: var(--good); }
+.callout.warn strong { color: var(--warn); }
+.callout.bad strong { color: var(--bad); }
+.callout p { margin: 0; }
+.callout ul { margin: 0; padding-left: 18px; }
+
+.bars { display: flex; flex-direction: column; gap: 9px; }
+.bar-row { display: grid; grid-template-columns: minmax(90px, 170px) 1fr auto; gap: 12px; align-items: center; font-size: 0.88rem; }
+.bar-row .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.bar-row .val { font-family: var(--font-mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.bar-row .val span { color: var(--muted); display: inline-block; min-width: 3.4em; }
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th { text-align: left; font-size: 0.78rem; color: var(--muted); font-weight: 600; padding: 6px 10px 8px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.linkish { font: inherit; font-weight: 600; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.linkish:hover { text-decoration-color: var(--accent); }
+td input { max-width: 110px; }
+
+.months { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: end; }
+.month { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 190px; min-width: 0; }
+.month .v { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.month .b { width: 100%; max-width: 54px; background: var(--accent); border-radius: 4px 4px 0 0; }
+.month .b.zero { background: var(--line); }
+.month .m { font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--line); width: 100%; text-align: center; padding-top: 4px; }
+
+/* forms */
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field > label, .field > .flabel, legend { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.field .help { font-size: 0.8rem; color: var(--muted); margin: 0; }
+input, select, textarea { font: inherit; font-size: 0.92rem; color: var(--fg); background: var(--surface); border: 1px solid var(--input-line); border-radius: 6px; padding: 8px 10px; min-height: 40px; width: 100%; }
+input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; accent-color: var(--accent); flex: none; }
+textarea { min-height: 96px; resize: vertical; }
+.del-row { display: grid; grid-template-columns: 1fr 76px auto; gap: 8px; align-items: center; }
+.del-list { display: flex; flex-direction: column; gap: 8px; }
+
+fieldset.q { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size: 0.9rem; font-weight: 600; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; min-height: 0; }
+.opt span { display: inline-block; padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; cursor: pointer; background: var(--surface); }
+.opt span:hover { border-color: var(--accent); }
+.opt input:checked + span { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.opt input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.result { border-radius: var(--radius); padding: 16px 18px; background: var(--surface-2); display: flex; flex-direction: column; gap: 6px; }
+.result.good { background: var(--good-soft); }
+.result.warn { background: var(--warn-soft); }
+.result.bad { background: var(--bad-soft); }
+.result .big { font-family: var(--font-mono); font-weight: 500; font-size: 2.1rem; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.result .big small { font-size: 1rem; color: var(--muted); margin-left: 2px; }
+.result.good .headline { color: var(--good); }
+.result.warn .headline { color: var(--warn); }
+.result.bad .headline { color: var(--bad); }
+.result .headline { font-weight: 700; font-size: 1.4rem; line-height: 1.15; }
+.result p { margin: 0; }
+.result ul { margin: 2px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.formula { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.fine { font-size: 0.8rem; color: var(--muted); margin: 0; }
+.section-title { font-weight: 700; font-size: 1rem; margin: 0; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.advice { font-size: 0.84rem; margin: 0; padding: 6px 10px; border-radius: 6px; }
+.advice.warn { background: var(--warn-soft); color: var(--warn); }
+.advice.bad { background: var(--bad-soft); color: var(--bad); }
+
+.hours-table td:first-child { width: 100%; }
+.hours-table input { width: 84px; }
+
+/* steps in the deal sheet */
+.tasks { display: flex; flex-direction: column; gap: 10px; }
+.task { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+.task.done { background: var(--surface-2); }
+.task.done .task-title { text-decoration: line-through; color: var(--muted); }
+.task-top { display: flex; align-items: center; gap: 10px; }
+.task-top input[type="text"] { font-weight: 600; }
+.task .grid3 input, .task .grid3 select { min-height: 36px; padding: 5px 8px; }
+.task-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; justify-content: space-between; }
+.money-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 10px; }
+.money-sum div { display: flex; flex-direction: column; }
+.money-sum .num { font-family: var(--font-mono); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.addrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 8px; align-items: end; padding: 12px; border-radius: 8px; background: var(--surface-2); }
+.history { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.history li { font-size: 0.88rem; padding: 8px 10px; border-radius: 6px; background: var(--surface-2); }
+
+/* sheet */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 20; }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(660px, 100%); background: var(--surface); z-index: 21; display: flex; flex-direction: column; border-left: 1px solid var(--line); box-shadow: -16px 0 40px var(--shadow); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.sheet-head { padding: 16px 22px 12px; display: flex; flex-direction: column; gap: 10px; }
+.sheet-head .top { display: flex; align-items: flex-start; gap: 12px; }
+.sheet-head h2 { font-weight: 700; font-size: 1.45rem; letter-spacing: -0.01em; margin: 0; flex: 1; min-width: 0; overflow-wrap: anywhere; line-height: 1.2; }
+.sheet-head .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.sheet-head .meta select { width: auto; min-height: 34px; padding: 4px 8px; font-weight: 600; }
+.sheet-head .meta label { font-size: 0.8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.icon-btn { width: 40px; height: 40px; display: inline-grid; place-items: center; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; flex: none; }
+.icon-btn:hover { border-color: var(--accent); }
+.sheet-tabs { display: flex; gap: 2px; padding: 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; }
+.sheet-tabs button { font: inherit; font-weight: 600; font-size: 0.88rem; background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 10px 9px; color: var(--muted); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+.sheet-tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: inline-block; }
+.dot.good { background: var(--good); }
+.dot.warn { background: var(--warn); }
+.dot.bad { background: var(--bad); }
+.sheet-body { flex: 1; overflow-y: auto; padding: 18px 22px 28px; display: flex; flex-direction: column; gap: 18px; }
+.sheet-body > * { flex-shrink: 0; }
+.sheet-foot { padding: 12px 22px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: none; }
+.sheet-foot .spacer { flex: 1; }
+.confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--bad-soft); width: 100%; }
+.confirm p { margin: 0; flex: 1 1 200px; color: var(--bad); font-weight: 600; font-size: 0.88rem; }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 8px 10px 8px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; z-index: 40; box-shadow: 0 6px 20px var(--shadow); max-width: calc(100% - 32px); display: flex; align-items: center; gap: 12px; }
+.toast button { font: inherit; font-weight: 700; background: none; border: 1px solid currentColor; color: inherit; border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+
+.empty { padding: 28px; text-align: center; color: var(--muted); }
+
+@media (max-width: 560px) {
+  .toolbar .hint { display: none; }
+  .search { max-width: none; flex: 1 1 100%; }
+  .bar-row { grid-template-columns: minmax(70px, 110px) 1fr auto; gap: 8px; }
+  .sheet-head, .sheet-body, .sheet-foot { padding-left: 16px; padding-right: 16px; }
+  .view-title { font-size: 1.5rem; }
+  .item-actions .btn { min-height: 44px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card, .btn, .opt span { transition: border-color 0.15s ease, background-color 0.15s ease; }
+}
+</style>
+<meta name="description" content="A deal desk for creators running brand sponsorships: what needs attention across every deal, contract terms turned into dated steps, invoices and payments. Free, no login. Your deals stay in your browser.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jason Nellis">
+<meta property="og:url" content="https://jasonnellis.com/dealflow">
+<meta property="og:title" content="Creator Dealflow">
+<meta property="og:description" content="What needs your attention across every sponsor deal, from offer to paid. Free, no login.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>:root { color-scheme: light; }</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="mark">
+      <h1>Creator Dealflow</h1>
+      <span class="tag">Your sponsor deals, from offer to paid</span>
+    </div>
+    <nav class="views" aria-label="Views">
+      <a href="#today" data-view="today">Needs attention</a>
+      <a href="#pipeline" data-view="pipeline">Pipeline</a>
+      <a href="#money" data-view="money">Money</a>
+      <a href="#rates" data-view="rates">Rates &amp; data</a>
+    </nav>
+  </header>
+  <div id="banner"></div>
+  <main id="view"></main>
+</div>
+
+<div class="scrim" id="scrim" data-action="close" hidden></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-head" id="dh"></div>
+  <div class="sheet-tabs" role="tablist" id="dt" aria-label="Deal sections"></div>
+  <div class="sheet-body" id="db"></div>
+  <div class="sheet-foot" id="df"></div>
+</aside>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var state = null;
+  /* ---------- reference data (from v0) ---------- */
+  var STAGES = [
+    { key: "inbound", label: "Inbound", group: "Evaluate" },
+    { key: "vetting", label: "Vetting", group: "Evaluate" },
+    { key: "negotiating", label: "Negotiating", group: "Negotiate" },
+    { key: "contracted", label: "Contracted", group: "Deliver" },
+    { key: "production", label: "In production", group: "Deliver" },
+    { key: "posted", label: "Posted", group: "Deliver" },
+    { key: "invoiced", label: "Invoiced", group: "Collect" },
+    { key: "paid", label: "Paid", group: "Collect" },
+    { key: "declined", label: "Declined", group: "Closed" }
+  ];
+  var FLOW = STAGES.filter(function (s) { return s.key !== "declined"; }).map(function (s) { return s.key; });
+  var OPEN = ["inbound", "vetting", "negotiating"];
+  var BOOKED = ["contracted", "production", "posted", "invoiced", "paid"];
+  var UNPAID = ["contracted", "production", "posted", "invoiced"];
+  function stageLabel(k) { for (var i = 0; i < STAGES.length; i++) if (STAGES[i].key === k) return STAGES[i].label; return k; }
+
+  var DELIVERABLES = [
+    { key: "yt_integration", label: "YouTube integration (60–90 s)", short: "YT integration", platform: "YouTube", hours: 3 },
+    { key: "yt_dedicated", label: "YouTube dedicated video", short: "YT dedicated", platform: "YouTube", hours: 12 },
+    { key: "yt_short", label: "YouTube Short", short: "YT Short", platform: "YouTube", hours: 2.75 },
+    { key: "tiktok", label: "TikTok video", short: "TikTok", platform: "TikTok", hours: 2.75 },
+    { key: "ig_reel", label: "Instagram Reel", short: "IG Reel", platform: "Instagram", hours: 2.75 },
+    { key: "ig_stories", label: "Instagram story set (3 frames)", short: "IG stories", platform: "Instagram", hours: 1 },
+    { key: "podcast_read", label: "Podcast host-read ad", short: "Podcast read", platform: "Podcast", hours: 1 },
+    { key: "newsletter", label: "Newsletter placement", short: "Newsletter", platform: "Newsletter", hours: 1 },
+    { key: "live", label: "Livestream segment", short: "Live segment", platform: "Live", hours: 1.5 }
+  ];
+  var DMAP = {}; DELIVERABLES.forEach(function (d) { DMAP[d.key] = d; });
+
+  var CATEGORIES = ["Tech & software", "Finance", "Beauty & skincare", "Food & drink", "Outdoor & fitness", "Home", "Gaming", "Other"];
+  var SOURCES = ["Inbound email", "Agency or manager", "Marketplace", "My outreach", "Referral"];
+  var CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD"];
+
+  var LEGIT = [
+    { key: "domain", q: "Does the sender's email domain match the brand's website?", opts: [["yes", "Yes, it matches", 0], ["free", "Free email (Gmail, Outlook)", 2], ["lookalike", "Lookalike domain", 99]] },
+    { key: "verify", q: "Can you find the brand's real site, product and social accounts?", opts: [["yes", "Yes", 0], ["thin", "Thin or brand new", 1], ["no", "No", 2]] },
+    { key: "attach", q: "Does it ask you to download a file, open a password-protected zip, or sign in through a link?", opts: [["no", "No", 0], ["yes", "Yes", 99]] },
+    { key: "payfirst", q: "Does it ask you to pay anything first (shipping, a fee, buying the product)?", opts: [["no", "No", 0], ["yes", "Yes", 99]] },
+    { key: "method", q: "How do they say they will pay you?", opts: [["normal", "Bank, PayPal or platform", 0], ["unstated", "Not stated", 1], ["odd", "Crypto or gift cards", 99]] },
+    { key: "rate", q: "Is the fee far above your usual rate, before you've negotiated?", opts: [["no", "No", 0], ["yes", "Yes", 1]] },
+    { key: "urgency", q: "Are they pushing you to decide within a day or two?", opts: [["no", "No", 0], ["yes", "Yes", 1]] },
+    { key: "brief", q: "Is there a named contact and a written brief?", opts: [["yes", "Yes", 0], ["no", "No", 1]] }
+  ];
+  var LEGIT_REASON = {
+    "domain:free": "Sent from a free email account, not the brand's own domain.",
+    "domain:lookalike": "The domain imitates the brand's. This is the most common impersonation trick.",
+    "verify:thin": "The brand has very little public footprint.",
+    "verify:no": "You couldn't confirm the brand exists.",
+    "attach:yes": "Asks you to download a file or sign in. Treat it as a malware or account-takeover attempt.",
+    "payfirst:yes": "Asks you to pay first. Real sponsors pay you.",
+    "method:odd": "Wants to pay in crypto or gift cards.",
+    "method:unstated": "The payment method isn't stated yet.",
+    "rate:yes": "The fee is far above your rate before any negotiation.",
+    "urgency:yes": "Pushes for a fast decision.",
+    "brief:no": "No named contact or written brief."
+  };
+
+  var CLAUSES = [
+    { key: "usage", label: "Usage rights", help: "Where, and for how long, the brand can use your content.",
+      opts: [["organic", "Your channels only", 0, "ok"], ["repost", "Brand reposts organically", 10, "ok"], ["paid30", "Paid ads, 30 days", 30, "ok"], ["paid90", "Paid ads, 90 days", 60, "warn"], ["paid365", "Paid ads, 1 year", 100, "warn"], ["perp", "Perpetual or unlimited", 200, "bad"]],
+      advice: { paid90: "Price each 30 days of paid usage, or cut it to 30 days.", paid365: "A year of paid usage is a licensing deal. Price it as one.", perp: "Strike \"perpetuity\". Offer a fixed term, or price it as a buyout." } },
+    { key: "whitelist", label: "Whitelisting / Spark Ads", help: "The brand runs ads through your account.",
+      opts: [["none", "None", 0, "ok"], ["w30", "Up to 30 days", 25, "ok"], ["w90", "60–90 days", 50, "warn"], ["open", "No end date", 100, "bad"]],
+      advice: { w90: "Charge per 30-day block.", open: "Add an end date. Open-ended access to your handle is a risk." } },
+    { key: "exclusivity", label: "Exclusivity", help: "Competitors you can't work with, and for how long.",
+      opts: [["none", "None", 0, "ok"], ["c30", "Category, up to 30 days", 15, "ok"], ["c90", "Category, 31–90 days", 35, "warn"], ["c90p", "Category, over 90 days", 60, "bad"], ["broad", "Any competitor, loosely defined", 75, "bad"]],
+      advice: { c90: "Ask for a narrower category or a shorter window, or charge for the deals you'll miss.", c90p: "Long exclusivity costs you other deals. Price in the lost income or shorten it.", broad: "Name the competitors in the contract. \"Any competitor\" can block a whole category." } },
+    { key: "payment", label: "Payment terms", help: "How long after invoicing you get paid.",
+      opts: [["net15", "Upfront or Net 15", 0, "ok"], ["net30", "Net 30", 0, "ok"], ["net60", "Net 45–60", 5, "warn"], ["net90", "Net 90 or later", 10, "bad"]],
+      advice: { net60: "Ask for 50% upfront, or Net 30.", net90: "Ask for 50% on signing. Ninety days is three months of float you're funding." } },
+    { key: "revisions", label: "Revision rounds", help: "Rounds of changes included in the fee.",
+      opts: [["r2", "Two or fewer", 0, "ok"], ["r3", "Three", 10, "warn"], ["unl", "Unlimited", 25, "bad"]],
+      advice: { r3: "Cap it at two rounds and charge for each extra one.", unl: "Cap the rounds in writing. Unlimited revisions have no end." } },
+    { key: "killfee", label: "Kill fee", help: "What you're paid if the brand cancels.",
+      opts: [["k50", "50% or more", 0, "ok"], ["klow", "Under 50%", 0, "warn"], ["none", "None", 0, "bad"]],
+      advice: { klow: "Ask for 50% once production has started.", none: "Add a kill fee: 50% after the brief is approved, 100% after filming." } },
+    { key: "ip", label: "Content ownership", help: "Who owns the finished video or post.",
+      opts: [["you", "You own it", 0, "ok"], ["licence", "Brand gets a licence", 0, "ok"], ["brand", "Brand owns it", 100, "bad"]],
+      advice: { brand: "Keep ownership and grant a licence. If they insist on owning it, it's a buyout and costs more." } },
+    { key: "perf", label: "Performance guarantees", help: "Promised views, or free make-good posts if numbers miss.",
+      opts: [["none", "No guarantees", 0, "ok"], ["guar", "View guarantee or make-good", 0, "bad"]],
+      advice: { guar: "Remove view guarantees. You control the content, not the algorithm." } },
+    { key: "approval", label: "Approval deadline", help: "How fast the brand has to sign off on drafts.",
+      opts: [["set", "Set deadline (e.g. 3 business days)", 0, "ok"], ["none", "No deadline", 0, "warn"]],
+      advice: { none: "Add a deadline after which the content counts as approved." } }
+  ];
+
+  var TRUST_SOURCE = "https://www.tubefilter.com/2026/08/16/creators-rely-on-brand-deals-but-worry-about-the-tension-between-sponsors-and-viewers-and-just-15-say-they-fully-trust-sponsored-content-from-other-creators/";
+  var SCAM_SOURCE = "https://outlierkit.com/resources/spot-fake-youtube-sponsorships/";
+  function iso(t) { return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0"); }
+  function todayISO() { return iso(new Date()); }
+  function parseD(s) { if (!s) return null; var p = s.split("-").map(Number); if (p.length !== 3 || p.some(isNaN)) return null; return new Date(p[0], p[1] - 1, p[2]); }
+  function addDays(s, n) { var t = parseD(s); t.setDate(t.getDate() + n); return iso(t); }
+  function diffDays(a, b) { return Math.round((parseD(b) - parseD(a)) / 86400000); }
+  function pct(x) { return Math.round(x * 100) + "%"; }
+  function hrs(h) { return (Math.round(h * 100) / 100).toString(); }
+  function num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function uid() { return "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function sum(arr, f) { return arr.reduce(function (s, x) { return s + f(x); }, 0); }
+  var LEGIT_OK = { domain: "yes", verify: "yes", attach: "no", payfirst: "no", method: "normal", rate: "no", urgency: "no", brief: "yes" };
+  var CONTRACT_OK = { usage: "organic", whitelist: "none", exclusivity: "c30", payment: "net30", revisions: "r2", killfee: "k50", ip: "you", perf: "none", approval: "set" };
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function seedV0() {
+    var t = todayISO(), d = function (n) { return addDays(t, n); };
+    var ex = function (o) { o.example = true; return blankDeal(o); };
+    return [
+      ex({ brand: "Tallow & Ash", category: "Beauty & skincare", contact: "Priya Raman", email: "priya@tallowandash.example", stage: "inbound", fee: 2500,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-2), legit: { domain: "yes", verify: "yes" },
+        notes: "Wants a mid-roll in the desk-setup skincare video. Second deal with them; the first one paid on time." }),
+      ex({ brand: "Glint Wallet", category: "Finance", contact: "\"Partnership team\" (no name)", email: "", stage: "inbound", fee: 9000,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-1),
+        legit: { domain: "free", verify: "thin", attach: "yes", method: "odd", rate: "yes", urgency: "yes", brief: "no" },
+        notes: "Sent from a Gmail address. Attached a password-protected campaign_brief.zip. Did not open it." }),
+      ex({ brand: "Northbound Coffee Co.", category: "Food & drink", contact: "Sam Ortiz", email: "sam@northboundcoffee.example", stage: "vetting", fee: 1800, productValue: 240,
+        deliverables: [{ type: "ig_reel", qty: 2 }, { type: "ig_stories", qty: 1 }], created: d(-5), legit: clone(LEGIT_OK),
+        take: { revisions: 1, extra: 1, buy: "yes", fit: "yes" }, notes: "Subscription beans. Already drink them, so the product counts." }),
+      ex({ brand: "Fieldnote Audio", category: "Tech & software", contact: "Dana Whitfield", email: "dana@fieldnoteaudio.example", stage: "negotiating", fee: 6000, productValue: 349,
+        deliverables: [{ type: "yt_dedicated", qty: 1 }, { type: "yt_short", qty: 2 }], created: d(-12), dueDate: d(30), legit: clone(LEGIT_OK),
+        take: { revisions: 2, extra: 3, buy: "partly", fit: "yes" },
+        contract: { usage: "perp", whitelist: "w30", exclusivity: "c90", payment: "net60", revisions: "r2", killfee: "none", ip: "licence", perf: "none" },
+        notes: "Their first draft asks for perpetual paid usage and 90 days of audio exclusivity. Countering on both. Extra hours are for testing the headphones." }),
+      ex({ brand: "Parcel Pantry", category: "Food & drink", contact: "Lee Haddad", email: "lee@parcelpantry.example", stage: "contracted", fee: 4200,
+        deliverables: [{ type: "tiktok", qty: 3 }, { type: "yt_integration", qty: 1 }], created: d(-20), dueDate: d(18), netDays: 60, legit: clone(LEGIT_OK),
+        take: { revisions: 1, extra: 0, buy: "no", fit: "yes" },
+        contract: { usage: "paid30", whitelist: "none", exclusivity: "c30", payment: "net60", revisions: "r2", killfee: "k50", ip: "licence", perf: "none", approval: "set" } }),
+      ex({ brand: "Loomstack", category: "Tech & software", contact: "Ana Ruiz (via Brightline Talent)", email: "ana@brightlinetalent.example", source: "Agency or manager", stage: "production", fee: 3500,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-25), dueDate: d(6), legit: clone(LEGIT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" }, contract: clone(CONTRACT_OK), notes: "Fourth Loomstack deal this year. Script draft due to them three days before the deadline." }),
+      ex({ brand: "Brightside Bikes", category: "Outdoor & fitness", contact: "Tom Becker", email: "tom@brightsidebikes.example", stage: "posted", fee: 7500, productValue: 1900,
+        deliverables: [{ type: "yt_dedicated", qty: 1 }, { type: "ig_reel", qty: 1 }], created: d(-50), dueDate: d(-5), postedDate: d(-4), legit: clone(LEGIT_OK),
+        take: { revisions: 2, extra: 4, buy: "yes", fit: "yes" }, contract: clone(CONTRACT_OK), notes: "Kept the e-bike. Extra hours were the test rides." }),
+      ex({ brand: "Loomstack", category: "Tech & software", contact: "Ana Ruiz (via Brightline Talent)", email: "ana@brightlinetalent.example", source: "Agency or manager", stage: "invoiced", fee: 3000,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-80), postedDate: d(-45), invoiceDate: d(-42), netDays: 30, legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" } }),
+      ex({ brand: "Tallow & Ash", category: "Beauty & skincare", contact: "Priya Raman", email: "priya@tallowandash.example", stage: "paid", fee: 2200,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-110), postedDate: d(-88), invoiceDate: d(-85), paidDate: d(-60), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" } }),
+      ex({ brand: "Kettle Camp", category: "Outdoor & fitness", contact: "Rosa Lind", email: "rosa@kettlecamp.example", stage: "paid", fee: 1600, productValue: 420,
+        deliverables: [{ type: "ig_reel", qty: 2 }], created: d(-70), postedDate: d(-44), invoiceDate: d(-40), paidDate: d(-25), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 1, buy: "partly", fit: "yes" } }),
+      ex({ brand: "Mintmark", category: "Finance", contact: "Jo Park", email: "jo@mintmark.example", stage: "paid", fee: 5200,
+        deliverables: [{ type: "yt_integration", qty: 1 }, { type: "newsletter", qty: 1 }], created: d(-150), postedDate: d(-124), invoiceDate: d(-120), paidDate: d(-95), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" } }),
+      ex({ brand: "Loomstack", category: "Tech & software", contact: "Ana Ruiz (via Brightline Talent)", email: "ana@brightlinetalent.example", source: "Agency or manager", stage: "paid", fee: 3000,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-180), postedDate: d(-158), invoiceDate: d(-155), paidDate: d(-130), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" } }),
+      ex({ brand: "Loomstack", category: "Tech & software", contact: "Ana Ruiz (via Brightline Talent)", email: "ana@brightlinetalent.example", source: "Agency or manager", stage: "paid", fee: 2800,
+        deliverables: [{ type: "yt_integration", qty: 1 }], created: d(-210), postedDate: d(-190), invoiceDate: d(-188), paidDate: d(-160), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" } }),
+      ex({ brand: "Hearthstone Teas", category: "Food & drink", contact: "Mia Clarke", email: "mia@hearthstoneteas.example", stage: "declined", fee: 0, productValue: 60,
+        deliverables: [{ type: "ig_reel", qty: 1 }, { type: "ig_stories", qty: 1 }], created: d(-30), legit: clone(LEGIT_OK),
+        take: { revisions: 1, extra: 0, buy: "no", fit: "unsure" }, declineReason: "Gifted only: $60 of tea for about six hours of work." })
+    ];
+  }
+  function summaryText(d) {
+    if (!d.deliverables.length) return "No deliverables yet";
+    return d.deliverables.map(function (x) { return (x.qty || 0) + "× " + (DMAP[x.type] ? DMAP[x.type].short : x.type); }).join(" · ");
+  }
+
+  function legitResult(d) {
+    var a = d.legit || {}, answered = 0, score = 0, hard = false, reasons = [];
+    LEGIT.forEach(function (q) {
+      var v = a[q.key]; if (!v) return;
+      var opt = q.opts.filter(function (o) { return o[0] === v; })[0]; if (!opt) return;
+      answered++;
+      if (opt[2] >= 99) hard = true; else score += opt[2];
+      if (opt[2] > 0) reasons.push({ text: LEGIT_REASON[q.key + ":" + v], hard: opt[2] >= 99 });
+    });
+    var total = LEGIT.length, r;
+    if (hard) r = { key: "scam", label: "Likely scam", level: "bad" };
+    else if (score >= 3) r = { key: "verify", label: "Verify first", level: "warn" };
+    else if (answered === 0) r = { key: "unchecked", label: "Not vetted", level: "" };
+    else if (answered < total) r = { key: "partial", label: answered + " of " + total + " checked", level: score > 0 ? "warn" : "" };
+    else r = { key: "ok", label: "Looks legitimate", level: "good" };
+    r.answered = answered; r.total = total; r.reasons = reasons; r.score = score;
+    return r;
+  }
+
+  function contractResult(d) {
+    var c = d.contract || {}, reviewed = 0, uplift = 0, flags = [], level = "";
+    CLAUSES.forEach(function (cl) {
+      var v = c[cl.key]; if (!v) return;
+      var opt = cl.opts.filter(function (o) { return o[0] === v; })[0]; if (!opt) return;
+      reviewed++; uplift += opt[2];
+      if (opt[3] !== "ok") flags.push({ clause: cl.label, option: opt[1], level: opt[3], advice: cl.advice[v] || "" });
+    });
+    if (flags.some(function (f) { return f.level === "bad"; })) level = "bad";
+    else if (flags.length) level = "warn";
+    else if (reviewed) level = "good";
+    return { reviewed: reviewed, total: CLAUSES.length, uplift: uplift, flags: flags, level: level };
+  }
+
+  function worthResult(d) {
+    var p = state.profile;
+    var prodHours = sum(d.deliverables, function (x) { return num(x.qty) * num(p.hours[x.type]); });
+    var revs = num(d.take.revisions), extra = num(d.take.extra);
+    var hours = d.deliverables.length ? prodHours + num(p.admin) + revs * num(p.revisionHours) + extra : 0;
+    var factor = d.take.buy === "yes" ? 1 : d.take.buy === "partly" ? 0.5 : 0;
+    var product = num(d.productValue) * factor;
+    var fee = num(d.fee);
+    var value = fee + product;
+    var rate = hours > 0 ? value / hours : 0;
+    var u = contractResult(d).uplift;
+    var target = num(p.rate);
+    var effTarget = target * (1 + u / 100);
+    var ratio = effTarget > 0 ? rate / effTarget : 0;
+    var askFor = Math.max(0, Math.ceil((effTarget * hours - product) / 50) * 50);
+    var v;
+    if (!d.deliverables.length) v = { label: "Add deliverables", level: "" };
+    else if (ratio >= 1.2) v = { label: "Take it", level: "good" };
+    else if (ratio >= 0.9) v = { label: "Fair deal", level: "good" };
+    else if (ratio >= 0.6) v = { label: "Counter", level: "warn" };
+    else v = { label: "Walk away or counter hard", level: "bad" };
+    return { prodHours: prodHours, revs: revs, extra: extra, hours: hours, product: product, fee: fee, value: value, rate: rate, uplift: u, target: target, effTarget: effTarget, ratio: ratio, askFor: askFor, verdict: v, factor: factor };
+  }
+
+  /* ---------- formatting (v2) ---------- */
+  var ctxCur = "USD";
+  function money(n, c) {
+    var cur = c || ctxCur;
+    try { return new Intl.NumberFormat("en-US", { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(Math.round(n || 0)); }
+    catch (e) { return cur + " " + Math.round(n || 0).toLocaleString("en-US"); }
+  }
+  function fmtDate(s) { var t = parseD(s); return t ? t.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "no date"; }
+  function fmtMonth(s) { var t = parseD(s); return t ? t.toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "date unknown"; }
+  function addD(s, n) { return s ? addDays(s, n) : ""; }
+  function days(n) { return n + (n === 1 ? " day" : " days"); }
+  function rel(s) {
+    var n = diffDays(todayISO(), s);
+    if (n === 0) return "today"; if (n === 1) return "tomorrow"; if (n === -1) return "yesterday";
+    return n > 0 ? "in " + days(n) : days(-n) + " ago";
+  }
+  var framed = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+
+  /* ---------- model ---------- */
+  var KEY2 = "creator-dealflow-v2", KEY1 = "creator-dealflow-v1";
+  function defaultProfile() {
+    var h = {}; DELIVERABLES.forEach(function (d) { h[d.key] = d.hours; });
+    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h };
+  }
+  function mergeProfile(p) {
+    var out = Object.assign(defaultProfile(), p || {});
+    out.hours = Object.assign(defaultProfile().hours, (p && p.hours) || {});
+    return out;
+  }
+  function blankDeal(o) {
+    var d = {
+      id: uid(), brand: "", category: "Other", contact: "", email: "", source: "Inbound email", stage: "inbound",
+      currency: (state && state.profile && state.profile.currency) || "USD", fee: 0, productValue: 0, deliverables: [],
+      publishBy: "", created: todayISO(), notes: "", declineReason: "", legit: {}, take: { revisions: 1, extra: 0, buy: "", fit: "" },
+      contract: {}, tasks: [], invoices: [], payments: [], termsApplied: false, revisionsUsed: 0
+    };
+    if (o) Object.keys(o).forEach(function (k) { d[k] = o[k]; });
+    return d;
+  }
+  function normDeal(x) {
+    var d = blankDeal(x);
+    d.take = Object.assign({ revisions: 1, extra: 0, buy: "", fit: "" }, x.take || {});
+    ["deliverables", "tasks", "invoices", "payments"].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
+    d.legit = d.legit || {}; d.contract = d.contract || {};
+    d.tasks = d.tasks.map(function (t) { return task(t); });
+    return d;
+  }
+  function task(o) {
+    var t = { id: uid(), title: "", owner: "me", kind: "other", due: "", chase: "", done: "", key: "", link: "", log: [] };
+    Object.keys(o || {}).forEach(function (k) { t[k] = o[k]; });
+    if (!Array.isArray(t.log)) t.log = [];
+    return t;
+  }
+  function logT(t, text) { t.log.push({ at: todayISO(), text: text }); }
+  function findTask(d, id) { for (var i = 0; i < d.tasks.length; i++) if (d.tasks[i].id === id) return d.tasks[i]; return null; }
+
+  /* ---------- terms become steps ---------- */
+  var NET = { net15: 15, net30: 30, net60: 60, net90: 90 };
+  var USAGE_DAYS = { paid30: 30, paid90: 90, paid365: 365 }, WL_DAYS = { w30: 30, w90: 90 }, EX_DAYS = { c30: 30, c90: 90, c90p: 180 };
+  var REV_CAP = { r2: 2, r3: 3 };
+  function netOf(d) { return NET[(d.contract || {}).payment] || 30; }
+  function delLabel(x) { var s = DMAP[x.type] ? DMAP[x.type].short : x.type; return (num(x.qty) > 1 ? num(x.qty) + "× " : "") + s; }
+  function termPlan(d) {
+    var P = d.publishBy, c = d.contract || {}, appr = c.approval === "none" ? 5 : 3, out = [];
+    d.deliverables.forEach(function (x, i) {
+      var L = delLabel(x);
+      out.push({ key: "draft:" + i, kind: "draft", owner: "me", title: "Send draft: " + L, due: addD(P, -7) });
+      out.push({ key: "appr:" + i, kind: "approval", owner: "brand", title: "Approval: " + L, due: addD(P, -3), chase: addD(P, -7 + appr) });
+      out.push({ key: "pub:" + i, kind: "publish", owner: "me", title: "Publish: " + L, due: P });
+    });
+    out.push({ key: "invoice", kind: "invoice", owner: "me", title: "Send invoice (Net " + netOf(d) + ")", due: addD(P, 2) });
+    if (USAGE_DAYS[c.usage]) out.push({ key: "usage", kind: "rights", owner: "brand", title: "Paid usage ends: check the ads have stopped", due: addD(P, USAGE_DAYS[c.usage]), chase: addD(P, USAGE_DAYS[c.usage] + 1) });
+    if (WL_DAYS[c.whitelist]) out.push({ key: "whitelist", kind: "rights", owner: "me", title: "Remove the brand's ad access to your account", due: addD(P, WL_DAYS[c.whitelist]) });
+    if (EX_DAYS[c.exclusivity]) out.push({ key: "excl", kind: "rights", owner: "me", title: "Exclusivity ends: competitors are open again", due: addD(P, EX_DAYS[c.exclusivity]) });
+    if (c.perf === "guar") out.push({ key: "perf", kind: "check", owner: "me", title: "Check views against the guarantee", due: addD(P, 30) });
+    return out;
+  }
+  function missingTerms(d) {
+    var have = {}; d.tasks.forEach(function (t) { if (t.key) have[t.key] = 1; });
+    return termPlan(d).filter(function (p) { return !have[p.key]; });
+  }
+  function applyTerms(d, note) {
+    var add = missingTerms(d);
+    add.forEach(function (p) { var t = task(p); logT(t, note || "Created from the deal terms"); d.tasks.push(t); });
+    d.termsApplied = true;
+    return add.length;
+  }
+  function revCap(d) { var r = (d.contract || {}).revisions; return r === "unl" ? Infinity : REV_CAP[r] || 0; }
+
+  /* ---------- money per deal ---------- */
+  function ledger(d) {
+    var t = todayISO();
+    var invs = d.invoices.slice().sort(function (a, b) { return (a.issued || "").localeCompare(b.issued || ""); });
+    var received = sum(d.payments, function (p) { return num(p.amount); }), pool = received;
+    var rows = invs.map(function (iv) {
+      var amt = num(iv.amount), paid = Math.min(amt, Math.max(0, pool)); pool -= paid;
+      var due = iv.issued ? addDays(iv.issued, num(iv.net)) : "";
+      var open = amt - paid;
+      return { inv: iv, amount: amt, paid: paid, open: open, due: due, late: open > 0 && due && due < t ? diffDays(due, t) : 0 };
+    });
+    var invoiced = sum(invs, function (iv) { return num(iv.amount); });
+    var booked = BOOKED.indexOf(d.stage) > -1;
+    var payable = booked ? Math.max(num(d.fee), invoiced) : invoiced;
+    return {
+      rows: rows, invoiced: invoiced, received: received, payable: payable,
+      outstanding: Math.max(0, payable - received),
+      overdue: sum(rows, function (r) { return r.late ? r.open : 0; }),
+      notInvoiced: Math.max(0, payable - Math.max(invoiced, received))
+    };
+  }
+  // After money changes: close payment steps for settled invoices; mark the deal paid when nothing is owed.
+  function syncMoney(d) {
+    var L = ledger(d), msgs = [];
+    var last = d.payments.map(function (p) { return p.date; }).filter(Boolean).sort().pop() || todayISO();
+    L.rows.forEach(function (r) {
+      var k = d.tasks.filter(function (t) { return t.key === "pay:" + r.inv.id; })[0];
+      if (k && !k.done && r.open <= 0) { k.done = last; logT(k, "Paid in full"); }
+      if (k && k.done && r.open > 0 && k.log.length && k.log[k.log.length - 1].text === "Paid in full") { k.done = ""; logT(k, "Reopened: payment removed"); }
+    });
+    if (L.payable > 0 && L.outstanding <= 0 && (d.stage === "posted" || d.stage === "invoiced")) { d.stage = "paid"; msgs.push("moved to Paid"); }
+    return msgs;
+  }
+  function addInvoice(d, amount, issued, net, ref) {
+    var iv = { id: uid(), ref: ref || "", amount: num(amount), issued: issued || "", net: num(net) };
+    d.invoices.push(iv);
+    var due = issued ? addDays(issued, num(net)) : "";
+    var k = task({ key: "pay:" + iv.id, kind: "payment", owner: "brand", title: "Payment: invoice" + (ref ? " " + ref : "") + " (" + money(iv.amount, d.currency) + ")", due: due, chase: due });
+    logT(k, "Invoice sent"); d.tasks.push(k);
+    var inv = d.tasks.filter(function (t) { return t.key === "invoice" && !t.done; })[0];
+    if (inv) { inv.done = issued || todayISO(); logT(inv, "Invoice recorded"); }
+    if (["contracted", "production", "posted"].indexOf(d.stage) > -1) d.stage = "invoiced";
+    return iv;
+  }
+
+  /* ---------- which deals count ---------- */
+  function hasReal() { return state.deals.some(function (d) { return !d.example; }); }
+  function live() { var r = hasReal(); return state.deals.filter(function (d) { return r ? !d.example : true; }); }
+
+  /* ---------- the attention list ---------- */
+  function classify(d, k, t) {
+    var it = { d: d, k: k, g: "none", lead: k.title || "Untitled step", when: "", level: "", sort: "9" };
+    var chaseLead = /^Approval: /.test(it.lead) ? it.lead.replace(/^Approval: /, "Chase approval: ") : /^Payment: /.test(it.lead) ? it.lead.replace(/^Payment: /, "Chase payment: ") : "Follow up: " + it.lead;
+    if (k.owner === "brand") {
+      if (k.chase && k.chase <= t) { it.g = "act"; it.lead = chaseLead; it.when = k.chase === t ? "Chase today" : "Chase was due " + rel(k.chase); it.level = k.chase < t ? "bad" : "warn"; it.sort = k.chase; }
+      else if (!k.chase && k.due && k.due < t) { it.g = "act"; it.lead = chaseLead; it.when = "Brand is " + days(diffDays(k.due, t)) + " late"; it.level = "bad"; it.sort = k.due; }
+      else if (k.chase) { it.g = "wait"; it.when = "Chase " + rel(k.chase) + ", " + fmtDate(k.chase); it.sort = k.chase; }
+      else if (k.due) { it.g = "wait"; it.when = "Brand owes it by " + fmtDate(k.due); it.sort = k.due; }
+      else { it.g = "wait"; it.when = "No chase date set"; it.sort = "8"; }
+    } else if (k.due) {
+      var n = diffDays(t, k.due); it.sort = k.due;
+      if (n < 0) { it.g = "act"; it.when = "Overdue by " + days(-n); it.level = "bad"; }
+      else if (n === 0) { it.g = "act"; it.when = "Due today"; it.level = "warn"; }
+      else if (n <= 7) { it.g = "soon"; it.when = "Due " + rel(k.due); }
+      else { it.g = "later"; it.when = "Due " + fmtDate(k.due); }
+    } else { it.when = "No date yet"; }
+    return it;
+  }
+  function attention(deals) {
+    var t = todayISO(), out = [];
+    (deals || live()).forEach(function (d) {
+      if (d.stage === "declined") return;
+      d.tasks.forEach(function (k) { if (!k.done) out.push(classify(d, k, t)); });
+    });
+    out.sort(function (a, b) { return a.sort.localeCompare(b.sort); });
+    return out;
+  }
+  var GORDER = { act: 0, soon: 1, wait: 2, later: 3, none: 4 };
+  function nextFor(d) {
+    var items = attention([d]);
+    items.sort(function (a, b) { return GORDER[a.g] - GORDER[b.g] || a.sort.localeCompare(b.sort); });
+    return items[0] || null;
+  }
+
+  /* ---------- earlier version and seeds ---------- */
+  function migrateV0(o, cur) {
+    var d = blankDeal({});
+    ["id", "brand", "category", "contact", "email", "source", "stage", "fee", "productValue", "deliverables", "created", "notes", "declineReason", "legit", "take", "contract", "example"].forEach(function (k) { if (o[k] !== undefined) d[k] = clone(o[k]); });
+    d.take = Object.assign({ revisions: 1, extra: 0, buy: "", fit: "" }, o.take || {});
+    d.legit = d.legit || {}; d.contract = d.contract || {};
+    d.deliverables = (d.deliverables || []).map(function (x) { return { type: x.type, qty: x.qty }; });
+    d.currency = cur; d.publishBy = o.dueDate || ""; d.tasks = []; d.invoices = []; d.payments = [];
+    var s = d.stage, net = o.netDays != null ? num(o.netDays) : 30, fee = num(o.fee), iv = null;
+    var note = o.example ? "Example" : "Brought over from the earlier version";
+    if (o.invoiceDate || s === "invoiced") { iv = { id: uid(), ref: "", amount: fee, issued: o.invoiceDate || "", net: net }; d.invoices.push(iv); }
+    if (s === "paid") d.payments.push({ id: uid(), amount: fee, date: o.paidDate || "", note: o.paidDate ? "" : "Paid date not recorded" });
+    if (s === "inbound" || s === "vetting") d.tasks.push(task({ kind: "reply", title: "Vet the offer and reply", due: addD(d.created, 3) }));
+    if (s === "negotiating") d.tasks.push(task({ kind: "reply", title: "Send your counter-offer" }));
+    if (s === "contracted" || s === "production") applyTerms(d, note);
+    if (s === "posted") d.tasks.push(task({ key: "invoice", kind: "invoice", title: "Send invoice (Net " + net + ")", due: addD(o.postedDate, 2) }));
+    if (iv && s === "invoiced") d.tasks.push(task({ key: "pay:" + iv.id, kind: "payment", owner: "brand", title: "Payment: invoice (" + money(fee, cur) + ")", due: iv.issued ? addDays(iv.issued, net) : "", chase: iv.issued ? addDays(iv.issued, net) : "" }));
+    if (["posted", "invoiced", "paid"].indexOf(s) > -1) d.termsApplied = true;
+    d.tasks.forEach(function (t) { if (!t.log.length) logT(t, note); });
+    return d;
+  }
+  function juniper() {
+    var t = todayISO();
+    var d = blankDeal({
+      example: true, brand: "Juniper Studio", category: "Home", contact: "Elena Marsh", email: "elena@juniperstudio.example", source: "My outreach",
+      stage: "production", currency: "GBP", fee: 3000, deliverables: [{ type: "yt_integration", qty: 1 }, { type: "ig_reel", qty: 1 }],
+      publishBy: addDays(t, 3), created: addDays(t, -45), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+      take: { revisions: 1, extra: 0, buy: "", fit: "yes" }, termsApplied: true, revisionsUsed: 1,
+      notes: "Autumn campaign. £600 deposit on signing, then the £2,400 balance invoiced early, as agreed."
+    });
+    var i1 = { id: uid(), ref: "0041", amount: 600, issued: addDays(t, -40), net: 15 };
+    var i2 = { id: uid(), ref: "0042", amount: 2400, issued: addDays(t, -33), net: 30 };
+    d.invoices = [i1, i2];
+    d.payments = [{ id: uid(), amount: 600, date: addDays(t, -27), note: "Deposit" }];
+    d.tasks = [
+      task({ key: "appr:0", kind: "approval", owner: "brand", title: "Approval: YT integration", due: addDays(t, 1), chase: t }),
+      task({ kind: "revision", title: "Send revised Reel (round 1)", due: t }),
+      task({ key: "pay:" + i2.id, kind: "payment", owner: "brand", title: "Payment: invoice 0042 (£2,400)", due: addDays(t, -3), chase: t }),
+      task({ key: "appr:1", kind: "approval", owner: "brand", title: "Approval: IG Reel", due: addDays(t, 2), chase: addDays(t, 3) }),
+      task({ key: "pub:0", kind: "publish", title: "Publish: YT integration", due: addDays(t, 3) }),
+      task({ key: "pub:1", kind: "publish", title: "Publish: IG Reel", due: addDays(t, 4) }),
+      task({ key: "excl", kind: "rights", title: "Exclusivity ends: competitors are open again", due: addDays(t, 33) }),
+      task({ key: "draft:0", kind: "draft", title: "Send draft: YT integration", due: addDays(t, -6), done: addDays(t, -6) }),
+      task({ key: "draft:1", kind: "draft", title: "Send draft: IG Reel", due: addDays(t, -5), done: addDays(t, -5) }),
+      task({ key: "invoice", kind: "invoice", title: "Send invoice (Net 30)", done: addDays(t, -33) }),
+      task({ key: "pay:" + i1.id, kind: "payment", owner: "brand", title: "Payment: invoice 0041 (£600)", due: addDays(t, -25), chase: addDays(t, -25), done: addDays(t, -27) })
+    ];
+    d.tasks.forEach(function (k) { logT(k, "Example"); });
+    return d;
+  }
+  function seeds() { return [juniper()].concat(seedV0().map(function (o) { return migrateV0(o, "USD"); })); }
+
+  /* ---------- storage ---------- */
+  var storageOK = true, loadNote = "";
+  function readKey(k) { try { return localStorage.getItem(k); } catch (e) { storageOK = false; return null; } }
+  function fresh() { return { v: 2, profile: defaultProfile(), deals: seeds(), ui: { showDeclined: false, banner: true }, backupAt: "" }; }
+  function normState(s) {
+    return { v: 2, profile: mergeProfile(s.profile), deals: s.deals.map(normDeal), ui: Object.assign({ showDeclined: false, banner: true }, s.ui || {}), backupAt: s.backupAt || "" };
+  }
+  function load() {
+    var raw = readKey(KEY2);
+    if (raw) {
+      try { var s = JSON.parse(raw); if (s && Array.isArray(s.deals)) return normState(s); } catch (e) { /* fall through */ }
+      loadNote = "Your saved deals couldn't be read, so the examples are showing. If you have a backup, restore it under Rates & data.";
+    }
+    var old = readKey(KEY1);
+    if (old) {
+      try {
+        var o = JSON.parse(old);
+        if (o && Array.isArray(o.deals)) {
+          var cur = (o.profile && o.profile.currency) || "USD";
+          state = { v: 2, profile: mergeProfile(o.profile), deals: [], ui: { showDeclined: false, banner: true }, backupAt: "" };
+          state.deals = o.deals.map(function (x) { return migrateV0(x, cur); });
+          var real = o.deals.filter(function (x) { return !x.example; }).length;
+          if (real) loadNote = "Brought over " + real + " deal" + (real === 1 ? "" : "s") + " from the earlier version, in " + cur + ". Check their dates and amounts, then copy a backup.";
+          return state;
+        }
+      } catch (e) { /* fall through */ }
+    }
+    return fresh();
+  }
+  function save() { try { localStorage.setItem(KEY2, JSON.stringify(state)); storageOK = true; } catch (e) { storageOK = false; } }
+
+  /* ---------- backup and restore ---------- */
+  function backupText() { return JSON.stringify({ app: "creator-dealflow", v: 2, exportedAt: new Date().toISOString(), profile: state.profile, deals: state.deals }, null, 2); }
+  function parseBackup(text, cur) {
+    var o = JSON.parse(text), raw, kind;
+    if (Array.isArray(o)) { raw = o; kind = "v0"; }
+    else if (o && o.app === "creator-dealflow" && Array.isArray(o.deals)) { raw = o.deals; kind = "v2"; }
+    else if (o && Array.isArray(o.deals)) { raw = o.deals; kind = "v0"; cur = cur || (o.profile && o.profile.currency); }
+    else throw new Error("shape");
+    var examples = raw.filter(function (x) { return x && x.example; }).length;
+    var deals = raw.filter(function (x) { return x && typeof x === "object" && !x.example; }).map(function (x) { return kind === "v2" ? normDeal(x) : migrateV0(x, cur || state.profile.currency); });
+    return { kind: kind, deals: deals, examples: examples, profile: kind === "v2" ? o.profile : null, text: text, cur: cur || state.profile.currency };
+  }
+  function legitBlock(d) {
+    var r = legitResult(d);
+    var body;
+    if (!r.answered) body = "<p>Answer the questions below when an offer arrives. A two-minute check catches most fake sponsorships before you reply.</p>";
+    else if (!r.reasons.length) body = "<p>" + (r.key === "ok" ? "No warning signs in your answers." : "No warning signs so far. Finish the questions to be sure.") + "</p>";
+    else body = "<ul>" + r.reasons.map(function (x) { return "<li>" + (x.hard ? "<strong>" + esc(x.text) + "</strong>" : esc(x.text)) + "</li>"; }).join("") + "</ul>";
+    var next = r.key === "scam" ? "<p>Don't reply, open attachments or click links. Report the email, then decline the offer here.</p>" : r.key === "verify" ? "<p>Check the brand directly before you reply: email them at the address on their own website.</p>" : "";
+    return '<div class="result ' + r.level + '" id="calc-legit"><span class="label">Legitimacy · ' + r.answered + " of " + r.total + ' answered</span><span class="headline">' + esc(r.label) + "</span>" + body + next + "</div>";
+  }
+  function legitTab(d) {
+    return legitBlock(d) + LEGIT.map(function (q) {
+      return '<fieldset class="q"><legend>' + esc(q.q) + '</legend><div class="opts">' + q.opts.map(function (o) {
+        var id = "lg-" + q.key + "-" + o[0];
+        return '<label class="opt" for="' + id + '"><input type="radio" id="' + id + '" name="lg-' + q.key + '" value="' + o[0] + '" data-legit="' + q.key + '"' + (d.legit[q.key] === o[0] ? " checked" : "") + "><span>" + esc(o[1]) + "</span></label>";
+      }).join("") + "</div></fieldset>";
+    }).join("") + '<p class="fine">Rules based on common fake-sponsorship patterns aimed at creators. <a href="' + SCAM_SOURCE + '" target="_blank" rel="noopener">How to spot fake YouTube sponsorships</a></p>';
+  }
+
+  function worthBlock(d) {
+    var w = worthResult(d);
+    if (!d.deliverables.length) return '<div class="result" id="calc-worth"><span class="label">Effective hourly rate</span><span class="headline">Add deliverables first</span><p>List what the brand wants on the Deal tab. The hours come from your Rates page.</p></div>';
+    var targetLine = "against your " + money(w.target) + "/h target" + (w.uplift ? ", or " + money(w.effTarget) + "/h with the contract terms priced in (+" + w.uplift + "%)" : "");
+    var gap = w.value - w.effTarget * w.hours;
+    var ask = w.askFor > w.fee
+      ? "<p><strong>Ask for " + money(w.askFor) + "</strong> (" + money(w.askFor - w.fee) + " more) to reach your target" + (w.uplift ? " with the contract as written" : "") + ".</p>"
+      : "<p>The fee clears your target by " + money(gap) + ".</p>";
+    var fit = "";
+    if (d.take.fit === "no") fit = '<p class="advice bad">You wouldn\'t recommend it unpaid. Only 15% of creators say they fully trust sponsored content from other creators (<a href="' + TRUST_SOURCE + '" target="_blank" rel="noopener">Tubefilter, Aug 2026</a>). A product you don\'t believe in spends that trust.</p>';
+    else if (d.take.fit === "unsure") fit = '<p class="advice warn">You\'re not sure you\'d recommend it. Try the product before you sign.</p>';
+    return '<div class="result ' + w.verdict.level + '" id="calc-worth"><span class="label">Effective hourly rate</span>' +
+      '<span class="big">' + money(w.rate) + "<small>/h</small></span>" +
+      '<p><span class="chip ' + w.verdict.level + '">' + esc(w.verdict.label) + "</span> " + targetLine + ".</p>" +
+      '<p class="formula">(' + money(w.fee) + " cash + " + money(w.product) + " product) ÷ " + hrs(w.hours) + " h</p>" + ask + fit + "</div>";
+  }
+  function worthTab(d) {
+    var p = state.profile, w = worthResult(d);
+    var rows = d.deliverables.map(function (x) {
+      var def = DMAP[x.type]; return "<tr><td>" + num(x.qty) + " × " + esc(def ? def.label : x.type) + '</td><td class="num">' + hrs(num(x.qty) * num(p.hours[x.type])) + " h</td></tr>";
+    }).join("");
+    var h = worthBlock(d);
+    h += '<div class="stack"><h3 class="section-title">Where the hours go</h3><div class="table-wrap"><table class="hours-table"><tbody>' + rows +
+      '<tr><td>Admin: calls, emails, brief, invoice</td><td class="num">' + hrs(num(p.admin)) + " h</td></tr>" +
+      '<tr><td><label for="t-revisions">Revision rounds you expect (' + hrs(num(p.revisionHours)) + ' h each)</label></td><td class="num"><input id="t-revisions" type="number" min="0" step="1" inputmode="numeric" data-take="revisions" value="' + esc(d.take.revisions) + '"></td></tr>' +
+      '<tr><td><label for="t-extra">Other hours: product testing, travel, extra calls</label></td><td class="num"><input id="t-extra" type="number" min="0" step="0.5" inputmode="decimal" data-take="extra" value="' + esc(d.take.extra) + '"></td></tr>' +
+      '<tr><td><strong>Total</strong></td><td class="num"><strong id="calc-hours">' + hrs(w.hours) + " h</strong></td></tr></tbody></table></div>" +
+      '<p class="fine">Deliverable hours come from your <a href="#rates" data-action="close-to-rates">Rates</a> page.</p></div>';
+    h += takeQ(d, "buy", "Would you have bought the product anyway?", [["yes", "Yes, count its full value"], ["partly", "Maybe, count half"], ["no", "No, it's worth nothing to me"]]);
+    h += takeQ(d, "fit", "Would you recommend it to your audience without being paid?", [["yes", "Yes"], ["unsure", "Not sure"], ["no", "No"]]);
+    return h;
+  }
+  function takeQ(d, key, q, list) {
+    return '<fieldset class="q"><legend>' + esc(q) + '</legend><div class="opts">' + list.map(function (o) {
+      var id = "tk-" + key + "-" + o[0];
+      return '<label class="opt" for="' + id + '"><input type="radio" id="' + id + '" name="tk-' + key + '" value="' + o[0] + '" data-takeopt="' + key + '"' + (d.take[key] === o[0] ? " checked" : "") + "><span>" + esc(o[1]) + "</span></label>";
+    }).join("") + "</div></fieldset>";
+  }
+
+  function contractBlock(d) {
+    var c = contractResult(d);
+    var head = !c.reviewed ? "Not reviewed" : c.level === "bad" ? "Push back before signing" : c.level === "warn" ? "A few terms to negotiate" : "Standard terms";
+    var body = !c.reviewed ? "<p>Go through the contract or brief and set each clause below. Terms that give the brand more get priced in.</p>" :
+      "<p>" + c.reviewed + " of " + c.total + " clauses reviewed" + (c.uplift ? " · price in <strong>+" + c.uplift + "%</strong> (" + money(num(d.fee) * c.uplift / 100) + " on the current fee)" : "") + ".</p>" +
+      (c.flags.length ? "<ul>" + c.flags.map(function (f) { return "<li><strong>" + esc(f.clause) + ":</strong> " + esc(f.advice || f.option) + "</li>"; }).join("") + "</ul>" : "");
+    return '<div class="result ' + c.level + '" id="calc-contract"><span class="label">Contract checklist</span><span class="headline">' + head + "</span>" + body + "</div>";
+  }
+  function contractTab(d) {
+    return contractBlock(d) + CLAUSES.map(function (cl) {
+      var v = d.contract[cl.key] || "";
+      var opt = cl.opts.filter(function (o) { return o[0] === v; })[0];
+      var adv = opt && opt[3] !== "ok" && cl.advice[v] ? '<p class="advice ' + opt[3] + '">' + esc(cl.advice[v]) + "</p>" : "";
+      return '<div class="field"><label for="c-' + cl.key + '">' + esc(cl.label) + '</label><p class="help">' + esc(cl.help) + '</p><select id="c-' + cl.key + '" data-clause="' + cl.key + '"><option value="">Not reviewed</option>' +
+        cl.opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === v ? " selected" : "") + ">" + esc(o[1]) + (o[2] ? " (+" + o[2] + "%)" : "") + "</option>"; }).join("") + "</select>" + adv + "</div>";
+    }).join("") + '<p class="fine">The percentages are starting points, not market rates. Adjust your counter to what brands in your niche actually pay.</p>';
+  }
+
+  state = load();
+  var ui = { openId: null, tab: "steps", q: "", confirm: null, intake: false, intakeErr: "", moneyCur: "", restore: null, restoreErr: "", hideBackupNag: false };
+
+  function cur() { return byId(ui.openId); }
+  function byId(id) { for (var i = 0; i < state.deals.length; i++) if (state.deals[i].id === id) return state.deals[i]; return null; }
+  function chip(text, level, title) { return '<span class="chip ' + (level || "") + '"' + (title ? ' title="' + esc(title) + '"' : "") + ">" + esc(text) + "</span>"; }
+  function opts(list, val) { return list.map(function (o) { var k = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o; return '<option value="' + esc(k) + '"' + (k === val ? " selected" : "") + ">" + esc(l) + "</option>"; }).join(""); }
+  function usageLabel(d) {
+    var v = (d.contract || {}).usage; if (!v) return "Usage not recorded";
+    var o = CLAUSES[0].opts.filter(function (x) { return x[0] === v; })[0]; return o ? o[1] : v;
+  }
+
+  /* ---------- toast with undo ---------- */
+  var toastTimer, toastUndo = null;
+  function toast(msg, undo) {
+    var el = document.getElementById("toast");
+    toastUndo = undo || null;
+    el.innerHTML = "<span>" + esc(msg) + "</span>" + (undo ? '<button type="button" data-action="undo">Undo</button>' : "");
+    el.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.hidden = true; toastUndo = null; }, undo ? 6000 : 3000);
+  }
+  function snap(d) { var j = JSON.stringify(d), id = d.id; return function () { for (var i = 0; i < state.deals.length; i++) if (state.deals[i].id === id) state.deals[i] = JSON.parse(j); }; }
+
+  /* ---------- banner ---------- */
+  function renderBanner() {
+    var el = document.getElementById("banner"), h = "";
+    if (!storageOK) h += '<div class="banner bad"><p><strong>Changes aren\'t being saved.</strong> This browser is blocking storage or is full. Copy a backup before you close this page.</p><div class="row"><button class="btn small" type="button" data-action="copy-backup">Copy backup</button></div></div>';
+    if (loadNote) h += '<div class="banner warn"><p>' + esc(loadNote) + '</p><div class="row"><button class="btn small quiet" type="button" data-action="dismiss-note">Hide</button></div></div>';
+    var real = state.deals.filter(function (d) { return !d.example; });
+    var hasEx = state.deals.some(function (d) { return d.example; });
+    if (!real.length && hasEx && state.ui.banner) {
+      h += '<div class="banner"><p><strong>These are example deals</strong> for a fictional creator, so you can see how it works. They disappear from your lists and totals as soon as you log your own deal.</p><div class="row"><button class="btn small" type="button" data-action="clear-examples">Clear examples</button><button class="btn small quiet" type="button" data-action="dismiss-banner">Hide this note</button></div></div>';
+    } else if (real.length && !ui.hideBackupNag) {
+      var age = state.backupAt ? diffDays(state.backupAt.slice(0, 10), todayISO()) : null;
+      if (age === null || age > 7) h += '<div class="banner warn"><p>Your deals are saved in this browser only. ' + (age === null ? "You haven't copied a backup yet." : "Your last backup was " + days(age) + " ago.") + '</p><div class="row"><button class="btn small" type="button" data-action="copy-backup">Copy backup</button><button class="btn small quiet" type="button" data-action="hide-nag">Not now</button></div></div>';
+    }
+    el.innerHTML = h;
+  }
+
+  /* ---------- needs attention ---------- */
+  var GROUPS = [["act", "Act now"], ["soon", "Coming up this week"], ["wait", "Waiting on the brand"], ["later", "Later"], ["none", "No date yet"]];
+  function doneLabel(k) { return k.owner !== "brand" ? "Done" : k.kind === "approval" ? "Approved" : k.kind === "payment" ? "Paid" : "Received"; }
+  function rowHTML(it) {
+    var d = it.d, k = it.k, ids = ' data-deal="' + d.id + '" data-task="' + k.id + '"';
+    var btns = (k.owner === "brand" && it.g === "act" ? '<button class="btn small" type="button" data-action="chased"' + ids + '>Followed up</button>' : "") +
+      '<button class="btn small" type="button" data-action="task-done"' + ids + ">" + doneLabel(k) + "</button>";
+    var sub = [d.brand || "Untitled deal"];
+    if (k.owner === "brand" && k.due && it.g === "act") sub.push("they owed it by " + fmtDate(k.due));
+    if (d.example) sub.push("example");
+    return '<li class="item"><div class="item-main"><span class="when ' + it.level + '">' + esc(it.when) + " · " + (k.owner === "brand" ? "Brand" : "You") + "</span>" +
+      '<button class="item-title linkish" type="button" data-open="' + d.id + '" data-opentab="steps">' + esc(it.lead) + "</button>" +
+      '<span class="item-sub">' + esc(sub.join(" · ")) + "</span></div>" +
+      '<div class="item-actions">' + btns + "</div></li>";
+  }
+  function intakeHTML() {
+    var p = state.profile;
+    return '<form class="intake" id="intake" novalidate><h3>Log a deal</h3>' +
+      '<div class="grid2"><div class="field"><label for="qi-brand">Brand</label><input id="qi-brand" autocomplete="off" placeholder="Who is it with?"></div>' +
+      '<div class="field"><label for="qi-step">Next step</label><input id="qi-step" autocomplete="off" placeholder="Reply with my rates"></div>' +
+      '<div class="field"><label for="qi-owner">Who has it</label><select id="qi-owner">' + opts([["me", "Me"], ["brand", "The brand (I\'m waiting)"]], "me") + "</select></div>" +
+      '<div class="field"><label for="qi-date">Due, or when to chase</label><input id="qi-date" type="date"></div>' +
+      '<div class="field"><label for="qi-stage">Where it stands</label><select id="qi-stage">' + opts([["inbound", "New offer"], ["negotiating", "Negotiating"], ["contracted", "Agreed, work under way"]], "inbound") + "</select></div>" +
+      '<div class="field"><label for="qi-fee">Fee, if you know it</label><div class="del-row" style="grid-template-columns:1fr 90px"><input id="qi-fee" type="number" min="0" step="50" inputmode="decimal"><select id="qi-cur" aria-label="Currency">' + opts(CURRENCIES, p.currency) + "</select></div></div></div>" +
+      '<p class="err" id="qi-err" role="alert" hidden></p>' +
+      '<div class="toolbar"><button class="btn primary" type="submit">Add deal</button><button class="btn" type="button" data-action="intake-open">Add and fill in details</button><button class="btn quiet" type="button" data-action="intake-cancel">Cancel</button><span class="hint">Only the brand is required. Add the rest as it firms up.</span></div></form>';
+  }
+  function renderToday() {
+    var items = attention(), t = todayISO();
+    var by = {}; items.forEach(function (it) { (by[it.g] = by[it.g] || []).push(it); });
+    var acts = (by.act || []).length, waits = (by.wait || []).length;
+    var overdue = {}; live().forEach(function (d) { var o = ledger(d).overdue; if (o) overdue[d.currency] = (overdue[d.currency] || 0) + o; });
+    var od = Object.keys(overdue).map(function (c) { return money(overdue[c], c); }).join(" + ");
+    var long = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+    var h = '<div class="today"><div class="view-head"><div><h2 class="view-title">Needs attention</h2><p>' + esc(long) + " · " + (acts ? acts + " to act on" : "nothing urgent") + " · " + waits + " waiting on brands" + (od ? " · " + esc(od) + " overdue" : "") + "</p></div>" +
+      (ui.intake ? "" : '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>') + "</div>";
+    if (ui.intake) h += intakeHTML();
+    if (!items.length) h += '<p class="empty">Nothing needs you right now. Log a deal and its next step to start.</p>';
+    GROUPS.forEach(function (g) {
+      var list = by[g[0]]; if (!list) return;
+      var inner = '<span>' + g[1] + '</span><span class="count">' + list.length + "</span>";
+      var ul = '<ul class="items">' + list.map(rowHTML).join("") + "</ul>";
+      if (g[0] === "later" || g[0] === "none") h += '<details class="group"><summary>' + inner + "</summary>" + ul + "</details>";
+      else h += '<section class="group"><h3>' + inner + "</h3>" + ul + "</section>";
+    });
+    var recent = [];
+    live().forEach(function (d) { d.tasks.forEach(function (k) { if (k.done && diffDays(k.done, t) <= 3 && diffDays(k.done, t) >= 0) recent.push({ d: d, k: k }); }); });
+    if (recent.length) {
+      h += '<details class="group"><summary><span>Done in the last 3 days</span><span class="count">' + recent.length + '</span></summary><ul class="items">' + recent.map(function (r) {
+        return '<li class="item done"><div class="item-main"><span class="when">Done ' + esc(rel(r.k.done)) + '</span><button class="item-title linkish" type="button" data-open="' + r.d.id + '" data-opentab="steps">' + esc(r.k.title) + '</button><span class="item-sub">' + esc(r.d.brand) + '</span></div><div class="item-actions"><button class="btn small quiet" type="button" data-action="task-reopen" data-deal="' + r.d.id + '" data-task="' + r.k.id + '">Reopen</button></div></li>';
+      }).join("") + "</ul></details>";
+    }
+    return h + "</div>";
+  }
+
+  /* ---------- pipeline ---------- */
+  function cardHTML(d) {
+    var w = worthResult(d), l = legitResult(d), c = contractResult(d), chips = [], nx = nextFor(d), L = ledger(d);
+    ctxCur = d.currency;
+    if (OPEN.indexOf(d.stage) > -1 && (d.stage !== "negotiating" || l.key === "scam" || l.key === "verify")) chips.push(chip(l.label, l.level, "Legitimacy check"));
+    if (d.deliverables.length && d.stage !== "declined" && l.key !== "scam") chips.push(chip(money(w.rate) + "/h", w.verdict.level, "Effective hourly rate: " + w.verdict.label));
+    if ((d.stage === "negotiating" || d.stage === "contracted") && c.flags.length) chips.push(chip(c.flags.length + " clause flag" + (c.flags.length === 1 ? "" : "s"), c.level, "Contract checklist"));
+    if (L.overdue) chips.push(chip(money(L.overdue) + " overdue", "bad"));
+    else if (d.stage === "paid" && L.outstanding) chips.push(chip(money(L.outstanding) + " not recorded as received", "warn"));
+    var moneyLine = (num(d.fee) ? money(d.fee) : "Fee not set") + (num(d.productValue) ? " + " + money(d.productValue) + " product" : "") + (L.received && L.outstanding ? " · " + money(L.received) + " in" : "");
+    return '<button class="card" type="button" id="card-' + d.id + '" draggable="true" data-open="' + d.id + '">' +
+      '<span class="brand">' + esc(d.brand || "Untitled deal") + "</span>" +
+      '<span class="what">' + esc(summaryText(d)) + "</span>" +
+      '<span class="money">' + moneyLine + "</span>" +
+      (nx ? '<span class="next"><span class="when ' + nx.level + '">' + esc(nx.when) + ":</span> " + esc(nx.lead) + "</span>" : "") +
+      (chips.length ? '<span class="chips">' + chips.join("") + "</span>" : "") +
+      (d.stage === "declined" && d.declineReason ? '<span class="what">' + esc(d.declineReason) + "</span>" : "") +
+      "</button>";
+  }
+  function renderPipeline() {
+    var q = (ui.q || "").trim().toLowerCase(), deals = live();
+    var declinedCount = deals.filter(function (d) { return d.stage === "declined"; }).length;
+    var stages = STAGES.filter(function (s) { return s.key !== "declined" || state.ui.showDeclined; });
+    var cols = stages.map(function (s) {
+      var ds = deals.filter(function (d) { return d.stage === s.key && (!q || (d.brand || "").toLowerCase().indexOf(q) > -1); });
+      ds.sort(function (a, b) { return (b.created || "").localeCompare(a.created || ""); });
+      var tot = {}; ds.forEach(function (d) { if (legitResult(d).key !== "scam" && num(d.fee)) tot[d.currency] = (tot[d.currency] || 0) + num(d.fee); });
+      var sumTxt = Object.keys(tot).map(function (c) { return money(tot[c], c); }).join(" + ") || "—";
+      return '<section class="col' + (s.key === "declined" ? " declined" : "") + '" data-stage="' + s.key + '" aria-labelledby="col-' + s.key + '">' +
+        '<div class="col-head"><span class="grp">' + s.group + '</span><div class="ttl"><h2 id="col-' + s.key + '">' + s.label + '</h2><span class="count">' + ds.length + '</span></div><span class="sum">' + sumTxt + "</span></div>" +
+        (ds.length ? ds.map(cardHTML).join("") : '<p class="empty-col">' + (q ? "No matches" : "Nothing here") + "</p>") + "</section>";
+    }).join("");
+    return '<div class="stack"><div class="toolbar"><input class="search" id="search" type="search" placeholder="Search brands" aria-label="Search brands" value="' + esc(ui.q) + '">' +
+      '<label class="check"><input type="checkbox" id="show-declined"' + (state.ui.showDeclined ? " checked" : "") + "> Show declined (" + declinedCount + ")</label>" +
+      '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>' +
+      '<span class="hint">Drag cards between stages, or open a deal to move it.</span></div>' +
+      '<div class="board-wrap"><div class="board">' + cols + "</div></div></div>";
+  }
+
+  /* ---------- money ---------- */
+  function platformSplit(d) {
+    var p = state.profile, tot = sum(d.deliverables, function (x) { return num(x.qty) * num(p.hours[x.type]); }), out = {};
+    if (!tot) return [["Unassigned", num(d.fee)]];
+    d.deliverables.forEach(function (x) {
+      var plat = DMAP[x.type] ? DMAP[x.type].platform : "Other";
+      out[plat] = (out[plat] || 0) + num(d.fee) * (num(x.qty) * num(p.hours[x.type])) / tot;
+    });
+    return Object.keys(out).map(function (k) { return [k, out[k]]; });
+  }
+  function groupBy(deals, fn) {
+    var m = {};
+    deals.forEach(function (d) { fn(d).forEach(function (kv) { m[kv[0]] = (m[kv[0]] || 0) + kv[1]; }); });
+    return Object.keys(m).map(function (k) { return [k, m[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+  }
+  function barsHTML(rows, total, max) {
+    max = max || 6;
+    var shown = rows.slice(0, max), rest = rows.slice(max);
+    if (rest.length) shown.push(["Everyone else (" + rest.length + ")", sum(rest, function (r) { return r[1]; })]);
+    return '<div class="bars">' + shown.map(function (r) {
+      var s = total ? r[1] / total : 0;
+      return '<div class="bar-row"><span class="name" title="' + esc(r[0]) + '">' + esc(r[0]) + '</span><div class="track" role="img" aria-label="' + esc(r[0]) + " " + pct(s) + '"><div class="fill" style="width:' + (s * 100).toFixed(1) + '%"></div></div><span class="val">' + money(r[1]) + " <span>" + pct(s) + "</span></span></div>";
+    }).join("") + "</div>";
+  }
+  function currencies(deals) {
+    var c = {}; deals.forEach(function (d) { c[d.currency] = (c[d.currency] || 0) + 1; });
+    return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
+  }
+  function renderMoney() {
+    var all = live(), curs = currencies(all), t = todayISO(), year = t.slice(0, 4);
+    if (!curs.length) return '<p class="empty">No deals yet. Log one from Needs attention.</p>';
+    if (curs.indexOf(ui.moneyCur) < 0) ui.moneyCur = curs[0];
+    var C = ui.moneyCur; ctxCur = C;
+    var deals = all.filter(function (d) { return d.currency === C; });
+    var out = "";
+    if (curs.length > 1) out += '<div class="curtabs"><span class="label">Currency</span>' + curs.map(function (c) { return '<button class="btn small' + (c === C ? " primary" : "") + '" type="button" data-action="money-cur" data-cur="' + c + '" aria-pressed="' + (c === C) + '">' + c + "</button>"; }).join("") + '<span class="fine">Each currency is totalled separately. Nothing is converted.</span></div>';
+    var open = deals.filter(function (d) { return OPEN.indexOf(d.stage) > -1 && legitResult(d).key !== "scam"; });
+    var scams = deals.filter(function (d) { return OPEN.indexOf(d.stage) > -1 && legitResult(d).key === "scam"; });
+    var booked = deals.filter(function (d) { return BOOKED.indexOf(d.stage) > -1; });
+    var Ls = booked.map(function (d) { return { d: d, L: ledger(d) }; });
+    var outstanding = sum(Ls, function (x) { return x.L.outstanding; });
+    var late = Ls.filter(function (x) { return x.L.overdue > 0; });
+    var pays = []; deals.forEach(function (d) { d.payments.forEach(function (p) { pays.push({ d: d, p: p }); }); });
+    var thisYear = pays.filter(function (x) { return (x.p.date || "").slice(0, 4) === year; });
+    out += '<section class="figures" aria-label="Summary">' +
+      '<div class="fig"><span class="label">Open offers</span><span class="num">' + money(sum(open, function (d) { return num(d.fee); })) + '</span><span class="sub">' + open.length + " in play" + (scams.length ? " · " + scams.length + " flagged as scam, not counted" : "") + "</span></div>" +
+      '<div class="fig"><span class="label">Booked, not yet received</span><span class="num">' + money(outstanding) + '</span><span class="sub">Agreed or invoiced, minus what has arrived</span></div>' +
+      '<div class="fig' + (late.length ? " bad" : "") + '"><span class="label">Overdue invoices</span><span class="num">' + money(sum(late, function (x) { return x.L.overdue; })) + '</span><span class="sub">' + (late.length ? late.map(function (x) { return esc(x.d.brand || "Untitled deal"); }).join(", ") : "Nothing overdue") + "</span></div>" +
+      '<div class="fig"><span class="label">Received in ' + year + '</span><span class="num">' + money(sum(thisYear, function (x) { return num(x.p.amount); })) + '</span><span class="sub">' + thisYear.length + " payment" + (thisYear.length === 1 ? "" : "s") + " with a date this year</span></div></section>";
+
+    out += '<div class="panels">';
+    var total = sum(booked, function (d) { return num(d.fee); });
+    if (!total) {
+      out += '<section class="panel wide"><h2>Nothing booked yet</h2><p class="lede">Once a deal is agreed, it counts toward your income here. You\'ll see how much depends on each brand, category and platform.</p></section>';
+    } else {
+      var nm = function (d) { return d.brand || "Untitled deal"; };
+      var brands = groupBy(booked, function (d) { return [[nm(d), num(d.fee)]]; });
+      var cats = groupBy(booked, function (d) { return [[d.category, num(d.fee)]]; });
+      var plats = groupBy(booked, platformSplit);
+      var top = brands[0], share = top[1] / total;
+      var topDeal = booked.filter(function (d) { return nm(d) === top[0]; })[0];
+      var level = share > 0.4 ? "bad" : share > 0.25 ? "warn" : "good";
+      var head = level === "bad" ? "Concentrated" : level === "warn" ? "Worth watching" : "Spread out";
+      var line = level === "good" ? "No single brand carries more than a quarter of your booked sponsor income."
+        : esc(top[0]) + " is " + pct(share) + " of your booked sponsor income. If they pause their creator budget, you lose " + (share > 0.5 ? "more than half" : share > 0.33 ? "over a third" : "about a quarter") + " of it." + (topDeal && topDeal.category !== "Other" ? " Line up a second brand in " + esc(topDeal.category.toLowerCase()) + "." : "");
+      out += '<section class="panel wide"><div class="panel-head"><h2>Who pays you</h2><span class="label">' + money(total) + " agreed across " + booked.length + " deals · cash fees only</span></div>" +
+        '<div class="callout ' + level + '"><strong>' + head + "</strong><p>" + line + "</p></div>" + barsHTML(brands, total, 6) + "</section>";
+      var platTop = plats[0], platShare = platTop[1] / total;
+      out += '<section class="panel"><h2>By category</h2>' + barsHTML(cats, total, 6) + '<p class="fine">A category freeze, like fintech marketing cuts, hits every brand in it at once.</p></section>';
+      out += '<section class="panel"><h2>By platform</h2>' + barsHTML(plats, total, 6) +
+        (platShare > 0.7 ? '<div class="callout warn"><p>' + pct(platShare) + " of your sponsor income runs through " + esc(platTop[0]) + ". A change in its reach hits every deal.</p></div>" : "") +
+        '<p class="fine">Each deal\'s fee is split across its deliverables by the hours they take.</p></section>';
+    }
+    var rows = [];
+    Ls.forEach(function (x) {
+      x.L.rows.forEach(function (r) {
+        if (r.open <= 0) return;
+        var st = r.late ? chip(days(r.late) + " overdue", "bad") : r.due ? chip("Due " + rel(r.due), "") : chip("No invoice date", "warn");
+        rows.push({ s: r.due || "0", h: '<tr><td><button class="linkish" type="button" data-open="' + x.d.id + '" data-opentab="money">' + esc(x.d.brand || "Untitled deal") + "</button>" + (r.inv.ref ? ' <span class="fine">#' + esc(r.inv.ref) + "</span>" : "") + '</td><td class="num">' + money(r.open) + '</td><td class="num">' + fmtDate(r.inv.issued) + '</td><td class="num">' + fmtDate(r.due) + "</td><td>" + st + "</td></tr>" });
+      });
+      if (x.L.notInvoiced > 0) rows.push({ s: "z", h: '<tr><td><button class="linkish" type="button" data-open="' + x.d.id + '" data-opentab="money">' + esc(x.d.brand || "Untitled deal") + '</button></td><td class="num">' + money(x.L.notInvoiced) + '</td><td class="num">—</td><td class="num">—</td><td>' + chip(x.d.stage === "paid" ? "Marked paid, no payment recorded" : "Not invoiced yet", "warn") + "</td></tr>" });
+    });
+    rows.sort(function (a, b) { return a.s.localeCompare(b.s); });
+    out += '<section class="panel wide"><div class="panel-head"><h2>Money owed to you</h2><span class="label">' + money(outstanding) + " outstanding</span></div>" +
+      (rows.length ? '<div class="table-wrap"><table><thead><tr><th>Brand</th><th class="num">Open</th><th class="num">Invoiced</th><th class="num">Due</th><th>Status</th></tr></thead><tbody>' + rows.map(function (r) { return r.h; }).join("") + "</tbody></table></div>" : '<p class="lede">Nothing outstanding.</p>') + "</section>";
+    var now = new Date(), months = [];
+    for (var i = 5; i >= 0; i--) {
+      var m = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var key = m.getFullYear() + "-" + String(m.getMonth() + 1).padStart(2, "0");
+      months.push({ label: m.toLocaleDateString("en-GB", { month: "short" }), v: sum(pays.filter(function (x) { return (x.p.date || "").slice(0, 7) === key; }), function (x) { return num(x.p.amount); }) });
+    }
+    var undated = pays.filter(function (x) { return !x.p.date; });
+    var mx = Math.max.apply(null, months.map(function (m) { return m.v; })) || 1;
+    out += '<section class="panel wide"><div class="panel-head"><h2>Received by month</h2><span class="label">Last six months · by date received</span></div><div class="months" role="img" aria-label="' + esc(months.map(function (m) { return m.label + " " + money(m.v); }).join(", ")) + '">' +
+      months.map(function (m) { var hgt = m.v ? Math.max(3, Math.round(m.v / mx * 140)) : 2; return '<div class="month"><span class="v">' + (m.v ? money(m.v) : "—") + '</span><div class="b' + (m.v ? "" : " zero") + '" style="height:' + hgt + 'px"></div><span class="m">' + m.label + "</span></div>"; }).join("") + "</div>" +
+      (undated.length ? '<p class="fine">' + undated.length + " payment" + (undated.length === 1 ? " has" : "s have") + " no date (" + money(sum(undated, function (x) { return num(x.p.amount); })) + ") and " + (undated.length === 1 ? "isn't" : "aren't") + " shown by month.</p>" : "") + "</section>";
+    return out + "</div>";
+  }
+
+  /* ---------- rates and data ---------- */
+  function renderRates() {
+    var p = state.profile; ctxCur = p.currency;
+    var out = '<div class="panels">';
+    out += '<section class="panel"><h2>Your rate</h2><p class="lede">Every deal\'s worth-it check compares its effective hourly rate against this target. Use what an hour of your time earns elsewhere.</p>' +
+      '<div class="grid2"><div class="field"><label for="r-rate">Target hourly rate</label><input id="r-rate" type="number" min="0" step="5" inputmode="decimal" data-profile="rate" value="' + esc(p.rate) + '"></div>' +
+      '<div class="field"><label for="r-currency">Your main currency</label><select id="r-currency">' + opts(CURRENCIES, p.currency) + '</select><p class="help">Used for your target rate and new deals. Existing deals keep their own currency.</p></div>' +
+      '<div class="field"><label for="r-admin">Admin hours per deal</label><input id="r-admin" type="number" min="0" step="0.25" inputmode="decimal" data-profile="admin" value="' + esc(p.admin) + '"><p class="help">Calls, emails, reading the brief, invoicing.</p></div>' +
+      '<div class="field"><label for="r-rev">Hours per revision round</label><input id="r-rev" type="number" min="0" step="0.25" inputmode="decimal" data-profile="revisionHours" value="' + esc(p.revisionHours) + '"></div></div></section>';
+    out += '<section class="panel"><h2>Hours per deliverable</h2><p class="lede">Starting estimates from the Burn Rate format tables, trimmed for sponsored segments. Replace them with your own.</p>' +
+      '<div class="table-wrap"><table class="hours-table"><thead><tr><th>Deliverable</th><th class="num">Hours</th></tr></thead><tbody>' +
+      DELIVERABLES.map(function (d) { return '<tr><td><label for="h-' + d.key + '">' + esc(d.label) + '</label></td><td class="num"><input id="h-' + d.key + '" type="number" min="0" step="0.25" inputmode="decimal" data-hours="' + d.key + '" value="' + esc(p.hours[d.key]) + '"></td></tr>'; }).join("") +
+      "</tbody></table></div></section>";
+    out += '<section class="panel"><h2>Contract adjusters</h2><p class="lede">How much the contract checklist adds to your asking price for each term. These are rules of thumb, not market data. Calibrate them against what brands in your niche actually pay.</p>' +
+      '<div class="table-wrap"><table><thead><tr><th>Clause</th><th>Term</th><th class="num">Adds</th></tr></thead><tbody>' +
+      CLAUSES.map(function (c) { return c.opts.filter(function (o) { return o[2] > 0; }).map(function (o, i) { return "<tr><td>" + (i === 0 ? esc(c.label) : "") + "</td><td>" + esc(o[1]) + '</td><td class="num">+' + o[2] + "%</td></tr>"; }).join(""); }).join("") +
+      "</tbody></table></div></section>";
+    out += renderData();
+    return out + "</div>";
+  }
+  function renderData() {
+    var conf = ui.confirm, real = state.deals.filter(function (d) { return !d.example; }).length, ex = state.deals.length - real;
+    var last = state.backupAt ? new Date(state.backupAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "never";
+    var h = '<section class="panel wide" id="data"><div class="panel-head"><h2>Back up and restore</h2><span class="label">Last backup: ' + esc(last) + "</span></div>" +
+      '<p class="lede">Your deals are saved in this browser only. They don\'t sync to your other devices or to anyone else. Copy a backup every week or so and keep it somewhere safe, like a note or a file in your cloud drive.</p>' +
+      '<div class="toolbar"><button class="btn primary" type="button" data-action="copy-backup">Copy backup</button>' + (framed ? "" : '<button class="btn" type="button" data-action="save-backup">Save backup file</button>') +
+      '<span class="fine">' + real + " deal" + (real === 1 ? "" : "s") + (ex ? " and " + ex + " examples" : "") + "</span></div>" +
+      (ui.backupShown ? '<textarea id="backup-out" readonly aria-label="Backup text">' + esc(ui.backupShown) + "</textarea>" : '<textarea id="backup-out" readonly hidden aria-label="Backup text"></textarea>') +
+      '<h3 class="section-title">Restore</h3><p class="fine">Choose a backup file or paste a backup. A list copied from the earlier version of Creator Dealflow ("Copy deals as JSON") works too. Example deals in a backup are skipped.</p>' +
+      '<div class="grid2"><div class="field"><label for="restore-file">Backup file</label><input id="restore-file" type="file" accept=".json,.txt,application/json,text/plain"></div>' +
+      '<div class="field"><label for="restore-text">Or paste it here</label><textarea id="restore-text" spellcheck="false" style="min-height:64px"></textarea></div></div>' +
+      '<div class="toolbar"><button class="btn" type="button" data-action="check-restore">Check backup</button></div>';
+    if (ui.restoreErr) h += '<p class="err" role="alert">' + esc(ui.restoreErr) + "</p>";
+    var r = ui.restore;
+    if (r) {
+      var here = {}; state.deals.forEach(function (d) { here[d.id] = 1; });
+      var dup = r.deals.filter(function (d) { return here[d.id]; }).length, fresh = r.deals.length - dup;
+      h += '<div class="callout"><strong>Found ' + r.deals.length + " deal" + (r.deals.length === 1 ? "" : "s") + "</strong><p>" +
+        (r.examples ? r.examples + " example deal" + (r.examples === 1 ? "" : "s") + " skipped. " : "") + (dup ? dup + " already here. Adding skips them. " : "") +
+        (r.kind === "v0" ? "This came from the earlier version, which didn't store a currency on each deal." : "") + "</p>" +
+        (r.kind === "v0" ? '<div class="field" style="max-width:220px"><label for="rs-cur">These deals are in</label><select id="rs-cur">' + opts(CURRENCIES, r.cur) + "</select></div>" : "") +
+        '<div class="toolbar"><button class="btn primary" type="button" data-action="restore-add"' + (fresh ? "" : " disabled") + ">Add " + fresh + " new deal" + (fresh === 1 ? "" : "s") + '</button><button class="btn" type="button" data-action="ask-replace">Replace all my deals</button><button class="btn quiet" type="button" data-action="restore-cancel">Cancel</button></div>' +
+        (conf === "replace" ? '<div class="confirm"><p>Replace all ' + state.deals.length + " deals here with the " + r.deals.length + ' in the backup?</p><button class="btn small danger" type="button" data-action="restore-replace">Replace</button><button class="btn small" type="button" data-action="cancel-confirm">Keep mine</button></div>' : "") + "</div>";
+    }
+    h += '<h3 class="section-title">Examples and reset</h3><div class="toolbar">' + (ex ? '<button class="btn" type="button" data-action="clear-examples">Clear examples</button>' : '<button class="btn" type="button" data-action="add-examples">Add example deals</button>') + '<button class="btn" type="button" data-action="ask-clear">Delete all deals</button></div>' +
+      (conf === "clear" ? '<div class="confirm"><p>Delete all ' + state.deals.length + ' deals? This can\'t be undone unless you have a backup.</p><button class="btn small danger" type="button" data-action="do-clear">Delete all</button><button class="btn small" type="button" data-action="cancel-confirm">Keep them</button></div>' : "");
+    return h + "</section>";
+  }
+
+  /* ---------- deal sheet ---------- */
+  function headHTML(d) {
+    var stageSel = '<label for="f-stage">Stage <select id="f-stage" data-field="stage">' + opts(STAGES.map(function (s) { return [s.key, s.label]; }), d.stage) + "</select></label>";
+    var meta = [d.currency, d.category, d.contact, d.example ? "Example" : ""].filter(Boolean).map(esc).join(" · ");
+    return '<div class="top"><h2 id="sheet-title">' + esc(d.brand || "New deal") + '</h2><button class="icon-btn" type="button" data-action="close" aria-label="Close deal"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></button></div>' +
+      '<div class="meta">' + stageSel + '<span class="fine" id="sheet-meta">' + meta + "</span></div>";
+  }
+  var TABS = [["steps", "Next steps"], ["deal", "Details"], ["money", "Money"], ["legit", "Legit check"], ["worth", "Worth it?"], ["contract", "Contract"]];
+  function tabsHTML(d) {
+    var openN = d.tasks.filter(function (k) { return !k.done; }).length, L = ledger(d);
+    var lv = { legit: legitResult(d).level, worth: worthResult(d).verdict.level, contract: contractResult(d).level, money: L.overdue ? "bad" : "" };
+    return TABS.map(function (t) {
+      var badge = t[0] === "steps" ? ' <span class="count fine">' + openN + "</span>" : "";
+      var dot = lv[t[0]] !== undefined ? '<span class="dot ' + lv[t[0]] + '" aria-hidden="true"></span>' : "";
+      return '<button type="button" role="tab" id="tab-' + t[0] + '" aria-selected="' + (ui.tab === t[0]) + '" aria-controls="db" data-tab="' + t[0] + '">' + dot + t[1] + badge + "</button>";
+    }).join("");
+  }
+
+  function taskHTML(d, k) {
+    var id = k.id, ids = ' data-task="' + id + '"', last = k.log.length ? k.log[k.log.length - 1] : null;
+    return '<div class="task' + (k.done ? " done" : "") + '"><div class="task-top">' +
+      '<input type="checkbox" id="tk-done-' + id + '" data-tf="done"' + ids + (k.done ? " checked" : "") + ' aria-label="Done">' +
+      '<input type="text" class="task-title" id="tk-title-' + id + '" data-tf="title"' + ids + ' value="' + esc(k.title) + '" aria-label="Step" placeholder="What needs to happen?"></div>' +
+      '<div class="grid3"><div class="field"><label for="tk-owner-' + id + '">Who has it</label><select id="tk-owner-' + id + '" data-tf="owner"' + ids + ">" + opts([["me", "Me"], ["brand", "The brand"]], k.owner) + "</select></div>" +
+      '<div class="field"><label for="tk-due-' + id + '">' + (k.owner === "brand" ? "They owe it by" : "Due") + '</label><input type="date" id="tk-due-' + id + '" data-tf="due"' + ids + ' value="' + esc(k.due) + '"></div>' +
+      '<div class="field"><label for="tk-chase-' + id + '">Chase on</label><input type="date" id="tk-chase-' + id + '" data-tf="chase"' + ids + ' value="' + esc(k.chase) + '"></div>' +
+      (k.done ? '<div class="field"><label for="tk-doneon-' + id + '">Done on</label><input type="date" id="tk-doneon-' + id + '" data-tf="doneon"' + ids + ' value="' + esc(k.done) + '"></div>' : "") +
+      (k.kind === "publish" ? '<div class="field"><label for="tk-link-' + id + '">Link to the post</label><input type="url" id="tk-link-' + id + '" data-tf="link"' + ids + ' value="' + esc(k.link) + '" placeholder="https://"></div>' : "") + "</div>" +
+      '<div class="task-foot"><span class="fine">' + (last ? esc(last.text) + ", " + esc(fmtDate(last.at)) : "") + '</span><button class="btn small quiet" type="button" data-action="del-task"' + ids + ">Remove</button></div></div>";
+  }
+  function stepsTab(d) {
+    var h = '<div class="grid2"><div class="field"><label for="f-publish">Publish by</label><input id="f-publish" type="date" data-field="publishBy" value="' + esc(d.publishBy) + '"><p class="help">Steps made from the terms count back from this date.</p></div></div>';
+    var miss = missingTerms(d), booked = BOOKED.indexOf(d.stage) > -1;
+    if (!d.deliverables.length) h += '<p class="fine">Add deliverables under Details, and the contract terms under Contract, to turn them into steps.</p>';
+    else if (miss.length && (booked || d.stage === "negotiating")) {
+      h += '<div class="callout"><strong>' + miss.length + " step" + (miss.length === 1 ? "" : "s") + " from the deal terms</strong><ul>" + miss.slice(0, 5).map(function (p) { return "<li>" + esc(p.title) + (p.due ? " · " + esc(fmtDate(p.due)) : "") + "</li>"; }).join("") + (miss.length > 5 ? "<li>and " + (miss.length - 5) + " more</li>" : "") + '</ul><div class="toolbar"><button class="btn small primary" type="button" data-action="apply-terms">Add ' + (miss.length === 1 ? "it" : "them") + "</button>" + (d.publishBy ? "" : '<span class="fine">Set a publish date first to give them dates.</span>') + "</div></div>";
+    }
+    if (booked && d.deliverables.length) {
+      var cap = revCap(d), used = num(d.revisionsUsed), over = cap && cap !== Infinity && used >= cap;
+      h += '<div class="toolbar"><span>Revision rounds: <strong>' + used + "</strong> used" + (cap === Infinity ? " · unlimited in the contract" : cap ? " of " + cap + " included" : " · limit not set in Contract") + "</span>" +
+        '<button class="btn small" type="button" data-action="log-revision">Log a revision round</button></div>' +
+        (over ? '<p class="advice warn">The next round is beyond what the contract includes. Bill it, or agree it in writing first.</p>' : "");
+    }
+    var open = d.tasks.filter(function (k) { return !k.done; }), done = d.tasks.filter(function (k) { return k.done; });
+    var key = function (k) { return k.owner === "brand" ? (k.chase || k.due || "9") : (k.due || "9"); };
+    open.sort(function (a, b) { return key(a).localeCompare(key(b)); });
+    done.sort(function (a, b) { return (b.done || "").localeCompare(a.done || ""); });
+    h += '<div class="tasks">' + (open.length ? open.map(function (k) { return taskHTML(d, k); }).join("") : '<p class="fine">No open steps.</p>') + "</div>";
+    h += '<div><button class="btn small" type="button" data-action="add-task">+ Add a step</button></div>';
+    if (done.length) h += '<details><summary class="section-title">Done (' + done.length + ')</summary><div class="tasks" style="margin-top:10px">' + done.map(function (k) { return taskHTML(d, k); }).join("") + "</div></details>";
+    return h;
+  }
+
+  function dealTab(d) {
+    var h = '<div class="grid2">' +
+      '<div class="field"><label for="f-brand">Brand</label><input id="f-brand" data-field="brand" value="' + esc(d.brand) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="f-category">Category</label><select id="f-category" data-field="category">' + opts(CATEGORIES, d.category) + "</select></div>" +
+      '<div class="field"><label for="f-contact">Contact</label><input id="f-contact" data-field="contact" value="' + esc(d.contact) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="f-email">Contact email</label><input id="f-email" type="email" data-field="email" value="' + esc(d.email) + '" autocomplete="off"></div>' +
+      '<div class="field"><label for="f-source">Came from</label><select id="f-source" data-field="source">' + opts(SOURCES, d.source) + "</select></div>" +
+      '<div class="field"><label for="f-created">Arrived on</label><input id="f-created" type="date" data-field="created" value="' + esc(d.created) + '"></div>' +
+      '<div class="field"><label for="f-currency">Currency</label><select id="f-currency" data-field="currency">' + opts(CURRENCIES, d.currency) + "</select></div>" +
+      '<div class="field"><label for="f-fee">Agreed or offered fee</label><input id="f-fee" type="number" min="0" step="50" inputmode="decimal" data-field="fee" value="' + esc(d.fee || "") + '"></div>' +
+      '<div class="field"><label for="f-product">Product value</label><input id="f-product" type="number" min="0" step="10" inputmode="decimal" data-field="productValue" value="' + esc(d.productValue || "") + '"></div>' +
+      "</div>";
+    h += '<div class="field"><span class="flabel">Deliverables</span><div class="del-list">' +
+      d.deliverables.map(function (x, i) {
+        return '<div class="del-row"><select id="del-' + i + '-type" data-del="' + i + '" data-dk="type" aria-label="Deliverable ' + (i + 1) + ' type">' + opts(DELIVERABLES.map(function (o) { return [o.key, o.label]; }), x.type) + "</select>" +
+          '<input id="del-' + i + '-qty" type="number" min="1" step="1" inputmode="numeric" data-del="' + i + '" data-dk="qty" value="' + esc(x.qty) + '" aria-label="Deliverable ' + (i + 1) + ' quantity">' +
+          '<button class="btn small quiet" type="button" data-action="del-remove" data-i="' + i + '" aria-label="Remove deliverable ' + (i + 1) + '">Remove</button></div>';
+      }).join("") + '<div><button class="btn small" type="button" data-action="del-add">+ Add deliverable</button></div></div></div>';
+    if (d.stage === "declined") h += '<div class="field"><label for="f-decline">Why you declined</label><input id="f-decline" data-field="declineReason" value="' + esc(d.declineReason) + '"></div>';
+    h += '<div class="field"><label for="f-notes">Notes</label><textarea id="f-notes" data-field="notes">' + esc(d.notes) + "</textarea></div>";
+    return h + brandHistory(d);
+  }
+  function sameBrand(a, b) { return a.id !== b.id && !!a.example === !!b.example && (a.brand || "").trim().toLowerCase() === (b.brand || "").trim().toLowerCase() && !!a.brand; }
+  function paidAfter(x) {
+    var iv = x.invoices.map(function (i) { return i.issued; }).filter(Boolean).sort()[0], pd = x.payments.map(function (p) { return p.date; }).filter(Boolean).sort().pop();
+    return iv && pd && x.stage === "paid" ? diffDays(iv, pd) : null;
+  }
+  function brandHistory(d) {
+    var past = state.deals.filter(function (x) { return sameBrand(x, d); }).sort(function (a, b) { return (b.created || "").localeCompare(a.created || ""); });
+    if (!d.brand) return "";
+    if (!past.length) return '<p class="fine">No earlier deals with ' + esc(d.brand) + " yet. When they come back, their past fees and terms show here.</p>";
+    return '<div class="stack" style="gap:8px"><h3 class="section-title">Your history with ' + esc(d.brand) + '</h3><ul class="history">' + past.map(function (x) {
+      var pa = paidAfter(x);
+      return '<li><button class="linkish" type="button" data-open="' + x.id + '">' + esc(fmtMonth(x.created)) + "</button> · " + esc(stageLabel(x.stage)) + " · " + (num(x.fee) ? money(x.fee, x.currency) : "no fee") + " for " + esc(summaryText(x)) + " · " + esc(usageLabel(x)) + (pa !== null ? " · paid " + days(pa) + " after invoicing" : "") + "</li>";
+    }).join("") + "</ul></div>";
+  }
+  function pastBlock(d) {
+    var types = {}; d.deliverables.forEach(function (x) { types[x.type] = 1; });
+    var comp = state.deals.filter(function (x) {
+      return x.id !== d.id && !!x.example === !!d.example && x.currency === d.currency && ["posted", "invoiced", "paid"].indexOf(x.stage) > -1 && num(x.fee) &&
+        x.deliverables.some(function (y) { return types[y.type]; });
+    }).sort(function (a, b) { return (b.created || "").localeCompare(a.created || ""); }).slice(0, 6);
+    if (!d.deliverables.length) return "";
+    if (!comp.length) return '<p class="fine">No completed ' + esc(d.currency) + " deals with the same kind of deliverable yet. Your own history shows here as it builds up.</p>";
+    var fees = comp.map(function (x) { return num(x.fee); }).sort(function (a, b) { return a - b; }), mid = fees[Math.floor(fees.length / 2)];
+    if (fees.length % 2 === 0) mid = (fees[fees.length / 2 - 1] + fees[fees.length / 2]) / 2;
+    return '<div class="stack" style="gap:8px"><h3 class="section-title">Your past deals like this one</h3>' +
+      (comp.length > 1 ? '<p class="fine">Median fee across these ' + comp.length + ": <strong>" + money(mid, d.currency) + "</strong>. Check that the scope and rights match before you compare.</p>" : "") +
+      '<div class="table-wrap"><table><thead><tr><th>Deal</th><th>Deliverables</th><th>Usage</th><th class="num">Fee</th><th class="num">Per hour</th></tr></thead><tbody>' +
+      comp.map(function (x) { return '<tr><td><button class="linkish" type="button" data-open="' + x.id + '">' + esc(x.brand || "Untitled") + '</button> <span class="fine">' + esc(fmtMonth(x.created)) + "</span></td><td>" + esc(summaryText(x)) + "</td><td>" + esc(usageLabel(x)) + '</td><td class="num">' + money(x.fee, x.currency) + '</td><td class="num">' + money(worthResult(x).rate, x.currency) + "</td></tr>"; }).join("") +
+      '</tbody></table></div><p class="fine">Per-hour figures use your current hour estimates from Rates.</p></div>';
+  }
+
+  function moneyTab(d) {
+    var L = ledger(d), t = todayISO(), C = d.currency;
+    var h = '<div class="money-sum"><div><span class="label">Agreed fee</span><span class="num">' + (num(d.fee) ? money(d.fee, C) : "Not set") + '</span></div><div><span class="label">Invoiced</span><span class="num">' + money(L.invoiced, C) + '</span></div><div><span class="label">Received</span><span class="num">' + money(L.received, C) + '</span></div><div><span class="label">Outstanding</span><span class="num">' + money(L.outstanding, C) + "</span></div></div>";
+    if (d.stage === "paid" && L.outstanding > 0) h += '<p class="advice warn">The stage says paid, but no payment covers ' + money(L.outstanding, C) + ". Record the payment below so your cash totals stay right.</p>";
+    if (L.invoiced > num(d.fee) && num(d.fee)) h += '<p class="advice warn">You\'ve invoiced more than the agreed fee. Check the amounts.</p>';
+    h += '<h3 class="section-title">Invoices</h3>';
+    if (L.rows.length) h += '<div class="table-wrap"><table><thead><tr><th>Invoice</th><th class="num">Amount</th><th class="num">Sent</th><th class="num">Due</th><th>Status</th><th></th></tr></thead><tbody>' + L.rows.map(function (r) {
+      var st = r.open <= 0 ? chip("Paid", "good") : r.paid > 0 ? chip(money(r.open, C) + " left", r.late ? "bad" : "warn") : r.late ? chip(days(r.late) + " overdue", "bad") : r.due ? chip("Due " + rel(r.due), "") : chip("No date", "warn");
+      return "<tr><td>" + esc(r.inv.ref ? "#" + r.inv.ref : "Invoice") + '</td><td class="num">' + money(r.amount, C) + '</td><td class="num">' + fmtDate(r.inv.issued) + '</td><td class="num">' + (r.due ? fmtDate(r.due) + " · Net " + num(r.inv.net) : "—") + "</td><td>" + st + '</td><td><button class="btn small quiet" type="button" data-action="del-inv" data-inv="' + r.inv.id + '">Remove</button></td></tr>';
+    }).join("") + "</tbody></table></div>";
+    else h += '<p class="fine">No invoices yet.</p>';
+    var suggest = L.notInvoiced || (L.invoiced ? "" : num(d.fee));
+    h += '<div class="addrow"><div class="field"><label for="inv-amount">Amount</label><input id="inv-amount" type="number" min="0" step="50" inputmode="decimal" value="' + (suggest || "") + '"></div>' +
+      '<div class="field"><label for="inv-issued">Sent on</label><input id="inv-issued" type="date" value="' + t + '"></div>' +
+      '<div class="field"><label for="inv-net">Payment terms (days)</label><input id="inv-net" type="number" min="0" step="15" inputmode="numeric" value="' + netOf(d) + '"></div>' +
+      '<div class="field"><label for="inv-ref">Invoice number</label><input id="inv-ref" autocomplete="off"></div>' +
+      '<button class="btn" type="button" data-action="add-inv">Add invoice</button></div>';
+    h += '<h3 class="section-title">Payments received</h3>';
+    if (d.payments.length) h += '<div class="table-wrap"><table><thead><tr><th>Received</th><th class="num">Amount</th><th>Note</th><th></th></tr></thead><tbody>' + d.payments.slice().sort(function (a, b) { return (a.date || "").localeCompare(b.date || ""); }).map(function (p) {
+      return "<tr><td>" + (p.date ? fmtDate(p.date) : chip("Date unknown", "warn")) + '</td><td class="num">' + money(p.amount, C) + "</td><td>" + esc(p.note) + '</td><td><button class="btn small quiet" type="button" data-action="del-pay" data-pay="' + p.id + '">Remove</button></td></tr>';
+    }).join("") + "</tbody></table></div>";
+    else h += '<p class="fine">Nothing received yet.</p>';
+    h += '<div class="addrow"><div class="field"><label for="pay-amount">Amount</label><input id="pay-amount" type="number" min="0" step="50" inputmode="decimal" value="' + (L.outstanding || "") + '"></div>' +
+      '<div class="field"><label for="pay-date">Received on</label><input id="pay-date" type="date" value="' + t + '"></div>' +
+      '<div class="field"><label for="pay-note">Note</label><input id="pay-note" autocomplete="off" placeholder="Deposit, balance…"></div>' +
+      '<button class="btn" type="button" data-action="add-pay">Record payment</button></div>';
+    return h;
+  }
+
+  function footHTML(d) {
+    if (ui.confirm === "delete:" + d.id) return '<div class="confirm"><p>Delete ' + esc(d.brand || "this deal") + '? This can\'t be undone.</p><button class="btn small danger" type="button" data-action="do-delete">Delete</button><button class="btn small" type="button" data-action="cancel-confirm">Keep it</button></div>';
+    var i = FLOW.indexOf(d.stage), h = "";
+    if (d.stage === "declined") h += '<button class="btn" type="button" data-action="reopen">Reopen as inbound</button>';
+    else if (i > -1 && i < FLOW.length - 1) h += '<button class="btn primary" type="button" data-action="advance">Move to ' + stageLabel(FLOW[i + 1]) + "</button>";
+    if (OPEN.indexOf(d.stage) > -1) h += '<button class="btn" type="button" data-action="decline">Decline</button>';
+    return h + '<span class="spacer"></span><button class="btn quiet" type="button" data-action="ask-delete">Delete</button>';
+  }
+  function bodyHTML(d) {
+    switch (ui.tab) {
+      case "legit": return legitTab(d);
+      case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + worthTab(d) + pastBlock(d);
+      case "contract": return contractTab(d);
+      case "money": return moneyTab(d);
+      case "deal": return dealTab(d);
+      default: return stepsTab(d);
+    }
+  }
+  function renderSheet() {
+    var sheet = document.getElementById("sheet"), scrim = document.getElementById("scrim"), app = document.getElementById("app");
+    var d = cur();
+    if (!d) { sheet.hidden = true; scrim.hidden = true; app.inert = false; return; }
+    ctxCur = d.currency;
+    sheet.hidden = false; scrim.hidden = false; app.inert = true;
+    var body = document.getElementById("db"), top = body.scrollTop;
+    document.getElementById("dh").innerHTML = headHTML(d);
+    document.getElementById("dt").innerHTML = tabsHTML(d);
+    body.innerHTML = bodyHTML(d);
+    body.scrollTop = top;
+    document.getElementById("df").innerHTML = footHTML(d);
+  }
+  function refreshComputed() {
+    var d = cur(); if (!d) return;
+    ctxCur = d.currency;
+    var title = document.getElementById("sheet-title"); if (title) title.textContent = d.brand || "New deal";
+    document.getElementById("dt").innerHTML = tabsHTML(d);
+    var swap = function (id, html) { var el = document.getElementById(id); if (el) el.outerHTML = html; };
+    swap("calc-worth", worthBlock(d)); swap("calc-legit", legitBlock(d)); swap("calc-contract", contractBlock(d));
+    var hEl = document.getElementById("calc-hours"); if (hEl) hEl.textContent = hrs(worthResult(d).hours) + " h";
+  }
+
+  /* ---------- top-level render ---------- */
+  var VIEWS = ["today", "pipeline", "money", "rates"];
+  function hashView() { var h = (location.hash || "").replace("#", ""); return VIEWS.indexOf(h) > -1 ? h : "today"; }
+  var curView = hashView();
+  function view() { return curView; }
+  function setView(v) { curView = v; try { if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v); } catch (e) { /* hash unavailable */ } renderAll(); window.scrollTo(0, 0); }
+  function renderView() {
+    var v = view(), acts = attention().filter(function (it) { return it.g === "act"; }).length;
+    document.querySelectorAll("nav.views a").forEach(function (a) {
+      if (a.dataset.view === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (a.dataset.view === "today") a.innerHTML = "Needs attention" + (acts ? '<span class="n" aria-label="' + acts + ' to act on">' + acts + "</span>" : "");
+    });
+    ctxCur = state.profile.currency;
+    document.getElementById("view").innerHTML = v === "money" ? renderMoney() : v === "rates" ? renderRates() : v === "pipeline" ? renderPipeline() : renderToday();
+  }
+  function withFocus(fn) {
+    var a = document.activeElement, id = a && a.id, s = null, e = null;
+    try { s = a.selectionStart; e = a.selectionEnd; } catch (x) { /* not a text field */ }
+    fn();
+    if (id) {
+      var el = document.getElementById(id);
+      if (el && el !== document.activeElement) { el.focus({ preventScroll: true }); try { if (s != null) el.setSelectionRange(s, e); } catch (x) { /* ignore */ } }
+    }
+  }
+  function renderAll() { withFocus(function () { renderBanner(); renderView(); renderSheet(); }); }
+  function renderBehind() { renderBanner(); renderView(); }
+
+  function openDeal(id, tab) {
+    ui.openId = id; ui.tab = tab || "steps"; ui.confirm = null;
+    renderAll();
+    var b = document.querySelector("#dh .icon-btn"); if (b) b.focus();
+  }
+  function isEmptyDeal(d) { return !d.brand && !num(d.fee) && !d.deliverables.length && !d.notes && !d.contact && !d.email && !d.tasks.length && !d.invoices.length && !d.payments.length; }
+  function closeDeal() {
+    var d = cur(), id = ui.openId;
+    if (d && isEmptyDeal(d)) { state.deals = state.deals.filter(function (x) { return x.id !== d.id; }); save(); id = null; }
+    ui.openId = null; ui.confirm = null;
+    renderAll();
+    var c = id && document.getElementById("card-" + id); if (c) c.focus();
+  }
+  function moveStage(d, stage) {
+    var was = d.stage, extra = "";
+    d.stage = stage;
+    if ((stage === "contracted" || stage === "production") && !d.termsApplied && d.deliverables.length) {
+      var n = applyTerms(d); if (n) extra = ". Added " + n + " steps from the terms";
+    }
+    if (stage === "paid" && ledger(d).outstanding > 0) extra = ". Record the payment under Money so cash totals stay right";
+    save();
+    if (was !== stage) toast("Moved " + (d.brand || "the deal") + " to " + stageLabel(stage) + extra);
+  }
+
+  /* ---------- actions ---------- */
+  function completeTask(d, k) {
+    var m = /^pay:(.+)$/.exec(k.key || ""), msg = (k.owner === "brand" ? doneLabel(k) + ": " : "Done: ") + k.title;
+    if (m) {
+      var r = ledger(d).rows.filter(function (x) { return x.inv.id === m[1]; })[0];
+      if (r && r.open > 0) {
+        d.payments.push({ id: uid(), amount: r.open, date: todayISO(), note: "Invoice" + (r.inv.ref ? " #" + r.inv.ref : "") + " paid" });
+        msg = "Recorded " + money(r.open, d.currency) + " received from " + (d.brand || "the brand");
+      }
+    }
+    if (!k.done) { k.done = todayISO(); logT(k, k.owner === "brand" ? doneLabel(k) : "Done"); }
+    if (k.kind === "publish" && (d.stage === "contracted" || d.stage === "production") && d.tasks.filter(function (x) { return x.kind === "publish" && !x.done; }).length === 0) { d.stage = "posted"; msg += ". Deal moved to Posted"; }
+    var extra = syncMoney(d); if (extra.length) msg += ". Deal " + extra.join(", ");
+    return msg;
+  }
+  function submitIntake(openAfter) {
+    var g = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; };
+    var brand = g("qi-brand");
+    if (!brand) { var e = document.getElementById("qi-err"); if (e) { e.textContent = "Add the brand's name to log the deal."; e.hidden = false; } var b = document.getElementById("qi-brand"); if (b) b.focus(); return; }
+    var owner = g("qi-owner") || "me", date = g("qi-date"), stage = g("qi-stage") || "inbound", hadReal = hasReal();
+    var step = g("qi-step") || (stage === "inbound" ? "Vet the offer and reply" : stage === "negotiating" ? "Send your counter-offer" : "Confirm deliverables and dates");
+    var d = blankDeal({ brand: brand, stage: stage, fee: num(g("qi-fee")), currency: g("qi-cur") || state.profile.currency });
+    var k = task({ title: step, owner: owner, due: owner === "me" ? date : "", chase: owner === "brand" ? date : "" });
+    logT(k, "Logged"); d.tasks.push(k);
+    state.deals.push(d); ui.intake = false; save();
+    if (openAfter) openDeal(d.id, "deal"); else renderAll();
+    toast("Logged " + brand + (hadReal ? "" : ". The examples are hidden now"));
+  }
+  function readRestore(text, curOverride) {
+    ui.restoreErr = ""; ui.restore = null;
+    if (!text || !text.trim()) { ui.restoreErr = "Choose a backup file or paste a backup first."; return; }
+    try {
+      var r = parseBackup(text.trim(), curOverride);
+      if (!r.deals.length) ui.restoreErr = "That backup has no deals in it. Example deals are skipped.";
+      else ui.restore = r;
+    } catch (e) { ui.restoreErr = "That doesn't look like a Creator Dealflow backup. Check that you copied all of it, from the first { or [ to the last } or ]."; }
+  }
+  function markBackedUp() { state.backupAt = new Date().toISOString(); ui.hideBackupNag = false; save(); }
+
+  document.addEventListener("submit", function (e) { if (e.target.id === "intake") { e.preventDefault(); submitIntake(false); } });
+
+  document.addEventListener("click", function (e) {
+    var tab = e.target.closest("[data-tab]");
+    if (tab) { ui.tab = tab.dataset.tab; ui.confirm = null; document.getElementById("db").scrollTop = 0; renderAll(); var tb = document.getElementById("tab-" + ui.tab); if (tb) tb.focus(); return; }
+    var nav = e.target.closest("nav.views a[data-view]");
+    if (nav) { e.preventDefault(); setView(nav.dataset.view); return; }
+    var op = e.target.closest("[data-open]");
+    if (op) { openDeal(op.dataset.open, op.dataset.opentab); return; }
+    var act = e.target.closest("[data-action]");
+    if (!act) return;
+    var a = act.dataset.action, d = cur(), k, snapFn, msg;
+    var rowDeal = act.dataset.deal ? byId(act.dataset.deal) : d;
+    switch (a) {
+      case "intake":
+        ui.intake = true; if (view() !== "today") setView("today"); else renderAll();
+        var qb = document.getElementById("qi-brand"); if (qb) qb.focus(); break;
+      case "intake-cancel": ui.intake = false; renderAll(); break;
+      case "intake-open": submitIntake(true); break;
+      case "close": closeDeal(); break;
+      case "close-to-rates": e.preventDefault(); ui.openId = null; setView("rates"); break;
+      case "undo": if (toastUndo) { toastUndo(); toastUndo = null; save(); document.getElementById("toast").hidden = true; renderAll(); } break;
+      case "task-done":
+        k = findTask(rowDeal, act.dataset.task); if (!k) break;
+        snapFn = snap(rowDeal); msg = completeTask(rowDeal, k); save(); renderAll(); toast(msg, snapFn); break;
+      case "task-reopen":
+        k = findTask(rowDeal, act.dataset.task); if (!k) break;
+        k.done = ""; logT(k, "Reopened"); save(); renderAll(); toast("Reopened: " + k.title); break;
+      case "chased":
+        k = findTask(rowDeal, act.dataset.task); if (!k) break;
+        snapFn = snap(rowDeal); k.chase = addDays(todayISO(), 3); logT(k, "Followed up"); save(); renderAll();
+        toast("Next chase on " + fmtDate(k.chase), snapFn); break;
+      case "advance": var i = FLOW.indexOf(d.stage); if (i > -1 && i < FLOW.length - 1) moveStage(d, FLOW[i + 1]); renderAll(); break;
+      case "decline": moveStage(d, "declined"); ui.tab = "deal"; renderAll(); var fd = document.getElementById("f-decline"); if (fd) fd.focus(); break;
+      case "reopen": moveStage(d, "inbound"); renderAll(); break;
+      case "ask-delete": ui.confirm = "delete:" + d.id; renderAll(); break;
+      case "do-delete": state.deals = state.deals.filter(function (x) { return x.id !== d.id; }); save(); toast("Deleted " + (d.brand || "the deal")); ui.openId = null; ui.confirm = null; renderAll(); break;
+      case "cancel-confirm": ui.confirm = null; renderAll(); break;
+      case "del-add": d.deliverables.push({ type: "yt_integration", qty: 1 }); save(); renderAll(); var ns = document.getElementById("del-" + (d.deliverables.length - 1) + "-type"); if (ns) ns.focus(); break;
+      case "del-remove": d.deliverables.splice(+act.dataset.i, 1); save(); renderAll(); break;
+      case "apply-terms": var n = applyTerms(d); save(); renderAll(); toast(n ? "Added " + n + " step" + (n === 1 ? "" : "s") + " from the terms" : "All the steps from the terms are already here"); break;
+      case "log-revision":
+        d.revisionsUsed = num(d.revisionsUsed) + 1;
+        var cap = revCap(d), rn = d.revisionsUsed, over = cap && cap !== Infinity && rn > cap;
+        k = task({ kind: "revision", title: "Send revised version (round " + rn + ")" + (over ? ": beyond the " + cap + " included, bill it" : ""), due: addDays(todayISO(), 2) });
+        logT(k, "Revision requested"); d.tasks.push(k); save(); renderAll();
+        toast(over ? "Round " + rn + " is beyond the " + cap + " the contract includes" : "Logged revision round " + rn); break;
+      case "add-task":
+        k = task({ title: "", owner: "me" }); logT(k, "Added"); d.tasks.push(k); save(); renderAll();
+        var nt = document.getElementById("tk-title-" + k.id); if (nt) nt.focus(); break;
+      case "del-task":
+        snapFn = snap(d); d.tasks = d.tasks.filter(function (x) { return x.id !== act.dataset.task; }); save(); renderAll(); toast("Removed the step", snapFn); break;
+      case "add-inv":
+        var amt = num(document.getElementById("inv-amount").value);
+        if (amt <= 0) { toast("Enter the invoice amount"); document.getElementById("inv-amount").focus(); break; }
+        snapFn = snap(d);
+        addInvoice(d, amt, document.getElementById("inv-issued").value, document.getElementById("inv-net").value, document.getElementById("inv-ref").value.trim());
+        syncMoney(d); save(); renderAll(); toast("Added an invoice for " + money(amt, d.currency) + ". Its payment is now on your list", snapFn); break;
+      case "del-inv":
+        snapFn = snap(d);
+        d.invoices = d.invoices.filter(function (x) { return x.id !== act.dataset.inv; });
+        d.tasks = d.tasks.filter(function (x) { return x.key !== "pay:" + act.dataset.inv; });
+        syncMoney(d); save(); renderAll(); toast("Removed the invoice", snapFn); break;
+      case "add-pay":
+        var pa = num(document.getElementById("pay-amount").value);
+        if (pa <= 0) { toast("Enter the amount you received"); document.getElementById("pay-amount").focus(); break; }
+        snapFn = snap(d);
+        d.payments.push({ id: uid(), amount: pa, date: document.getElementById("pay-date").value, note: document.getElementById("pay-note").value.trim() });
+        msg = syncMoney(d); save(); renderAll(); toast("Recorded " + money(pa, d.currency) + " received" + (msg.length ? ". Deal " + msg.join(", ") : ""), snapFn); break;
+      case "del-pay":
+        snapFn = snap(d); d.payments = d.payments.filter(function (x) { return x.id !== act.dataset.pay; }); syncMoney(d); save(); renderAll(); toast("Removed the payment", snapFn); break;
+      case "money-cur": ui.moneyCur = act.dataset.cur; renderAll(); break;
+      case "dismiss-banner": state.ui.banner = false; save(); renderAll(); break;
+      case "dismiss-note": loadNote = ""; renderAll(); break;
+      case "hide-nag": ui.hideBackupNag = true; renderAll(); break;
+      case "clear-examples": state.deals = state.deals.filter(function (x) { return !x.example; }); state.ui.banner = false; save(); toast("Cleared the example deals"); renderAll(); break;
+      case "add-examples": state.deals = state.deals.concat(seeds()); state.ui.banner = true; save(); toast("Added the example deals"); renderAll(); break;
+      case "ask-clear": ui.confirm = "clear"; renderAll(); break;
+      case "do-clear": state.deals = []; ui.confirm = null; save(); toast("Deleted all deals"); renderAll(); break;
+      case "copy-backup":
+        var txt = backupText();
+        var showText = function () {
+          ui.backupShown = txt; if (view() !== "rates") setView("rates"); else renderAll();
+          var ta = document.getElementById("backup-out"); if (ta) { ta.hidden = false; ta.value = txt; ta.focus(); ta.select(); }
+          markBackedUp(); toast("Select all of the text and copy it");
+        };
+        try { navigator.clipboard.writeText(txt).then(function () { markBackedUp(); renderAll(); toast("Backup copied. Paste it somewhere safe, like a note"); }, showText); } catch (x) { showText(); }
+        break;
+      case "save-backup":
+        try {
+          var url = URL.createObjectURL(new Blob([backupText()], { type: "application/json" })), link = document.createElement("a");
+          link.href = url; link.download = "creator-dealflow-backup-" + todayISO() + ".json"; document.body.appendChild(link); link.click(); link.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1000); markBackedUp(); renderAll(); toast("Saved a backup file");
+        } catch (x) { toast("This browser blocked the file. Use Copy backup instead"); }
+        break;
+      case "check-restore": readRestore((document.getElementById("restore-text") || {}).value); ui.confirm = null; renderAll(); break;
+      case "restore-cancel": ui.restore = null; ui.restoreErr = ""; ui.confirm = null; renderAll(); break;
+      case "ask-replace": ui.confirm = "replace"; renderAll(); break;
+      case "restore-add":
+        var here = {}; state.deals.forEach(function (x) { here[x.id] = 1; });
+        var add = ui.restore.deals.filter(function (x) { return !here[x.id]; });
+        state.deals = state.deals.concat(add); ui.restore = null; save(); renderAll(); toast("Added " + add.length + " deal" + (add.length === 1 ? "" : "s") + " from the backup"); break;
+      case "restore-replace":
+        state.deals = ui.restore.deals; if (ui.restore.profile) state.profile = mergeProfile(ui.restore.profile);
+        var cnt = state.deals.length; ui.restore = null; ui.confirm = null; save(); renderAll(); toast("Restored " + cnt + " deals from the backup"); break;
+    }
+  });
+
+  function inSheet(el) { return !!el.closest("#sheet"); }
+  var NUMERIC = { fee: 1, productValue: 1 };
+  document.addEventListener("input", function (e) {
+    var t = e.target, d = cur();
+    if (t.id === "search") { ui.q = t.value; withFocus(renderView); return; }
+    if (t.dataset.profile) { state.profile[t.dataset.profile] = num(t.value); save(); return; }
+    if (t.dataset.hours) { state.profile.hours[t.dataset.hours] = num(t.value); save(); return; }
+    if (!d || !inSheet(t) || t.tagName === "SELECT" || t.type === "radio" || t.type === "checkbox" || t.type === "date") return;
+    if (t.dataset.tf) { var k = findTask(d, t.dataset.task); if (k && (t.dataset.tf === "title" || t.dataset.tf === "link")) { k[t.dataset.tf] = t.value; save(); renderBehind(); } return; }
+    if (t.dataset.field) d[t.dataset.field] = NUMERIC[t.dataset.field] ? num(t.value) : t.value;
+    else if (t.dataset.del && t.dataset.dk === "qty") d.deliverables[+t.dataset.del].qty = num(t.value);
+    else if (t.dataset.take) d.take[t.dataset.take] = num(t.value);
+    else return;
+    save(); renderBehind(); refreshComputed();
+  });
+  document.addEventListener("change", function (e) {
+    var t = e.target, d = cur();
+    if (t.id === "show-declined") { state.ui.showDeclined = t.checked; save(); renderAll(); return; }
+    if (t.id === "r-currency") { state.profile.currency = t.value; save(); renderAll(); toast("New deals and your target rate now use " + t.value + ". Existing deals keep their currency"); return; }
+    if (t.id === "rs-cur" && ui.restore) { readRestore(ui.restore.text, t.value); renderAll(); return; }
+    if (t.id === "restore-file") {
+      var f = t.files && t.files[0]; if (!f) return;
+      if (f.size > 5e6) { ui.restoreErr = "That file is larger than any Creator Dealflow backup should be."; renderAll(); return; }
+      var rd = new FileReader();
+      rd.onload = function () { readRestore(String(rd.result)); renderAll(); };
+      rd.onerror = function () { ui.restoreErr = "The file couldn't be read. Try pasting the backup instead."; renderAll(); };
+      rd.readAsText(f); return;
+    }
+    if (!d || !inSheet(t)) return;
+    if (t.dataset.field === "stage") { moveStage(d, t.value); renderAll(); return; }
+    if (t.dataset.tf) {
+      var k = findTask(d, t.dataset.task); if (!k) return;
+      var f2 = t.dataset.tf;
+      if (f2 === "done") { if (t.checked) { var snapFn = snap(d), msg = completeTask(d, k); save(); renderAll(); toast(msg, snapFn); return; } k.done = ""; logT(k, "Reopened"); }
+      else if (f2 === "doneon") k.done = t.value || todayISO();
+      else if (f2 === "owner") { k.owner = t.value; logT(k, t.value === "brand" ? "Now waiting on the brand" : "Back with you"); }
+      else if (f2 === "due" || f2 === "chase") { k[f2] = t.value; logT(k, (f2 === "due" ? "Due date" : "Chase date") + (t.value ? " set to " + fmtDate(t.value) : " cleared")); }
+      else { save(); return; }
+      save(); renderAll(); return;
+    }
+    if (t.dataset.field && (t.tagName === "SELECT" || t.type === "date")) d[t.dataset.field] = t.value;
+    else if (t.dataset.del && t.dataset.dk === "type") d.deliverables[+t.dataset.del].type = t.value;
+    else if (t.dataset.legit) d.legit[t.dataset.legit] = t.value;
+    else if (t.dataset.takeopt) d.take[t.dataset.takeopt] = t.value;
+    else if (t.dataset.clause) { if (t.value) d.contract[t.dataset.clause] = t.value; else delete d.contract[t.dataset.clause]; }
+    else return;
+    save(); renderAll();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (ui.openId) { e.preventDefault(); closeDeal(); }
+    else if (ui.intake) { ui.intake = false; renderAll(); }
+  });
+
+  // drag and drop between stage columns
+  var dragId = null;
+  document.addEventListener("dragstart", function (e) {
+    var c = e.target.closest && e.target.closest(".card"); if (!c) return;
+    dragId = c.dataset.open; c.classList.add("dragging");
+    try { e.dataTransfer.setData("text/plain", dragId); e.dataTransfer.effectAllowed = "move"; } catch (x) { /* ignore */ }
+  });
+  document.addEventListener("dragend", function () { dragId = null; document.querySelectorAll(".dragging, .col.drop").forEach(function (el) { el.classList.remove("dragging", "drop"); }); });
+  document.addEventListener("dragover", function (e) {
+    var col = e.target.closest && e.target.closest(".col"); if (!col || !dragId) return;
+    e.preventDefault();
+    document.querySelectorAll(".col.drop").forEach(function (el) { if (el !== col) el.classList.remove("drop"); });
+    col.classList.add("drop");
+  });
+  document.addEventListener("drop", function (e) {
+    var col = e.target.closest && e.target.closest(".col"); if (!col || !dragId) return;
+    e.preventDefault();
+    var d = byId(dragId); dragId = null;
+    if (d && d.stage !== col.dataset.stage) moveStage(d, col.dataset.stage);
+    renderAll();
+  });
+
+  window.addEventListener("hashchange", function () { curView = hashView(); renderAll(); });
+  save();
+  renderAll();
+})();
+</script>
+</body>
+</html>
