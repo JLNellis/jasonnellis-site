@@ -944,7 +944,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 
   /* ---------- which deals count ---------- */
   function hasReal() { return state.deals.some(function (d) { return !d.example; }); }
-  function live() { var r = hasReal(); return state.deals.filter(function (d) { return r ? !d.example : true; }); }
+  function live() { var r = hasReal(), ex = state.ui.showExamples; return state.deals.filter(function (d) { return !d.example || !r || ex; }); }
 
   /* ---------- the attention list ---------- */
   function classify(d, k, t) {
@@ -1200,6 +1200,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var hasEx = state.deals.some(function (d) { return d.example; });
     if (!real.length && hasEx && state.ui.banner) {
       h += '<div class="banner"><p><strong>These are example deals</strong> for a fictional creator, so you can see how it works. They disappear from your lists and totals as soon as you log your own deal.</p><div class="row"><button class="btn small" type="button" data-action="clear-examples">Clear examples</button><button class="btn small quiet" type="button" data-action="dismiss-banner">Hide this note</button></div></div>';
+    } else if (real.length && hasEx && state.ui.showExamples) {
+      h += '<div class="banner"><p><strong>Example deals are showing alongside yours,</strong> and they count in your lists and totals. Items from examples are marked "example".</p><div class="row"><button class="btn small" type="button" data-action="hide-examples">Hide examples</button><button class="btn small quiet" type="button" data-action="clear-examples">Clear examples</button></div></div>';
     } else if (real.length && !ui.hideBackupNag) {
       var age = state.backupAt ? diffDays(state.backupAt.slice(0, 10), todayISO()) : null;
       if (age === null || age > 7) h += '<div class="banner warn"><p>Your deals are saved in this browser only. ' + (age === null ? "You haven't copied a backup yet." : "Your last backup was " + days(age) + " ago.") + '</p><div class="row"><button class="btn small" type="button" data-action="copy-backup">Copy backup</button><button class="btn small quiet" type="button" data-action="hide-nag">Not now</button></div></div>';
@@ -1476,7 +1478,9 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         '<div class="toolbar"><button class="btn primary" type="button" data-action="restore-add"' + (fresh ? "" : " disabled") + ">Add " + fresh + " new deal" + (fresh === 1 ? "" : "s") + '</button><button class="btn" type="button" data-action="ask-replace">Replace all my deals</button><button class="btn quiet" type="button" data-action="restore-cancel">Cancel</button></div>' +
         (conf === "replace" ? '<div class="confirm"><p>Replace all ' + state.deals.length + " deals here with the " + r.deals.length + ' in the backup?</p><button class="btn small danger" type="button" data-action="restore-replace">Replace</button><button class="btn small" type="button" data-action="cancel-confirm">Keep mine</button></div>' : "") + "</div>";
     }
-    h += '<h3 class="section-title">Examples and reset</h3><div class="toolbar">' + (ex ? '<button class="btn" type="button" data-action="clear-examples">Clear examples</button>' : '<button class="btn" type="button" data-action="add-examples">Add example deals</button>') + '<button class="btn" type="button" data-action="ask-clear">Delete all deals</button></div>' +
+    var shown = state.ui.showExamples;
+    h += '<h3 class="section-title">Examples and reset</h3>' + (ex && real ? '<p class="fine">' + (shown ? "Example deals are showing alongside yours and count in your totals." : "Example deals are hidden while you have deals of your own.") + "</p>" : "") + '<div class="toolbar">' +
+      (ex ? (real ? '<button class="btn" type="button" data-action="' + (shown ? "hide-examples" : "show-examples") + '">' + (shown ? "Hide examples" : "Show examples") + "</button>" : "") + '<button class="btn" type="button" data-action="clear-examples">Clear examples</button>' : '<button class="btn" type="button" data-action="add-examples">Add example deals</button>') + '<button class="btn" type="button" data-action="ask-clear">Delete all deals</button></div>' +
       (conf === "clear" ? '<div class="confirm"><p>Delete all ' + state.deals.length + ' deals? This can\'t be undone unless you have a backup.</p><button class="btn small danger" type="button" data-action="do-clear">Delete all</button><button class="btn small" type="button" data-action="cancel-confirm">Keep them</button></div>' : "");
     return h + "</section>";
   }
@@ -1803,7 +1807,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     logT(k, "Logged"); d.tasks.push(k);
     state.deals.push(d); ui.intake = false; save();
     if (openAfter) openDeal(d.id, "deal"); else renderAll();
-    toast("Logged " + brand + (hadReal ? "" : ". The examples are hidden now"));
+    toast("Logged " + brand + (hadReal || state.ui.showExamples || !state.deals.some(function (x) { return x.example; }) ? "" : ". The examples are hidden now"));
   }
   function readRestore(text, curOverride) {
     ui.restoreErr = ""; ui.restore = null;
@@ -1942,8 +1946,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       case "dismiss-banner": state.ui.banner = false; save(); renderAll(); break;
       case "dismiss-note": loadNote = ""; renderAll(); break;
       case "hide-nag": ui.hideBackupNag = true; renderAll(); break;
-      case "clear-examples": state.deals = state.deals.filter(function (x) { return !x.example; }); state.ui.banner = false; save(); toast("Cleared the example deals"); renderAll(); break;
-      case "add-examples": state.deals = state.deals.concat(seeds()); state.ui.banner = true; save(); toast("Added the example deals"); renderAll(); break;
+      case "clear-examples": state.deals = state.deals.filter(function (x) { return !x.example; }); state.ui.banner = false; state.ui.showExamples = false; save(); toast("Cleared the example deals"); renderAll(); break;
+      case "add-examples": state.deals = state.deals.concat(seeds()); state.ui.banner = true; state.ui.showExamples = hasReal(); save(); toast(hasReal() ? "Added the example deals. They show alongside yours until you hide them" : "Added the example deals"); renderAll(); break;
+      case "show-examples": state.ui.showExamples = true; save(); renderAll(); toast("Showing the example deals alongside yours"); break;
+      case "hide-examples": state.ui.showExamples = false; save(); renderAll(); toast("Example deals hidden. Clear them under Rates & data"); break;
       case "ask-clear": ui.confirm = "clear"; renderAll(); break;
       case "do-clear": state.deals = []; ui.confirm = null; save(); toast("Deleted all deals"); renderAll(); break;
       case "copy-backup":
