@@ -25,6 +25,11 @@
   const short = src => (D.SOURCES[src] ? D.SOURCES[src].cite.split(',')[0].split(':')[0] : '');
   const tilt = key => (E.hashStr(String(key)) % 19) - 9;
   const reduceMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // People are whole numbers on screen; the engine keeps the fractions (E.people).
+  const ppl = x => { const p = E.people(x); return p.under ? C.week.underOne : p.n.toLocaleString('en-US'); };
+  const V = C.week.versus;
+  const delta = n => (n === 0 ? esc(V.same)
+    : `<span aria-hidden="true">${esc(fill(n > 0 ? V.up : V.down, { n: Math.abs(n) }))}</span><span class="sr">${esc(fill(n > 0 ? V.upSr : V.downSr, { n: Math.abs(n) }))}</span>`);
   const shareUrl = slug => 'https://jasonnellis.com/robot-comments/r/' + slug + '/';
   const track = (name, props) => { try { if (window.siteTrack) window.siteTrack(name, props); } catch (e) {} };
   const store = {
@@ -258,17 +263,15 @@
   function renderResolve(res) {
     const r = res.row, lv = res.lever, k = E.cardById(r.card);
     const dwell = r.held / Math.max(1, r.impressions);
+    const vs = E.versusLastPost(S.rows, r.week);
+    const numRow = m => `<dt>${esc(L.metrics[m])}</dt><dd>${ppl(r[m])}</dd>${vs ? `<dd class="d">${delta(vs[m])}</dd>` : ''}`;
     show(titleBlock(r.week) + stripHTML(false) +
       `<div class="played">${cardHTML(k, { static: true })}</div>
        <div class="resolve">
          <div class="feed" aria-hidden="true"><i></i><i></i><i class="you"></i><i></i><i></i><i></i><div class="light"></div><div class="ticks"></div></div>
-         <dl class="nums" tabindex="-1" data-focus>
-           <dt>${esc(L.metrics.impressions)}</dt><dd>${Math.round(r.impressions).toLocaleString('en-US')}</dd>
-           <dt>${esc(L.metrics.held)}</dt><dd>${Math.round(r.held).toLocaleString('en-US')}</dd>
-           <dt>${esc(L.metrics.contributions)}</dt><dd>${r.contributions.toFixed(1)}</dd>
-           <dt>${esc(L.metrics.visits)}</dt><dd>${r.visits.toFixed(1)}</dd>
-           <dt>${esc(L.metrics.dms)}</dt><dd>${r.dms.toFixed(2)}</dd>
-         </dl>
+         <div><dl class="nums${vs ? ' vs' : ''}" tabindex="-1" data-focus>
+           ${['impressions', 'held', 'contributions', 'visits', 'dms'].map(numRow).join('')}
+         </dl><p class="vscap">${esc(vs ? V.caption : V.first)}</p></div>
          <p class="feedcap">${esc(C.week.feedCaption)}</p>
        </div>
        <p class="why">${esc(C.why[lv.key] || '')}</p>
@@ -333,15 +336,18 @@
       store.del('rc_run');
       track('rc_completed', { archetype: F.archetype, band: F.band, tax: String(F.tax) });
     }
+    const cuts = E.BAND_CUTS.v, pctOf = q => Math.round(q * 100);
+    const place = fill(C.end.bandPlace[F.band], { n: { cold: pctOf(cuts[0]), warm: pctOf(cuts[0]), working: pctOf(cuts[1]), hot: 100 - pctOf(cuts[2]) }[F.band] });
     const titleLever = { key: 'title', stamp: C.titleStamp.stamp, src: C.titleStamp.src, mag: null };
     const used = [...new Set(S.rows.filter(r => r.lever).map(r => r.lever.src).concat(C.titleStamp.src))];
     show(`<section class="end">
         <p class="gametitle">${esc(C.title)}<button type="button" class="stamp stamp-btn land titlestamp" style="--r:11deg" id="tstamp"
           aria-label="${esc(L.stamps[titleLever.stamp] + ': ' + short(titleLever.src) + '. ' + C.week.sourceLink)}">${stampSVG(titleLever.stamp, titleLever.src)}</button></p>
         <h1 tabindex="-1" data-focus>${esc(O.name)}</h1><p class="tagline">${esc(O.tagline)}</p>
-        <div class="score"><div><span class="big">${F.pipeline.toFixed(1)}</span>
+        <div class="score"><div><span class="big">${ppl(F.pipeline)}</span>
           <small><button class="term" data-term="pipeline">${esc(C.end.pipelineLabel)}</button>: ${esc(C.end.pipelineUnit)}</small></div>
-          <button class="term band" data-term="band">${esc(L.bands[F.band])}</button></div>
+          <button class="term band" data-term="band">${esc(L.bands[F.band])}</button>
+          <p class="place">${esc(place)}</p></div>
         ${stripHTML(true)}
         <div class="facts"><div><button class="term" data-term="clarity">${esc(C.end.clarityLabel)}</button><b>${esc(F.clarity)}</b></div>
           <div><button class="term" data-term="folkloreTax">${esc(C.end.taxLabel)}</button><b class="num">${F.tax}</b></div></div>
@@ -352,6 +358,7 @@
         <p class="src">${esc(C.end.taxLabel)}: ${esc(C.end.taxLine)}${F.playedGated ? ' ' + esc(C.end.gatedNote) : ''}</p>
         <div class="actions"><button class="btn" id="share">${esc(C.end.share)}</button><button class="btn ghost" id="again">${esc(C.end.replay)}</button></div>
         <p><a class="link" id="ev" href="${EVIDENCE_URL}">${esc(C.evidence.fromEnd)}</a></p>
+        <p class="next">${esc(C.end.nextLine)} <a href="${esc(C.end.nextUrl)}">${esc(C.end.nextLink)}</a></p>
         <div id="notify"></div>
         <p class="podcast">${esc(C.end.podcast)} <a href="/building-value">${esc(C.end.podcastLink)}</a></p>
         <h2 class="srch">${esc(C.end.sourcesHeading)}</h2>

@@ -351,6 +351,70 @@ test('buildHand keeps the same topic for the same platform+angle within a week',
   const b = E.buildHand(S).find(c => c.kind === 'post' && c.angle === 'evergreen').topic;
   assert.strictEqual(a, b);
 });
+// The page's real order: deal, (queue then resolve at End the week) applyMove, settleWeek,
+// advanceWeek, and only then buildHand. advanceWeek has already bumped S.week when the new hand
+// is dealt, so "posted this week" is empty there; the hand must still rotate.
+const postsOf = hand => hand.filter(c => c.kind === 'post' || c.kind === 'ride');
+function endWeekAndDeal(S) { E.settleWeek(S); E.advanceWeek(S); return E.buildHand(S); }
+test('rotation: a posted topic is not dealt again next week (page order)', () => {
+  for (let seed = 1; seed <= 25; seed++) {
+    E.setRng(seeded(seed), seeded(seed + 500));
+    const S = mk('gaming', 'longform');
+    const card = postsOf(E.buildHand(S)).find(c => c.angle === 'evergreen');
+    E.applyMove(S, card);
+    const next = postsOf(endWeekAndDeal(S)).map(c => c.topic);
+    assert.ok(!next.includes(card.topic), `seed ${seed}: '${card.topic}' dealt again in week ${S.week}`);
+  }
+});
+test('rotation: an unposted card gets a new title across the week boundary', () => {
+  for (let seed = 1; seed <= 25; seed++) {
+    E.setRng(seeded(seed), seeded(seed + 500));
+    const S = mk('gaming', 'longform');
+    let prev = postsOf(E.buildHand(S)).find(c => c.angle === 'personal').topic;
+    for (let w = 0; w < 6; w++) {   // post evergreen each week; never touch the personal card
+      E.applyMove(S, postsOf(S.hand).find(c => c.angle === 'evergreen'));
+      const now = postsOf(endWeekAndDeal(S)).find(c => c.angle === 'personal').topic;
+      assert.notStrictEqual(now, prev, `seed ${seed}: personal card stuck on '${now}' into week ${S.week}`);
+      prev = now;
+    }
+  }
+});
+test('rotation: a same-week rebuild keeps every unposted title (business move, new channel)', () => {
+  const S = mk('gaming', 'longform'); S.plats.longform.followers = 3000;
+  const before = postsOf(E.buildHand(S));
+  E.biz.engage(S);
+  const afterBiz = postsOf(E.buildHand(S));
+  assert.deepStrictEqual(afterBiz.map(c => c.angle + ':' + c.topic), before.map(c => c.angle + ':' + c.topic));
+  S.plats.shortform.active = true; S.plats.shortform.followers = 50;   // a channel added mid-week
+  const afterChan = postsOf(E.buildHand(S)).filter(c => c.pkey === 'longform');
+  afterChan.forEach(c => assert.strictEqual(c.topic, before.find(b => b.angle === c.angle).topic, `${c.angle} reshuffled mid-week`));
+});
+test('rotation: a hand never carries the same topic twice, including a mid-week rebuild', () => {
+  for (let seed = 1; seed <= 40; seed++) {
+    E.setRng(seeded(seed), seeded(seed + 500));
+    const S = mk('gaming', 'longform'); S.plats.shortform.active = true; S.plats.shortform.followers = 100;
+    for (let w = 0; w < 6; w++) {
+      const h1 = postsOf(E.buildHand(S));
+      E.biz.engage(S);                         // a post stays queued (unresolved) while the hand is re-dealt
+      const h2 = postsOf(E.buildHand(S));
+      [h1, h2].forEach(h => { const t = h.map(c => c.topic); assert.strictEqual(new Set(t).size, t.length, `seed ${seed} week ${S.week}: ${t.join(' | ')}`); });
+      E.applyMove(S, h2[0]); endWeekAndDeal(S);
+    }
+  }
+});
+test('rotation: dealing titles never draws from the gameplay RNG stream', () => {
+  E.setRng(seeded(9)); mk('gaming', 'longform'); const ref = [E.rnd(0, 1), E.rnd(0, 1)];
+  E.setRng(seeded(9)); const S = mk('gaming', 'longform');
+  for (let i = 0; i < 5; i++) { E.buildHand(S); S.week++; }
+  assert.deepStrictEqual([E.rnd(0, 1), E.rnd(0, 1)], ref, 'buildHand consumed gameplay draws');
+});
+test('rotation: an old save whose hand lacks the dealt stamp just gets a fresh deal', () => {
+  const S = mk('gaming', 'longform');
+  const old = postsOf(E.buildHand(S)).map(c => { const o = Object.assign({}, c); delete o.dealt; return o; });
+  S.hand = old;
+  const fresh = postsOf(E.buildHand(S));
+  fresh.forEach(c => assert.ok(!old.some(o => o.topic === c.topic), `'${c.topic}' carried from an unstamped card`));
+});
 test('buildHand deals ONE expansion card carrying every openable platform; no cross-post card', () => {
   const S = mk(); S.plats.longform.followers = 3000; S.plats.longform.heat = 40; S.plats.shortform.active = true; S.plats.shortform.followers = 100;
   const hand = E.buildHand(S);

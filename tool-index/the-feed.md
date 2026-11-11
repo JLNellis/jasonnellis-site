@@ -7,6 +7,6 @@ url: "/the-feed"
 cta: "Play free"
 time: "About 20 min"
 released: "Sep 2026"
-order: 1
+order: 4
 ---
 A creator life sim. Five platforms that each want something different, one stress meter, an algorithm that changes its mind without telling you, and eight ways it ends. Every run is different.

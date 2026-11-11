@@ -383,6 +383,30 @@
     };
   }
 
+  // ======================= DISPLAY (reads results, changes nothing) =======================
+  // Kept outside CONFIG on purpose: none of this feeds the model, so ENGINE_VERSION and saves are untouched.
+
+  // Band cut points: percentiles of the seeded random-policy population (spec §9). The sim builds
+  // robot-comments-bands.js from these; the end screen describes the band with them. Ours.
+  const BAND_CUTS = deepFreeze(c([0.25, 0.6, 0.85], O));
+
+  // People are shown as whole numbers (2026-11-10 review). The model keeps its fractions, and
+  // finish() still bands on the one-decimal pipeline. A nonzero count under a half is flagged so
+  // the screen can say "under one" instead of a misleading zero.
+  const people = x => ({ n: Math.round(Math.max(0, x)), under: x > 0 && x < 0.5 });
+
+  // A week's result against the player's previous post (skips and event weeks have no post to
+  // compare). Whole percent change per metric, or null for the first post.
+  const VERSUS = ['impressions', 'held', 'contributions', 'visits', 'dms'];
+  function versusLastPost(rows, week) {
+    const cur = rows.find(r => r.week === week && r.kind === 'post');
+    const prev = rows.filter(r => r.kind === 'post' && r.week < week).pop();
+    if (!cur || !prev) return null;
+    const out = {};
+    for (const m of VERSUS) out[m] = prev[m] > 0 ? Math.round((cur[m] / prev[m] - 1) * 100) : 0;
+    return out;
+  }
+
   // Resume: the save is the inputs, never the state (spec §5a).
   function serialize(S) {
     return { v: ENGINE_VERSION, setup: { archetype: S.setup.archetype, budget: S.setup.budget }, choices: S.choices.slice() };
@@ -409,5 +433,6 @@
   return {
     ENGINE_VERSION, versionOf, CONFIG, cardById: id => BY_ID[id] || null, hashStr, rng, newGame, weekKind, deal, cardCost, canAfford,
     nextDecisionWeeks, leverFor, resolveWeek, resolveEvent, finish, serialize, replay, stampEntries,
+    BAND_CUTS, people, versusLastPost,
   };
 });

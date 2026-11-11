@@ -99,8 +99,12 @@
 
   // ======================= RNG helpers =======================
   // Injectable so the tests and the sim can be reproducible. Defaults to Math.random.
-  let rng = Math.random;
-  const setRng = fn => { rng = fn || Math.random; };
+  // Topic titles draw from their own stream: which line a card shows is copy, and dealing it must
+  // never shift the gameplay draws (a seeded sim that moves when a title is picked is measuring the
+  // RNG, not the balance). Seeded runs get a fixed-seed topic stream unless one is passed.
+  let rng = Math.random, topicRng = Math.random;
+  const lcg = seed => { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; };
+  const setRng = (fn, topicFn) => { rng = fn || Math.random; topicRng = topicFn || (fn ? lcg(0x7f4a7c15) : Math.random); };
   const rnd = (a, b) => a + rng() * (b - a);
   const rint = (a, b) => Math.floor(rnd(a, b + 1));
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -421,32 +425,47 @@
   }
 
   // ======================= the dealt hand =======================
-  function pickTopic(S, angleKey) {
+  // `avoid` = titles already on the table (last hand, or another card in this one): skipped while
+  // anything else is left. When every title is on cooldown, the one posted longest ago comes back.
+  function pickTopic(S, angleKey, avoid) {
     const all = TOPICS[S.niche][angleKey];
+    const ok = avoid ? all.filter(t => !avoid.has(t)) : all, pool = ok.length ? ok : all;
     const recent = new Set(S.usedTopics.filter(u => S.week - u.week < CONFIG.topicCooldown).map(u => u.topic));
-    const fresh = all.filter(t => !recent.has(t));
-    return pick(fresh.length ? fresh : all);
+    const fresh = pool.filter(t => !recent.has(t));
+    const pickT = arr => arr[Math.floor(topicRng() * arr.length)];
+    if (fresh.length) return pickT(fresh);
+    const last = t => Math.max(...S.usedTopics.filter(u => u.topic === t).map(u => u.week));
+    const oldest = Math.min(...pool.map(last));
+    return pickT(pool.filter(t => last(t) === oldest));
   }
-  function postCard(S, p, angleKey, ride) {
+  function postCard(S, p, angleKey, ride, avoid) {
     let mod = 1;
     if (p.heat >= 52) mod *= 1.35;
     const tired = p.fatigue >= CONFIG.tiredAt && angleKey === p.lastAngle;   // the audience is tired of THIS angle, not of you
     if (p.proven && p.fatigue < CONFIG.tiredAt) mod *= 1.12;
     if (tired) mod *= CONFIG.tiredViewsMult;
     if (ride) mod *= 1.6;
-    // keep the topic the player already saw this week for this platform+angle — unless they just posted it
+    // A mid-week re-deal keeps the title the player already saw for this platform+angle (unless they
+    // just posted it). Only a card dealt THIS week carries: the page deals after advanceWeek, so a
+    // carry-over keyed on anything else froze every card on its week-1 title for the whole run.
+    // Unstamped cards (saves from before the stamp) just get a fresh deal.
     const usedNow = new Set(S.usedTopics.filter(u => u.week === S.week).map(u => u.topic));
-    const prev = (S.hand || []).find(c => c.pkey === p.key && c.angle === angleKey && c.topic && !usedNow.has(c.topic));
-    return { kind: ride ? 'ride' : 'post', pkey: p.key, angle: angleKey, topic: prev ? prev.topic : pickTopic(S, angleKey),
+    const prev = (S.hand || []).find(c => c.dealt === S.week && c.pkey === p.key && c.angle === angleKey && c.topic && !usedNow.has(c.topic));
+    const topic = prev ? prev.topic : pickTopic(S, angleKey, avoid);
+    if (avoid) avoid.add(topic);
+    return { kind: ride ? 'ride' : 'post', pkey: p.key, angle: angleKey, topic, dealt: S.week,
              mod, stress: stressCost(S, p.key, angleKey), special: !!ride, ride: !!ride, heat: p.heat, fatigue: p.fatigue, tired, proven: p.proven };
   }
   function buildHand(S) {
     const hand = [], act = activePlats(S);
+    // every title in the last hand stays off fresh cards (a carried card keeps its own), and each
+    // dealt title joins the set, so no two cards share one and nothing reruns straight after a week
+    const avoid = new Set((S.hand || []).map(c => c.topic).filter(Boolean));
     act.forEach(p => {
       const ride = !!(S.lastHit && S.lastHit.key === p.key && S.week - S.lastHit.week <= 1);
       let angle = 'evergreen';
       if (ride || p.heat >= 40) angle = 'trend';
-      hand.push(postCard(S, p, angle, ride));
+      hand.push(postCard(S, p, angle, ride, avoid));
     });
     // The strongest platform is where the "which angle?" choice lives. Fix 5: on a single platform the
     // hand used to equal the slots (post everything, no choice), so deal all three angles there — the
@@ -456,10 +475,10 @@
     const top = strongest(S);
     if (top && act.length === 1) {
       const have = new Set(hand.filter(c => c.pkey === top.key).map(c => c.angle));
-      AORDER.forEach(a => { if (!have.has(a)) hand.push(postCard(S, top, a, false)); });
+      AORDER.forEach(a => { if (!have.has(a)) hand.push(postCard(S, top, a, false, avoid)); });
     } else if (top && hand.length <= 3) {
       const c0 = hand.find(c => c.pkey === top.key);
-      hand.push(postCard(S, top, c0.angle === 'trend' ? 'evergreen' : 'trend', false));
+      hand.push(postCard(S, top, c0.angle === 'trend' ? 'evergreen' : 'trend', false, avoid));
     }
     // Expansion: one card, the player chooses which platform (options = every inactive platform whose
     // follower threshold is met). pkey is filled in by the chooser; applyMove falls back to options[0].

@@ -511,6 +511,63 @@ test('evidence data: one row per why-line, every row sourced, grouped into the f
   assert.strictEqual(RC.titleStamp.stamp, 'invented');
 });
 
+// ---------------------------------------------------------------- readable results (2026-11-10 review)
+test('people: counts of humans show as whole numbers, a nonzero fraction under a half shows as under one', () => {
+  const cases = [[0, 0, false], [0.01, 0, true], [0.49, 0, true], [0.5, 1, false], [1.01, 1, false], [2.5, 3, false], [10.9, 11, false], [1296.4, 1296, false]];
+  for (const [x, n, under] of cases) assert.deepStrictEqual(E.people(x), { n, under }, String(x));
+});
+
+test('people: display only, the model and the band keep their fractions', () => {
+  const S = playScript({ archetype: 'seed', budget: 3 }, firstAffordable);
+  const F = E.finish(S);
+  assert.strictEqual(F.pipeline, Math.round(S.pipeline * 10) / 10);
+  assert.ok(S.rows.some(r => r.kind === 'post' && r.dms !== Math.round(r.dms)), 'rows keep fractional DMs');
+});
+
+test('versusLastPost: null for the first post, else whole percent change against the previous post', () => {
+  const S = playScript({ archetype: 'seriesb', budget: 3 }, firstAffordable);
+  const posts = S.rows.filter(r => r.kind === 'post');
+  assert.strictEqual(E.versusLastPost(S.rows, posts[0].week), null);
+  for (let i = 1; i < posts.length; i++) {
+    const v = E.versusLastPost(S.rows, posts[i].week), a = posts[i], b = posts[i - 1];
+    for (const m of ['impressions', 'held', 'contributions', 'visits', 'dms']) {
+      assert.strictEqual(v[m], Math.round((a[m] / b[m] - 1) * 100), `week ${a.week} ${m}`);
+      assert.ok(Number.isInteger(v[m]));
+    }
+  }
+});
+
+test('versusLastPost: skips and event weeks are passed over, not compared against', () => {
+  const S = E.newGame({ archetype: 'seed', budget: 3 });
+  const post = () => E.resolveWeek(S, firstAffordable(S, E.deal(S)));
+  post(); post();                          // weeks 1, 2
+  E.resolveWeek(S, { skip: true });        // week 3
+  post();                                  // week 4
+  E.resolveEvent(S);                       // week 5
+  post();                                  // week 6
+  const row = w => S.rows.find(r => r.week === w);
+  assert.strictEqual(E.versusLastPost(S.rows, 4).impressions, Math.round((row(4).impressions / row(2).impressions - 1) * 100));
+  assert.strictEqual(E.versusLastPost(S.rows, 6).dms, Math.round((row(6).dms / row(4).dms - 1) * 100));
+});
+
+test('band cut points are stamped ours, match the generated bands file, and the sim uses them', () => {
+  assert.strictEqual(E.BAND_CUTS.stamp, 'ours');
+  assert.deepStrictEqual(E.BAND_CUTS.v, [0.25, 0.6, 0.85]);
+  const sim = require('fs').readFileSync(require('path').join(__dirname, 'robot-comments-sim.js'), 'utf8');
+  assert.ok(/BAND_CUTS/.test(sim), 'sim must derive the bands from E.BAND_CUTS');
+  assert.ok(/\bours\b/.test(C.glossary.terms.band), 'the band definition says the cut points are ours');
+});
+
+test('copy: readable-results strings exist and fill', () => {
+  const W = C.week.versus;
+  for (const k of ['up', 'down', 'same', 'upSr', 'downSr', 'caption', 'first']) assert.ok(W[k], 'week.versus.' + k);
+  assert.ok(C.week.underOne, 'week.underOne');
+  for (const b of ['cold', 'warm', 'working', 'hot']) assert.ok(/\{n\}/.test(C.end.bandPlace[b]), 'end.bandPlace.' + b);
+  assert.ok(C.end.nextLine && C.end.nextLink && /^\/(blog|lens)/.test(C.end.nextUrl), 'end next step');
+  const slug = C.end.nextUrl.match(/^\/blog\/([^/]+)\/$/);
+  if (slug) assert.ok(require('fs').existsSync(require('path').join(__dirname, '..', 'essays', slug[1] + '.md')), 'essay exists: ' + slug[1]);
+});
+
 // ---------------------------------------------------------------- runner
 let failed = 0;
 for (const [name, fn] of tests) {

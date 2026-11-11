@@ -132,7 +132,7 @@ function writeBands() {
       pipes.push(Math.round(S.pipeline * 10) / 10); // same rounding finish() bands on
       reach.push(S.totalImpressions / (S.anchorStart * 10));
     }
-    bands[archetype] = { pipeline: [pct(pipes, 0.25), pct(pipes, 0.6), pct(pipes, 0.85)].map(round3), reachTop: round3(pct(reach, 0.75)) };
+    bands[archetype] = { pipeline: E.BAND_CUTS.v.map(q => pct(pipes, q)).map(round3), reachTop: round3(pct(reach, 0.75)) };
   }
   const file = path.join(__dirname, '..', 'robot-comments-bands.js');
   fs.writeFileSync(file, bandsSource(bands, new Date().toISOString().slice(0, 10)));

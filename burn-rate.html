@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Burn Rate — how many hours a week does your channel actually cost?</title>
-<meta name="description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login, no email needed.">
+<meta name="description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours and whether you can afford it, then names the first thing to cut. Free, no login, no email needed.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Nellis">
 <meta property="og:url" content="https://jasonnellis.com/burn-rate">
 <meta property="og:title" content="Burn Rate: can you afford your own upload schedule?">
-<meta property="og:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login.">
+<meta property="og:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours and whether you can afford it, then names the first thing to cut. Free, no login.">
 <meta property="og:image" content="https://jasonnellis.com/og-burn-rate.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Burn Rate: can you afford your own upload schedule? A result card reads 10 hours a week needed, 8 available, Running hot.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Burn Rate: can you afford your own upload schedule?">
-<meta name="twitter:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours, whether you can afford it, and what to cut. Free, no login.">
+<meta name="twitter:description" content="Pick a format and a platform. Burn Rate tells you what the schedule costs in hours and whether you can afford it, then names the first thing to cut. Free, no login.">
 <meta name="twitter:image" content="https://jasonnellis.com/og-burn-rate.jpg">
 <link rel="canonical" href="https://jasonnellis.com/burn-rate">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -35,6 +35,20 @@
   .br-hero .lede{ font-size:19px; line-height:1.6; color:var(--fg-2); margin:0; max-width:36em; }
   .br-hero .lede strong{ color:var(--fg-1); font-weight:500; }
   .br-hero .meta{ display:flex; gap:18px; flex-wrap:wrap; margin-top:22px; font-size:14px; color:var(--fg-3); }
+
+  /* ---- reverse entry: start from hours ---- */
+  .br-reverse{ padding:20px 26px 18px; margin-bottom:20px; }
+  .br-reverse h2{ font-size:18px; font-weight:600; letter-spacing:-.01em; color:var(--fg-1); margin:0 0 12px; }
+  .rev-row{ display:grid; grid-template-columns: 130px minmax(0,1fr) 130px; gap:12px; }
+  .rev-row .field{ margin-bottom:0; }
+  .rev-out{ font-size:14.5px; line-height:1.55; color:var(--fg-2); margin:14px 0 0; }
+  .rev-out b{ color:var(--fg-1); font-weight:500; }
+  .rev-fits{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .rev-fits:empty{ display:none; }
+  .rev-fit{ font:inherit; font-size:13.5px; color:var(--fg-1); background:var(--bg-deep); border:1px solid var(--border-strong); border-radius:999px; padding:7px 12px; cursor:pointer; }
+  .rev-fit span{ font-family:var(--font-mono); font-size:12.5px; color:var(--fg-2); margin-left:6px; }
+  .rev-fit:hover, .rev-fit:focus-visible{ border-color:var(--color-accent-vivid); }
+  .rev-fit[aria-pressed="true"]{ border-color:var(--color-accent-vivid); }
 
   /* ---- calculator ---- */
   .br-calc{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start; padding-bottom:48px; }
@@ -73,6 +87,11 @@
   .verdict .big span{ font-size:15px; color:var(--fg-2); }
   .verdict .band{ font-size:22px; font-weight:700; letter-spacing:-.01em; margin-top:10px; }
   .verdict .pov{ font-size:15px; line-height:1.6; color:var(--fg-2); margin:8px 0 0; }
+  .verdict .example-note{ font-size:14px; line-height:1.5; color:var(--fg-1); margin:8px 0 10px; padding:10px 12px; border:1px solid var(--border-strong); border-radius:var(--radius-md); background:var(--bg-deep); }
+  .verdict .example-note[hidden]{ display:none; }
+  .next-step{ font-size:14px; line-height:1.55; color:var(--fg-2); margin:2px 0 0; }
+  .next-step a{ color:var(--fg-1); border-bottom:1px solid var(--border-strong); text-decoration:none; }
+  .next-step a:hover{ color:var(--color-accent-vivid); border-color:var(--color-accent-vivid); }
   .verdict.ok{ border-color:rgba(0,230,118,.45); } .verdict.ok .band, .verdict.ok .big b{ color:var(--br-ok); }
   .verdict.warn{ border-color:rgba(255,202,75,.45); } .verdict.warn .band, .verdict.warn .big b{ color:var(--br-warn); }
   .verdict.hot{ border-color:rgba(255,59,92,.5); } .verdict.hot .band, .verdict.hot .big b{ color:var(--br-hot); }
@@ -104,7 +123,8 @@
   .br-plan .sub{ color:var(--fg-2); font-size:15px; margin:0 0 18px; line-height:1.6; }
   .gate{ position:relative; }
   .gate .content{ transition:filter .3s; }
-  .gate.locked .content{ filter:blur(7px); pointer-events:none; user-select:none; }
+  .gate.locked .content{ filter:blur(7px); pointer-events:none; user-select:none; min-height:280px; }
+  .plan-free{ margin-bottom:14px; }
   .gate .lock{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:20px; }
   .gate.locked .lock{ display:flex; } .gate .lock{ display:none; }
   .gate .lock p{ margin:0; max-width:34em; color:var(--fg-2); font-size:15px; line-height:1.55; }
@@ -156,6 +176,16 @@
     .statgrid{ grid-template-columns:1fr 1fr; }
     .br-panel{ padding:20px 18px; }
     .row2{ grid-template-columns:1fr; }
+    .br-reverse{ padding:18px 18px 16px; }
+    .br-reverse h2{ margin-bottom:10px; }
+    .rev-row{ grid-template-columns:1fr 1fr; gap:10px; }
+    .rev-row .rev-hours{ grid-column:1; grid-row:1; }
+    .rev-row .rev-cad{ grid-column:2; grid-row:1; }
+    .rev-row .rev-plat{ grid-column:1 / -1; grid-row:2; }
+    .rev-out{ font-size:14px; margin-top:12px; }
+    .rev-fits{ gap:6px; }
+    .rev-fit{ font-size:13px; padding:5px 10px; }
+    .rev-fit span{ font-size:12px; margin-left:4px; }
   }
 </style>
 </head>
@@ -169,8 +199,28 @@
 
       <section class="br-hero">
         <h1>How many hours a week does your channel actually cost?</h1>
-        <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs, whether you can afford it, and what to cut.</strong> No login. No email needed to see your result.</p>
+        <p class="lede">Most creators plan a schedule without ever costing it. Pick a format and a platform, check the hours, and Burn Rate tells you <strong>what the schedule costs and whether you can afford it.</strong> Your result and the first thing to cut are free, with no login and no email. The rest of the plan unlocks when you join the Building Value list.</p>
         <div class="meta"><span>2 minutes</span><span>Numbers dated 14 Sept 2026</span><span>Deterministic, no AI</span></div>
+      </section>
+
+      <section class="card br-reverse" aria-labelledby="revTitle">
+        <h2 id="revTitle">Start from the hours you have</h2>
+        <div class="rev-row">
+          <div class="field rev-hours">
+            <label for="revAvail">Hours a week</label>
+            <input type="number" id="revAvail" min="0.5" max="100" step="0.5" inputmode="decimal">
+          </div>
+          <div class="field rev-plat">
+            <label for="revPlatform">Platform</label>
+            <select id="revPlatform"></select>
+          </div>
+          <div class="field rev-cad">
+            <label for="revCadence">Uploads a week</label>
+            <input type="number" id="revCadence" min="0.25" max="21" step="0.25" inputmode="decimal">
+          </div>
+        </div>
+        <p class="rev-out" id="revOut" aria-live="polite"></p>
+        <div class="rev-fits" id="revFits"></div>
       </section>
 
       <section class="br-calc" aria-label="Calculator">
@@ -212,7 +262,8 @@
 
         <div class="br-results">
           <div class="card verdict" id="verdict">
-            <div class="k">Your burn rate</div>
+            <div class="k" id="verdictK">Your burn rate</div>
+            <p class="example-note" id="exampleNote" hidden>This is an example: a weekly talking-head video on YouTube, with 8 hours a week to make it. Change any field to see yours.</p>
             <div class="big"><b id="needH">10</b><span>hours a week needed · <span id="availH">8</span> available</span></div>
             <div class="band" id="band">Running hot</div>
             <p class="pov" id="pov"></p>
@@ -239,13 +290,15 @@
             <button class="btn ghost" id="copyBtn" type="button">Copy as text</button>
           </div>
           <div class="toast" id="toast" aria-live="polite"></div>
+          <p class="next-step">Next: twelve weeks of LinkedIn posting decisions, with every rule checked against its source. <a href="/robot-comments" class="tap">Play 80% of Your Comments Are Robots&nbsp;→</a></p>
         </div>
       </section>
 
       <section class="br-plan" aria-label="What to cut first">
         <div class="card">
           <h2>What to cut first</h2>
-          <p class="sub">A plan built from your numbers: which stage is eating your week, what to change, and what it saves. Also the formats you could afford at this cadence, and the cadence you could afford with this format.</p>
+          <p class="sub">A plan built from your numbers: which stage is eating your week and what changing it saves. The first cut is free. The rest of the plan, including the cadence you could afford with this format, unlocks below.</p>
+          <ol class="plan-list plan-free" id="planFree"></ol>
           <div class="gate locked" id="gate">
             <div class="content">
               <ol class="plan-list" id="plan"></ol>
@@ -381,14 +434,15 @@
   const stagesEl = $('stages');
   const stageInputs = [];
 
-  PLATFORMS.forEach(p => platformSel.add(new Option(p.name, p.id)));
+  const revAvail = $('revAvail'), revPlatform = $('revPlatform'), revCadence = $('revCadence');
+  PLATFORMS.forEach(p => { platformSel.add(new Option(p.name, p.id)); revPlatform.add(new Option(p.name, p.id)); });
   FORMATS.forEach(f => formatSel.add(new Option(f.name, f.id)));
   STAGES.forEach((s, i) => {
     const row = document.createElement('div'); row.className = 'stage';
     row.innerHTML = `<label for="st_${s.id}">${s.name}<small>${s.small}</small></label><input type="number" id="st_${s.id}" min="0" max="200" step="0.25" inputmode="decimal">`;
     stagesEl.appendChild(row);
     const inp = row.querySelector('input'); stageInputs.push(inp);
-    inp.addEventListener('input', () => { stagesEdited = true; typed.e[i] = 1; render(); });
+    inp.addEventListener('input', () => { isExample = false; stagesEdited = true; typed.e[i] = 1; render(); });
   });
   $('stagekey').innerHTML = STAGES.map(s => `<span><i style="background:${s.color}"></i>${s.name}</span>`).join('');
 
@@ -397,6 +451,10 @@
   $('hrsTable').innerHTML = FORMATS.map(f => `<tr><td>${f.name}${f.est?' <span class="conf lo">inferred</span>':''}</td>${f.h.map(x=>`<td class="num">${x}</td>`).join('')}<td class="num">${sum(f.h)}</td><td>${f.range}</td></tr>`).join('');
 
   let stagesEdited = false;
+  // A fresh load (no hash) shows the defaults as a labelled example until the
+  // visitor changes any field. Shared links open straight to their result.
+  let isExample = false;
+  function mine(){ isExample = false; }
   // What the visitor typed in this page view (not what a shared link filled in).
   const typed = { e:[0,0,0,0,0,0], a:0, c:0 };
   const plat = () => PLATFORMS.find(p => p.id === platformSel.value);
@@ -411,14 +469,33 @@
     return pm + ' a month';
   }
   function fmtH(x){ return (Math.round(x*4)/4).toString().replace(/\.0+$/,''); }
+  function shortName(f){ return f.name.replace(/\s*\(.*\)$/,''); }
+  // Formats whose total hours fit the per-upload budget, most ambitious first.
+  function fitting(budgetPerUpload, excludeId){
+    return FORMATS.filter(f => f.id !== excludeId && sum(f.h) <= budgetPerUpload).sort((a,b)=>sum(b.h)-sum(a.h)).slice(0,4);
+  }
 
   function setPlatform(id){ platformSel.value = id; cadenceIn.value = plat().def; }
   function setFormat(id){ formatSel.value = id; fmt().h.forEach((h,i)=> stageInputs[i].value = h); stagesEdited = false; typed.e = [0,0,0,0,0,0]; }
 
-  platformSel.addEventListener('change', () => { cadenceIn.value = plat().def; render(); });
-  formatSel.addEventListener('change', () => { const f = fmt(); setFormat(f.id); setPlatform(f.plat); render(); });
-  cadenceIn.addEventListener('input', () => { typed.c = 1; render(); });
-  availIn.addEventListener('input', () => { typed.a = 1; render(); });
+  platformSel.addEventListener('change', () => { mine(); cadenceIn.value = plat().def; render(); });
+  formatSel.addEventListener('change', () => { mine(); const f = fmt(); setFormat(f.id); setPlatform(f.plat); render(); });
+  cadenceIn.addEventListener('input', () => { mine(); typed.c = 1; render(); });
+  availIn.addEventListener('input', () => { mine(); typed.a = 1; render(); });
+
+  // Reverse entry: "I have N hours a week, what can I make?" It drives the
+  // same inputs as the calculator, so logging and the hash work unchanged.
+  let revTracked = false;
+  function trackRev(){ if (revTracked) return; revTracked = true; try{ window.siteTrack && siteTrack('Burn Rate reverse'); }catch(e){} }
+  revAvail.addEventListener('input', () => { mine(); trackRev(); availIn.value = revAvail.value; typed.a = 1; render(); });
+  revCadence.addEventListener('input', () => { mine(); trackRev(); cadenceIn.value = revCadence.value; typed.c = 1; render(); });
+  revPlatform.addEventListener('change', () => { mine(); trackRev(); setPlatform(revPlatform.value); render(); });
+  $('revFits').addEventListener('click', e => {
+    const b = e.target.closest('[data-fmt]'); if (!b) return;
+    mine(); trackRev(); setFormat(b.dataset.fmt); render();
+    const v = $('verdict'), r = v.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > innerHeight) v.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
   $('resetStages').addEventListener('click', () => { setFormat(formatSel.value); render(); });
 
   // ---------------- compute ----------------
@@ -454,6 +531,8 @@
     $('stagebar').innerHTML = STAGES.map((st,i) => `<i style="width:${s.hpp?100*s.hrs[i]/s.hpp:0}%;background:${st.color}" title="${st.name}: ${fmtH(s.hrs[i])} h"></i>`).join('');
     // verdict
     const v = $('verdict'); v.className = 'card verdict ' + s.band.cls;
+    $('verdictK').textContent = isExample ? 'Example burn rate' : 'Your burn rate';
+    $('exampleNote').hidden = !isExample;
     $('needH').textContent = fmtH(s.need);
     $('availH').textContent = fmtH(s.avail);
     $('band').textContent = s.band.name;
@@ -479,9 +558,10 @@
     $('scDate').textContent = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
     // plan
     renderPlan(s);
-    // url state
+    renderReverse(s);
+    // url state (an untouched example keeps a clean URL, so a reload stays an example)
     const hash = `#p=${s.p.id}&f=${s.f.id}&c=${s.cad}&a=${s.avail}&s=${s.hrs.map(fmtH).join(',')}`;
-    history.replaceState(null, '', hash);
+    history.replaceState(null, '', isExample ? location.pathname + location.search : hash);
     // analytics: anonymous, no free text
     const key = `${s.p.id}|${s.f.id}|${s.band.name}`;
     if (key !== lastKey){ lastKey = key; clearTimeout(render._t); render._t = setTimeout(()=>{ try{ window.siteTrack && siteTrack('Burn Rate result', {platform:s.p.id, format:s.f.id, verdict:s.band.name}); }catch(e){} }, 1500); }
@@ -510,6 +590,17 @@
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushLog(); });
   addEventListener('pagehide', flushLog);
+
+  // ---------------- reverse entry ----------------
+  function renderReverse(s){
+    if (document.activeElement !== revAvail) revAvail.value = availIn.value;
+    if (document.activeElement !== revCadence) revCadence.value = cadenceIn.value;
+    revPlatform.value = s.p.id;
+    const budget = s.avail / s.cad, fits = fitting(budget, null);
+    $('revOut').innerHTML = `That is <b>${fmtH(budget)} hours per upload</b> at ${fmtCad(s.cad)}. ` +
+      (fits.length ? 'Pick a format that fits:' : 'No format in the table fits that. Post less often or find more hours.');
+    $('revFits').innerHTML = fits.map(f => `<button type="button" class="rev-fit" data-fmt="${f.id}" aria-pressed="${f.id === s.f.id}">${shortName(f)}<span>${fmtH(sum(f.h))} h</span></button>`).join('');
+  }
 
   // ---------------- plan ----------------
   const CUTS = {
@@ -540,14 +631,16 @@
     }
     // format alternatives on this platform's cadence
     const budgetPerUpload = s.avail / s.cad;
-    const alts = FORMATS.filter(f => f.id !== s.f.id && sum(f.h) <= budgetPerUpload).sort((a,b)=>sum(b.h)-sum(a.h)).slice(0,4);
+    const alts = fitting(budgetPerUpload, s.f.id);
     if (s.debt > 0){
       items.push(`<li><span class="n">${++n}</span><div><b>Or keep the format and post ${fmtCad(s.affordPerWeek)}.</b><span>That is what you can afford with ${fmtH(s.avail)} hours. It is below what the platform rewards, and it is a schedule you will actually keep, which beats one you won't. Never miss it.</span></div></li>`);
       items.push(`<li><span class="n">${++n}</span><div><b>Or change the format. At ${fmtCad(s.cad)} you have ${fmtH(budgetPerUpload)} hours per upload.</b><span>${alts.length ? 'Formats that fit that budget, most ambitious first: ' + alts.map(f=>`${f.name.replace(/\s*\(.*\)$/,'')} (${fmtH(sum(f.h))} h)`).join(', ') + '.' : 'No format in the table fits that budget at this cadence. The cadence is the thing to change.'}</span></div></li>`);
     } else {
       items.push(`<li><span class="n">${++n}</span><div><b>You can afford this. Now don't add anything.</b><span>The failure mode from here is a second platform, a longer runtime, or a guest every week. Bank the spare ${fmtH(-s.debt)} hours as slack. Slack is what lets you keep the schedule when life happens.</span></div></li>`);
     }
-    $('plan').innerHTML = items.join('');
+    // The first item is free for everyone; the rest sits behind the gate.
+    $('planFree').innerHTML = items[0] || '';
+    $('plan').innerHTML = items.slice(1).join('');
   }
 
   // ---------------- gate ----------------
@@ -574,6 +667,7 @@
   // ---------------- init from hash ----------------
   (function init(){
     const q = new URLSearchParams(location.hash.slice(1));
+    isExample = !q.get('f');
     const f = FORMATS.find(x=>x.id===q.get('f')) || FORMATS[0];
     setFormat(f.id);
     const p = PLATFORMS.find(x=>x.id===q.get('p')) || PLATFORMS.find(x=>x.id===f.plat);

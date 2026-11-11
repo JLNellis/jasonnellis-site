@@ -7,6 +7,6 @@ url: "/burn-rate"
 cta: "Run the numbers"
 time: "2 min"
 released: "Sep 2026"
-order: 2
+order: 1
 ---
 Pick a format and a platform. Burn Rate tells you what the schedule costs in hours a week, whether you can actually cover it, and what to cut first.

@@ -66,6 +66,18 @@
       oursNote: 'The size of this effect is ours.',
       defineTags: 'What these mean',
       feedCaption: 'Your post in the feed. The light is attention, the ticks are comments.',
+      // People are counted in whole numbers; a count above zero but under a half shows as this.
+      underOne: '<1',
+      // Each result against the player's previous post (skips and event weeks have none).
+      versus: {
+        up: '↑{n}%',
+        down: '↓{n}%',
+        same: 'same',
+        upSr: 'up {n}% on your last post',
+        downSr: 'down {n}% on your last post',
+        caption: 'Arrows compare each number with your last post.',
+        first: 'Your first post. From next week, each number is compared with your last post.',
+      },
       titleBlock: { project: 'Project', week: 'Week', hours: 'Hours' },
     },
 
@@ -150,7 +162,7 @@
         cluster: 'The subject your headline and recent posts are known for.',
         hours: 'Your weekly time for LinkedIn. Each post and each comment session costs hours, and unused hours do not carry over.',
         pipeline: 'Your DMs and qualified conversations across twelve weeks. It is the only score.',
-        band: 'Cold, warm, working and hot place your pipeline among thousands of simulated players who started where you did.',
+        band: 'Cold, warm, working and hot place your pipeline among thousands of simulated players who started where you did. Where the lines fall is ours.',
         folkloreTax: 'The number of bait cards you played. Each one promised a shortcut.',
         clarity: 'Where your fingerprint ended the twelve weeks: blurred, faint, legible or sharp.',
         event: 'Weeks 5 and 9 happen to you. There is no decision, only a consequence.',
@@ -288,6 +300,13 @@
     end: {
       pipelineLabel: 'Pipeline',
       pipelineUnit: 'DMs and qualified conversations',
+      // Under the band word. {n} is a share of the simulated players who started where you did (RobotEngine.BAND_CUTS).
+      bandPlace: {
+        cold: 'In the bottom {n}% of simulated players who started where you did.',
+        warm: 'Ahead of {n}% of simulated players who started where you did.',
+        working: 'Ahead of {n}% of simulated players who started where you did.',
+        hot: 'In the top {n}% of simulated players who started where you did.',
+      },
       clarityLabel: 'Fingerprint clarity',
       taxLabel: 'Folklore tax',
       taxLine: 'Shortcuts you took on someone else\'s word.',
@@ -297,6 +316,10 @@
       shareText: '{archetype} · pipeline: {band} · folklore tax: {tax}',
       copied: 'Link copied',
       replay: 'Play again',
+      // One line ahead of the notify box, pointing at the essay this model was built for.
+      nextLine: 'Every rule in this model had to name its source. What that turned up:',
+      nextLink: 'Who counted, and what are they selling?',
+      nextUrl: '/blog/who-counted-and-what-are-they-selling/',
       emailLine: 'Get notified when Building Value relaunches.',
       emailPlaceholder: 'you@company.com',
       emailButton: 'Notify me',
