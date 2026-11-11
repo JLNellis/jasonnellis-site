@@ -61,21 +61,34 @@ body {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+body { overflow-x: clip; caret-color: var(--accent); -webkit-font-smoothing: antialiased; }
 h1, h2, h3 { text-wrap: balance; }
-a { color: var(--accent); }
+a { color: var(--accent); text-underline-offset: 3px; }
+::selection { background: color-mix(in srgb, var(--accent) 24%, transparent); color: var(--fg); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.app { max-width: 1480px; margin: 0 auto; padding-block: 20px 64px; display: flex; flex-direction: column; gap: 18px; }
+.app { max-width: 1320px; margin: 0 auto; padding-block: 0 72px; display: flex; flex-direction: column; gap: 20px; }
 
-/* top bar */
-.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
-.mark { display: flex; align-items: baseline; gap: 10px; margin-right: auto; flex-wrap: wrap; }
-.mark h1 { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
-.mark .tag { font-size: 0.85rem; color: var(--muted); }
-nav.views { display: flex; flex-wrap: wrap; gap: 2px; background: var(--surface-2); padding: 4px; border-radius: 10px; }
-nav.views a { padding: 7px 14px; border-radius: 7px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-nav.views a[aria-current="page"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 2px var(--shadow); }
-nav.views .n { font-family: var(--font-mono); font-size: 0.75rem; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: var(--bad-soft); color: var(--bad); }
+/* top bar: full-bleed, sticky on wider screens so the views stay one click away */
+.topbar { position: relative; z-index: 10; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; padding-block: 14px; }
+.topbar::before { content: ""; position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; background: var(--bg); border-bottom: 1px solid var(--line); }
+.mark { display: flex; align-items: baseline; gap: 12px; margin-right: auto; flex-wrap: wrap; min-width: 0; }
+.mark h1 { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; margin: 0; line-height: 1.2; }
+.mark .tag { font-size: 0.84rem; color: var(--muted); }
+nav.views { display: flex; gap: 2px; background: var(--surface-2); padding: 3px; border-radius: 9px; }
+nav.views a { padding: 6px 13px; border-radius: 6px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.88rem; white-space: nowrap; display: inline-flex; align-items: center; }
+nav.views a:hover { color: var(--fg); }
+nav.views a[aria-current="page"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 2px var(--shadow), 0 0 0 1px color-mix(in srgb, var(--line) 70%, transparent); }
+nav.views .n { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; margin-left: 6px; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--bad); color: var(--surface); text-align: center; line-height: 1.55; font-variant-numeric: tabular-nums; }
+@media (min-width: 760px) {
+  .topbar { position: sticky; top: 0; }
+}
+@media (max-width: 759px) {
+  .mark .tag { display: none; }
+  nav.views { width: 100%; overflow-x: auto; scrollbar-width: none; }
+  nav.views::-webkit-scrollbar { display: none; }
+  nav.views a { flex: 1 0 auto; justify-content: center; min-height: 40px; }
+}
 
 .btn { font: inherit; font-weight: 600; font-size: 0.9rem; border-radius: 6px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; min-height: 40px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
 .btn:hover { border-color: var(--accent); }
@@ -108,45 +121,77 @@ nav.views .n { font-family: var(--font-mono); font-size: 0.75rem; margin-left: 4
 .check { display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--muted); cursor: pointer; }
 .check input { width: 18px; height: 18px; min-height: 0; accent-color: var(--accent); }
 
-/* today */
-.today { display: flex; flex-direction: column; gap: 18px; max-width: 920px; }
-.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px; }
-.view-title { font-weight: 700; font-size: 1.75rem; letter-spacing: -0.02em; margin: 0; line-height: 1.15; }
-.view-head p { margin: 4px 0 0; color: var(--muted); }
-.group { display: flex; flex-direction: column; gap: 6px; }
-.group > h3, .group > summary { font-size: 1.05rem; font-weight: 700; margin: 0; display: flex; align-items: baseline; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-.group > summary { cursor: pointer; list-style-position: inside; }
-.group .count { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 400; color: var(--muted); }
-.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+/* today: the list leads; money owed and payment check-ins sit in a rail beside it on wide screens */
+.today { display: flex; flex-direction: column; gap: 20px; }
+.today-main { display: flex; flex-direction: column; gap: 28px; min-width: 0; order: 2; }
+.today-rail { display: contents; }
+.today .view-head { order: 0; }
+.today .owed-meter { order: 1; }
+.today .fu-checkins { order: 3; }
+@media (min-width: 1080px) {
+  .today { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px 48px; align-items: start; }
+  .today .view-head { grid-column: 1 / -1; }
+  .today-main { grid-column: 1; grid-row: 2; }
+  .today-rail { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 92px; }
+}
+.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 16px; padding-top: 8px; }
+.view-title { font-weight: 700; font-size: 1.75rem; letter-spacing: -0.025em; margin: 0; line-height: 1.15; }
+.view-head p { margin: 6px 0 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.group { display: flex; flex-direction: column; gap: 4px; }
+.group > h3, .group > summary { font-size: 1rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--fg); }
+.group > summary { cursor: pointer; list-style-position: inside; border-bottom-color: var(--line); color: var(--muted); }
+.group > summary:hover { color: var(--fg); }
+.group[open] > summary { color: var(--fg); }
+.group .count { font-family: var(--font-mono); font-size: 0.76rem; font-weight: 500; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 0 7px; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.items { list-style: none; margin: 0 -12px; padding: 0; display: flex; flex-direction: column; }
+.item { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr) auto; align-items: center; gap: 6px 20px; padding: 12px; border-bottom: 1px solid var(--line); }
 .item:last-child { border-bottom: 0; }
-.item-main { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.when { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.item:hover { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
+.item-when { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
+.item-main { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.when { font-size: 0.82rem; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
 .when.bad { color: var(--bad); }
 .when.warn { color: var(--warn); }
+/* Who owes the next move. "You" is filled, "Brand" is an outline, so it reads without colour too. */
+.who { display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 600; color: var(--muted); }
+.who::before { content: ""; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.who.me { color: var(--fg); }
+.who.me::before { background: var(--accent); }
+.who.brand::before { border: 1.5px solid var(--muted); }
 .item-title { font-size: 1rem; }
 .item-sub { font-size: 0.86rem; color: var(--muted); overflow-wrap: anywhere; }
-.item-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.item-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .item.done .item-title { color: var(--muted); text-decoration: line-through; }
+@media (max-width: 640px) {
+  .items { margin: 0; }
+  .item { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 14px 0; }
+  .item:hover { background: none; }
+  .item-when { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  /* One action sits beside the title; several wrap underneath it. */
+  .item:has(.item-actions > :nth-child(2)) .item-actions { grid-column: 1 / -1; justify-content: flex-start; padding-top: 4px; }
+}
+.rail-title { font-size: 1rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
 .intake { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .intake h3 { margin: 0; font-size: 1.05rem; }
 .err { color: var(--bad); font-size: 0.84rem; margin: 0; font-weight: 600; }
 
 /* board */
 .board-wrap { overflow-x: auto; padding-bottom: 6px; }
-.board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(236px, 1fr); gap: 10px; min-width: min-content; }
-.col { background: var(--surface-2); border-radius: var(--radius); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 260px; min-width: 0; }
+.board { display: grid; grid-template-columns: repeat(var(--cols, 8), minmax(232px, 1fr)); grid-template-rows: auto 1fr; gap: 0 10px; min-width: min-content; }
+/* Stage groups bracket their columns instead of repeating a label over each one. */
+.board-group { grid-row: 1; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 0 4px 6px; margin-bottom: 10px; border-bottom: 2px solid var(--line); }
+.col { grid-row: 2; align-self: start; background: color-mix(in srgb, var(--surface-2) 70%, var(--bg)); border-radius: var(--radius); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 320px; min-width: 0; }
 .col.drop { outline: 2px dashed var(--accent); outline-offset: -2px; }
 .col-head { display: flex; flex-direction: column; gap: 1px; padding: 2px 4px 6px; }
-.col-head .grp { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
 .col-head .ttl { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.col-head h2 { font-weight: 700; font-size: 1rem; margin: 0; }
+.col-head h2 { font-weight: 700; font-size: 0.98rem; margin: 0; }
 .col-head .count, .col-head .sum { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.col-head .count { background: var(--surface); border-radius: 999px; padding: 0 7px; line-height: 1.6; }
 .col.declined { opacity: 0.85; }
 .empty-col { font-size: 0.82rem; color: var(--muted); padding: 6px 4px; }
 
-.card { text-align: left; font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 100%; }
-.card:hover { border-color: var(--accent); }
+.card { text-align: left; font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; width: 100%; box-shadow: 0 1px 2px var(--shadow); }
+.card:hover { border-color: var(--accent); box-shadow: 0 4px 12px var(--shadow); }
 .card.dragging { opacity: 0.5; }
 .card .brand { font-weight: 700; font-size: 0.95rem; overflow-wrap: anywhere; }
 .card .what { font-size: 0.8rem; color: var(--muted); }
@@ -276,7 +321,19 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 .owed .big { font-family: var(--font-mono); font-weight: 500; font-size: 2.2rem; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; color: var(--fg); }
 .owed .big .plus { color: var(--bad); }
 .owed p { margin: 0; }
-.owed .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.owed .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.owed-meter { gap: 14px; border: 1px solid color-mix(in srgb, var(--bad) 20%, transparent); }
+.owed-meter .owed-curs { flex-direction: column; gap: 0; }
+.owed-cur { padding-block: 14px; }
+.owed-cur:first-child { padding-top: 0; }
+.owed-cur + .owed-cur { border-top: 1px solid color-mix(in srgb, var(--bad) 18%, transparent); }
+.owed-meter .big { font-size: 2.1rem; }
+.owed-parts { margin: 10px 0 0; display: grid; gap: 3px; font-size: 0.86rem; }
+.owed-parts div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.owed-parts dt { color: color-mix(in srgb, var(--fg) 74%, var(--bad)); }
+.owed-parts dd { margin: 0; white-space: nowrap; }
+.owed-parts dd.plus { color: var(--bad); font-weight: 600; }
+.owed-meter .fine { color: color-mix(in srgb, var(--fg) 70%, var(--bad)); }
 .owed-curs { display: flex; flex-wrap: wrap; gap: 18px 36px; }
 .letter { width: 100%; min-height: 200px; font-size: 0.88rem; line-height: 1.5; }
 .tick { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -310,8 +367,9 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 .sheet-head .meta label { font-size: 0.8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
 .icon-btn { width: 40px; height: 40px; display: inline-grid; place-items: center; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; flex: none; }
 .icon-btn:hover { border-color: var(--accent); }
-.sheet-tabs { display: flex; gap: 2px; padding: 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; }
-.sheet-tabs button { font: inherit; font-weight: 600; font-size: 0.88rem; background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 10px 9px; color: var(--muted); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+.sheet-tabs { display: flex; gap: 0; padding: 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; flex: none; scrollbar-width: thin; }
+.sheet-tabs button { font: inherit; font-weight: 600; font-size: 0.86rem; background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 10px 8px 9px; color: var(--muted); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+.sheet-tabs button:hover { color: var(--fg); }
 .sheet-tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: inline-block; }
 .dot.good { background: var(--good); }
@@ -338,11 +396,15 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   .item-actions .btn { min-height: 44px; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .card, .btn, .opt span { transition: border-color 0.15s ease, background-color 0.15s ease; }
+  .card, .btn, .opt span, nav.views a, .item, .sheet-tabs button { transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; }
+  .sheet:not([hidden]) { animation: sheet-in 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+  .scrim:not([hidden]) { animation: fade-in 0.18s ease-out; }
 }
+@keyframes sheet-in { from { transform: translateX(32px); } }
+@keyframes fade-in { from { opacity: 0; } }
 /* ===== CSS: FEATURE A · payment outcomes and rights ===== */
 .fu-checkins { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
-.fu-checkins .eyebrow { font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+.fu-checkins { gap: 10px; }
 .fu-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .fu-card { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--line); min-width: 0; }
 .fu-card:first-child { padding-top: 2px; }
@@ -1435,8 +1497,9 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (d.example) sub.push("example");
     var dn = k.key === "usage" ? "Ads stopped" : doneLabel(k);
     btns = btns.replace(">" + doneLabel(k) + "</button>", ">" + dn + "</button>");
-    return '<li class="item"><div class="item-main"><span class="when ' + it.level + '">' + esc(it.when) + " · " + (k.owner === "brand" ? "Brand" : "You") + "</span>" +
-      '<button class="item-title linkish" type="button" data-open="' + d.id + '" data-opentab="steps">' + esc(it.lead) + "</button>" +
+    var who = k.owner === "brand" ? '<span class="who brand">Brand</span>' : '<span class="who me">You</span>';
+    return '<li class="item' + (it.level ? " is-" + it.level : "") + '"><div class="item-when"><span class="when ' + it.level + '">' + esc(it.when) + "</span>" + who + "</div>" +
+      '<div class="item-main"><button class="item-title linkish" type="button" data-open="' + d.id + '" data-opentab="steps">' + esc(it.lead) + "</button>" +
       '<span class="item-sub">' + esc(sub.join(" · ")) + "</span></div>" +
       '<div class="item-actions">' + btns + "</div></li>";
   }
@@ -1455,8 +1518,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function owedCard() {
     var all = owedAll(); if (!all.length) return "";
     var anyExtra = all.some(function (c) { return c.extra > 0; });
-    return '<section class="owed" aria-label="What brands owe you"><span class="eyebrow">What brands owe you</span><div class="owed-curs">' + all.map(function (c) {
-      return '<div><div class="big tick">' + money2(c.overdue + c.extra, c.cur) + "</div><p>" + (c.overdue ? money(c.overdue, c.cur) + " overdue" : "") + (c.extra ? (c.overdue ? " + " : "") + '<strong class="plus">' + money2(c.extra, c.cur) + "</strong> in late interest, fees and overage" : "") + (c.daily ? ' · <span class="tick">+' + money2(c.daily, c.cur) + "</span> a day" : "") + "</p></div>";
+    return '<section class="owed owed-meter" aria-labelledby="owed-title"><h2 class="rail-title" id="owed-title">What brands owe you</h2><div class="owed-curs">' + all.map(function (c) {
+      return '<div class="owed-cur"><div class="big tick">' + money2(c.overdue + c.extra, c.cur) + '</div><dl class="owed-parts">' +
+        (c.overdue ? "<div><dt>Overdue</dt><dd class=\"tick\">" + money(c.overdue, c.cur) + "</dd></div>" : "") +
+        (c.extra ? '<div><dt>Late interest, fees and overage</dt><dd class="tick plus">+' + money2(c.extra, c.cur) + "</dd></div>" : "") +
+        (c.daily ? '<div><dt>Still growing</dt><dd class="tick">+' + money2(c.daily, c.cur) + " a day</dd></div>" : "") + "</dl></div>";
     }).join("") + '</div><div class="row"><button class="btn small" type="button" data-action="owed-view">See the breakdown and follow-ups</button>' + (anyExtra ? '<span class="fine">Estimates, not legal advice.</span>' : "") + "</div></section>";
   }
   function renderToday() {
@@ -1468,9 +1534,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var long = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
     var h = '<div class="today"><div class="view-head"><div><h2 class="view-title">Needs attention</h2><p>' + esc(long) + " · " + (acts ? acts + " to act on" : "nothing urgent") + " · " + waits + " waiting on brands" + (od ? " · " + esc(od) + " overdue" : "") + "</p></div>" +
       (ui.intake ? "" : '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>') + "</div>";
+    var rail = owedCard() + todayExtras();
+    if (rail) h += '<aside class="today-rail" aria-label="Money owed and payment check-ins">' + rail + "</aside>";
+    h += '<div class="today-main">';
     if (ui.intake) h += intakeHTML();
-    h += owedCard();
-    h += todayExtras();
     if (!items.length) h += '<p class="empty">Nothing needs you right now. Log a deal and its next step to start.</p>';
     GROUPS.forEach(function (g) {
       var list = by[g[0]]; if (!list) return;
@@ -1483,10 +1550,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     live().forEach(function (d) { d.tasks.forEach(function (k) { if (k.done && diffDays(k.done, t) <= 3 && diffDays(k.done, t) >= 0) recent.push({ d: d, k: k }); }); });
     if (recent.length) {
       h += '<details class="group"><summary><span>Done in the last 3 days</span><span class="count">' + recent.length + '</span></summary><ul class="items">' + recent.map(function (r) {
-        return '<li class="item done"><div class="item-main"><span class="when">Done ' + esc(rel(r.k.done)) + '</span><button class="item-title linkish" type="button" data-open="' + r.d.id + '" data-opentab="steps">' + esc(r.k.title) + '</button><span class="item-sub">' + esc(r.d.brand) + '</span></div><div class="item-actions"><button class="btn small quiet" type="button" data-action="task-reopen" data-deal="' + r.d.id + '" data-task="' + r.k.id + '">Reopen</button></div></li>';
+        return '<li class="item done"><div class="item-when"><span class="when">Done ' + esc(rel(r.k.done)) + '</span></div><div class="item-main"><button class="item-title linkish" type="button" data-open="' + r.d.id + '" data-opentab="steps">' + esc(r.k.title) + '</button><span class="item-sub">' + esc(r.d.brand) + '</span></div><div class="item-actions"><button class="btn small quiet" type="button" data-action="task-reopen" data-deal="' + r.d.id + '" data-task="' + r.k.id + '">Reopen</button></div></li>';
       }).join("") + "</ul></details>";
     }
-    return h + "</div>";
+    return h + "</div></div>";
   }
 
   /* ---------- pipeline ---------- */
@@ -1512,20 +1579,23 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var q = (ui.q || "").trim().toLowerCase(), deals = live();
     var declinedCount = deals.filter(function (d) { return d.stage === "declined"; }).length;
     var stages = STAGES.filter(function (s) { return s.key !== "declined" || state.ui.showDeclined; });
+    var groups = [];
+    stages.forEach(function (s) { var g = groups[groups.length - 1]; if (g && g.name === s.group) g.n++; else groups.push({ name: s.group, n: 1 }); });
+    var heads = groups.map(function (g) { return '<div class="board-group" style="grid-column: span ' + g.n + '">' + g.name + "</div>"; }).join("");
     var cols = stages.map(function (s) {
       var ds = deals.filter(function (d) { return d.stage === s.key && (!q || (d.brand || "").toLowerCase().indexOf(q) > -1); });
       ds.sort(function (a, b) { return (b.created || "").localeCompare(a.created || ""); });
       var tot = {}; ds.forEach(function (d) { if (legitResult(d).key !== "scam" && num(d.fee)) tot[d.currency] = (tot[d.currency] || 0) + num(d.fee); });
       var sumTxt = Object.keys(tot).map(function (c) { return money(tot[c], c); }).join(" + ") || "—";
       return '<section class="col' + (s.key === "declined" ? " declined" : "") + '" data-stage="' + s.key + '" aria-labelledby="col-' + s.key + '">' +
-        '<div class="col-head"><span class="grp">' + s.group + '</span><div class="ttl"><h2 id="col-' + s.key + '">' + s.label + '</h2><span class="count">' + ds.length + '</span></div><span class="sum">' + sumTxt + "</span></div>" +
+        '<div class="col-head"><div class="ttl"><h2 id="col-' + s.key + '">' + s.label + '</h2><span class="count">' + ds.length + '</span></div><span class="sum">' + sumTxt + "</span></div>" +
         (ds.length ? ds.map(cardHTML).join("") : '<p class="empty-col">' + (q ? "No matches" : "Nothing here") + "</p>") + "</section>";
     }).join("");
     return '<div class="stack"><div class="toolbar"><input class="search" id="search" type="search" placeholder="Search brands" aria-label="Search brands" value="' + esc(ui.q) + '">' +
       '<label class="check"><input type="checkbox" id="show-declined"' + (state.ui.showDeclined ? " checked" : "") + "> Show declined (" + declinedCount + ")</label>" +
       '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>' +
       '<span class="hint">Drag cards between stages, or open a deal to move it.</span></div>' +
-      '<div class="board-wrap"><div class="board">' + cols + "</div></div></div>";
+      '<div class="board-wrap"><div class="board" style="--cols: ' + stages.length + '">' + heads + cols + "</div></div></div>";
   }
 
   /* ---------- money ---------- */
@@ -1969,7 +2039,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function renderView() {
     var v = view(), acts = attention().filter(function (it) { return it.g === "act"; }).length;
     document.querySelectorAll("nav.views a").forEach(function (a) {
-      if (a.dataset.view === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (a.dataset.view === v) {
+        a.setAttribute("aria-current", "page");
+        var nav = a.parentNode; // on a phone the views scroll sideways; keep the current one in sight
+        if (nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, a.offsetLeft - nav.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2);
+      } else a.removeAttribute("aria-current");
       if (a.dataset.view === "today") a.innerHTML = "Needs attention" + (acts ? '<span class="n" aria-label="' + acts + ' to act on">' + acts + "</span>" : "");
     });
     ctxCur = state.profile.currency;
@@ -2127,7 +2201,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function todayExtras() {
     syncAllFollowups();
     var list = pendingCheckins(); if (!list.length) return "";
-    return '<section class="fu-checkins" id="fu-checkins" aria-label="Did they pay?"><span class="eyebrow">Did they pay?</span><ul class="fu-list">' + list.map(function (x) {
+    return '<section class="fu-checkins" id="fu-checkins" aria-labelledby="fu-title"><h2 class="rail-title" id="fu-title">Did they pay?</h2><ul class="fu-list">' + list.map(function (x) {
       var d = x.d, f = x.f, r = x.r, C = d.currency, ids = ' data-deal="' + d.id + '" data-fu="' + f.id + '"', on = ui.fuDate === f.id, t = todayISO();
       return '<li class="fu-card" id="fu-' + f.id + '"><p class="fu-q">Did ' + esc(d.brand || "the brand") + " pay " + esc(invName(r, C)) + " after your " + esc(TONE_AFTER[f.tone] || "follow-up") + "?</p>" +
         '<p class="fine">Sent ' + esc(rel(f.at)) + " · " + money(r.open, C) + " open" + (d.example ? " · example" : "") + "</p>" +
