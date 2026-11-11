@@ -262,6 +262,15 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 .money-sum div { display: flex; flex-direction: column; }
 .money-sum .num { font-family: var(--font-mono); font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .addrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 8px; align-items: end; padding: 12px; border-radius: 8px; background: var(--surface-2); }
+.lines { display: flex; flex-direction: column; gap: 10px; }
+.line { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.line-top { display: grid; grid-template-columns: 1fr 72px auto; gap: 8px; align-items: center; }
+.line .grid3 input { min-height: 36px; padding: 5px 8px; }
+.line-total { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1rem; padding-top: 6px; }
+.hint { font-size: 0.8rem; color: var(--muted); margin: 0; }
+.hint.warn { color: var(--warn); font-weight: 600; }
+.price-sum { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 12px; border-radius: 8px; background: var(--surface-2); }
+.price-sum strong { font-family: var(--font-mono); font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 .history { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .history li { font-size: 0.88rem; padding: 8px 10px; border-radius: 6px; background: var(--surface-2); }
 
@@ -590,17 +599,18 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   var KEY2 = "creator-dealflow-v2", KEY1 = "creator-dealflow-v1";
   function defaultProfile() {
     var h = {}; DELIVERABLES.forEach(function (d) { h[d.key] = d.hours; });
-    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h };
+    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h, rateCard: {} };
   }
   function mergeProfile(p) {
     var out = Object.assign(defaultProfile(), p || {});
     out.hours = Object.assign(defaultProfile().hours, (p && p.hours) || {});
+    out.rateCard = Object.assign({}, (p && p.rateCard) || {});
     return out;
   }
   function blankDeal(o) {
     var d = {
       id: uid(), brand: "", category: "Other", contact: "", email: "", source: "Inbound email", stage: "inbound",
-      currency: (state && state.profile && state.profile.currency) || "USD", fee: 0, productValue: 0, deliverables: [],
+      currency: (state && state.profile && state.profile.currency) || "USD", fee: 0, feeMode: "lines", productValue: 0, deliverables: [],
       publishBy: "", created: todayISO(), notes: "", declineReason: "", legit: {}, take: { revisions: 1, extra: 0, buy: "", fit: "" },
       contract: {}, tasks: [], invoices: [], payments: [], termsApplied: false, revisionsUsed: 0
     };
@@ -613,7 +623,51 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     ["deliverables", "tasks", "invoices", "payments"].forEach(function (k) { if (!Array.isArray(d[k])) d[k] = []; });
     d.legit = d.legit || {}; d.contract = d.contract || {};
     d.tasks = d.tasks.map(function (t) { return task(t); });
+    d.deliverables = d.deliverables.map(normLine);
+    if (x.feeMode !== "lines" && x.feeMode !== "package") d.feeMode = d.deliverables.some(function (l) { return num(l.rate) > 0; }) || !num(d.fee) ? "lines" : "package";
     return d;
+  }
+  function normLine(x) { return { type: x.type || "yt_integration", qty: x.qty == null ? 1 : x.qty, rate: num(x.rate), publishBy: x.publishBy || "", specs: x.specs || "" }; }
+
+  /* ---------- placements and pricing ---------- */
+  function lineTotal(x) { return num(x.qty) * num(x.rate); }
+  function linesTotal(d) { return sum(d.deliverables, lineTotal); }
+  function priced(d) { return d.feeMode !== "package"; }
+  function syncFee(d) { if (priced(d)) d.fee = linesTotal(d); }
+  function cardRate(d, type) { var r = num((state.profile.rateCard || {})[type]); return r && d.currency === state.profile.currency ? r : 0; }
+  function splitByHours(d) {
+    var p = state.profile, tot = sum(d.deliverables, function (x) { return num(x.qty) * num(p.hours[x.type]); });
+    d.deliverables.forEach(function (x) {
+      var share = tot ? num(x.qty) * num(p.hours[x.type]) / tot : 1 / d.deliverables.length;
+      x.rate = num(x.qty) ? Math.round(num(d.fee) * share / num(x.qty) / 50) * 50 : 0;
+    });
+  }
+  function lineDate(d, x) { return x.publishBy || d.publishBy || ""; }
+  // What one placement of this type cost in another deal: its own price, or the whole fee when it was the only line.
+  function unitPrice(x, deal) {
+    if (num(x.rate)) return num(x.rate);
+    if (deal.deliverables.length === 1 && num(deal.fee) && num(x.qty)) return num(deal.fee) / num(x.qty);
+    return 0;
+  }
+  function pastRates(d, type) {
+    var out = [];
+    state.deals.forEach(function (o) {
+      if (o.id === d.id || !!o.example !== !!d.example || o.currency !== d.currency || BOOKED.indexOf(o.stage) < 0) return;
+      o.deliverables.forEach(function (x) { if (x.type === type) { var u = unitPrice(x, o); if (u) out.push({ price: u, deal: o }); } });
+    });
+    return out.sort(function (a, b) { return a.price - b.price; });
+  }
+  function median(list) { if (!list.length) return 0; var m = Math.floor(list.length / 2); return list.length % 2 ? list[m] : (list[m - 1] + list[m]) / 2; }
+  function rateHint(d, x) {
+    var parts = [], card = cardRate(d, x.type), past = pastRates(d, x.type), level = "";
+    if (card) parts.push("Your rate card: " + money(card, d.currency));
+    if (past.length) {
+      var prices = past.map(function (p) { return p.price; }), med = median(prices);
+      parts.push(past.length === 1 ? "Last time: " + money(prices[0], d.currency) + " (" + (past[0].deal.brand || "untitled") + ")" : "Before: " + money(prices[0], d.currency) + "–" + money(prices[prices.length - 1], d.currency) + ", median " + money(med, d.currency) + " across " + past.length);
+      var ref = card || med, r = unitPrice(x, d);
+      if (r && ref) { var diff = Math.round((r - ref) / ref * 100); if (Math.abs(diff) >= 5) { parts.push(Math.abs(diff) + "% " + (diff < 0 ? "below" : "above") + " your " + (card ? "rate card" : "usual")); level = diff < -10 ? "warn" : ""; } }
+    } else if (card && num(x.rate) && num(x.rate) < card) { parts.push(Math.round((card - num(x.rate)) / card * 100) + "% below your rate card"); level = "warn"; }
+    return { text: parts.join(" · "), level: level };
   }
   function task(o) {
     var t = { id: uid(), title: "", owner: "me", kind: "other", due: "", chase: "", done: "", key: "", link: "", log: [] };
@@ -632,12 +686,15 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function delLabel(x) { var s = DMAP[x.type] ? DMAP[x.type].short : x.type; return (num(x.qty) > 1 ? num(x.qty) + "× " : "") + s; }
   function termPlan(d) {
     var P = d.publishBy, c = d.contract || {}, appr = c.approval === "none" ? 5 : 3, out = [];
+    var last = "";
     d.deliverables.forEach(function (x, i) {
-      var L = delLabel(x);
-      out.push({ key: "draft:" + i, kind: "draft", owner: "me", title: "Send draft: " + L, due: addD(P, -7) });
-      out.push({ key: "appr:" + i, kind: "approval", owner: "brand", title: "Approval: " + L, due: addD(P, -3), chase: addD(P, -7 + appr) });
-      out.push({ key: "pub:" + i, kind: "publish", owner: "me", title: "Publish: " + L, due: P });
+      var L = delLabel(x), D = lineDate(d, x);
+      if (D > last) last = D;
+      out.push({ key: "draft:" + i, kind: "draft", owner: "me", title: "Send draft: " + L, due: addD(D, -7) });
+      out.push({ key: "appr:" + i, kind: "approval", owner: "brand", title: "Approval: " + L, due: addD(D, -3), chase: addD(D, -7 + appr) });
+      out.push({ key: "pub:" + i, kind: "publish", owner: "me", title: "Publish: " + L, due: D });
     });
+    P = last || P;
     out.push({ key: "invoice", kind: "invoice", owner: "me", title: "Send invoice (Net " + netOf(d) + ")", due: addD(P, 2) });
     if (USAGE_DAYS[c.usage]) out.push({ key: "usage", kind: "rights", owner: "brand", title: "Paid usage ends: check the ads have stopped", due: addD(P, USAGE_DAYS[c.usage]), chase: addD(P, USAGE_DAYS[c.usage] + 1) });
     if (WL_DAYS[c.whitelist]) out.push({ key: "whitelist", kind: "rights", owner: "me", title: "Remove the brand's ad access to your account", due: addD(P, WL_DAYS[c.whitelist]) });
@@ -747,7 +804,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     ["id", "brand", "category", "contact", "email", "source", "stage", "fee", "productValue", "deliverables", "created", "notes", "declineReason", "legit", "take", "contract", "example"].forEach(function (k) { if (o[k] !== undefined) d[k] = clone(o[k]); });
     d.take = Object.assign({ revisions: 1, extra: 0, buy: "", fit: "" }, o.take || {});
     d.legit = d.legit || {}; d.contract = d.contract || {};
-    d.deliverables = (d.deliverables || []).map(function (x) { return { type: x.type, qty: x.qty }; });
+    d.deliverables = (d.deliverables || []).map(normLine); d.feeMode = num(o.fee) ? "package" : "lines";
     d.currency = cur; d.publishBy = o.dueDate || ""; d.tasks = []; d.invoices = []; d.payments = [];
     var s = d.stage, net = o.netDays != null ? num(o.netDays) : 30, fee = num(o.fee), iv = null;
     var note = o.example ? "Example" : "Brought over from the earlier version";
@@ -766,7 +823,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var t = todayISO();
     var d = blankDeal({
       example: true, brand: "Juniper Studio", category: "Home", contact: "Elena Marsh", email: "elena@juniperstudio.example", source: "My outreach",
-      stage: "production", currency: "GBP", fee: 3000, deliverables: [{ type: "yt_integration", qty: 1 }, { type: "ig_reel", qty: 1 }],
+      stage: "production", currency: "GBP", fee: 3000, feeMode: "lines", deliverables: [{ type: "yt_integration", qty: 1, rate: 2200, publishBy: addDays(t, 3), specs: "60–90 s mid-roll, link and code in the description, pinned comment" }, { type: "ig_reel", qty: 1, rate: 800, publishBy: addDays(t, 4), specs: "30–45 s, collab post with the brand, link sticker in a story" }],
       publishBy: addDays(t, 3), created: addDays(t, -45), legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
       take: { revisions: 1, extra: 0, buy: "", fit: "yes" }, termsApplied: true, revisionsUsed: 1,
       notes: "Autumn campaign. £600 deposit on signing, then the £2,400 balance invoiced early, as agreed."
@@ -856,7 +913,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 
   function worthBlock(d) {
     var w = worthResult(d);
-    if (!d.deliverables.length) return '<div class="result" id="calc-worth"><span class="label">Effective hourly rate</span><span class="headline">Add deliverables first</span><p>List what the brand wants on the Deal tab. The hours come from your Rates page.</p></div>';
+    if (!d.deliverables.length) return '<div class="result" id="calc-worth"><span class="label">Effective hourly rate</span><span class="headline">Add deliverables first</span><p>List what the brand wants under Details. The hours come from your Rates page.</p></div>';
     var targetLine = "against your " + money(w.target) + "/h target" + (w.uplift ? ", or " + money(w.effTarget) + "/h with the contract terms priced in (+" + w.uplift + "%)" : "");
     var gap = w.value - w.effTarget * w.hours;
     var ask = w.askFor > w.fee
@@ -1152,9 +1209,9 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="field"><label for="r-currency">Your main currency</label><select id="r-currency">' + opts(CURRENCIES, p.currency) + '</select><p class="help">Used for your target rate and new deals. Existing deals keep their own currency.</p></div>' +
       '<div class="field"><label for="r-admin">Admin hours per deal</label><input id="r-admin" type="number" min="0" step="0.25" inputmode="decimal" data-profile="admin" value="' + esc(p.admin) + '"><p class="help">Calls, emails, reading the brief, invoicing.</p></div>' +
       '<div class="field"><label for="r-rev">Hours per revision round</label><input id="r-rev" type="number" min="0" step="0.25" inputmode="decimal" data-profile="revisionHours" value="' + esc(p.revisionHours) + '"></div></div></section>';
-    out += '<section class="panel"><h2>Hours per deliverable</h2><p class="lede">Starting estimates from the Burn Rate format tables, trimmed for sponsored segments. Replace them with your own.</p>' +
-      '<div class="table-wrap"><table class="hours-table"><thead><tr><th>Deliverable</th><th class="num">Hours</th></tr></thead><tbody>' +
-      DELIVERABLES.map(function (d) { return '<tr><td><label for="h-' + d.key + '">' + esc(d.label) + '</label></td><td class="num"><input id="h-' + d.key + '" type="number" min="0" step="0.25" inputmode="decimal" data-hours="' + d.key + '" value="' + esc(p.hours[d.key]) + '"></td></tr>'; }).join("") +
+    out += '<section class="panel"><h2>Your rate card</h2><p class="lede">What you charge for one placement of each format, in ' + esc(p.currency) + ', and the hours it takes you. New placements start at your price, and every offer is checked against it. The hours are starting estimates from the Burn Rate format tables. Replace them with your own.</p>' +
+      '<div class="table-wrap"><table class="hours-table"><thead><tr><th>Format</th><th class="num">Your price</th><th class="num">Hours</th></tr></thead><tbody>' +
+      DELIVERABLES.map(function (d) { return '<tr><td><label for="rc-' + d.key + '">' + esc(d.label) + '</label></td><td class="num"><input id="rc-' + d.key + '" type="number" min="0" step="50" inputmode="decimal" data-ratecard="' + d.key + '" value="' + esc((p.rateCard || {})[d.key] || "") + '" aria-label="' + esc(d.label) + ' price"></td><td class="num"><input id="h-' + d.key + '" type="number" min="0" step="0.25" inputmode="decimal" data-hours="' + d.key + '" value="' + esc(p.hours[d.key]) + '" aria-label="' + esc(d.label) + ' hours"></td></tr>'; }).join("") +
       "</tbody></table></div></section>";
     out += '<section class="panel"><h2>Contract adjusters</h2><p class="lede">How much the contract checklist adds to your asking price for each term. These are rules of thumb, not market data. Calibrate them against what brands in your niche actually pay.</p>' +
       '<div class="table-wrap"><table><thead><tr><th>Clause</th><th>Term</th><th class="num">Adds</th></tr></thead><tbody>' +
@@ -1223,7 +1280,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="task-foot"><span class="fine">' + (last ? esc(last.text) + ", " + esc(fmtDate(last.at)) : "") + '</span><button class="btn small quiet" type="button" data-action="del-task"' + ids + ">Remove</button></div></div>";
   }
   function stepsTab(d) {
-    var h = '<div class="grid2"><div class="field"><label for="f-publish">Publish by</label><input id="f-publish" type="date" data-field="publishBy" value="' + esc(d.publishBy) + '"><p class="help">Steps made from the terms count back from this date.</p></div></div>';
+    var h = '<div class="grid2"><div class="field"><label for="f-publish">Publish by</label><input id="f-publish" type="date" data-field="publishBy" value="' + esc(d.publishBy) + '"><p class="help">Steps made from the terms count back from this date, or from each placement\'s own go-live date under Details.</p></div></div>';
     var miss = missingTerms(d), booked = BOOKED.indexOf(d.stage) > -1;
     if (!d.deliverables.length) h += '<p class="fine">Add deliverables under Details, and the contract terms under Contract, to turn them into steps.</p>';
     else if (miss.length && (booked || d.stage === "negotiating")) {
@@ -1254,18 +1311,56 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="field"><label for="f-source">Came from</label><select id="f-source" data-field="source">' + opts(SOURCES, d.source) + "</select></div>" +
       '<div class="field"><label for="f-created">Arrived on</label><input id="f-created" type="date" data-field="created" value="' + esc(d.created) + '"></div>' +
       '<div class="field"><label for="f-currency">Currency</label><select id="f-currency" data-field="currency">' + opts(CURRENCIES, d.currency) + "</select></div>" +
-      '<div class="field"><label for="f-fee">Agreed or offered fee</label><input id="f-fee" type="number" min="0" step="50" inputmode="decimal" data-field="fee" value="' + esc(d.fee || "") + '"></div>' +
       '<div class="field"><label for="f-product">Product value</label><input id="f-product" type="number" min="0" step="10" inputmode="decimal" data-field="productValue" value="' + esc(d.productValue || "") + '"></div>' +
       "</div>";
-    h += '<div class="field"><span class="flabel">Deliverables</span><div class="del-list">' +
-      d.deliverables.map(function (x, i) {
-        return '<div class="del-row"><select id="del-' + i + '-type" data-del="' + i + '" data-dk="type" aria-label="Deliverable ' + (i + 1) + ' type">' + opts(DELIVERABLES.map(function (o) { return [o.key, o.label]; }), x.type) + "</select>" +
-          '<input id="del-' + i + '-qty" type="number" min="1" step="1" inputmode="numeric" data-del="' + i + '" data-dk="qty" value="' + esc(x.qty) + '" aria-label="Deliverable ' + (i + 1) + ' quantity">' +
-          '<button class="btn small quiet" type="button" data-action="del-remove" data-i="' + i + '" aria-label="Remove deliverable ' + (i + 1) + '">Remove</button></div>';
-      }).join("") + '<div><button class="btn small" type="button" data-action="del-add">+ Add deliverable</button></div></div></div>';
+    h += pricingHTML(d);
     if (d.stage === "declined") h += '<div class="field"><label for="f-decline">Why you declined</label><input id="f-decline" data-field="declineReason" value="' + esc(d.declineReason) + '"></div>';
     h += '<div class="field"><label for="f-notes">Notes</label><textarea id="f-notes" data-field="notes">' + esc(d.notes) + "</textarea></div>";
     return h + brandHistory(d);
+  }
+  function pricingHTML(d) {
+    var C = d.currency, pr = priced(d), alloc = linesTotal(d);
+    var h = '<div class="stack" style="gap:10px"><div class="panel-head"><h3 class="section-title">Deliverables and pricing</h3>' +
+      '<div class="opts" role="radiogroup" aria-label="How this deal is priced">' +
+      [["lines", "Price each placement"], ["package", "One package price"]].map(function (o) {
+        return '<label class="opt" for="fm-' + o[0] + '"><input type="radio" id="fm-' + o[0] + '" name="feeMode" value="' + o[0] + '" data-feemode="1"' + (d.feeMode === o[0] ? " checked" : "") + "><span>" + o[1] + "</span></label>";
+      }).join("") + "</div></div>";
+    if (!d.deliverables.length) h += '<p class="fine">What is the brand buying? Add each placement: the format, how many, what each one is worth, and when it goes live.</p>';
+    h += '<div class="lines">' + d.deliverables.map(function (x, i) {
+      var hint = rateHint(d, x);
+      return '<div class="line"><div class="line-top"><select id="del-' + i + '-type" data-del="' + i + '" data-dk="type" aria-label="Placement ' + (i + 1) + ' format">' + opts(DELIVERABLES.map(function (o) { return [o.key, o.label]; }), x.type) + "</select>" +
+        '<input id="del-' + i + '-qty" type="number" min="1" step="1" inputmode="numeric" data-del="' + i + '" data-dk="qty" value="' + esc(x.qty) + '" aria-label="How many">' +
+        '<button class="btn small quiet" type="button" data-action="del-remove" data-i="' + i + '" aria-label="Remove placement ' + (i + 1) + '">Remove</button></div>' +
+        '<div class="grid3"><div class="field"><label for="del-' + i + '-rate">' + (pr ? "Price each" : "Share of package, each") + " (" + esc(C) + ')</label><input id="del-' + i + '-rate" type="number" min="0" step="50" inputmode="decimal" data-del="' + i + '" data-dk="rate" value="' + esc(x.rate || "") + '"></div>' +
+        '<div class="field"><label for="del-' + i + '-date">Goes live</label><input id="del-' + i + '-date" type="date" data-del="' + i + '" data-dk="publishBy" value="' + esc(x.publishBy) + '"></div>' +
+        '<div class="field"><span class="flabel">Line total</span><span class="line-total" id="lt-' + i + '">' + money(lineTotal(x), C) + "</span></div></div>" +
+        '<div class="field"><label for="del-' + i + '-specs">Specs</label><input id="del-' + i + '-specs" data-del="' + i + '" data-dk="specs" value="' + esc(x.specs) + '" autocomplete="off" placeholder="Length, placement, links, codes, tags"></div>' +
+        '<p class="hint ' + hint.level + '" id="rh-' + i + '">' + esc(hint.text) + "</p></div>";
+    }).join("") + "</div>";
+    h += '<div><button class="btn small" type="button" data-action="del-add">+ Add placement</button></div>';
+    if (pr) h += '<div class="price-sum" id="price-sum"><span>Deal total, from the placements</span><strong id="price-total">' + money(alloc, C) + "</strong></div>";
+    else h += '<div class="price-sum"><div class="field" style="max-width:200px"><label for="f-fee">Package price (' + esc(C) + ')</label><input id="f-fee" type="number" min="0" step="50" inputmode="decimal" data-field="fee" value="' + esc(d.fee || "") + '"></div>' +
+      '<span class="fine" id="price-alloc">' + (alloc ? money(alloc, C) + " of " + money(d.fee, C) + " assigned to placements" : "Not split across placements") + "</span>" +
+      (d.deliverables.length > 1 && num(d.fee) ? '<button class="btn small" type="button" data-action="split-hours">Split by hours</button>' : "") + "</div>";
+    return h + "</div>";
+  }
+  function refreshPricing(d) {
+    var C = d.currency;
+    d.deliverables.forEach(function (x, i) {
+      var lt = document.getElementById("lt-" + i); if (lt) lt.textContent = money(lineTotal(x), C);
+      var rh = document.getElementById("rh-" + i); if (rh) { var hn = rateHint(d, x); rh.textContent = hn.text; rh.className = "hint " + hn.level; }
+    });
+    var pt = document.getElementById("price-total"); if (pt) pt.textContent = money(linesTotal(d), C);
+    var pa = document.getElementById("price-alloc"); if (pa) pa.textContent = linesTotal(d) ? money(linesTotal(d), C) + " of " + money(d.fee, C) + " assigned to placements" : "Not split across placements";
+  }
+  function rateCardBlock(d) {
+    if (!d.deliverables.length || d.currency !== state.profile.currency) return "";
+    var missing = d.deliverables.filter(function (x) { return !cardRate(d, x.type); });
+    if (missing.length === d.deliverables.length) return '<p class="fine">Add your prices under Rates &amp; data to see this offer against your rate card.</p>';
+    var card = sum(d.deliverables, function (x) { return num(x.qty) * cardRate(d, x.type); }), fee = num(d.fee);
+    var diff = card ? Math.round((fee - card) / card * 100) : 0, level = diff <= -15 ? "bad" : diff < 0 ? "warn" : "good";
+    return '<div class="callout ' + level + '"><strong>' + (fee ? (diff === 0 ? "Matches your rate card" : Math.abs(diff) + "% " + (diff < 0 ? "below" : "above") + " your rate card") : "Your rate card prices this at " + money(card, d.currency)) + "</strong>" +
+      "<p>Your rate card prices these placements at " + money(card, d.currency) + (missing.length ? " (" + missing.length + " without a price)" : "") + "." + (fee ? " The deal is " + money(fee, d.currency) + "." : "") + " The worth-it check below adds what the contract terms are worth.</p></div>";
   }
   function sameBrand(a, b) { return a.id !== b.id && !!a.example === !!b.example && (a.brand || "").trim().toLowerCase() === (b.brand || "").trim().toLowerCase() && !!a.brand; }
   function paidAfter(x) {
@@ -1288,10 +1383,15 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         x.deliverables.some(function (y) { return types[y.type]; });
     }).sort(function (a, b) { return (b.created || "").localeCompare(a.created || ""); }).slice(0, 6);
     if (!d.deliverables.length) return "";
-    if (!comp.length) return '<p class="fine">No completed ' + esc(d.currency) + " deals with the same kind of deliverable yet. Your own history shows here as it builds up.</p>";
+    var seen = {}, prow = d.deliverables.filter(function (x) { if (seen[x.type]) return false; seen[x.type] = 1; return true; }).map(function (x) {
+      var past = pastRates(d, x.type).map(function (p) { return p.price; }), def = DMAP[x.type];
+      return "<tr><td>" + esc(def ? def.short : x.type) + '</td><td class="num">' + (unitPrice(x, d) ? money(unitPrice(x, d), d.currency) : "—") + '</td><td class="num">' + (cardRate(d, x.type) ? money(cardRate(d, x.type), d.currency) : "—") + '</td><td class="num">' + (past.length ? money(median(past), d.currency) + ' <span class="fine">(' + past.length + ")</span>" : "—") + '</td><td class="num">' + (past.length > 1 ? money(past[0], d.currency) + "–" + money(past[past.length - 1], d.currency) : "—") + "</td></tr>";
+    }).join("");
+    var perPlacement = '<div class="stack" style="gap:8px"><h3 class="section-title">Per placement</h3><div class="table-wrap"><table><thead><tr><th>Format</th><th class="num">This deal</th><th class="num">Rate card</th><th class="num">Your median</th><th class="num">Your range</th></tr></thead><tbody>' + prow + '</tbody></table></div><p class="fine">Past prices come from placements you priced individually, or from deals with a single kind of placement. Package deals with mixed formats are left out.</p></div>';
+    if (!comp.length) return perPlacement + '<p class="fine">No completed ' + esc(d.currency) + " deals with the same kind of deliverable yet. Your own history shows here as it builds up.</p>";
     var fees = comp.map(function (x) { return num(x.fee); }).sort(function (a, b) { return a - b; }), mid = fees[Math.floor(fees.length / 2)];
     if (fees.length % 2 === 0) mid = (fees[fees.length / 2 - 1] + fees[fees.length / 2]) / 2;
-    return '<div class="stack" style="gap:8px"><h3 class="section-title">Your past deals like this one</h3>' +
+    return perPlacement + '<div class="stack" style="gap:8px"><h3 class="section-title">Your past deals like this one</h3>' +
       (comp.length > 1 ? '<p class="fine">Median fee across these ' + comp.length + ": <strong>" + money(mid, d.currency) + "</strong>. Check that the scope and rights match before you compare.</p>" : "") +
       '<div class="table-wrap"><table><thead><tr><th>Deal</th><th>Deliverables</th><th>Usage</th><th class="num">Fee</th><th class="num">Per hour</th></tr></thead><tbody>' +
       comp.map(function (x) { return '<tr><td><button class="linkish" type="button" data-open="' + x.id + '">' + esc(x.brand || "Untitled") + '</button> <span class="fine">' + esc(fmtMonth(x.created)) + "</span></td><td>" + esc(summaryText(x)) + "</td><td>" + esc(usageLabel(x)) + '</td><td class="num">' + money(x.fee, x.currency) + '</td><td class="num">' + money(worthResult(x).rate, x.currency) + "</td></tr>"; }).join("") +
@@ -1338,7 +1438,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function bodyHTML(d) {
     switch (ui.tab) {
       case "legit": return legitTab(d);
-      case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + worthTab(d) + pastBlock(d);
+      case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + rateCardBlock(d) + worthTab(d) + pastBlock(d);
       case "contract": return contractTab(d);
       case "money": return moneyTab(d);
       case "deal": return dealTab(d);
@@ -1366,6 +1466,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var swap = function (id, html) { var el = document.getElementById(id); if (el) el.outerHTML = html; };
     swap("calc-worth", worthBlock(d)); swap("calc-legit", legitBlock(d)); swap("calc-contract", contractBlock(d));
     var hEl = document.getElementById("calc-hours"); if (hEl) hEl.textContent = hrs(worthResult(d).hours) + " h";
+    refreshPricing(d);
   }
 
   /* ---------- top-level render ---------- */
@@ -1440,7 +1541,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (!brand) { var e = document.getElementById("qi-err"); if (e) { e.textContent = "Add the brand's name to log the deal."; e.hidden = false; } var b = document.getElementById("qi-brand"); if (b) b.focus(); return; }
     var owner = g("qi-owner") || "me", date = g("qi-date"), stage = g("qi-stage") || "inbound", hadReal = hasReal();
     var step = g("qi-step") || (stage === "inbound" ? "Vet the offer and reply" : stage === "negotiating" ? "Send your counter-offer" : "Confirm deliverables and dates");
-    var d = blankDeal({ brand: brand, stage: stage, fee: num(g("qi-fee")), currency: g("qi-cur") || state.profile.currency });
+    var d = blankDeal({ brand: brand, stage: stage, fee: num(g("qi-fee")), feeMode: num(g("qi-fee")) ? "package" : "lines", currency: g("qi-cur") || state.profile.currency });
     var k = task({ title: step, owner: owner, due: owner === "me" ? date : "", chase: owner === "brand" ? date : "" });
     logT(k, "Logged"); d.tasks.push(k);
     state.deals.push(d); ui.intake = false; save();
@@ -1496,8 +1597,9 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       case "ask-delete": ui.confirm = "delete:" + d.id; renderAll(); break;
       case "do-delete": state.deals = state.deals.filter(function (x) { return x.id !== d.id; }); save(); toast("Deleted " + (d.brand || "the deal")); ui.openId = null; ui.confirm = null; renderAll(); break;
       case "cancel-confirm": ui.confirm = null; renderAll(); break;
-      case "del-add": d.deliverables.push({ type: "yt_integration", qty: 1 }); save(); renderAll(); var ns = document.getElementById("del-" + (d.deliverables.length - 1) + "-type"); if (ns) ns.focus(); break;
-      case "del-remove": d.deliverables.splice(+act.dataset.i, 1); save(); renderAll(); break;
+      case "del-add": d.deliverables.push(normLine({ type: "yt_integration", qty: 1, rate: priced(d) ? cardRate(d, "yt_integration") : 0 })); syncFee(d); save(); renderAll(); var ns = document.getElementById("del-" + (d.deliverables.length - 1) + "-type"); if (ns) ns.focus(); break;
+      case "del-remove": d.deliverables.splice(+act.dataset.i, 1); syncFee(d); save(); renderAll(); break;
+      case "split-hours": splitByHours(d); save(); renderAll(); toast("Split " + money(d.fee, d.currency) + " across the placements by the hours they take"); break;
       case "apply-terms": var n = applyTerms(d); save(); renderAll(); toast(n ? "Added " + n + " step" + (n === 1 ? "" : "s") + " from the terms" : "All the steps from the terms are already here"); break;
       case "log-revision":
         d.revisionsUsed = num(d.revisionsUsed) + 1;
@@ -1573,10 +1675,12 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (t.id === "search") { ui.q = t.value; withFocus(renderView); return; }
     if (t.dataset.profile) { state.profile[t.dataset.profile] = num(t.value); save(); return; }
     if (t.dataset.hours) { state.profile.hours[t.dataset.hours] = num(t.value); save(); return; }
+    if (t.dataset.ratecard) { state.profile.rateCard[t.dataset.ratecard] = num(t.value); save(); return; }
     if (!d || !inSheet(t) || t.tagName === "SELECT" || t.type === "radio" || t.type === "checkbox" || t.type === "date") return;
     if (t.dataset.tf) { var k = findTask(d, t.dataset.task); if (k && (t.dataset.tf === "title" || t.dataset.tf === "link")) { k[t.dataset.tf] = t.value; save(); renderBehind(); } return; }
     if (t.dataset.field) d[t.dataset.field] = NUMERIC[t.dataset.field] ? num(t.value) : t.value;
-    else if (t.dataset.del && t.dataset.dk === "qty") d.deliverables[+t.dataset.del].qty = num(t.value);
+    else if (t.dataset.del && (t.dataset.dk === "qty" || t.dataset.dk === "rate")) { d.deliverables[+t.dataset.del][t.dataset.dk] = num(t.value); syncFee(d); save(); renderBehind(); refreshComputed(); refreshPricing(d); return; }
+    else if (t.dataset.del && t.dataset.dk === "specs") { d.deliverables[+t.dataset.del].specs = t.value; save(); return; }
     else if (t.dataset.take) d.take[t.dataset.take] = num(t.value);
     else return;
     save(); renderBehind(); refreshComputed();
@@ -1607,7 +1711,13 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       save(); renderAll(); return;
     }
     if (t.dataset.field && (t.tagName === "SELECT" || t.type === "date")) d[t.dataset.field] = t.value;
-    else if (t.dataset.del && t.dataset.dk === "type") d.deliverables[+t.dataset.del].type = t.value;
+    else if (t.dataset.del && t.dataset.dk === "type") { var ln = d.deliverables[+t.dataset.del], prevCard = cardRate(d, ln.type); ln.type = t.value; if (priced(d) && (!num(ln.rate) || num(ln.rate) === prevCard)) ln.rate = cardRate(d, t.value); syncFee(d); }
+    else if (t.dataset.del && t.dataset.dk === "publishBy") d.deliverables[+t.dataset.del].publishBy = t.value;
+    else if (t.dataset.feemode) {
+      d.feeMode = t.value;
+      if (t.value === "lines" && !linesTotal(d) && num(d.fee) && d.deliverables.length) splitByHours(d);
+      syncFee(d);
+    }
     else if (t.dataset.legit) d.legit[t.dataset.legit] = t.value;
     else if (t.dataset.takeopt) d.take[t.dataset.takeopt] = t.value;
     else if (t.dataset.clause) { if (t.value) d.contract[t.dataset.clause] = t.value; else delete d.contract[t.dataset.clause]; }
