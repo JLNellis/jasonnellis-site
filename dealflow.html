@@ -340,6 +340,178 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 @media (prefers-reduced-motion: no-preference) {
   .card, .btn, .opt span { transition: border-color 0.15s ease, background-color 0.15s ease; }
 }
+/* ===== CSS: FEATURE A · payment outcomes and rights ===== */
+.fu-checkins { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
+.fu-checkins .eyebrow { font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+.fu-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.fu-card { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.fu-card:first-child { padding-top: 2px; }
+.fu-card:last-child { border-bottom: 0; }
+.fu-q { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.fu-date { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.fu-date .field { flex: 0 1 180px; }
+.fu-date input { min-height: 36px; padding: 5px 8px; }
+.fu-stats { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 8px; background: var(--surface-2); }
+.fu-stats p { margin: 0; overflow-wrap: anywhere; }
+.callout.rights { background: var(--accent-soft); }
+.callout.rights strong { color: var(--fg); }
+.callout .fine a, .fu-stats a { overflow-wrap: anywhere; }
+.fakedoor { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 8px; border: 1px dashed var(--input-line); background: var(--surface-2); }
+.fakedoor p { margin: 0; font-size: 0.88rem; }
+.fu-thanks:focus { outline: none; }
+/* ===== END CSS A ===== */
+
+/* ===== CSS: FEATURE B · cash forecast and scenarios ===== */
+/* Certainty reads as strength of the accent: received is solid, then each less certain tier fades toward the surface.
+   The two weighted tiers (offers, renewals) are striped at 45° and 135° so they don't rely on shade alone. */
+.fc-c-actual { background: var(--accent); }
+.fc-c-inv { background: color-mix(in srgb, var(--accent) 66%, var(--surface)); }
+.fc-c-booked { background: color-mix(in srgb, var(--accent) 40%, var(--surface)); }
+.fc-c-pipe { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--accent) 55%, var(--surface)) 0 2px, color-mix(in srgb, var(--accent) 18%, var(--surface)) 2px 5px); }
+.fc-c-renew { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--accent) 42%, var(--surface)) 0 2px, color-mix(in srgb, var(--accent) 10%, var(--surface)) 2px 6px); }
+.fc-scen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px 22px; padding: 12px 14px; border-radius: 8px; background: var(--surface-2); }
+.fc-scen-head { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 32px; }
+.fc-scen .field > label { display: flex; justify-content: space-between; gap: 8px; }
+.fc-scen output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--fg); font-weight: 500; }
+.fc-scen input[type="range"] { padding: 0; border: 0; background: none; min-height: 32px; accent-color: var(--accent); }
+.fc-body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.fc-figs .fine { font-size: 0.78rem; }
+.fc-scen-res { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--warn-soft); font-size: 0.9rem; }
+.fc-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: 0.8rem; color: var(--muted); }
+.fc-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.fc-sw { width: 12px; height: 12px; border-radius: 3px; flex: none; display: inline-block; }
+.fc-sw-base { height: 0; border-top: 2px solid var(--fg); border-radius: 0; }
+.fc-chart { position: relative; --fc-gut: 46px; --fc-gap: 6px; }
+.fc-zones, .fc-cols, .fc-xs { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--fc-gap); }
+.fc-zones, .fc-xs { margin-left: var(--fc-gut); }
+.fc-zones span { font-size: 0.72rem; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 3px; margin-bottom: 8px; }
+.fc-zones .z-past { grid-column: 1 / span 6; }
+.fc-zones .z-ahead { grid-column: 7 / span 6; color: var(--fg); }
+.fc-plot { position: relative; height: 200px; }
+.fc-tick { position: absolute; left: var(--fc-gut); right: 0; border-top: 1px solid var(--line); }
+.fc-tick span { position: absolute; right: calc(100% + 6px); top: -0.6em; font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.2; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fc-cols { position: absolute; top: 0; bottom: 0; left: var(--fc-gut); right: 0; }
+.fc-col { position: relative; height: 100%; display: flex; align-items: flex-end; justify-content: center; padding: 0; margin: 0; border: 0; border-radius: 4px 4px 0 0; background: none; color: inherit; font: inherit; cursor: default; min-width: 0; }
+.fc-col:hover, .fc-col.on { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.fc-col:focus-visible { outline-offset: 0; }
+.fc-bar { width: min(24px, 100%); display: flex; flex-direction: column; gap: 2px; border-radius: 4px 4px 0 0; overflow: hidden; }
+.fc-seg { flex: 0 0 0px; min-height: 2px; }
+.fc-base { position: absolute; left: 50%; transform: translateX(-50%); width: min(32px, 100%); border-top: 2px solid var(--fg); pointer-events: none; }
+.fc-xs > span { text-align: center; font-size: 0.72rem; color: var(--muted); padding-top: 5px; white-space: nowrap; overflow: hidden; }
+.fc-xs > span.now { color: var(--fg); font-weight: 700; }
+.fc-xs .s { display: none; }
+.fc-tip { position: absolute; z-index: 3; top: 0; left: 0; width: max-content; min-width: 190px; max-width: min(260px, 100%); display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 6px 20px var(--shadow); font-size: 0.82rem; pointer-events: none; }
+.fc-tip .r { display: flex; align-items: center; gap: 8px; }
+.fc-tip .v { margin-left: auto; padding-left: 12px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.fc-tip .tot { border-top: 1px solid var(--line); padding-top: 4px; margin-top: 2px; font-weight: 600; }
+.fc-table summary, .fc-likes summary { cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--muted); }
+.fc-table[open] summary, .fc-likes[open] summary { margin-bottom: 8px; }
+.fc-table table { font-size: 0.82rem; }
+.fc-table .fc-mo { white-space: nowrap; }
+.fc-table tbody th { padding-top: 12px; color: var(--fg); white-space: normal; }
+.fc-foot { margin: 0; }
+.fc-grade-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.fc-notes { display: flex; flex-direction: column; gap: 8px; }
+.fc-notes ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.fc-likes .grid3 input { max-width: none; }
+@media (max-width: 560px) {
+  .fc-chart { --fc-gut: 38px; --fc-gap: 3px; }
+  .fc-plot { height: 180px; }
+  .fc-xs .l { display: none; }
+  .fc-xs .s { display: inline; }
+  .fc-zones .z-past { text-align: left; }
+}
+/* ===== END CSS B ===== */
+
+/* ===== CSS: FEATURE C · insights charts ===== */
+.ins { display: flex; flex-direction: column; gap: 14px; }
+.ins .panel h3 { font-size: 1rem; font-weight: 700; margin: 0; }
+.ins-empty { margin: 0; color: var(--muted); font-size: 0.9rem; max-width: 68ch; }
+.ins-curnote { margin: 4px 0 0; }
+.ins-svg { display: block; width: 100%; overflow: visible; }
+.ins-svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+.ins-svg text.strong { fill: var(--fg); font-weight: 500; }
+.ins-gl { stroke: var(--line); stroke-width: 1; }
+.ins-base { stroke: var(--line); stroke-width: 2; }
+.ins-today { stroke: var(--muted); stroke-width: 1; }
+.ins-net { stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.ins-ref { stroke: var(--muted); stroke-width: 2; }
+.ins-seg { stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.ins-dot { fill: var(--fg); stroke: var(--surface); stroke-width: 2; pointer-events: none; }
+.ins-dot.late { fill: var(--bad); }
+.ins-dot.open { fill: var(--surface); stroke: var(--fg); }
+.ins-dot.open.late { stroke: var(--bad); }
+.ins-pt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; pointer-events: none; }
+.ins-pt.open { fill: var(--surface); stroke: var(--accent); }
+.ins-hit { fill: transparent; }
+.ins-hit:hover { fill: var(--surface-2); }
+.ins-hit[data-open] { cursor: pointer; }
+.ins-bar { fill: var(--accent); }
+.ins-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: 0.8rem; color: var(--muted); }
+.ins-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.ins-legend svg { flex: none; overflow: visible; }
+.ins-prows { display: flex; flex-direction: column; }
+.ins-prow { display: grid; grid-template-columns: minmax(140px, 260px) minmax(0, 1fr); gap: 2px 16px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.ins-prow.axis { border-bottom: 0; padding: 2px 0 0; }
+.ins-pname { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.ins-pname .linkish { overflow-wrap: anywhere; }
+.ins-phead { font-size: 0.8rem; color: var(--muted); }
+.ins-multi { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.ins-card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ins-card-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 10px; }
+.ins-stat { margin: 0; font-size: 0.88rem; }
+.ins-stat strong { font-family: var(--font-mono); font-weight: 500; font-size: 1.05rem; }
+.ins-card .callout { padding: 8px 12px; font-size: 0.86rem; }
+.ins-plot { display: grid; grid-template-columns: 52px minmax(0, 1fr); }
+.ins-ylab { position: relative; }
+.ins-ylab span { position: absolute; right: 8px; transform: translateY(-50%); font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ins-scroll { overflow-x: auto; padding-bottom: 4px; }
+.ins-lanes { min-width: 600px; display: flex; flex-direction: column; gap: 2px; }
+.ins-lane { border-top: 1px solid var(--line); padding-top: 8px; }
+.ins-lane:first-child { border-top: 0; padding-top: 0; }
+/* Stays in view, and wraps to the visible width, while the lanes scroll sideways on a phone. */
+.ins-lane-head { position: sticky; left: 0; max-width: min(100%, calc(100vw - 72px)); display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+.ins-season { min-width: 300px; grid-template-columns: 46px minmax(0, 1fr); }
+.ins-months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.ins-mcol { display: flex; flex-direction: column; min-width: 0; border-radius: 4px; }
+.ins-mcol:hover { background: var(--surface-2); }
+.ins-mcol .m { font-size: 0.72rem; color: var(--muted); text-align: center; border-top: 1px solid var(--line); padding-top: 4px; }
+.ins-details summary { cursor: pointer; font-size: 0.86rem; font-weight: 600; color: var(--muted); width: fit-content; }
+.ins-details summary:hover { color: var(--fg); }
+.ins-details[open] summary { margin-bottom: 8px; }
+.ins-tip { position: fixed; z-index: 45; pointer-events: none; max-width: 260px; padding: 6px 10px; border-radius: 6px; background: var(--surface); color: var(--fg); border: 1px solid var(--line); box-shadow: 0 6px 20px var(--shadow); font-size: 0.8rem; display: flex; flex-direction: column; gap: 1px; }
+.ins-tip[hidden] { display: none; }
+.ins-tip strong { font-family: var(--font-mono); font-weight: 500; font-size: 0.92rem; }
+.ins-tip span { color: var(--muted); }
+@media (max-width: 560px) {
+  .ins-prow { grid-template-columns: minmax(0, 1fr); }
+  .ins-prow.axis > div:first-child { display: none; }
+  .ins-mcol .m { font-size: 0.6rem; }
+}
+/* ===== END CSS C ===== */
+
+/* ===== CSS: FEATURE D · negotiation and rate sharing ===== */
+.ng-rows { display: flex; flex-direction: column; gap: 10px; }
+.ng-fee { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 40px; }
+.ng-fee .tick { font-size: 1rem; }
+.ng-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; }
+.ng-stats > div { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 8px; background: var(--surface-2); min-width: 0; }
+.ng-stats .num { font-family: var(--font-mono); font-size: 1.3rem; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.ng-stats .num small { font-family: var(--font-body); font-size: 0.9rem; color: var(--muted); }
+.sc-check { display: flex; align-items: flex-start; color: var(--fg); line-height: 1.4; }
+.sc-check input { margin-top: 1px; }
+.share-card { margin: 0; max-width: 420px; width: 100%; border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: var(--radius); padding: 18px 20px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 3px var(--shadow); }
+.share-card .sc-top { display: flex; flex-direction: column; gap: 2px; }
+.share-card .sc-format { font-weight: 700; font-size: 1.1rem; line-height: 1.25; overflow-wrap: anywhere; }
+.share-card .sc-platform { font-size: 0.84rem; color: var(--muted); }
+.share-card .sc-price { font-family: var(--font-mono); font-weight: 500; font-size: 2.3rem; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.share-card .sc-stats { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.share-card .sc-foot { border-top: 1px solid var(--line); padding-top: 10px; font-size: 0.76rem; color: var(--muted); }
+.sc-text { min-height: 90px; }
+/* ===== END CSS D ===== */
+
+/* ---------- pilot measurement ---------- */
+.metrics-table td:first-child { width: 100%; }
 </style>
 <meta name="description" content="A deal desk for creators running brand sponsorships: what needs attention across every deal, contract terms turned into dated steps, invoices and payments. Free, no login. Your deals stay in your browser.">
 <meta name="robots" content="noindex">
@@ -363,6 +535,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       <a href="#today" data-view="today">Needs attention</a>
       <a href="#pipeline" data-view="pipeline">Pipeline</a>
       <a href="#money" data-view="money">Money</a>
+      <a href="#insights" data-view="insights">Insights</a>
       <a href="#rates" data-view="rates">Rates &amp; data</a>
     </nav>
   </header>
@@ -804,6 +977,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var b = d.lateBasis || "auto";
     if (b !== "auto") return b;
     if (num(d.lateFeePct)) return "contract";
+    // Follow the law that governs the contract (feature A). Only guess from the currency when it isn't set.
+    var g = d.governingLaw || "";
+    if (g === "uk" || g === "eu") return g;
+    if (g) return "none";
     return d.currency === "GBP" ? "uk" : d.currency === "EUR" ? "eu" : "none";
   }
   function lateRate(d, basis) {
@@ -863,6 +1040,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (tone === "firm") return hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue. Please confirm the payment date by " + by + "." +
       (it.interest ? " Late-payment interest under " + law.cite + " has been accruing since the due date." : "") + "\n\nThanks,\n" + me;
     var lines = hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue.\n\n";
+    var usLaw = { us_ny: "New York's Freelance Isn't Free Act (General Business Law, Article 44-A)", us_ca: "California's Freelance Worker Protection Act (Business and Professions Code, section 18100 onward)", us_il: "Illinois' Freelance Worker Protection Act (820 ILCS 193)" }[d.governingLaw || ""];
+    if (usLaw) lines += "I'd also note that " + usLaw + " requires freelancers to be paid by the date agreed in the contract.\n\n";
     if (it.interest || it.comp) lines += "Under " + law.cite + ", I'm entitled to interest at " + (Math.round(lateRate(d, lateBasis(d)) * 100) / 100) + "% a year (" + money2(it.daily, C) + " a day)" + (it.comp ? " plus fixed compensation of " + money(it.comp, C) : "") + ". As of today that comes to " + money2(it.interest, C) + " in interest" + (it.comp ? " and " + money(it.comp, C) + " compensation" : "") + ", a total of " + money2(r.open + it.extra, C) + ".\n\n";
     return lines + "Please pay the outstanding amount by " + by + ". I'd much rather keep working together than escalate this, so do let me know if something is holding it up.\n\nThanks,\n" + me;
   }
@@ -1047,7 +1226,35 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         logT(k, "Example"); d.tasks.push(k);
       }
     });
+    EXT.seed.forEach(function (fn) { fn(list, t); });
     return list;
+  }
+
+  /* ---------- extension points (feature regions register here) ---------- */
+  // actions[name](el, deal, event, rowDeal) handles a click on [data-action=name] not handled by the core.
+  // input / change: functions (target, openDeal) that return true when they handled the event.
+  // seed: functions (dealList, todayISO) that adjust the example deals.
+  var EXT = { actions: {}, input: [], change: [], seed: [] };
+
+  /* ---------- pilot measurement ---------- */
+  // Counts and dates of actions on this device. Never deal contents, amounts or brand names.
+  // Leaves the device only inside a backup, and only when the creator opts in.
+  var EVENT_LABELS = {
+    "open-view": "Opened a view", "open-deal": "Opened a deal", "deal-logged": "Logged a deal", "step-done": "Completed a step",
+    "followed-up": "Marked a brand as chased", "terms-applied": "Turned contract terms into steps", "revision-logged": "Logged a revision round",
+    "invoice-added": "Added an invoice", "payment-recorded": "Recorded a payment", "followup-copied": "Copied a payment follow-up",
+    "usage-running": "Found ads still running", "recap-sent": "Copied a recap for a brand", "renewal-started": "Started a renewal",
+    "makegood-added": "Added a make-good step", "backup-copied": "Copied a backup", "restore": "Restored from a backup"
+  };
+  function logEvent(name, props) {
+    if (!state) return;
+    var m = state.metrics = state.metrics || { counts: {}, log: [] };
+    var now = new Date().toISOString(), c = m.counts[name] = m.counts[name] || { n: 0, first: now, last: now };
+    c.n++; c.last = now;
+    var safe = {};
+    Object.keys(props || {}).forEach(function (k) { var v = props[k]; if (typeof v === "number" || typeof v === "boolean" || (typeof v === "string" && v.length <= 24)) safe[k] = v; });
+    m.log.push({ at: now, ev: name, p: safe });
+    if (m.log.length > 500) m.log = m.log.slice(-500);
   }
 
   /* ---------- storage ---------- */
@@ -1055,7 +1262,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function readKey(k) { try { return localStorage.getItem(k); } catch (e) { storageOK = false; return null; } }
   function fresh() { return { v: 2, profile: defaultProfile(), deals: seeds(), ui: { showDeclined: false, banner: true }, backupAt: "" }; }
   function normState(s) {
-    return { v: 2, profile: mergeProfile(s.profile), deals: s.deals.map(normDeal), ui: Object.assign({ showDeclined: false, banner: true }, s.ui || {}), backupAt: s.backupAt || "" };
+    return { v: 2, profile: mergeProfile(s.profile), deals: s.deals.map(normDeal), ui: Object.assign({ showDeclined: false, banner: true }, s.ui || {}), backupAt: s.backupAt || "",
+      metrics: s.metrics && s.metrics.counts ? s.metrics : { counts: {}, log: [] }, pilot: Object.assign({ code: "", share: false }, s.pilot || {}) };
   }
   function load() {
     var raw = readKey(KEY2);
@@ -1082,7 +1290,12 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function save() { try { localStorage.setItem(KEY2, JSON.stringify(state)); storageOK = true; } catch (e) { storageOK = false; } }
 
   /* ---------- backup and restore ---------- */
-  function backupText() { return JSON.stringify({ app: "creator-dealflow", v: 2, exportedAt: new Date().toISOString(), profile: state.profile, deals: state.deals }, null, 2); }
+  function backupText() {
+    var b = { app: "creator-dealflow", v: 2, exportedAt: new Date().toISOString(), profile: state.profile, deals: state.deals };
+    var pilot = state.pilot || {};
+    if (pilot.share) b.pilot = { code: pilot.code || "", metrics: state.metrics || { counts: {}, log: [] } };
+    return JSON.stringify(b, null, 2);
+  }
   function parseBackup(text, cur) {
     var o = JSON.parse(text), raw, kind;
     if (Array.isArray(o)) { raw = o; kind = "v0"; }
@@ -1257,6 +1470,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       (ui.intake ? "" : '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>') + "</div>";
     if (ui.intake) h += intakeHTML();
     h += owedCard();
+    h += todayExtras();
     if (!items.length) h += '<p class="empty">Nothing needs you right now. Log a deal and its next step to start.</p>';
     GROUPS.forEach(function (g) {
       var list = by[g[0]]; if (!list) return;
@@ -1380,7 +1594,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="fig' + (late.length ? " bad" : "") + '"><span class="label">Overdue invoices</span><span class="num">' + money(sum(late, function (x) { return x.L.overdue; })) + '</span><span class="sub">' + (late.length ? late.map(function (x) { return esc(x.d.brand || "Untitled deal"); }).join(", ") : "Nothing overdue") + "</span></div>" +
       '<div class="fig"><span class="label">Received in ' + year + '</span><span class="num">' + money(sum(thisYear, function (x) { return num(x.p.amount); })) + '</span><span class="sub">' + thisYear.length + " payment" + (thisYear.length === 1 ? "" : "s") + " with a date this year</span></div></section>";
 
-    out += '<div class="panels">' + owedPanel(C);
+    out += '<div class="panels">' + owedPanel(C) + moneyExtras(C);
     var total = sum(booked, function (d) { return num(d.fee); });
     if (!total) {
       out += '<section class="panel wide"><h2>Nothing booked yet</h2><p class="lede">Once a deal is agreed, it counts toward your income here. You\'ll see how much depends on each brand, category and platform.</p></section>';
@@ -1452,7 +1666,17 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="field"><label for="law-eu">EU reference rate (%)</label><input id="law-eu" type="number" min="0" step="0.05" inputmode="decimal" data-law="euRef" value="' + esc(law.euRef) + '"><p class="help">ECB main refinancing rate before 1 July or 1 January. Interest is at least this plus 8%. Some countries add more.</p></div></div>' +
       '<p class="fine"><a href="https://www.gov.uk/late-commercial-payments-interest-debt-recovery" target="_blank" rel="noopener">UK guidance</a> · <a href="https://www.bankofengland.co.uk/boeapps/database/Bank-Rate.asp" target="_blank" rel="noopener">Bank Rate history</a> · <a href="https://eur-lex.europa.eu/eli/dir/2011/7/oj" target="_blank" rel="noopener">EU directive</a>. Not legal advice.</p></section>';
     out += renderData();
+    out += renderPilot();
     return out + "</div>";
+  }
+  function renderPilot() {
+    var m = state.metrics || { counts: {}, log: [] }, pilot = state.pilot || {}, keys = Object.keys(m.counts).sort(function (a, b) { return m.counts[b].n - m.counts[a].n; });
+    return '<section class="panel wide" id="pilot"><div class="panel-head"><h2>What this pilot measures</h2><span class="label">' + m.log.length + " recent actions on this device</span></div>" +
+      '<p class="lede">To learn what helps, Dealflow counts which actions you take and when. It never records deal contents, amounts or brand names. These counts stay on this device unless you choose to include them in a backup you send.</p>' +
+      '<div class="grid2"><div class="field"><label for="pilot-code">Pilot code</label><input id="pilot-code" data-pilot="code" value="' + esc(pilot.code || "") + '" autocomplete="off" placeholder="From your invite"><p class="help">Lets Jason match a backup you send to your pilot conversations.</p></div>' +
+      '<div class="field"><span class="flabel">Sharing</span><label class="check"><input type="checkbox" id="pilot-share" data-pilot="share"' + (pilot.share ? " checked" : "") + "> Include these counts in backups</label></div></div>" +
+      (keys.length ? '<div class="table-wrap"><table class="metrics-table"><thead><tr><th>Action</th><th class="num">Times</th><th class="num">Last</th></tr></thead><tbody>' + keys.map(function (k) { var c = m.counts[k]; return "<tr><td>" + esc(EVENT_LABELS[k] || k) + '</td><td class="num">' + c.n + '</td><td class="num">' + esc(fmtDate(c.last.slice(0, 10))) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="fine">Nothing counted yet.</p>') +
+      '<div class="toolbar"><button class="btn small quiet" type="button" data-action="pilot-reset">Reset the counts</button></div></section>';
   }
   function renderData() {
     var conf = ui.confirm, real = state.deals.filter(function (d) { return !d.example; }).length, ex = state.deals.length - real;
@@ -1552,7 +1776,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     h += pricingHTML(d);
     if (d.stage === "declined") h += '<div class="field"><label for="f-decline">Why you declined</label><input id="f-decline" data-field="declineReason" value="' + esc(d.declineReason) + '"></div>';
     h += '<div class="field"><label for="f-notes">Notes</label><textarea id="f-notes" data-field="notes">' + esc(d.notes) + "</textarea></div>";
-    return h + brandHistory(d);
+    return h + dealExtras(d) + brandHistory(d);
   }
   function pricingHTML(d) {
     var C = d.currency, pr = priced(d), alloc = linesTotal(d);
@@ -1663,28 +1887,34 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     return h + lateBlock(d);
   }
   function lateBlock(d) {
-    var o = owedFor(d), C = d.currency, auto = lateBasis(Object.assign({}, d, { lateBasis: "auto" }));
-    var h = '<h3 class="section-title">Late payment and extras</h3><div class="grid2"><div class="field"><label for="f-latebasis">How late payment is charged</label><select id="f-latebasis" data-field="lateBasis">' +
-      opts([["auto", "Automatic (" + LAW[auto].short + ")"], ["uk", LAW.uk.label], ["eu", LAW.eu.label], ["contract", LAW.contract.label], ["none", "Don't charge it"]], d.lateBasis || "auto") + "</select>" +
-      '<p class="help">' + (o.basis === "none" ? "Nothing accrues. Add the late fee from your contract to charge it." : esc(LAW[o.basis].label) + ": " + (Math.round(o.rate * 100) / 100) + "% a year" + (o.basis === "uk" ? ", plus £40, £70 or £100 per invoice" : o.basis === "eu" ? ", plus at least €40 per invoice" : "") + ".") + "</p></div>" +
+    // Feature A: governing law, payment-terms flag, follow-up results and the chase demand test live here too.
+    syncFollowups(d);
+    var o = owedFor(d), C = d.currency, auto = lateBasis(Object.assign({}, d, { lateBasis: "auto" })), g = govLaw(d);
+    var autoWhy = auto === "contract" ? "" : g ? ", from the governing law" : auto !== "none" ? ", guessed from the currency" : "";
+    var h = '<h3 class="section-title">Late payment and extras</h3><div class="grid2">' + govBlock(d, o) + '<div class="field"><label for="f-latebasis">How late payment is charged</label><select id="f-latebasis" data-field="lateBasis">' +
+      opts([["auto", "Automatic (" + (auto === "none" ? "no late charge" : LAW[auto].short) + autoWhy + ")"], ["uk", LAW.uk.label], ["eu", LAW.eu.label], ["contract", LAW.contract.label], ["none", "Don't charge it"]], d.lateBasis || "auto") + "</select>" +
+      '<p class="help">' + (o.basis === "none" ? (US_RIGHTS[g] ? "No statutory interest to calculate. Add the late fee from your contract to charge it." : "Nothing accrues. Add the late fee from your contract to charge it.") : esc(LAW[o.basis].label) + ": " + (Math.round(o.rate * 100) / 100) + "% a year" + (o.basis === "uk" ? ", plus £40, £70 or £100 per invoice" : o.basis === "eu" ? ", plus at least €40 per invoice" : "") + ".") + "</p></div>" +
       '<div class="field"><label for="f-latefee">Late fee in the contract (% a month)</label><input id="f-latefee" type="number" min="0" step="0.25" inputmode="decimal" data-field="lateFeePct" value="' + esc(d.lateFeePct || "") + '"><p class="help">A contract rate replaces the statutory one.</p></div></div>';
+    h += rightsNote(d) + termsFlag(d);
     if (USAGE_DAYS[(d.contract || {}).usage]) {
       var ut = d.tasks.filter(function (k) { return k.key === "usage"; })[0];
       h += '<div class="callout' + (d.usageRunning ? " bad" : "") + '"><strong>Paid usage' + (ut && ut.due ? " ends " + esc(fmtDate(ut.due)) : "") + "</strong><p>" + (d.usageRunning ? "You found the ads still running. Each extra 30 days is billed at your paid-usage price." : "Check whether the brand is still running your content as ads after the usage period ends.") + '</p><div class="toolbar"><a class="btn small" href="' + adLibraryUrl(d.brand) + '" target="_blank" rel="noopener">Check the Meta ad library</a>' +
         (d.usageRunning ? '<button class="btn small" type="button" data-action="usage-stopped" data-deal="' + d.id + '">They\'ve stopped</button>' : '<button class="btn small" type="button" data-action="usage-running" data-deal="' + d.id + '">Still running</button>') + "</div></div>";
     }
-    if (!o.items.length) return h + '<p class="fine">Nothing extra is owed on this deal right now.</p>';
+    var stats = statsLine();
+    if (!o.items.length) return h + stats + '<p class="fine">Nothing extra is owed on this deal right now.</p>';
     h += '<div class="owed"><span class="eyebrow">Owed on top of the fee</span><div class="big tick">' + money2(o.extra, C) + "</div>" + (o.daily ? '<p><span class="tick">+' + money2(o.daily, C) + "</span> a day while it stays unpaid</p>" : "") + "</div>";
     o.items.forEach(function (it, i) {
       var title = it.kind === "late" ? (it.row.inv.ref ? "Invoice #" + it.row.inv.ref : "Invoice") + ": " + days(it.days) + " late on " + money(it.base, C) : it.kind === "usage" ? "Ads still running: " + it.blocks + " extra 30-day block" + (it.blocks === 1 ? "" : "s") : it.rounds + " extra revision round" + (it.rounds === 1 ? "" : "s");
-      var detail = it.kind === "late" ? money2(it.interest, C) + " interest" + (it.comp ? " + " + money(it.comp, C) + " compensation" : "") : it.kind === "usage" ? money(it.per30, C) + " per 30 days, from your paid-usage price" : money(it.each, C) + " each, from your hours and target rate";
+      var detail = it.kind === "late" ? (it.interest || it.comp ? money2(it.interest, C) + " interest" + (it.comp ? " + " + money(it.comp, C) + " compensation" : "") : "No late charge set") : it.kind === "usage" ? money(it.per30, C) + " per 30 days, from your paid-usage price" : money(it.each, C) + " each, from your hours and target rate";
       var tones = it.kind === "late" ? [["friendly", "Friendly nudge"], ["firm", "Firm reminder"], ["formal", "Cite the law"]] : [["formal", "Draft the note"]];
       var open = ui.letter && ui.letter.deal === d.id && ui.letter.i === i;
-      h += '<div class="task"><div class="task-foot"><strong>' + esc(title) + '</strong><span class="tick">' + money2(it.extra, C) + '</span></div><p class="fine">' + esc(detail) + '</p><div class="toolbar">' +
+      var sent = it.kind === "late" ? fups(d).filter(function (f) { return f.invId === it.row.inv.id; }) : [], lastF = sent[sent.length - 1];
+      h += '<div class="task"><div class="task-foot"><strong>' + esc(title) + '</strong><span class="tick">' + money2(it.extra, C) + '</span></div><p class="fine">' + esc(detail) + (lastF ? " · last follow-up " + esc(rel(lastF.at)) + " (" + esc((TONES[lastF.tone] || "").toLowerCase()) + ")" : "") + '</p><div class="toolbar">' +
         tones.map(function (tn) { return '<button class="btn small' + (open && ui.letter.tone === tn[0] ? " primary" : "") + '" type="button" data-action="letter" data-i="' + i + '" data-tone="' + tn[0] + '">' + tn[1] + "</button>"; }).join("") + "</div>" +
-        (open ? '<textarea class="letter" id="letter-text" aria-label="Follow-up draft">' + esc(letterText(d, it, ui.letter.tone)) + '</textarea><div class="toolbar"><button class="btn small primary" type="button" data-action="copy-letter" data-i="' + i + '">Copy and log as sent</button><span class="fine">Edit it first if you like. Copying logs a follow-up and moves the next chase a week out.</span></div>' : "") + "</div>";
+        (open ? '<textarea class="letter" id="letter-text" aria-label="Follow-up draft">' + esc(letterText(d, it, ui.letter.tone)) + '</textarea><div class="toolbar"><button class="btn small primary" type="button" data-action="copy-letter" data-i="' + i + '">Copy and log as sent</button><span class="fine">Edit it first if you like. Copying logs a follow-up, moves the next chase a week out, and asks you in 3 days whether they paid.</span></div>' : "") + chaseBit(d, it) + "</div>";
     });
-    return h + '<p class="fine">Estimates, not legal advice. Statutory interest applies to business-to-business contracts, from the day after the due date. If the contract sets its own late fee, that applies instead.</p>';
+    return h + stats + '<p class="fine">Estimates, not legal advice. Statutory interest applies to business-to-business contracts, from the day after the due date. If the contract sets its own late fee, that applies instead.</p>';
   }
 
   function footHTML(d) {
@@ -1698,7 +1928,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function bodyHTML(d) {
     switch (ui.tab) {
       case "legit": return legitTab(d);
-      case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + rateCardBlock(d) + worthTab(d) + pastBlock(d);
+      case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + rateCardBlock(d) + worthTab(d) + worthExtras(d) + pastBlock(d);
       case "contract": return contractTab(d);
       case "money": return moneyTab(d);
       case "recap": return recapTab(d);
@@ -1731,11 +1961,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   }
 
   /* ---------- top-level render ---------- */
-  var VIEWS = ["today", "pipeline", "money", "rates"];
+  var VIEWS = ["today", "pipeline", "money", "insights", "rates"];
   function hashView() { var h = (location.hash || "").replace("#", ""); return VIEWS.indexOf(h) > -1 ? h : "today"; }
   var curView = hashView();
   function view() { return curView; }
-  function setView(v) { curView = v; try { if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v); } catch (e) { /* hash unavailable */ } renderAll(); window.scrollTo(0, 0); }
+  function setView(v) { curView = v; logEvent("open-view", { view: v }); try { if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v); } catch (e) { /* hash unavailable */ } renderAll(); window.scrollTo(0, 0); }
   function renderView() {
     var v = view(), acts = attention().filter(function (it) { return it.g === "act"; }).length;
     document.querySelectorAll("nav.views a").forEach(function (a) {
@@ -1743,7 +1973,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       if (a.dataset.view === "today") a.innerHTML = "Needs attention" + (acts ? '<span class="n" aria-label="' + acts + ' to act on">' + acts + "</span>" : "");
     });
     ctxCur = state.profile.currency;
-    document.getElementById("view").innerHTML = v === "money" ? renderMoney() : v === "rates" ? renderRates() : v === "pipeline" ? renderPipeline() : renderToday();
+    document.getElementById("view").innerHTML = v === "money" ? renderMoney() : v === "rates" ? renderRates() : v === "pipeline" ? renderPipeline() : v === "insights" ? renderInsights() : renderToday();
   }
   function withFocus(fn) {
     var a = document.activeElement, id = a && a.id, s = null, e = null;
@@ -1758,7 +1988,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function renderBehind() { renderBanner(); renderView(); }
 
   function openDeal(id, tab) {
-    ui.openId = id; ui.tab = tab || "steps"; ui.confirm = null; ui.letter = null;
+    ui.openId = id; ui.tab = tab || "steps"; ui.confirm = null; ui.letter = null; logEvent("open-deal", { tab: ui.tab });
     renderAll();
     var b = document.querySelector("#dh .icon-btn"); if (b) b.focus();
   }
@@ -1781,17 +2011,1270 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (was !== stage) toast("Moved " + (d.brand || "the deal") + " to " + stageLabel(stage) + extra);
   }
 
+  /* ===== FEATURE A · payment outcomes and rights ===== */
+  // Owned by the "payment outcomes" session. Core calls todayExtras(); lateBlock(), letterText(), LAW, lateBasis()
+  // and the copy-letter handler are also A's to change.
+  // Deal fields (all optional, read with defaults):
+  //   d.governingLaw  "" (not sure) | uk | eu | us_ny | us_ca | us_il | us_other | other
+  //   d.followups     [{ id, at, tone, invId, outcome: "" | "paid" | "paid-before" | "followed-again", answeredAt, paidOn, snoozeUntil, notYet }]
+  //   d.chaseAnswer   "" | yes | maybe | no   (the "Have Dealflow chase this" demand test, asked once per deal)
+  //   d.termsFlagSeen true once the long-terms flag has been counted for this deal
+  EVENT_LABELS["followup-outcome"] = "Answered \"Did they pay?\"";
+  EVENT_LABELS["governing-law-set"] = "Set the law that governs a contract";
+  EVENT_LABELS["terms-flag"] = "Saw a payment-terms warning";
+  EVENT_LABELS["fakedoor-chase"] = "Tapped \"Have Dealflow chase this\"";
+  EVENT_LABELS["fakedoor-chase-answer"] = "Said whether they'd use a chase service";
+
+  var GOV_LAWS = [["", "Not sure"], ["uk", "UK"], ["eu", "EU or EEA country"], ["us_ny", "US: New York"], ["us_ca", "US: California"], ["us_il", "US: Illinois"], ["us_other", "US: another state"], ["other", "Other"]];
+  var TONES = { friendly: "Friendly nudge", firm: "Firm reminder", formal: "Cited the law" };
+  var TONE_AFTER = { friendly: "friendly nudge", firm: "firm reminder", formal: "follow-up citing the law" };
+  var CHECKIN_AFTER = 3, SNOOZE = 3;
+  // Short rights notes for US laws. Checked against the statutes on 11 Nov 2026. Estimates of coverage, not legal advice.
+  var US_RIGHTS = {
+    us_ny: { title: "New York: Freelance Isn't Free Act",
+      body: "Since 2024 this covers one-person businesses hired as independent contractors for $800 or more from the same client within 120 days. The client must give you a written contract and pay by the date in it, or within 30 days of the work being done if it sets no date. Late payment can mean double damages plus legal fees, and the Attorney General takes complaints.",
+      src: "https://www.nysenate.gov/legislation/laws/GBS/A44-A", srcLabel: "NY General Business Law, Article 44-A" },
+    us_ca: { title: "California: Freelance Worker Protection Act (SB 988)",
+      body: "Since January 2025 this covers one-person businesses paid $250 or more by the same client within 120 days for \"professional services\". That list includes original, creative marketing work and videographers, so many sponsorships plausibly fit, but it isn't settled. Pay is due by the date in the contract, or within 30 days of finishing the work. A court can award up to twice the unpaid amount plus legal fees.",
+      src: "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB988", srcLabel: "SB 988 on the California Legislature's site" },
+    us_il: { title: "Illinois: Freelance Worker Protection Act",
+      body: "Since July 2024 this covers individuals paid $500 or more by the same client within 120 days, for work done in Illinois or for a client based there. You're owed a written contract, and pay by the date in it, or within 30 days of finishing the work. Late payment can mean double the unpaid amount plus legal fees.",
+      src: "https://www.ilga.gov/legislation/ilcs/ilcs3.asp?ActID=4513&ChapterID=68", srcLabel: "820 ILCS 193 on the Illinois General Assembly's site" },
+    us_other: { title: "Other US states",
+      body: "There's no federal late-payment law for freelancers. New York, California and Illinois have state laws, and a few cities have their own, so check where you and the brand are based. Otherwise, the late fee in your contract is what you can rely on." }
+  };
+
+  function govLaw(d) { var g = d.governingLaw || ""; return { uk: 1, eu: 1, us_ny: 1, us_ca: 1, us_il: 1, us_other: 1, other: 1 }[g] ? g : ""; }
+  function govLabel(g) { for (var i = 0; i < GOV_LAWS.length; i++) if (GOV_LAWS[i][0] === g) return GOV_LAWS[i][1]; return "Not sure"; }
+  function fups(d) { if (!Array.isArray(d.followups)) d.followups = []; return d.followups; }
+  function invRow(d, invId) { return ledger(d).rows.filter(function (r) { return r.inv.id === invId; })[0] || null; }
+  function invName(r, C) { return r.inv.ref ? "invoice #" + r.inv.ref : "the " + money(r.amount, C) + " invoice"; }
+  function lastPayDate(d) { return d.payments.map(function (p) { return p.date; }).filter(Boolean).sort().pop() || todayISO(); }
+
+  // Called when a payment follow-up is copied (copy-letter). An earlier pending follow-up on the same invoice is closed as "followed again",
+  // so each payment is credited to the follow-up that came just before it.
+  function recordFollowup(d, invId, tone) {
+    var t = todayISO();
+    fups(d).forEach(function (f) { if (f.invId === invId && !f.outcome) { f.outcome = "followed-again"; f.answeredAt = t; } });
+    d.followups.push({ id: uid(), at: t, tone: tone || "", invId: invId, outcome: "", answeredAt: "", paidOn: "", snoozeUntil: "", notYet: 0 });
+  }
+  function answerPaid(d, f, paidOn, via) {
+    var n = diffDays(f.at, paidOn);
+    f.outcome = n < 0 ? "paid-before" : "paid"; f.paidOn = paidOn; f.answeredAt = todayISO();
+    logEvent("followup-outcome", { tone: f.tone, paid: true, daysToPay: Math.max(0, n), via: via });
+  }
+  // A payment that settles the invoice, recorded any other way, answers the check-in on its own.
+  function syncFollowups(d) {
+    var changed = false;
+    fups(d).forEach(function (f) {
+      if (f.outcome) return;
+      var r = invRow(d, f.invId);
+      if (r && r.open <= 0) { answerPaid(d, f, lastPayDate(d), "auto"); changed = true; }
+    });
+    return changed;
+  }
+  function syncAllFollowups() {
+    var changed = false;
+    state.deals.forEach(function (d) { if (Array.isArray(d.followups) && d.followups.length && syncFollowups(d)) changed = true; });
+    if (changed) save();
+    return changed;
+  }
+  // Catch payments recorded through core paths (task done, Money tab, step checkbox) once those handlers have run.
+  ["click", "change"].forEach(function (ev) {
+    document.addEventListener(ev, function () { setTimeout(function () { if (state && syncAllFollowups()) renderAll(); }, 0); });
+  });
+
+  // Per-tone results across the deals that count: { friendly: { sent, paid, waiting, followedAgain, days: [], median }, ... }
+  function followupStats() {
+    syncAllFollowups();
+    var out = {};
+    Object.keys(TONES).forEach(function (k) { out[k] = { tone: k, label: TONES[k], sent: 0, paid: 0, waiting: 0, followedAgain: 0, days: [], median: 0 }; });
+    live().forEach(function (d) {
+      (d.followups || []).forEach(function (f) {
+        var s = out[f.tone]; if (!s) return;
+        s.sent++;
+        if (f.outcome === "paid") { s.paid++; s.days.push(Math.max(0, diffDays(f.at, f.paidOn))); }
+        else if (f.outcome === "followed-again") s.followedAgain++;
+        else if (!f.outcome) s.waiting++;
+      });
+    });
+    Object.keys(out).forEach(function (k) { var s = out[k]; s.days.sort(function (a, b) { return a - b; }); s.median = median(s.days); });
+    return out;
+  }
+  function statsLine() {
+    var st = followupStats(), parts = [];
+    Object.keys(TONES).forEach(function (k) {
+      var s = st[k]; if (!s.sent) return;
+      parts.push("<strong>" + esc(s.label) + ":</strong> " + (s.paid ? (Math.round(s.median) < 1 ? "paid within a day" : "paid in a median of " + days(Math.round(s.median))) + " ("+ s.paid + " follow-up" + (s.paid === 1 ? "" : "s") + ")" : s.sent + " follow-up" + (s.sent === 1 ? "" : "s") + ", no payment recorded after one yet"));
+    });
+    if (!parts.length) return "";
+    return '<div class="fu-stats" id="fu-stats"><span class="label">What your follow-ups got you</span><p>' + parts.join(" · ") + '</p><p class="fine">Across all your deals, from your answers to "Did they pay?". Small numbers, so treat it as a hint.</p></div>';
+  }
+
+  // Pending check-ins: 3+ days after a follow-up, invoice still open, not snoozed.
+  function pendingCheckins() {
+    var t = todayISO(), out = [];
+    live().forEach(function (d) {
+      if (d.stage === "declined" || !Array.isArray(d.followups)) return;
+      d.followups.forEach(function (f) {
+        if (f.outcome || diffDays(f.at, t) < CHECKIN_AFTER || (f.snoozeUntil && f.snoozeUntil > t)) return;
+        var r = invRow(d, f.invId); if (!r || r.open <= 0) return;
+        out.push({ d: d, f: f, r: r });
+      });
+    });
+    return out.sort(function (a, b) { return a.f.at.localeCompare(b.f.at); });
+  }
+  function todayExtras() {
+    syncAllFollowups();
+    var list = pendingCheckins(); if (!list.length) return "";
+    return '<section class="fu-checkins" id="fu-checkins" aria-label="Did they pay?"><span class="eyebrow">Did they pay?</span><ul class="fu-list">' + list.map(function (x) {
+      var d = x.d, f = x.f, r = x.r, C = d.currency, ids = ' data-deal="' + d.id + '" data-fu="' + f.id + '"', on = ui.fuDate === f.id, t = todayISO();
+      return '<li class="fu-card" id="fu-' + f.id + '"><p class="fu-q">Did ' + esc(d.brand || "the brand") + " pay " + esc(invName(r, C)) + " after your " + esc(TONE_AFTER[f.tone] || "follow-up") + "?</p>" +
+        '<p class="fine">Sent ' + esc(rel(f.at)) + " · " + money(r.open, C) + " open" + (d.example ? " · example" : "") + "</p>" +
+        '<div class="toolbar"><button class="btn small" type="button" id="fu-yes-' + f.id + '" data-action="fu-yes"' + ids + ">Yes, today</button>" +
+        '<button class="btn small' + (on ? " primary" : "") + '" type="button" id="fu-on-' + f.id + '" data-action="fu-on"' + ids + ' aria-expanded="' + on + '">Paid on…</button>' +
+        '<button class="btn small quiet" type="button" id="fu-no-' + f.id + '" data-action="fu-no"' + ids + ">Not yet</button></div>" +
+        (on ? '<div class="fu-date"><div class="field"><label for="fu-date-' + f.id + '">Paid on</label><input type="date" id="fu-date-' + f.id + '" max="' + t + '" value="' + addDays(t, -1) + '"></div><button class="btn small primary" type="button" id="fu-save-' + f.id + '" data-action="fu-save"' + ids + ">Record payment</button></div>" : "") + "</li>";
+    }).join("") + '</ul><p class="fine">Your answers show which kind of follow-up gets you paid fastest.</p></section>';
+  }
+  function findFu(d, id) { return d ? fups(d).filter(function (f) { return f.id === id; })[0] || null : null; }
+  function payFrom(d, f, date, label) {
+    var r = invRow(d, f.invId); if (!r || r.open <= 0) return "";
+    var amt = r.open, k = d.tasks.filter(function (x) { return x.key === "pay:" + f.invId; })[0], msg;
+    if (date === todayISO() && k && !k.done) msg = completeTask(d, k); // same path as Paid on the Needs attention list
+    else {
+      d.payments.push({ id: uid(), amount: amt, date: date, note: "Invoice" + (r.inv.ref ? " #" + r.inv.ref : "") + " paid" });
+      logEvent("payment-recorded", { from: "checkin", daysLate: r.late });
+      var extra = syncMoney(d);
+      msg = "Recorded " + money(amt, d.currency) + " received from " + (d.brand || "the brand") + " on " + fmtDate(date) + (extra.length ? ". Deal " + extra.join(", ") : "");
+    }
+    if (!f.outcome) answerPaid(d, f, date, label);
+    return msg;
+  }
+  EXT.actions["fu-yes"] = function (el, d0, e, d) {
+    var f = findFu(d, el.dataset.fu); if (!f) return;
+    var undo = snap(d), msg = payFrom(d, f, todayISO(), "today");
+    ui.fuDate = null; save(); renderAll(); toast(msg || "Already settled", undo);
+  };
+  EXT.actions["fu-on"] = function (el, d0, e, d) {
+    ui.fuDate = ui.fuDate === el.dataset.fu ? null : el.dataset.fu; renderAll();
+    var inp = document.getElementById("fu-date-" + el.dataset.fu); if (inp) inp.focus();
+  };
+  EXT.actions["fu-save"] = function (el, d0, e, d) {
+    var f = findFu(d, el.dataset.fu); if (!f) return;
+    var inp = document.getElementById("fu-date-" + f.id), v = inp ? inp.value : "";
+    if (!v || v > todayISO()) { toast(v ? "Pick a date that isn't in the future" : "Pick the date they paid"); if (inp) inp.focus(); return; }
+    var undo = snap(d), msg = payFrom(d, f, v, "date");
+    ui.fuDate = null; save(); renderAll(); toast(msg || "Already settled", undo);
+  };
+  EXT.actions["fu-no"] = function (el, d0, e, d) {
+    var f = findFu(d, el.dataset.fu); if (!f) return;
+    var undo = snap(d);
+    f.snoozeUntil = addDays(todayISO(), SNOOZE); f.notYet = num(f.notYet) + 1;
+    logEvent("followup-outcome", { tone: f.tone, paid: false, daysSince: diffDays(f.at, todayISO()) });
+    ui.fuDate = null; save(); renderAll(); toast("We'll ask again on " + fmtDate(f.snoozeUntil), undo);
+  };
+
+  // Governing law field (in lateBlock).
+  EXT.change.push(function (t, d) {
+    if (t.id !== "f-govlaw" || !d) return false;
+    d.governingLaw = t.value; logEvent("governing-law-set", { law: t.value || "unsure" }); save(); renderAll(); return true;
+  });
+  function govBlock(d, o) {
+    var g = govLaw(d), note = "";
+    if (!g) note = '<p class="help">Look for a "governing law" clause near the end of the contract. Until you set it, the late-payment rules are a guess from the currency.</p>';
+    else if (g === "other") note = '<p class="help">Dealflow doesn\'t have rules for this law yet. Enter the late fee from your contract, if there is one.</p>';
+    var h = '<div class="field"><label for="f-govlaw">Which law governs the contract</label><select id="f-govlaw">' + opts(GOV_LAWS, g) + "</select>" + note + "</div>";
+    return h;
+  }
+  function rightsNote(d) {
+    var n = US_RIGHTS[govLaw(d)]; if (!n) return "";
+    return '<div class="callout rights" id="rights-note"><strong>' + esc(n.title) + "</strong><p>" + esc(n.body) + "</p>" +
+      (govLaw(d) !== "us_other" ? "<p>Whether a creator selling a sponsorship counts as a freelancer hasn't been tested in court, and these laws can apply because of where you or the brand are, whatever law the contract names. Treat it as leverage to mention, not a sure claim.</p>" : "") +
+      '<p class="fine">' + (n.src ? '<a href="' + n.src + '" target="_blank" rel="noopener">' + esc(n.srcLabel) + "</a> · " : "") + "Checked November 2026. Not legal advice.</p></div>";
+  }
+  // Payment terms over 60 days, for EU- and UK-governed deals.
+  function longTerms(d) {
+    var nets = [netOf(d)].concat(d.invoices.map(function (iv) { return num(iv.net); }));
+    return Math.max.apply(null, nets);
+  }
+  function termsFlag(d) {
+    var g = govLaw(d) || (d.currency === "EUR" ? "eu" : d.currency === "GBP" ? "uk" : ""), n = longTerms(d);
+    if ((g !== "eu" && g !== "uk") || n <= 60) return "";
+    if (!d.termsFlagSeen) { d.termsFlagSeen = true; logEvent("terms-flag", { law: g, net: n > 90 ? "over-90" : n > 60 ? "61-90" : "60" }); save(); }
+    var body = g === "eu"
+      ? "EU rules say payment terms between businesses shouldn't exceed 60 days unless they were expressly agreed in the contract and aren't grossly unfair to you. The EU's top court has said a brand can't simply impose a longer term. If you didn't negotiate this, ask for 60 days or less."
+      : "Under UK law, if the agreed payment date is more than 60 days out and that's grossly unfair to you, statutory interest can start after day 60 instead. A bill introduced in May 2026 would cap terms at 60 days, but it isn't law yet.";
+    var src = g === "eu" ? '<a href="https://eur-lex.europa.eu/eli/dir/2011/7/oj" target="_blank" rel="noopener">Late Payment Directive, Article 3(5)</a>' : '<a href="https://www.legislation.gov.uk/ukpga/1998/20/section/4" target="_blank" rel="noopener">Late Payment Act, section 4</a>';
+    return '<div class="callout warn" id="terms-flag"><strong>Payment terms of ' + days(n) + "</strong><p>" + esc(body) + '</p><p class="fine">' + src + " · " + (govLaw(d) ? "" : "Guessed from the currency. ") + "Not legal advice.</p></div>";
+  }
+
+  // "Have Dealflow chase this for me": a demand test for a service that doesn't exist yet.
+  function chaseBit(d, it) {
+    if (it.kind !== "late") return "";
+    var invId = it.row.inv.id, open = ui.chaseAsk === d.id + ":" + invId;
+    if (d.chaseAnswer) return open ? '<p class="fine fu-thanks" id="chase-thanks-' + invId + '" role="status">Thanks for telling us. Dealflow can\'t chase for you yet, so use the drafts above for now.</p>' : "";
+    var btn = '<button class="btn small quiet" type="button" id="chase-' + invId + '" data-action="chase-fake" data-inv="' + invId + '"' + (open ? ' aria-expanded="true"' : "") + ">Have Dealflow chase this for me</button>";
+    if (!open) return '<div class="toolbar">' + btn + "</div>";
+    return '<div class="fakedoor" id="chase-ask-' + invId + '" role="group" aria-label="Would you use a chase service?"><p><strong>We\'re testing whether to build this. Would you use it?</strong> Dealflow would follow up with the brand for you until it pays.</p><div class="toolbar">' +
+      [["yes", "Yes, I'd pay for it"], ["maybe", "Maybe"], ["no", "No"]].map(function (a) { return '<button class="btn small" type="button" id="chase-' + a[0] + "-" + invId + '" data-action="chase-answer" data-inv="' + invId + '" data-answer="' + a[0] + '">' + a[1] + "</button>"; }).join("") + "</div></div>";
+  }
+  EXT.actions["chase-fake"] = function (el, d) {
+    if (!d) return;
+    ui.chaseAsk = d.id + ":" + el.dataset.inv; logEvent("fakedoor-chase", { daysLate: (invRow(d, el.dataset.inv) || {}).late || 0 }); save(); renderAll();
+    var b = document.getElementById("chase-yes-" + el.dataset.inv); if (b) b.focus();
+  };
+  EXT.actions["chase-answer"] = function (el, d) {
+    if (!d) return;
+    d.chaseAnswer = el.dataset.answer; logEvent("fakedoor-chase-answer", { answer: el.dataset.answer }); save(); renderAll();
+    var n = document.getElementById("chase-thanks-" + el.dataset.inv); if (n) { n.setAttribute("tabindex", "-1"); n.focus(); }
+  };
+
+  // Example data: a firm follow-up on the overdue Loomstack invoice, 5 days ago, so a check-in shows. Juniper is under UK law,
+  // the Loomstack invoice under New York law. Idempotent, and touches example deals only.
+  function seedA(list, t) {
+    list.forEach(function (d) {
+      if (!d.example) return;
+      if (d.brand === "Loomstack" && d.stage === "invoiced" && d.invoices.length && !(d.followups || []).length) {
+        var iv = d.invoices[0]; if (!iv.ref) iv.ref = "0117";
+        d.governingLaw = d.governingLaw || "us_ny";
+        d.followups = [{ id: uid(), at: addDays(t, -5), tone: "firm", invId: iv.id, outcome: "", answeredAt: "", paidOn: "", snoozeUntil: "", notYet: 0 }];
+        var pk = d.tasks.filter(function (k) { return k.key === "pay:" + iv.id; })[0];
+        if (pk) { pk.log.push({ at: addDays(t, -5), text: "Follow-up sent (firm)" }); pk.chase = addDays(t, 2); }
+      }
+      if (d.brand === "Juniper Studio" && !d.governingLaw) d.governingLaw = "uk";
+    });
+  }
+  EXT.seed.push(seedA);
+  // load() builds the examples before this region runs (see the shared note on seed timing), so apply once on a first visit.
+  if (!readKey(KEY2) && !readKey(KEY1)) seedA(state.deals, todayISO());
+  /* ===== END FEATURE A ===== */
+
+
+  /* ===== FEATURE B · cash forecast and scenarios ===== */
+  // Owned by the "cash forecast" session. Core calls moneyExtras(currency) inside the Money view's panel grid.
+  // Cash by month for one currency: what was received in each of the last 6 full months, then an estimate for this
+  // month and the next 5, stacked by certainty. Built only from the creator's own history. Nothing is converted.
+  EVENT_LABELS["forecast-viewed"] = "Viewed the cash forecast";
+  EVENT_LABELS["scenario-changed"] = "Tried a forecast scenario";
+  EVENT_LABELS["forecast-likelihood"] = "Changed a forecast likelihood";
+  var FC_PAST = 6, FC_AHEAD = 6;
+  var FC_TIERS = [
+    { key: "inv", label: "Invoiced, not paid yet", short: "Invoiced" },
+    { key: "booked", label: "Booked, not invoiced", short: "Booked" },
+    { key: "pipe", label: "Open offers, weighted", short: "Offers" },
+    { key: "renew", label: "Expected renewals, weighted", short: "Renewals" }
+  ];
+  var FC_LIKE = { inbound: 10, vetting: 25, negotiating: 50, renewal: 50 };
+  var fcLast = null;
+  ui.fcBudget = 0; ui.fcDelay = 0; ui.fcTable = false; ui.fcLikes = false;
+
+  // normState() keeps only known top-level keys, so snapshots saved last time are read back here (same storage key).
+  (function () { try { var s = JSON.parse(readKey(KEY2) || "null"); if (s && s.forecastSnaps && typeof s.forecastSnaps === "object") state.forecastSnaps = s.forecastSnaps; } catch (e) { /* none saved */ } })();
+
+  function fcLikes() { var o = Object.assign({}, FC_LIKE); Object.keys(FC_LIKE).forEach(function (k) { var v = (state.profile.forecast || {})[k]; if (v != null && v !== "") o[k] = Math.max(0, Math.min(100, num(v))); }); return o; }
+  function fcMonth(s) { return s.slice(0, 7); }
+  function fcShift(key, n) { var p = key.split("-").map(Number); return iso(new Date(p[0], p[1] - 1 + n, 1)).slice(0, 7); }
+  function fcLabel(key, style) { var p = key.split("-").map(Number); return new Date(p[0], p[1] - 1, 1).toLocaleDateString("en-GB", style === "long" ? { month: "long", year: "numeric" } : style === "month" ? { month: "long" } : { month: "short" }); }
+  function fcBrand(d) { return (d.example ? "x:" : "") + (d.brand || "").trim().toLowerCase(); }
+  function fcSorted(a) { return a.slice().sort(function (x, y) { return x - y; }); }
+  function fcLateText(n) { n = Math.round(n); return n > 0 ? days(n) + " late" : n < 0 ? days(-n) + " early" : "on time"; }
+  function fcCompact(n, C) {
+    try { return new Intl.NumberFormat("en-US", { style: "currency", currency: C, notation: "compact", maximumFractionDigits: 1 }).format(n); }
+    catch (e) { return money(n, C); }
+  }
+
+  // When each invoice was paid in full, matching dated payments to invoices in order. Undated payments give no sample.
+  function fcPaidInvoices(d) {
+    var pays = d.payments.filter(function (p) { return p.date && num(p.amount) > 0; }).sort(function (a, b) { return a.date.localeCompare(b.date); });
+    var invs = d.invoices.filter(function (iv) { return iv.issued && num(iv.amount) > 0; }).sort(function (a, b) { return a.issued.localeCompare(b.issued); });
+    var out = [], need = 0;
+    invs.forEach(function (iv) {
+      need += num(iv.amount);
+      for (var i = 0, run = 0; i < pays.length; i++) { run += num(pays[i].amount); if (run >= need - 0.005) { out.push({ due: addDays(iv.issued, num(iv.net)), paid: pays[i].date }); return; } }
+    });
+    return out;
+  }
+  // The creator's own habits: each brand's median lateness (paid date minus due date), the median across brands,
+  // and the median days from a deal arriving to its first payment.
+  function fcHistory(deals) {
+    var byBrand = {}, all = [], lags = [];
+    deals.forEach(function (d) {
+      if (d.stage === "declined") return;
+      fcPaidInvoices(d).forEach(function (x) { var n = diffDays(x.due, x.paid), k = fcBrand(d); all.push(n); (byBrand[k] = byBrand[k] || []).push(n); });
+      var first = d.payments.map(function (p) { return p.date; }).filter(Boolean).sort()[0];
+      if (first && d.created) { var g = diffDays(d.created, first); if (g >= 0) lags.push(g); }
+    });
+    var med = {}; Object.keys(byBrand).forEach(function (k) { med[k] = median(fcSorted(byBrand[k])); });
+    return { brand: med, all: all.length ? median(fcSorted(all)) : 0, allN: all.length, lag: lags.length ? Math.round(median(fcSorted(lags))) : 75, lagN: lags.length };
+  }
+  function fcLate(h, d) { var k = fcBrand(d); return Math.round(h.brand[k] != null ? h.brand[k] : h.all); }
+
+  // Everything still expected in currency C, each with an amount and an expected date (never before today).
+  function fcItems(deals, C) {
+    var t = todayISO(), h = fcHistory(deals), likes = fcLikes(), items = [], paid = [], undated = { n: 0, amt: 0 }, noDate = { n: 0, amt: 0 };
+    var notBefore = function (s) { return s < t ? t : s; };
+    deals.forEach(function (d) {
+      if (d.currency !== C || d.stage === "declined") return;
+      d.payments.forEach(function (p) {
+        if (!num(p.amount)) return;
+        if (p.date) paid.push({ date: p.date, amount: num(p.amount) }); else { undated.n++; undated.amt += num(p.amount); }
+      });
+      if (BOOKED.indexOf(d.stage) > -1) {
+        var L = ledger(d), late = fcLate(h, d);
+        L.rows.forEach(function (r) {
+          if (r.open <= 0) return;
+          if (!r.due) { noDate.n++; noDate.amt += r.open; return; }
+          items.push({ tier: "inv", amount: r.open, date: notBefore(addDays(r.due, late)) });
+        });
+        if (L.notInvoiced > 0) {
+          var step = d.tasks.filter(function (k) { return k.key === "invoice" && !k.done && k.due; })[0];
+          var lastLive = d.deliverables.map(function (x) { return lineDate(d, x); }).concat(d.publishBy || "").filter(Boolean).sort().pop();
+          var invOn = notBefore(step ? step.due : lastLive ? addDays(lastLive, 2) : addDays(t, 14));
+          items.push({ tier: "booked", amount: L.notInvoiced, date: notBefore(addDays(invOn, netOf(d) + late)) });
+        }
+      } else if (OPEN.indexOf(d.stage) > -1 && num(d.fee) > 0 && legitResult(d).key !== "scam") {
+        items.push({ tier: "pipe", amount: num(d.fee) * likes[d.stage] / 100, date: addDays(t, h.lag) });
+      }
+    });
+    // Renewals: brands with 2+ booked deals in this currency and nothing open with them right now.
+    var open = {}, brands = {}, renewN = 0;
+    deals.forEach(function (d) {
+      if (!d.brand || d.stage === "declined") return;
+      if (OPEN.indexOf(d.stage) > -1) open[fcBrand(d)] = 1;
+      if (d.currency === C && BOOKED.indexOf(d.stage) > -1 && d.created) (brands[fcBrand(d)] = brands[fcBrand(d)] || []).push(d);
+    });
+    Object.keys(brands).forEach(function (k) {
+      var past = brands[k].sort(function (a, b) { return a.created.localeCompare(b.created); });
+      if (open[k] || past.length < 2) return;
+      var gaps = []; for (var i = 1; i < past.length; i++) gaps.push(diffDays(past[i - 1].created, past[i].created));
+      var amt = median(fcSorted(past.map(function (d) { return num(d.fee); }))) * likes.renewal / 100;
+      if (amt <= 0) return;
+      renewN++;
+      items.push({ tier: "renew", amount: amt, date: addDays(notBefore(addDays(past[past.length - 1].created, Math.round(median(fcSorted(gaps))))), h.lag) });
+    });
+    return { items: items, paid: paid, undated: undated, noDate: noDate, h: h, renewN: renewN };
+  }
+  // Buckets into months. budget (%) scales offers and renewals; delay (days) pushes back everything not yet received.
+  function fcMonths(F, budget, delay) {
+    var M = fcMonth(todayISO()), idx = {}, rows = [], later = 0, f = 1 + budget / 100, tiers = { inv: 0, booked: 0, pipe: 0, renew: 0 };
+    for (var i = -FC_PAST; i < FC_AHEAD; i++) { var k = fcShift(M, i); idx[k] = rows.length; rows.push({ key: k, past: k < M, now: k === M, actual: 0, inv: 0, booked: 0, pipe: 0, renew: 0, proj: 0 }); }
+    F.paid.forEach(function (p) { var j = idx[fcMonth(p.date)]; if (j != null) rows[j].actual += p.amount; });
+    F.items.forEach(function (x) {
+      var amt = x.amount * (x.tier === "pipe" || x.tier === "renew" ? f : 1), j = idx[fcMonth(addDays(x.date, delay))];
+      if (j == null) { later += amt; return; }
+      rows[j][x.tier] += amt; rows[j].proj += amt; tiers[x.tier] += amt;
+    });
+    var ahead = rows.filter(function (r) { return !r.past; });
+    return { rows: rows, later: later, tiers: tiers, total: sum(ahead, function (r) { return r.proj; }), received: sum(rows, function (r) { return r.past ? r.actual : 0; }) };
+  }
+  function fcReceived(deals, C, key) {
+    var s = 0;
+    deals.forEach(function (d) { if (d.currency === C && d.stage !== "declined") d.payments.forEach(function (p) { if (p.date && fcMonth(p.date) === key) s += num(p.amount); }); });
+    return s;
+  }
+
+  /* ----- a forecast that grades itself ----- */
+  function fcSnaps() { if (!state.forecastSnaps || typeof state.forecastSnaps !== "object") state.forecastSnaps = {}; return state.forecastSnaps; }
+  // Once a month, keep next month's projected total for every currency, from the creator's own deals only.
+  function fcSnapshot() {
+    var real = state.deals.filter(function (d) { return !d.example; }), S = fcSnaps(), next = fcShift(fcMonth(todayISO()), 1);
+    if (!real.length || (S[next] && !S[next].example)) return;
+    var byCur = {};
+    currencies(real).forEach(function (c) { var m = fcMonths(fcItems(real, c), 0, 0); byCur[c] = Math.round(m.rows.filter(function (r) { return r.key === next; })[0].proj); });
+    Object.keys(S).forEach(function (k) { if (S[k] && S[k].example) delete S[k]; });
+    S[next] = { made: todayISO(), byCur: byCur };
+    save();
+  }
+  // Example only: a backdated snapshot for last month, so the grading line shows before a month has passed.
+  function fcSeedSnapshot() {
+    var S = fcSnaps(), ex = state.deals.filter(function (d) { return d.example; });
+    if (hasReal() || !ex.length || Object.keys(S).length) return;
+    var last = fcShift(fcMonth(todayISO()), -1), byCur = {};
+    currencies(ex).forEach(function (c) { var got = fcReceived(ex, c, last); if (got) byCur[c] = Math.round(got * 1.15 / 50) * 50; });
+    if (!Object.keys(byCur).length) return;
+    S[last] = { made: addDays(last + "-01", -3), byCur: byCur, example: true };
+    save();
+  }
+  function fcGrades(C) {
+    var S = fcSnaps(), M = fcMonth(todayISO()), real = hasReal(), deals = state.deals.filter(function (d) { return !d.example === real; });
+    var keys = Object.keys(S).filter(function (k) { var s = S[k]; return k < M && s && !!s.example === !real && s.byCur && s.byCur[C] != null; }).sort().reverse().slice(0, 3);
+    var lines = keys.map(function (k) {
+      var s = S[k], proj = num(s.byCur[C]), got = fcReceived(deals, C, k), diff = proj ? Math.round((got - proj) / proj * 100) : null;
+      return "<li>" + (s.example ? chip("Example") + " " : "") + "In " + esc(fcLabel(fcMonth(s.made), "month")) + " we projected <strong>" + money(proj, C) + "</strong> for " + esc(fcLabel(k, "long")) +
+        ". You received <strong>" + money(got, C) + "</strong>" + (diff === null ? "" : diff === 0 ? ", right on the estimate" : ", " + Math.abs(diff) + "% " + (diff < 0 ? "less" : "more") + " than projected") + ".</li>";
+    });
+    var next = S[fcShift(M, 1)], pend = real && next && !next.example && next.byCur && next.byCur[C] != null
+      ? '<p class="fine">Saved this month: ' + money(next.byCur[C], C) + " expected in " + esc(fcLabel(fcShift(M, 1), "month")) + ". It's graded here once " + esc(fcLabel(fcShift(M, 1), "month")) + " is over.</p>" : "";
+    if (!lines.length && !pend) return "";
+    return '<div class="callout fc-grade" id="fc-grade"><strong>How the forecast did</strong>' + (lines.length ? '<ul class="fc-grade-list">' + lines.join("") + "</ul>" : "<p>Each month the forecast saves what it expects next month, then checks it against what arrived.</p>") + pend + "</div>";
+  }
+
+  /* ----- rendering ----- */
+  var FC_CLS = { actual: "fc-c-actual", inv: "fc-c-inv", booked: "fc-c-booked", pipe: "fc-c-pipe", renew: "fc-c-renew" };
+  function fcSw(k) { return '<span class="fc-sw ' + FC_CLS[k] + '" aria-hidden="true"></span>'; }
+  function fcSign(n) { return n > 0 ? "+" + n : n < 0 ? "−" + Math.abs(n) : "0"; }
+  function fcScenario() { return !!(ui.fcBudget || ui.fcDelay); }
+  function fcColText(r, C) {
+    var parts = [];
+    if (r.past || r.now || r.actual >= 0.5) parts.push((r.now ? "received so far " : "received ") + money(r.actual, C));
+    FC_TIERS.forEach(function (t) { if (r[t.key] >= 0.5) parts.push(t.short.toLowerCase() + " " + money(r[t.key], C)); });
+    if (!r.past) parts.push("total " + money(r.actual + r.proj, C));
+    return fcLabel(r.key, "long") + (r.past ? "" : ", estimate") + ": " + parts.join(", ");
+  }
+  function fcBody(C) {
+    var F = fcItems(live(), C), base = fcMonths(F, 0, 0), on = fcScenario(), m = on ? fcMonths(F, ui.fcBudget, ui.fcDelay) : base;
+    fcLast = { C: C, rows: m.rows };
+    var rows = m.rows, ahead = rows.filter(function (r) { return !r.past; }), pastR = rows.filter(function (r) { return r.past; });
+    var span = esc(fcLabel(ahead[0].key) + "–" + fcLabel(ahead[ahead.length - 1].key));
+    var max = 0; rows.forEach(function (r, i) { max = Math.max(max, r.actual + r.proj, base.rows[i].actual + base.rows[i].proj); });
+    if (!max && !F.undated.n && !F.noDate.n) return '<p class="fine">Nothing received or expected in ' + esc(C) + " yet. Once you record payments or book deals, the forecast fills in here.</p>";
+    // y axis: 3–4 clean ticks
+    var raw = max / 3 || 1, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (x) { return x * mag; }).filter(function (x) { return x >= raw; })[0], top = Math.max(step, Math.ceil(max / step) * step), ticks = [];
+    for (var v = 0; v <= top + 0.001; v += step) ticks.push(v);
+    var pctOf = function (n) { return Math.round(n / top * 10000) / 100; };
+    var diff = m.total - base.total, dpct = base.total ? Math.round(diff / base.total * 100) : 0;
+    var h = '<div class="money-sum fc-figs">' +
+      '<div><span class="label">' + (on ? "Expected with this scenario" : "Expected") + ", " + span + '</span><span class="num" id="fc-total">' + money(m.total, C) + '</span><span class="fine">' + (on ? "Estimate. Without the scenario: " + money(base.total, C) : "Estimate") + "</span></div>" +
+      '<div><span class="label">Already invoiced</span><span class="num">' + money(m.tiers.inv, C) + '</span><span class="fine">Most certain part</span></div>' +
+      '<div><span class="label">Received, ' + esc(fcLabel(pastR[0].key) + "–" + fcLabel(pastR[pastR.length - 1].key)) + '</span><span class="num">' + money(m.received, C) + '</span><span class="fine">Payments with a date</span></div></div>';
+    h += on ? '<p class="fc-scen-res" id="fc-scen-res">This scenario ' + (diff < -0.5 ? "takes <strong>" + money(-diff, C) + "</strong> (" + Math.abs(dpct) + "%) out of the next six months" : diff > 0.5 ? "adds <strong>" + money(diff, C) + "</strong> (" + dpct + "%) to the next six months" : "leaves the six-month total unchanged") +
+      (ui.fcDelay ? ". Payments it pushes past " + esc(fcLabel(ahead[ahead.length - 1].key, "month")) + " drop out of the window" : "") + ".</p>" : "";
+    h += '<ul class="fc-legend" id="fc-legend"><li>' + fcSw("actual") + "Received</li>" + FC_TIERS.map(function (t) { return "<li>" + fcSw(t.key) + esc(t.label) + "</li>"; }).join("") +
+      (on ? '<li><span class="fc-sw fc-sw-base" aria-hidden="true"></span>Without the scenario</li>' : "") + "</ul>";
+    h += '<div class="fc-chart" id="fc-chart"><div class="fc-zones" aria-hidden="true"><span class="z-past">Received</span><span class="z-ahead">Estimate</span></div><div class="fc-plot">' +
+      ticks.map(function (t) { return '<div class="fc-tick" style="bottom:' + pctOf(t) + '%"><span>' + esc(fcCompact(t, C)) + "</span></div>"; }).join("") + '<div class="fc-cols">' +
+      rows.map(function (r, i) {
+        var segs = ["renew", "pipe", "booked", "inv", "actual"].filter(function (k) { return r[k] >= 0.5; }), tot = r.actual + r.proj, b = base.rows[i].actual + base.rows[i].proj;
+        return '<button type="button" class="fc-col' + (r.past ? "" : " ahead") + (r.now ? " now" : "") + '" id="fc-col-' + i + '" data-fc-col="' + i + '" aria-label="' + esc(fcColText(r, C)) + '">' +
+          (tot >= 0.5 ? '<span class="fc-bar" style="height:' + pctOf(tot) + '%">' + segs.map(function (k) { return '<span class="fc-seg ' + FC_CLS[k] + '" style="flex-grow:' + Math.round(r[k]) + '"></span>'; }).join("") + "</span>" : "") +
+          (on && !r.past && Math.abs(b - tot) >= 0.5 ? '<span class="fc-base" style="bottom:' + pctOf(b) + '%"></span>' : "") + "</button>";
+      }).join("") + '</div></div><div class="fc-xs" aria-hidden="true">' +
+      rows.map(function (r) { var l = fcLabel(r.key); return '<span class="' + (r.now ? "now" : "") + '"><span class="l">' + esc(l) + '</span><span class="s">' + esc(l.charAt(0)) + "</span></span>"; }).join("") +
+      '</div><div class="fc-tip" id="fc-tip" aria-hidden="true" hidden></div></div>';
+    // the same numbers as a table
+    var cell = function (n) { return n >= 0.5 ? money(n, C) : "–"; };
+    h += '<details class="fc-table" id="fc-table"' + (ui.fcTable ? " open" : "") + '><summary>Monthly amounts as a table</summary><div class="table-wrap"><table><thead><tr><th>Month</th><th class="num">Received</th>' +
+      FC_TIERS.map(function (t) { return '<th class="num">' + esc(t.short) + "</th>"; }).join("") + '<th class="num">Total</th></tr></thead><tbody>' +
+      rows.map(function (r) { return (r.now ? '<tr><th colspan="' + (FC_TIERS.length + 3) + '" scope="rowgroup">Estimate (this month includes what has arrived so far)</th></tr>' : "") + '<tr><td class="fc-mo">' + esc(fcLabel(r.key) + " " + r.key.slice(0, 4)) + '</td><td class="num">' + cell(r.actual) + "</td>" + FC_TIERS.map(function (t) { return '<td class="num">' + cell(r[t.key]) + "</td>"; }).join("") + '<td class="num">' + cell(r.actual + r.proj) + "</td></tr>"; }).join("") +
+      "</tbody></table></div></details>";
+    var notes = [];
+    if (m.later >= 0.5) notes.push(money(m.later, C) + " more is expected after " + esc(fcLabel(ahead[ahead.length - 1].key, "long")) + ", so it isn't shown.");
+    if (F.undated.n) notes.push(F.undated.n + " payment" + (F.undated.n === 1 ? "" : "s") + " worth " + money(F.undated.amt, C) + " " + (F.undated.n === 1 ? "has" : "have") + " no date, so " + (F.undated.n === 1 ? "it isn't" : "they aren't") + " in any month. Add the date in the deal's Money tab.");
+    if (F.noDate.n) notes.push(F.noDate.n + " unpaid invoice" + (F.noDate.n === 1 ? "" : "s") + " worth " + money(F.noDate.amt, C) + " " + (F.noDate.n === 1 ? "has" : "have") + " no issue date, so " + (F.noDate.n === 1 ? "it isn't" : "they aren't") + " placed in a month.");
+    if (notes.length) h += '<p class="fine fc-foot" id="fc-foot">' + notes.join(" ") + "</p>";
+    return h;
+  }
+  function fcNotes(C) {
+    var F = fcItems(live(), C), h = F.h, L = fcLikes();
+    var like = function (k, label) { return '<div class="field"><label for="fc-like-' + k + '">' + label + ' (%)</label><input type="number" id="fc-like-' + k + '" data-fc-like="' + k + '" min="0" max="100" step="5" inputmode="numeric" value="' + L[k] + '"></div>'; };
+    return '<div class="fc-notes"><h3 class="section-title">How this estimate works</h3><ul class="fine">' +
+      "<li><strong>Invoiced:</strong> each unpaid invoice arrives on its due date plus how late that brand usually pays. Brands with no paid invoices yet use your median across brands: " + (h.allN ? fcLateText(h.all) + ", from " + h.allN + " paid invoice" + (h.allN === 1 ? "" : "s") : "on time, until you have paid invoices") + ". Overdue invoices count as arriving this month.</li>" +
+      "<li><strong>Booked:</strong> invoiced when the deal's invoice step is due, or 2 days after the last placement goes live, or in 2 weeks if neither is set. Then paid on the deal's terms plus the brand's usual lateness.</li>" +
+      "<li><strong>Open offers:</strong> the fee times the chance the stage closes (" + L.inbound + "% inbound, " + L.vetting + "% vetting, " + L.negotiating + "% negotiating), paid " + days(h.lag) + " from today, " + (h.lagN ? "your median from an offer arriving to its first payment" : "a default until you have paid deals") + ". Offers flagged as likely scams aren't counted.</li>" +
+      "<li><strong>Renewals:</strong> brands you've had 2 or more deals with and nothing open with now. The next deal is expected after their usual gap between deals, at their median fee, times a " + L.renewal + "% chance it happens, then paid " + days(h.lag) + " later." + (F.renewN ? "" : " None qualify in " + esc(C) + " yet.") + "</li>" +
+      "<li>Each currency is forecast on its own. Nothing is converted. Scenarios aren't saved.</li></ul>" +
+      '<details class="fc-likes" id="fc-likes"' + (ui.fcLikes ? " open" : "") + '><summary>Change the likelihoods</summary><div class="grid3">' +
+      like("inbound", "Inbound") + like("vetting", "Vetting") + like("negotiating", "Negotiating") + like("renewal", "Renewal") + '</div><p class="help">Saved on this device. They apply to every currency.</p></details></div>';
+  }
+  function moneyExtras(C) {
+    fcSeedSnapshot(); fcSnapshot();
+    var prev = document.getElementById("fc-panel"), body = fcBody(C);
+    if (!prev || prev.dataset.cur !== C) {
+      var bt = fcMonths(fcItems(live(), C), 0, 0).tiers;
+      logEvent("forecast-viewed", { months: FC_AHEAD, tiers: FC_TIERS.filter(function (t) { return bt[t.key] >= 0.5; }).length });
+    }
+    var b = ui.fcBudget, dl = ui.fcDelay;
+    return '<section class="panel wide fc" id="fc-panel" data-cur="' + esc(C) + '" aria-labelledby="fc-title"><div class="panel-head"><h2 id="fc-title">Cash forecast</h2>' + chip("Estimate") + "</div>" +
+      '<p class="lede">What arrived in each of the last six months, and what\'s likely to arrive in the next six, worked out from your own deals and how your brands have paid. It\'s cash flow from what you know, not a market prediction.</p>' +
+      '<div class="fc-scen" role="group" aria-labelledby="fc-scen-h"><div class="fc-scen-head"><span class="label" id="fc-scen-h">Try a scenario</span><button class="btn small quiet" type="button" id="fc-reset" data-action="fc-reset"' + (fcScenario() ? "" : " hidden") + ">Reset</button></div>" +
+      '<div class="field"><label for="fc-budget">Brand budgets <output id="fc-budget-out" for="fc-budget">' + fcSign(b) + '%</output></label><input type="range" id="fc-budget" min="-50" max="20" step="5" value="' + b + '"><p class="help">Changes open offers and renewals</p></div>' +
+      '<div class="field"><label for="fc-delay">Extra payment delay <output id="fc-delay-out" for="fc-delay">' + days(dl) + '</output></label><input type="range" id="fc-delay" min="0" max="60" step="5" value="' + dl + '"><p class="help">Pushes back everything not yet received</p></div></div>' +
+      '<div class="fc-body" id="fc-body">' + body + "</div>" + fcGrades(C) + fcNotes(C) + "</section>";
+  }
+  function fcRefresh() {
+    var p = document.getElementById("fc-panel"), b = document.getElementById("fc-body");
+    if (!p || !b) return;
+    b.innerHTML = fcBody(p.dataset.cur);
+    var bo = document.getElementById("fc-budget-out"), dout = document.getElementById("fc-delay-out"), rs = document.getElementById("fc-reset");
+    if (bo) bo.textContent = fcSign(ui.fcBudget) + "%";
+    if (dout) dout.textContent = days(ui.fcDelay);
+    if (rs) rs.hidden = !fcScenario();
+  }
+  function fcBucketDelay(n) { return n === 0 ? "0" : n <= 15 ? "1-15" : n <= 30 ? "16-30" : n <= 45 ? "31-45" : "46-60"; }
+
+  EXT.input.push(function (t) {
+    if (t.id === "fc-budget" || t.id === "fc-delay") { ui[t.id === "fc-budget" ? "fcBudget" : "fcDelay"] = num(t.value); fcRefresh(); return true; }
+    if (t.dataset && t.dataset.fcLike) {
+      if (t.value === "") return true;
+      var f = state.profile.forecast = Object.assign({}, state.profile.forecast || {});
+      f[t.dataset.fcLike] = Math.max(0, Math.min(100, num(t.value))); save(); fcRefresh(); return true;
+    }
+    return false;
+  });
+  EXT.change.push(function (t) {
+    if (t.id === "fc-budget" || t.id === "fc-delay") { logEvent("scenario-changed", { budget: fcSign(Math.round(ui.fcBudget / 10) * 10) + "%", delay: fcBucketDelay(ui.fcDelay) }); save(); return true; }
+    if (t.dataset && t.dataset.fcLike) { logEvent("forecast-likelihood", { stage: t.dataset.fcLike }); save(); renderAll(); return true; }
+    return false;
+  });
+  EXT.actions["fc-reset"] = function () {
+    ui.fcBudget = 0; ui.fcDelay = 0; logEvent("scenario-changed", { budget: "0%", delay: "0" }); save(); renderAll();
+    var s = document.getElementById("fc-budget"); if (s) s.focus();
+  };
+  // Remember which disclosures are open across re-renders ("toggle" doesn't bubble, so listen in the capture phase).
+  document.addEventListener("toggle", function (e) {
+    if (e.target.id === "fc-table") ui.fcTable = e.target.open;
+    if (e.target.id === "fc-likes") ui.fcLikes = e.target.open;
+  }, true);
+
+  // Hover or focus a month to see each tier's amount.
+  function fcTip(col) {
+    var tip = document.getElementById("fc-tip"), chart = document.getElementById("fc-chart");
+    if (!tip || !chart || !fcLast) return;
+    document.querySelectorAll(".fc-col.on").forEach(function (c) { if (c !== col) c.classList.remove("on"); });
+    if (!col) { tip.hidden = true; return; }
+    var r = fcLast.rows[+col.dataset.fcCol], C = fcLast.C; if (!r) return;
+    col.classList.add("on");
+    var line = function (k, label, n) { return '<span class="r">' + (k ? fcSw(k) : "") + "<span>" + esc(label) + '</span><span class="v">' + money(n, C) + "</span></span>"; };
+    var h = "<strong>" + esc(fcLabel(r.key, "long")) + "</strong>" + (r.past ? "" : '<span class="fine">' + (r.now ? "Received so far, then estimate" : "Estimate") + "</span>");
+    if (r.actual >= 0.5 || r.past) h += line("actual", r.now ? "Received so far" : "Received", r.actual);
+    FC_TIERS.forEach(function (t) { if (r[t.key] >= 0.5) h += line(t.key, t.short, r[t.key]); });
+    if (!r.past) h += '<span class="r tot"><span>Total</span><span class="v">' + money(r.actual + r.proj, C) + "</span></span>";
+    tip.innerHTML = h; tip.hidden = false;
+    var cb = chart.getBoundingClientRect(), kb = col.getBoundingClientRect(), bar = col.querySelector(".fc-bar"), top = bar ? bar.getBoundingClientRect().top : kb.bottom;
+    var w = tip.offsetWidth, x = kb.left - cb.left + kb.width / 2 - w / 2;
+    tip.style.left = Math.max(0, Math.min(cb.width - w, x)) + "px";
+    tip.style.top = Math.max(0, top - cb.top - tip.offsetHeight - 8) + "px";
+  }
+  document.addEventListener("mouseover", function (e) { var c = e.target.closest && e.target.closest(".fc-col"); if (c) fcTip(c); });
+  document.addEventListener("mouseout", function (e) {
+    var c = e.target.closest && e.target.closest(".fc-col"); if (!c) return;
+    var to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(".fc-col") : null;
+    if (!to) fcTip(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("fc-col") ? document.activeElement : null);
+  });
+  document.addEventListener("focusin", function (e) { if (e.target.classList && e.target.classList.contains("fc-col")) fcTip(e.target); });
+  document.addEventListener("focusout", function (e) { if (e.target.classList && e.target.classList.contains("fc-col") && !(e.relatedTarget && e.relatedTarget.classList && e.relatedTarget.classList.contains("fc-col"))) fcTip(null); });
+
+  // Example data: two paid GBP deals and one GBP offer, so the GBP forecast has history, a renewal partner and a pipeline.
+  function fcSeed(list, t) {
+    if (list.some(function (d) { return d.fcSeed; }) || !list.some(function (d) { return d.example && d.brand === "Juniper Studio"; })) return;
+    var mk = function (o, inv, pay) {
+      var d = blankDeal(Object.assign({ example: true, fcSeed: true, currency: "GBP", feeMode: "lines", legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK), take: { revisions: 1, extra: 0, buy: "", fit: "yes" }, termsApplied: true }, o));
+      d.deliverables = d.deliverables.map(normLine);
+      if (inv) d.invoices = [Object.assign({ id: uid(), ref: "" }, inv)];
+      if (pay) d.payments = [Object.assign({ id: uid(), note: "" }, pay)];
+      return d;
+    };
+    list.push(mk({ brand: "Juniper Studio", category: "Home", contact: "Elena Marsh", email: "elena@juniperstudio.example", source: "My outreach", stage: "paid", fee: 2600, created: addDays(t, -160), publishBy: addDays(t, -130),
+      deliverables: [{ type: "yt_integration", qty: 1, rate: 2600, publishBy: addDays(t, -130) }], notes: "Spring campaign. Paid a week after the due date." },
+      { ref: "0031", amount: 2600, issued: addDays(t, -126), net: 30 }, { amount: 2600, date: addDays(t, -89) }));
+    list.push(mk({ brand: "Copperleaf Paper", category: "Home", contact: "Ravi Shah", email: "ravi@copperleafpaper.example", source: "Inbound email", stage: "paid", fee: 1200, created: addDays(t, -95), publishBy: addDays(t, -82),
+      deliverables: [{ type: "ig_reel", qty: 1, rate: 1200, publishBy: addDays(t, -82) }] },
+      { amount: 1200, issued: addDays(t, -80), net: 30 }, { amount: 1200, date: addDays(t, -38) }));
+    var w = mk({ brand: "Wren & Weald", category: "Outdoor & fitness", contact: "Hana Okafor", email: "hana@wrenandweald.example", source: "Inbound email", stage: "negotiating", fee: 1800, created: addDays(t, -6), termsApplied: false,
+      deliverables: [{ type: "yt_integration", qty: 1, rate: 1800 }], notes: "Asked for 60 days of paid usage. Countering at 30." });
+    var k = task({ kind: "reply", title: "Send your counter-offer", due: addDays(t, 2) }); logT(k, "Example"); w.tasks.push(k);
+    list.push(w);
+  }
+  EXT.seed.push(fcSeed);
+  // First visit: load() built the examples before this region ran. Apply once if nothing was stored yet (fcSeed is idempotent).
+  if (!readKey(KEY2) && !readKey(KEY1)) fcSeed(state.deals, todayISO());
+  /* ===== END FEATURE B ===== */
+
+
+  /* ===== FEATURE C · insights charts ===== */
+  // Owned by the "insights" session. Core calls renderInsights() for the Insights view.
+  // Five sections, all from the creator's own deals: days to pay by brand (every currency, since days compare),
+  // then, one currency at a time, price per placement, effective CPM, partner timelines and seasonality.
+  // Charts are inline SVG with x positions in percent, so they reflow to any width without scaling the text.
+  // Each chart has an empty state, a summary sentence and a table of its numbers.
+  EVENT_LABELS["insights-viewed"] = "Opened Insights";
+  EVENT_LABELS["insights-currency"] = "Switched the Insights currency";
+
+  var INS_PAD = 3; // percent kept clear at each end of a plot, so edge dots aren't clipped
+  var INS_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function (m) { return new Date(2000, m, 1).toLocaleDateString("en-GB", { month: "short" }).slice(0, 3); });
+  function insX(v, lo, hi) { return (INS_PAD + (hi > lo ? (v - lo) / (hi - lo) : 0.5) * (100 - 2 * INS_PAD)).toFixed(2) + "%"; }
+  function insDay(s) { var t = parseD(s); return t ? Math.round(t.getTime() / 86400000) : null; }
+  function insKey(d) { return (d.example ? "ex:" : "") + (d.brand || "").trim().toLowerCase(); }
+  function insName(d) { return d.brand || "Untitled deal"; }
+  function insAnchor(x) { var p = parseFloat(x); return p < 8 ? "start" : p > 92 ? "end" : "middle"; }
+  function insTip(value, sub) { return ' data-tip="' + esc(value) + '" data-tipsub="' + esc(sub) + '"'; }
+  function insAxisMoney(v, c) {
+    if (v >= 10000) { try { return new Intl.NumberFormat("en-US", { style: "currency", currency: c, notation: "compact", maximumFractionDigits: 1 }).format(v); } catch (e) { return money(v, c); } }
+    return v % 1 ? money2(v, c) : money(v, c);
+  }
+  function insChange(a, b) { if (!a || !b) return ""; var p = Math.round((b - a) / a * 100); return p === 0 ? "no change" : (p > 0 ? "+" : "−") + Math.abs(p) + "%"; }
+  // Round tick values from zero, about n steps.
+  function insNice(max, n) {
+    if (!(max > 0)) max = 1;
+    var raw = max / (n || 3), p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), f = raw / p;
+    var step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p, out = [];
+    for (var v = 0; out.length < 20; v += step) { out.push(Math.round(v * 100) / 100); if (v >= max - step * 0.001) break; }
+    return out;
+  }
+  // Month-start ticks between two ISO dates, at most maxN of them, on calendar-aligned steps.
+  function insMonthTicks(loISO, hiISO, maxN) {
+    var a = parseD(loISO), b = parseD(hiISO), all = [], y = a.getFullYear(), m = a.getMonth() + 1;
+    while (new Date(y, m, 1) <= b) { all.push(new Date(y, m, 1)); m++; }
+    var step = [1, 2, 3, 4, 6, 12].filter(function (s) { return Math.ceil(all.length / s) <= maxN; })[0] || 12;
+    return all.filter(function (dt) { return dt.getMonth() % step === 0; }).map(function (dt) { return { n: insDay(iso(dt)), label: dt.toLocaleDateString("en-GB", { month: "short", year: "2-digit" }) }; });
+  }
+  function insXAxis(ticks, lo, hi, extra) {
+    return '<svg class="ins-svg" height="18" aria-hidden="true">' + ticks.map(function (t) { var x = insX(t.n, lo, hi); return '<text x="' + x + '" y="13" text-anchor="' + insAnchor(x) + '">' + esc(t.label) + "</text>"; }).join("") + (extra || "") + "</svg>";
+  }
+  function insDetails(id, label, head, rows) {
+    return '<details class="ins-details" id="' + id + '"><summary>' + esc(label) + '</summary><div class="table-wrap"><table><thead><tr>' + head.map(function (h) { return "<th" + (h[1] ? ' class="num"' : "") + ">" + esc(h[0]) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.join("") + "</tbody></table></div></details>";
+  }
+  function insLegend(items) { return '<ul class="ins-legend" aria-hidden="true">' + items.map(function (i) { return '<li><svg width="16" height="14">' + i[0] + "</svg>" + esc(i[1]) + "</li>"; }).join("") + "</ul>"; }
+
+  // When each invoice was paid in full: payments, oldest first, settle invoices in the order they were issued.
+  function insInvoices(d) {
+    var t = todayISO();
+    var invs = d.invoices.filter(function (i) { return num(i.amount) > 0; }).sort(function (a, b) { return (a.issued || "").localeCompare(b.issued || ""); });
+    var pays = d.payments.filter(function (p) { return num(p.amount) > 0; }).sort(function (a, b) { return (a.date || "9999").localeCompare(b.date || "9999"); });
+    var pi = 0, left = pays.length ? num(pays[0].amount) : 0;
+    return invs.map(function (iv) {
+      var need = num(iv.amount), on = "", undated = false;
+      while (need > 0.005 && pi < pays.length) {
+        var take = Math.min(need, left); need -= take; left -= take;
+        if (take > 0) { if (pays[pi].date) on = pays[pi].date; else undated = true; }
+        if (left <= 0.005) { pi++; left = pi < pays.length ? num(pays[pi].amount) : 0; }
+      }
+      var r = { d: d, inv: iv, net: num(iv.net), paid: need <= 0.005, on: "" };
+      if (!iv.issued) r.skip = true;
+      else if (r.paid && (undated || !on)) r.skip = true;
+      else if (r.paid) { r.on = on; r.days = Math.max(0, diffDays(iv.issued, on)); }
+      else if (iv.issued > t) r.future = true;
+      else r.days = diffDays(iv.issued, t);
+      r.late = r.days != null && r.days > r.net;
+      return r;
+    });
+  }
+  function insNetLabel(nets) {
+    var u = nets.filter(function (n, i) { return nets.indexOf(n) === i; }).sort(function (a, b) { return a - b; });
+    var one = function (n) { return n ? "Net " + n : "Due on receipt"; };
+    return u.length === 1 ? one(u[0]) : "Net " + u[0] + "–" + u[u.length - 1];
+  }
+  function insPractice(paid) { return paid.length === 1 ? "paid in " + days(paid[0]) : "a median of " + days(Math.round(median(paid))) + " in practice"; }
+
+  /* 1. Days to pay, by brand */
+  function insPaySection(deals) {
+    var groups = {}, order = [], skipped = 0, t = todayISO();
+    deals.forEach(function (d) {
+      insInvoices(d).forEach(function (r) {
+        if (r.skip) { skipped++; return; }
+        if (r.future) return;
+        var k = insKey(d);
+        if (!groups[k]) { groups[k] = { name: insName(d), rows: [], deal: d }; order.push(k); }
+        var g = groups[k]; g.rows.push(r);
+        if ((d.created || "") > (g.deal.created || "")) g.deal = d;
+      });
+    });
+    var head = '<div class="panel-head"><h2>Days to pay, by brand</h2><span class="label">Every currency · days from invoice to paid in full</span></div>';
+    if (!order.length) return '<section class="panel ins-sec" id="ins-pay">' + head + '<p class="ins-empty">This chart needs invoices with an invoice date. Add one on a deal\'s Money tab and record the payment when it lands. Each invoice becomes a dot here, set against the terms you agreed.</p></section>';
+    var all = [], hi = 30;
+    var gs = order.map(function (k) {
+      var g = groups[k];
+      g.paid = g.rows.filter(function (r) { return r.paid; }).map(function (r) { return r.days; }).sort(function (a, b) { return a - b; });
+      g.open = g.rows.filter(function (r) { return !r.paid; });
+      g.maxOpen = Math.max.apply(null, [0].concat(g.open.map(function (r) { return r.days; })));
+      g.nets = g.rows.map(function (r) { return r.net; });
+      g.overdue = g.open.some(function (r) { return r.late; });
+      g.score = Math.max(g.paid.length ? median(g.paid) : 0, g.maxOpen);
+      g.head = insNetLabel(g.nets) + " on paper, " + (g.paid.length ? insPractice(g.paid) : "nothing paid yet") +
+        (g.open.length ? " · " + (g.open.length === 1 ? "1 unpaid, " : g.open.length + " unpaid, the oldest ") + days(g.maxOpen) + " so far" : "");
+      g.rows.forEach(function (r) { all.push(r); hi = Math.max(hi, r.days, r.net); });
+      return g;
+    }).sort(function (a, b) { return b.score - a.score; });
+    var step = hi <= 60 ? 15 : hi <= 180 ? 30 : 60;
+    hi = Math.ceil(hi * 1.05 / step) * step;
+    var ticks = []; for (var v = 0; v <= hi; v += step) ticks.push(v);
+    var grid = function (h) { return ticks.map(function (v) { var x = insX(v, 0, hi); return '<line class="ins-gl" x1="' + x + '" x2="' + x + '" y1="2" y2="' + (h - 2) + '"/>'; }).join(""); };
+
+    var paidAll = all.filter(function (r) { return r.paid; }), lateN = paidAll.filter(function (r) { return r.late; }).length;
+    var openAll = all.filter(function (r) { return !r.paid; }), overdueN = openAll.filter(function (r) { return r.late; }).length;
+    var netMed = median(all.map(function (r) { return r.net; }).sort(function (a, b) { return a - b; }));
+    var pd = paidAll.map(function (r) { return r.days; }).sort(function (a, b) { return a - b; }), pmed = median(pd);
+    var slow = gs.filter(function (g) { return g.paid.length && median(g.paid) > Math.max.apply(null, g.nets); })[0];
+    var level = pd.length && pmed > netMed ? "bad" : overdueN || lateN ? "warn" : "good";
+    var headline = insNetLabel([netMed]) + " on paper" + (pd.length ? ", " + insPractice(pd) : ", nothing paid in full yet");
+    var detail = "Across " + gs.length + " brand" + (gs.length === 1 ? "" : "s") + " and " + all.length + " invoice" + (all.length === 1 ? "" : "s") + ". " +
+      (pd.length ? lateN + " of " + pd.length + " paid invoice" + (pd.length === 1 ? "" : "s") + " arrived after the agreed terms. " : "") +
+      (openAll.length ? openAll.length + " still unpaid" + (overdueN ? ", " + overdueN + " past terms" : "") + "." : "Nothing unpaid.") +
+      (slow ? " Slowest: " + slow.name + ", " + insNetLabel(slow.nets) + " on paper, " + insPractice(slow.paid) + "." : "");
+
+    var rows = gs.map(function (g, gi) {
+      var H = 32, cy = 16, placed = [], s = grid(H);
+      g.nets.filter(function (n, i) { return g.nets.indexOf(n) === i; }).forEach(function (n) { var x = insX(n, 0, hi); s += '<line class="ins-net" x1="' + x + '" x2="' + x + '" y1="6" y2="26"/>'; });
+      g.rows.slice().sort(function (a, b) { return (a.paid ? 0 : 1) - (b.paid ? 0 : 1); }).forEach(function (r) {
+        var near = placed.filter(function (p) { return Math.abs(p - r.days) <= hi * 0.015; }).length; placed.push(r.days);
+        var y = cy + [0, -7, 7, -12, 12][near % 5], x = insX(r.days, 0, hi);
+        var val = days(r.days) + (r.paid ? "" : " so far");
+        var sub = g.name + " · " + money(r.inv.amount, r.d.currency) + " invoiced " + fmtDate(r.inv.issued) + " · " + insNetLabel([r.net]) + (r.paid ? " · paid " + fmtDate(r.on) : " · unpaid") + (r.late ? " · past terms" : "");
+        s += '<circle class="ins-hit" cx="' + x + '" cy="' + y + '" r="12"' + insTip(val, sub) + "/>" +
+          '<circle class="ins-dot' + (r.late ? " late" : "") + (r.paid ? "" : " open") + '" cx="' + x + '" cy="' + y + '" r="' + (r.paid ? 5 : 4.5) + '"/>';
+      });
+      return '<div class="ins-prow"><div class="ins-pname"><button class="linkish" type="button" id="ins-pay-brand-' + gi + '" data-open="' + g.deal.id + '" data-opentab="money" title="Open the latest invoiced deal">' + esc(g.name) + '</button><span class="ins-phead">' + esc(g.head) + "</span></div>" +
+        '<svg class="ins-svg" height="' + H + '" role="img" aria-label="' + esc(g.name + ": " + g.head) + '">' + s + "</svg></div>";
+    }).join("");
+    var axis = '<div class="ins-prow axis"><div></div>' + insXAxis(ticks.map(function (v) { return { n: v, label: v === hi ? v + " days" : String(v) }; }), 0, hi) + "</div>";
+    var trows = all.slice().sort(function (a, b) { return insName(a.d).localeCompare(insName(b.d)) || (a.inv.issued || "").localeCompare(b.inv.issued || ""); }).map(function (r) {
+      var st = r.paid ? (r.late ? chip(days(r.days - r.net) + " after terms", "bad") : chip("Within terms", "good")) : r.late ? chip("Unpaid, past terms", "bad") : chip("Unpaid, not due yet", "");
+      return "<tr><td>" + esc(insName(r.d)) + '</td><td class="num">' + money(r.inv.amount, r.d.currency) + '</td><td class="num">' + fmtDate(r.inv.issued) + "</td><td>" + esc(insNetLabel([r.net])) + '</td><td class="num">' + (r.paid ? fmtDate(r.on) : "—") + '</td><td class="num">' + r.days + "</td><td>" + st + "</td></tr>";
+    });
+    var key = insLegend([
+      ['<circle cx="8" cy="7" r="5" class="ins-dot"/>', "Paid within terms"],
+      ['<circle cx="8" cy="7" r="5" class="ins-dot late"/>', "Paid after terms"],
+      ['<circle cx="8" cy="7" r="4.5" class="ins-dot open late"/>', "Unpaid, days so far"],
+      ['<line x1="8" x2="8" y1="1" y2="13" class="ins-net"/>', "Agreed terms"]
+    ]);
+    return '<section class="panel ins-sec" id="ins-pay">' + head +
+      '<div class="callout ' + level + '"><strong>' + esc(headline) + "</strong><p>" + esc(detail) + "</p></div>" + key +
+      '<div class="ins-prows">' + rows + axis + "</div>" +
+      '<p class="fine">Click a brand to open its latest invoiced deal. Days compare across currencies, so every deal is here.' + (skipped ? " " + skipped + " invoice" + (skipped === 1 ? " isn't" : "s aren't") + " shown because the invoice or its payment has no date." : "") + "</p>" +
+      insDetails("ins-pay-table", "Every invoice in this chart", [["Brand"], ["Amount", 1], ["Invoiced", 1], ["Terms"], ["Paid", 1], ["Days", 1], ["Status"]], trows) + "</section>";
+  }
+
+  // A small time chart: dots joined in date order, round y ticks, an optional reference line, the latest value labelled.
+  function insTimeChart(pts, lo, hi, ticksX, fmt, axisFmt, ref, label) {
+    var H = 132, T = 12, B = 8, ph = H - T - B;
+    var vmax = Math.max.apply(null, pts.map(function (p) { return p.v; }).concat(ref ? [ref] : []));
+    var ticks = insNice(vmax * 1.08, 3), ymax = ticks[ticks.length - 1];
+    var Y = function (v) { return +(T + (1 - v / ymax) * ph).toFixed(1); };
+    var s = pts.slice().sort(function (a, b) { return a.t - b.t; }), svg = "", ylab = "";
+    ticks.forEach(function (v) { svg += '<line class="ins-gl" x1="0" x2="100%" y1="' + Y(v) + '" y2="' + Y(v) + '"/>'; ylab += '<span style="top:' + Y(v) + 'px">' + esc(axisFmt(v)) + "</span>"; });
+    ticksX.forEach(function (t) { var x = insX(t.n, lo, hi); svg += '<line class="ins-gl" x1="' + x + '" x2="' + x + '" y1="' + T + '" y2="' + (H - B) + '"/>'; });
+    if (ref) svg += '<line class="ins-ref" x1="0" x2="100%" y1="' + Y(ref) + '" y2="' + Y(ref) + '"/>';
+    for (var i = 1; i < s.length; i++) svg += '<line class="ins-seg" x1="' + insX(s[i - 1].t, lo, hi) + '" y1="' + Y(s[i - 1].v) + '" x2="' + insX(s[i].t, lo, hi) + '" y2="' + Y(s[i].v) + '"/>';
+    s.forEach(function (p) {
+      var x = insX(p.t, lo, hi);
+      svg += '<circle class="ins-hit" cx="' + x + '" cy="' + Y(p.v) + '" r="12"' + insTip(p.tip, p.sub) + (p.open ? ' data-open="' + p.open + '"' : "") + "/>" +
+        '<circle class="ins-pt" cx="' + x + '" cy="' + Y(p.v) + '" r="4.5"/>';
+    });
+    var L = s[s.length - 1], lx = insX(L.t, lo, hi), lp = parseFloat(lx);
+    svg += '<text class="strong" x="' + lx + '" y="' + (Y(L.v) - 11) + '" text-anchor="' + (lp > 75 ? "end" : lp < 25 ? "start" : "middle") + '">' + esc(fmt(L.v)) + "</text>";
+    return '<div class="ins-plot" role="img" aria-label="' + esc(label) + '"><div class="ins-ylab" style="height:' + H + 'px">' + ylab + '</div><svg class="ins-svg" height="' + H + '" aria-hidden="true">' + svg + "</svg><div></div>" + insXAxis(ticksX, lo, hi) + "</div>";
+  }
+  function insPlacements(deals) {
+    var out = [];
+    deals.forEach(function (d) {
+      if (BOOKED.indexOf(d.stage) < 0) return;
+      d.deliverables.forEach(function (x) { out.push({ d: d, x: x, date: lineDate(d, x) || d.created }); });
+    });
+    return out.filter(function (p) { return p.date && DMAP[p.x.type]; });
+  }
+  function insByFormat(list) {
+    var by = {};
+    list.forEach(function (p) { (by[p.x.type] = by[p.x.type] || []).push(p); });
+    return DELIVERABLES.filter(function (f) { return by[f.key]; }).map(function (f) { return { f: f, list: by[f.key].sort(function (a, b) { return a.date.localeCompare(b.date); }) }; });
+  }
+  function insRange(list) {
+    var ds = list.map(function (p) { return p.date; }).sort(), loI = ds[0], hiI = ds[ds.length - 1];
+    if (diffDays(loI, hiI) < 60) { loI = addDays(loI, -30); hiI = addDays(hiI, 30); }
+    return { lo: insDay(loI), hi: insDay(hiI), ticks: insMonthTicks(loI, hiI, 4) };
+  }
+
+  /* 2. Price per placement over time, by format */
+  function insPriceSection(deals, C) {
+    var list = insPlacements(deals).filter(function (p) { p.price = unitPrice(p.x, p.d); return p.price > 0; });
+    var head = '<div class="panel-head"><h2>Price per placement, by format</h2><span class="label">Agreed deals in ' + esc(C) + " · one dot per placement</span></div>";
+    if (!list.length) return '<section class="panel ins-sec" id="ins-price">' + head + '<p class="ins-empty">This chart needs agreed deals in ' + esc(C) + " with a price per placement. Price each placement on a deal's Details tab, or log a deal with a single placement and a fee. Each price is plotted at its go-live date, or the date the deal arrived.</p></section>";
+    var R = insRange(list), own = C === state.profile.currency, flagged = [], trows = [], noCard = 0;
+    var cards = insByFormat(list).map(function (g, gi) {
+      var prices = g.list.map(function (p) { return p.price; }), latest = prices[prices.length - 1];
+      var med = median(prices.slice().sort(function (a, b) { return a - b; }));
+      var card = own ? num((state.profile.rateCard || {})[g.f.key]) : 0;
+      if (!card) noCard++;
+      var recent = prices.slice(-3), rmed = median(recent.slice().sort(function (a, b) { return a - b; }));
+      var below = card && rmed < card * 0.95;
+      var stat = prices.length === 1 ? "One price so far: <strong>" + money(latest, C) + "</strong>" : "Latest <strong>" + money(latest, C) + "</strong> against a median of " + money(med, C) + (insChange(med, latest) && insChange(med, latest) !== "no change" ? " (" + insChange(med, latest) + ")" : "");
+      var flag = "";
+      if (below) {
+        flagged.push(g.f.short);
+        flag = '<div class="callout warn"><p>' + (recent.length === 1 ? "Your price, " + money(rmed, C) + ", is " : "Your last " + recent.length + " prices are below your rate card. Their median, " + money(rmed, C) + ", is ") + Math.round((card - rmed) / card * 100) + "% under your " + money(card, C) + ".</p></div>";
+      }
+      g.list.forEach(function (p) { trows.push({ s: p.date, h: "<tr><td>" + esc(g.f.short) + '</td><td class="num">' + fmtDate(p.date) + " " + p.date.slice(0, 4) + "</td><td>" + esc(insName(p.d)) + '</td><td class="num">' + money(p.price, C) + '</td><td class="num">' + (card ? money(card, C) : "—") + "</td></tr>" }); });
+      var pts = g.list.map(function (p) { return { t: insDay(p.date), v: p.price, tip: money(p.price, C) + " per placement", sub: insName(p.d) + " · " + fmtDate(p.date) + " " + p.date.slice(0, 4) + (num(p.x.qty) > 1 ? " · " + num(p.x.qty) + " placements" : ""), open: p.d.id }; });
+      var lbl = g.f.short + ": " + prices.length + " price" + (prices.length === 1 ? "" : "s") + ", latest " + money(latest, C) + (prices.length > 1 ? ", median " + money(med, C) : "") + (card ? ", rate card " + money(card, C) : "") + ".";
+      return '<div class="ins-card" id="ins-price-' + g.f.key + '"><div class="ins-card-head"><h3>' + esc(g.f.short) + '</h3><span class="fine">' + esc(g.f.platform) + " · " + prices.length + " placement" + (prices.length === 1 ? "" : "s") + "</span></div>" +
+        '<p class="ins-stat">' + stat + "</p>" + flag +
+        (card ? insLegend([['<line x1="1" x2="15" y1="7" y2="7" class="ins-ref"/>', "Your rate card, " + money(card, C)]]) : "") +
+        insTimeChart(pts, R.lo, R.hi, R.ticks, function (v) { return money(v, C); }, function (v) { return insAxisMoney(v, C); }, card, lbl) + "</div>";
+    });
+    var sumLine = list.length + " priced placement" + (list.length === 1 ? "" : "s") + " in " + C + " across " + cards.length + " format" + (cards.length === 1 ? "" : "s") + "." +
+      (flagged.length ? " Recent prices sit below your rate card for " + flagged.join(", ") + "." : "");
+    var foot = !own ? "Your rate card is in " + state.profile.currency + ", so it isn't drawn on " + C + " prices." : noCard ? "Add your prices under Rates & data and your rate card shows as a reference line on each format." : "";
+    trows.sort(function (a, b) { return a.s.localeCompare(b.s); });
+    return '<section class="panel ins-sec" id="ins-price">' + head + '<p class="lede">' + esc(sumLine) + "</p>" + '<div class="ins-multi">' + cards.join("") + "</div>" +
+      '<p class="fine">Package deals with more than one placement aren\'t split, so they\'re left out.' + (foot ? " " + esc(foot) : "") + "</p>" +
+      insDetails("ins-price-table", "Every price in this chart", [["Format"], ["Date", 1], ["Brand"], ["Price", 1], ["Rate card", 1]], trows.map(function (r) { return r.h; })) + "</section>";
+  }
+
+  /* 3. Effective CPM trend, by format. Platforms stay separate, and views are never added across them. */
+  function insCpmSection(deals, C) {
+    var list = insPlacements(deals).filter(function (p) { p.st = lineStats(p.d, p.x); return p.st.cpm > 0; });
+    var head = '<div class="panel-head"><h2>Effective CPM, by format</h2><span class="label">' + esc(C) + " · what you were paid per 1,000 views</span></div>";
+    if (!list.length) return '<section class="panel ins-sec" id="ins-cpm">' + head + '<p class="ins-empty">This chart needs results. Open a posted deal\'s Recap tab and enter each placement\'s views and where the number came from. Your effective CPM is the fee divided by views, times 1,000.</p></section>';
+    var R = insRange(list), trows = [];
+    var cards = insByFormat(list).map(function (g) {
+      var vals = g.list.map(function (p) { return p.st.cpm; }), latest = vals[vals.length - 1], med = median(vals.slice().sort(function (a, b) { return a - b; }));
+      g.list.forEach(function (p) { var r = p.x.res || {}; trows.push({ s: p.date, h: "<tr><td>" + esc(g.f.short) + '</td><td class="num">' + fmtDate(p.date) + " " + p.date.slice(0, 4) + "</td><td>" + esc(insName(p.d)) + '</td><td class="num">' + money2(p.st.cpm, C) + '</td><td class="num">' + fmtN(r.views) + "</td><td>" + esc(r.source || "Not recorded") + '</td><td class="num">' + (r.asOf ? fmtDate(r.asOf) + " " + r.asOf.slice(0, 4) : "—") + "</td></tr>" }); });
+      var pts = g.list.map(function (p) { var r = p.x.res || {}; return { t: insDay(p.date), v: p.st.cpm, tip: money2(p.st.cpm, C) + " per 1,000 views", sub: insName(p.d) + " · " + fmtN(r.views) + " views · " + (r.source || "source not recorded") + (r.asOf ? ", as of " + fmtDate(r.asOf) + " " + r.asOf.slice(0, 4) : ""), open: p.d.id }; });
+      var stat = vals.length === 1 ? "One result so far: <strong>" + money2(latest, C) + "</strong>" : "Latest <strong>" + money2(latest, C) + "</strong> against a median of " + money2(med, C);
+      var lbl = g.f.short + " effective CPM: " + vals.length + " result" + (vals.length === 1 ? "" : "s") + ", latest " + money2(latest, C) + (vals.length > 1 ? ", median " + money2(med, C) : "") + ".";
+      return '<div class="ins-card" id="ins-cpm-' + g.f.key + '"><div class="ins-card-head"><h3>' + esc(g.f.short) + '</h3><span class="fine">' + esc(g.f.platform) + " views only</span></div>" +
+        '<p class="ins-stat">' + stat + "</p>" + insTimeChart(pts, R.lo, R.hi, R.ticks, function (v) { return money2(v, C); }, function (v) { return insAxisMoney(v, C); }, 0, lbl) + "</div>";
+    });
+    trows.sort(function (a, b) { return a.s.localeCompare(b.s); });
+    return '<section class="panel ins-sec" id="ins-cpm">' + head + '<p class="lede">' + esc(list.length + " placement" + (list.length === 1 ? "" : "s") + " with recorded results. A higher CPM means you were paid more for the same reach, which is a strong number to bring to your next negotiation.") + "</p>" +
+      '<div class="ins-multi">' + cards.join("") + "</div>" +
+      '<p class="fine">Each format is shown on its own, and views are never added across platforms. Results are creator-reported: hover a dot for its source and the date it was measured.</p>' +
+      insDetails("ins-cpm-table", "Every result in this chart", [["Format"], ["Go-live", 1], ["Brand"], ["CPM", 1], ["Views", 1], ["Source"], ["Measured", 1]], trows.map(function (r) { return r.h; })) + "</section>";
+  }
+
+  /* 4. Partner timelines: brands with two or more deals in this currency */
+  function insEvery(gap, n) {
+    var w = Math.max(1, Math.round(gap / 7)), m = Math.max(1, Math.round(gap / 30.4));
+    var txt = gap < 45 ? "~" + w + " week" + (w === 1 ? "" : "s") : "~" + m + " month" + (m === 1 ? "" : "s");
+    return (n > 2 ? "renews every " : "came back after ") + txt;
+  }
+  function insPartnerSection(deals, C) {
+    var by = {}, order = [], t = todayISO();
+    deals.forEach(function (d) {
+      if (d.stage === "declined" || !d.created || !d.brand) return;
+      var k = insKey(d); if (!by[k]) { by[k] = []; order.push(k); } by[k].push(d);
+    });
+    var head = '<div class="panel-head"><h2>Partner timelines</h2><span class="label">' + esc(C) + " · brands with two or more deals · one marker per deal, when it arrived</span></div>";
+    var lanes = order.filter(function (k) { return by[k].length > 1; }).map(function (k) {
+      var list = by[k].sort(function (a, b) { return a.created.localeCompare(b.created); });
+      var gaps = []; for (var i = 1; i < list.length; i++) gaps.push(diffDays(list[i - 1].created, list[i].created));
+      return { name: insName(list[0]), list: list, total: sum(list, function (d) { return num(d.fee); }), gap: median(gaps.sort(function (a, b) { return a - b; })) };
+    }).sort(function (a, b) { return b.total - a.total; });
+    if (!lanes.length) return '<section class="panel ins-sec" id="ins-partners">' + head + '<p class="ins-empty">This chart needs a brand that has come back for a second deal in ' + esc(C) + ". When one does, you'll see how often they renew and whether their fee is moving.</p></section>";
+    var dates = []; lanes.forEach(function (l) { l.list.forEach(function (d) { dates.push(d.created); }); });
+    dates.sort(); var loI = addDays(dates[0], -14), hiI = dates[dates.length - 1] > t ? dates[dates.length - 1] : t;
+    hiI = addDays(hiI, 14);
+    var lo = insDay(loI), hi = insDay(hiI), ticks = insMonthTicks(loI, hiI, 7), tx = insX(insDay(t), lo, hi), trows = [];
+    var H = 80, cy = 40;
+    var html = lanes.map(function (l, li) {
+      var svg = ticks.map(function (tk) { var x = insX(tk.n, lo, hi); return '<line class="ins-gl" x1="' + x + '" x2="' + x + '" y1="4" y2="' + (H - 4) + '"/>'; }).join("") +
+        '<line class="ins-today" x1="' + tx + '" x2="' + tx + '" y1="4" y2="' + (H - 4) + '"/>' +
+        '<line class="ins-base" x1="' + INS_PAD + '%" x2="' + (100 - INS_PAD) + '%" y1="' + cy + '" y2="' + cy + '"/>';
+      var prev = 0;
+      l.list.forEach(function (d, i) {
+        var x = insX(insDay(d.created), lo, hi), fee = num(d.fee), ch = i ? insChange(prev, fee) : "", up = i % 2 === 0, a = insAnchor(x);
+        var offer = OPEN.indexOf(d.stage) > -1;
+        svg += '<circle class="ins-hit" cx="' + x + '" cy="' + cy + '" r="12" data-open="' + d.id + '"' + insTip(fee ? money(fee, C) : "No fee", l.name + " · arrived " + fmtDate(d.created) + " " + d.created.slice(0, 4) + " · " + stageLabel(d.stage) + (ch ? " · " + ch + " on the deal before" : "")) + "/>" +
+          '<circle class="ins-pt' + (offer ? " open" : "") + '" cx="' + x + '" cy="' + cy + '" r="5"/>' +
+          '<text class="strong" x="' + x + '" y="' + (up ? cy - 13 : cy + 22) + '" text-anchor="' + a + '">' + esc(fee ? money(fee, C) : "no fee") + "</text>" +
+          (ch ? '<text x="' + x + '" y="' + (up ? cy - 26 : cy + 35) + '" text-anchor="' + a + '">' + esc(ch) + "</text>" : "");
+        trows.push("<tr><td>" + esc(l.name) + '</td><td class="num">' + fmtDate(d.created) + " " + d.created.slice(0, 4) + "</td><td>" + esc(stageLabel(d.stage)) + '</td><td class="num">' + (fee ? money(fee, C) : "—") + '</td><td class="num">' + esc(ch || "—") + "</td></tr>");
+        if (fee) prev = fee;
+      });
+      var fees = l.list.map(function (d) { return num(d.fee); }).filter(Boolean), drift = fees.length > 1 ? " · fee " + money(fees[0], C) + " → " + money(fees[fees.length - 1], C) + " (" + insChange(fees[0], fees[fees.length - 1]) + ")" : "";
+      var latest = l.list[l.list.length - 1];
+      l.sub = l.list.length + " deals · " + money(l.total, C) + " in total · " + insEvery(l.gap, l.list.length) + drift;
+      return '<div class="ins-lane"><div class="ins-lane-head"><button class="linkish" type="button" id="ins-lane-brand-' + li + '" data-open="' + latest.id + '">' + esc(l.name) + '</button><span class="fine">' + esc(l.sub) + "</span></div>" +
+        '<svg class="ins-svg" height="' + H + '" role="img" aria-label="' + esc(l.name + ": " + l.sub) + '">' + svg + "</svg></div>";
+    }).join("");
+    var axis = insXAxis(ticks, lo, hi, '<text x="' + tx + '" y="13" text-anchor="' + insAnchor(tx) + '" class="strong">Today</text>');
+    // Drop month labels that would sit on top of "Today".
+    axis = axis.replace(/<text x="([\d.]+)%" y="13" text-anchor="\w+">[^<]*<\/text>/g, function (m, x) { return Math.abs(parseFloat(x) - parseFloat(tx)) < 7 ? "" : m; });
+    var top = lanes[0];
+    var sumLine = lanes.length + " brand" + (lanes.length === 1 ? " has" : "s have") + " come back for more than one deal in " + C + ". " + top.name + " is worth the most to you: " + top.sub.replace(/ · /g, ", ") + ".";
+    return '<section class="panel ins-sec" id="ins-partners">' + head + '<p class="lede">' + esc(sumLine) + "</p>" +
+      insLegend([['<circle cx="8" cy="7" r="5" class="ins-pt"/>', "Agreed deal"], ['<circle cx="8" cy="7" r="4.5" class="ins-pt open"/>', "Offer, not agreed yet"], ['<line x1="8" x2="8" y1="1" y2="13" class="ins-today"/>', "Today"]]) +
+      '<div class="ins-scroll" id="ins-partners-scroll"><div class="ins-lanes">' + html + axis + "</div></div>" +
+      '<p class="fine">Sorted by total value. Each label shows the fee and the change from the deal before. Click a brand or a marker to open the deal.</p>' +
+      insDetails("ins-partners-table", "Every deal in this chart", [["Brand"], ["Arrived", 1], ["Stage"], ["Fee", 1], ["Change", 1]], trows) + "</section>";
+  }
+
+  /* 5. Seasonality: received payments by calendar month, once there's a year of history */
+  function insSeasonSection(deals, C) {
+    var pays = [], t = todayISO();
+    deals.forEach(function (d) { d.payments.forEach(function (p) { if (p.date && p.date <= t && num(p.amount) > 0) pays.push(p); }); });
+    var head = '<div class="panel-head"><h2>Seasonality</h2><span class="label">' + esc(C) + " · received, by calendar month</span></div>";
+    var first = pays.map(function (p) { return p.date; }).sort()[0];
+    var ty = +t.slice(0, 4), tm = +t.slice(5, 7) - 1, span = first ? ty * 12 + tm - (+first.slice(0, 4) * 12 + (+first.slice(5, 7) - 1)) + 1 : 0;
+    if (span < 12) return '<section class="panel ins-sec" id="ins-season">' + head + '<p class="ins-empty">Seasonality shows once you have 12 months of payments in ' + esc(C) + (first ? ". You have " + span + " so far, starting " + esc(fmtMonth(first)) + "." : ". Record payments on each deal's Money tab as they arrive.") + "</p></section>";
+    var tot = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], yrs = tot.slice();
+    pays.forEach(function (p) { tot[+p.date.slice(5, 7) - 1] += num(p.amount); });
+    for (var k = +first.slice(0, 4) * 12 + (+first.slice(5, 7) - 1); k <= ty * 12 + tm; k++) yrs[k % 12]++;
+    var avg = tot.map(function (v, m) { return yrs[m] ? v / yrs[m] : 0; });
+    var ticks = insNice(Math.max.apply(null, avg) * 1.05, 3), ymax = ticks[ticks.length - 1], H = 132, T = 8, ph = H - T;
+    var Y = function (v) { return +(T + (1 - v / ymax) * ph).toFixed(1); };
+    var ranked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].sort(function (a, b) { return avg[b] - avg[a]; });
+    var best = ranked.filter(function (m) { return avg[m] > 0; }).slice(0, 2), worst = ranked[11];
+    var ylab = ticks.map(function (v) { return '<span style="top:' + Y(v) + 'px">' + esc(insAxisMoney(v, C)) + "</span>"; }).join("");
+    var cols = avg.map(function (v, m) {
+      var h = v ? Math.max(2, ph * v / ymax) : 0, g = ticks.map(function (tv) { return '<line class="ins-gl" x1="0" x2="100%" y1="' + Y(tv) + '" y2="' + Y(tv) + '"/>'; }).join("");
+      var bar = h ? '<rect class="ins-bar" x="50%" y="' + (H - h).toFixed(1) + '" width="14" height="' + h.toFixed(1) + '" rx="' + Math.min(4, h / 2).toFixed(1) + '" transform="translate(-7 0)"/>' + (h > 4 ? '<rect class="ins-bar" x="50%" y="' + (H - 4) + '" width="14" height="4" transform="translate(-7 0)"/>' : "") : "";
+      return '<div class="ins-mcol"' + insTip(money(v, C) + " on average", INS_MONTHS[m] + " · " + money(tot[m], C) + " received over " + yrs[m] + " year" + (yrs[m] === 1 ? "" : "s")) + '><svg class="ins-svg" height="' + H + '" aria-hidden="true">' + g + bar + '</svg><span class="m">' + INS_MONTHS[m] + "</span></div>";
+    }).join("");
+    var sumLine = "Your strongest month" + (best.length > 1 ? "s are " + INS_MONTHS[best[0]] + " and " + INS_MONTHS[best[1]] : " is " + INS_MONTHS[best[0]]) + ". " + INS_MONTHS[best[0]] + " brings in " + money(avg[best[0]], C) + " on average. " + INS_MONTHS[worst] + " is usually the quietest" + (avg[worst] ? ", at " + money(avg[worst], C) : ", with nothing received") + ". Based on " + span + " months of payments, averaged across the years each month appears.";
+    var trows = avg.map(function (v, m) { return "<tr><td>" + INS_MONTHS[m] + '</td><td class="num">' + money(v, C) + '</td><td class="num">' + money(tot[m], C) + '</td><td class="num">' + yrs[m] + "</td></tr>"; });
+    return '<section class="panel ins-sec" id="ins-season">' + head + '<p class="lede">' + esc(sumLine) + "</p>" +
+      '<div class="ins-scroll"><div class="ins-plot ins-season" role="img" aria-label="' + esc(sumLine) + '"><div class="ins-ylab" style="height:' + H + 'px">' + ylab + '</div><div class="ins-months">' + cols + "</div></div></div>" +
+      '<p class="fine">By the date each payment arrived. The current month is still in progress.</p>' +
+      insDetails("ins-season-table", "Every month in this chart", [["Month"], ["Average a year", 1], ["Total", 1], ["Years", 1]], trows) + "</section>";
+  }
+
+  function insCurBar(curs, C) {
+    if (curs.length < 2) return '<p class="fine ins-curnote" id="ins-curbar">The charts below are in ' + esc(C) + ".</p>";
+    return '<div class="curtabs" id="ins-curbar"><span class="label">Charts below in</span>' + curs.map(function (c) { return '<button class="btn small' + (c === C ? " primary" : "") + '" type="button" id="ins-cur-' + esc(c) + '" data-action="ins-cur" data-cur="' + esc(c) + '" aria-pressed="' + (c === C) + '">' + esc(c) + "</button>"; }).join("") + '<span class="fine">Each currency is shown separately. Nothing is converted.</span></div>';
+  }
+  function renderInsights() {
+    var all = live(), firstRender = !document.getElementById("ins-root"), curs = currencies(all);
+    if (firstRender) {
+      logEvent("insights-viewed", { currencies: curs.length, deals: all.length });
+      // On a phone the partner lanes scroll sideways: start them at the most recent deals.
+      requestAnimationFrame(function () { var sc = document.getElementById("ins-partners-scroll"); if (sc) sc.scrollLeft = sc.scrollWidth; });
+    }
+    if (!all.length) return '<div class="ins" id="ins-root"><p class="empty">No deals yet. Log one from Needs attention, and your payment history and prices will show here.</p></div>';
+    if (curs.indexOf(ui.insightsCur) < 0) ui.insightsCur = curs[0];
+    var C = ui.insightsCur, inC = all.filter(function (d) { return d.currency === C; });
+    ctxCur = C;
+    return '<div class="ins" id="ins-root"><div class="view-head"><div><h2 class="view-title">Insights</h2><p>How brands actually pay you, and what your own deals say you\'re worth. Built only from the deals in this browser' + (all.some(function (d) { return d.example; }) ? ", including the examples" : "") + ".</p></div></div>" +
+      insPaySection(all) + insCurBar(curs, C) + insPriceSection(inC, C) + insCpmSection(inC, C) + insPartnerSection(inC, C) + insSeasonSection(inC, C) +
+      '<div class="ins-tip" id="ins-tip" role="tooltip" hidden></div></div>';
+  }
+  EXT.actions["ins-cur"] = function (el) {
+    var c = el.dataset.cur; if (!c || c === ui.insightsCur) return;
+    ui.insightsCur = c; logEvent("insights-currency", { cur: c }); save(); renderAll();
+  };
+
+  // Tooltips: pointer-only enhancement; every value is also in the section's table.
+  function insHideTip() { var tip = document.getElementById("ins-tip"); if (tip) tip.hidden = true; }
+  document.addEventListener("pointerover", function (e) {
+    var el = e.target.closest && e.target.closest("#ins-root [data-tip]"), tip = document.getElementById("ins-tip");
+    if (!el || !tip) return;
+    tip.textContent = "";
+    var s = document.createElement("strong"); s.textContent = el.getAttribute("data-tip");
+    var sp = document.createElement("span"); sp.textContent = el.getAttribute("data-tipsub") || "";
+    tip.appendChild(s); tip.appendChild(sp); tip.hidden = false;
+    var r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.round(Math.min(window.innerWidth - w - 8, Math.max(8, r.left + r.width / 2 - w / 2))) + "px";
+    tip.style.top = Math.round(r.top - h - 8 < 8 ? r.bottom + 8 : r.top - h - 8) + "px";
+  });
+  document.addEventListener("pointerout", function (e) {
+    var el = e.target.closest && e.target.closest("#ins-root [data-tip]");
+    if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) insHideTip();
+  });
+  window.addEventListener("scroll", insHideTip, true);
+
+  // Example history, marked example: older Loomstack and Kettle Camp deals with priced placements, results and
+  // payment dates, so the price trends, CPM, partner timelines and seasonality have something to show.
+  function insSeed(list, t) {
+    if (list.some(function (d) { return d.insSeed; })) return;
+    var LOOM = { brand: "Loomstack", category: "Tech & software", contact: "Ana Ruiz (via Brightline Talent)", email: "ana@brightlinetalent.example", source: "Agency or manager", res: "YouTube Studio" };
+    var KETTLE = { brand: "Kettle Camp", category: "Outdoor & fitness", contact: "Rosa Lind", email: "rosa@kettlecamp.example", source: "Inbound email", res: "Instagram Insights" };
+    function past(b, at, lines, paidIn) {
+      var created = addDays(t, at), posted = addDays(created, 22), issued = addDays(posted, 3);
+      var dl = lines.map(function (l) { return normLine({ type: l[0], qty: l[1], rate: l[2], publishBy: posted, res: l[3] ? { views: l[3], clicks: l[4] || 0, source: b.res, asOf: addDays(posted, 30) } : {} }); });
+      var fee = sum(dl, lineTotal);
+      var d = blankDeal({ example: true, insSeed: true, brand: b.brand, category: b.category, contact: b.contact, email: b.email, source: b.source, stage: "paid", currency: "USD",
+        fee: fee, feeMode: "lines", deliverables: dl, publishBy: posted, created: created, legit: clone(LEGIT_OK), contract: clone(CONTRACT_OK),
+        take: { revisions: 1, extra: 0, buy: "", fit: "yes" }, termsApplied: true, notes: "Example history for Insights." });
+      d.invoices = [{ id: uid(), ref: "", amount: fee, issued: issued, net: 30 }];
+      d.payments = [{ id: uid(), amount: fee, date: addDays(issued, paidIn), note: "" }];
+      return d;
+    }
+    [past(LOOM, -400, [["yt_integration", 1, 2400, 141000, 1580]], 22),
+      past(LOOM, -300, [["yt_integration", 1, 2600, 152000, 1720]], 26),
+      past(KETTLE, -380, [["ig_reel", 2, 700, 41000, 380]], 61),
+      past(KETTLE, -250, [["ig_reel", 2, 725, 43500, 400], ["ig_stories", 1, 300]], 52),
+      past(KETTLE, -160, [["ig_reel", 2, 750, 40500, 350]], 44)
+    ].forEach(function (d) { list.push(d); });
+  }
+  EXT.seed.push(insSeed);
+  // load() builds the first visit's examples before this region runs, so apply the history once here too.
+  // Nothing has been saved yet on a first visit; insSeed skips itself if the history is already there.
+  if (!readKey(KEY2) && !readKey(KEY1)) insSeed(state.deals, todayISO());
+  /* ===== END FEATURE C ===== */
+
+
+  /* ===== FEATURE D · negotiation and rate sharing ===== */
+  // Owned by the "negotiation" session. Core calls dealExtras(d) at the end of the Details tab and worthExtras(d) in the Worth it? tab.
+  // Negotiation record: d.nego = { offer, offerOn, counter, counterOn, final, gapAtCounter, gapBasis, auto, fromNudge }.
+  //   gapAtCounter: % the offer sat below the creator's own reference (rate card, else past median) when they countered. Negative = above.
+  //   auto: true while the record only holds defaults taken from the fee, so it stays out of the history until the creator edits it.
+  // Compare answer: state.profile.compareAnswer ("yes" | "maybe" | "no") and state.profile.compareAnsweredOn.
+  EVENT_LABELS["counter-recorded"] = "Recorded a counter-offer";
+  EVENT_LABELS["negotiation-closed"] = "Recorded the final agreed fee";
+  EVENT_LABELS["counter-nudge-used"] = "Used the suggested counter";
+  EVENT_LABELS["share-card-made"] = "Made a rate share card";
+  EVENT_LABELS["fakedoor-compare"] = "Tapped Compare with other creators";
+  EVENT_LABELS["fakedoor-compare-answer"] = "Answered whether they'd share rates";
+
+  var NG = { share: "", shareOk: false, copyText: "", fd: "", logged: {} }; // this session only, never saved
+  var NG_DEFAULT = { offer: 0, offerOn: "", counter: 0, counterOn: "", final: 0, gapAtCounter: null, gapBasis: "" };
+  function negoOf(d) { return Object.assign({}, NG_DEFAULT, d.nego || {}); }
+  function ngGet(d) { var n = d.nego = d.nego || {}; Object.keys(NG_DEFAULT).forEach(function (k) { if (n[k] === undefined) n[k] = NG_DEFAULT[k]; }); return n; } // fills defaults in place so references stay valid
+  function ngPct(a, b) { return b ? Math.round((a - b) / b * 100) : 0; }
+  function ngBucket(p) {
+    if (p == null || isNaN(p)) return "none";
+    if (p <= -20) return "under -20%"; if (p < -10) return "-20 to -10%"; if (p < 0) return "-10 to 0%"; if (p === 0) return "0%";
+    if (p < 10) return "0-10%"; if (p < 20) return "10-20%"; if (p < 30) return "20-30%"; if (p < 50) return "30-50%"; return "50%+";
+  }
+  function ngRel(p, what) { return p > 0 ? p + "% above " + what : p < 0 ? -p + "% below " + what : "at " + what; }
+  // What the creator's own numbers price these placements at: the rate card per placement, the past median where there's no card price.
+  // Same currency only (cardRate and pastRates already enforce that). Null when any placement has neither.
+  function ngRef(d) {
+    if (!d.deliverables.length) return null;
+    var total = 0, card = 0, past = 0;
+    for (var i = 0; i < d.deliverables.length; i++) {
+      var x = d.deliverables[i], q = num(x.qty); if (!q) continue;
+      var c = cardRate(d, x.type);
+      if (c) { total += q * c; card++; continue; }
+      var p = pastRates(d, x.type).map(function (r) { return r.price; });
+      if (!p.length) return null;
+      total += q * median(p); past++;
+    }
+    if (!total) return null;
+    return { total: total, basis: !past ? "your rate card" : card ? "your rate card and past prices" : "your past median" };
+  }
+  function ngOfferNow(d) { var n = negoOf(d); return num(n.offer) || num(d.fee); }
+  function ngGap(d) { var r = ngRef(d), o = ngOfferNow(d); return r && o ? { pct: -ngPct(o, r.total), basis: r.basis } : null; }
+  function ngSetGap(d) { var n = ngGet(d), g = num(n.counter) ? ngGap(d) : null; n.gapAtCounter = g ? g.pct : null; n.gapBasis = g ? g.basis : ""; }
+
+  function ngResultHTML(d) {
+    var n = negoOf(d), C = d.currency, o = num(n.offer), c = num(n.counter), f = num(n.final), out = [], level = "";
+    if (!o) {
+      out.push(num(d.fee) ? "Record the brand's first offer to track how far you move it." : "Record the brand's first offer, your counter and the fee you agree.");
+    } else {
+      if (c) {
+        if (n.gapAtCounter != null && n.gapAtCounter > 0) out.push("The offer was " + n.gapAtCounter + "% below " + (n.gapBasis || "your rate card") + " when you countered.");
+        out.push("You countered " + ngRel(ngPct(c, o), "the offer") + ".");
+      } else if (!f) {
+        var g = ngGap(d);
+        if (g && g.pct >= 5) { out.push("The offer is " + g.pct + "% below " + g.basis + " for these placements."); level = "warn"; }
+      }
+      if (f) {
+        var up = ngPct(f, o);
+        if (c) out.push(up > 0 ? "You landed " + up + "% above it." : up < 0 ? "You landed " + (-up) + "% below it." : "You landed at the offer.");
+        else out.push(up === 0 ? "You took the first offer." : "The final fee is " + ngRel(up, "the first offer") + ", without a counter.");
+        if (c && f >= c) out.push("Your full counter held.");
+        level = up > 0 ? "good" : level;
+      }
+    }
+    if (!out.length) out.push("Record your counter when you send it, and the final fee once it's agreed.");
+    return '<div class="callout ' + level + '" id="ng-result" aria-live="polite"><p>' + esc(out.join(" ")) + "</p>" +
+      (f && num(d.fee) && f !== num(d.fee) ? '<p class="fine">The deal fee is now ' + money(d.fee, C) + ".</p>" : "") + "</div>";
+  }
+  function ngSwapResult(d) { var el = document.getElementById("ng-result"); if (el) el.outerHTML = ngResultHTML(d); }
+
+  function negoHTML(d) {
+    if (!d.nego && num(d.fee)) d.nego = Object.assign({}, NG_DEFAULT, { offer: num(d.fee), offerOn: d.created || todayISO(), final: BOOKED.indexOf(d.stage) > -1 ? num(d.fee) : 0, auto: true });
+    var n = negoOf(d), C = d.currency, fee = num(d.fee);
+    var amt = function (k, label) { return '<div class="field"><label for="ng-' + k + '">' + label + " (" + esc(C) + ')</label><input id="ng-' + k + '" type="number" min="0" step="50" inputmode="decimal" data-nego="' + k + '" value="' + esc(num(n[k]) || "") + '"></div>'; };
+    var day = function (k, label) { return '<div class="field"><label for="ng-' + k + '">' + label + '</label><input id="ng-' + k + '" type="date" data-nego="' + k + '" value="' + esc(n[k]) + '"></div>'; };
+    return '<div class="stack ng" id="ng" style="gap:10px"><div class="panel-head"><h3 class="section-title">Negotiation</h3><span class="fine">Only you see this</span></div>' +
+      '<div class="ng-rows"><div class="grid2">' + amt("offer", "First offer") + day("offerOn", "Offered on") + "</div>" +
+      '<div class="grid2">' + amt("counter", "Your counter") + day("counterOn", "Countered on") + "</div>" +
+      '<div class="grid2">' + amt("final", "Final agreed") +
+      '<div class="field"><span class="flabel">Deal fee now</span><div class="ng-fee"><span class="tick">' + (fee ? money(fee, C) : "Not set") + "</span>" +
+      (fee && num(n.final) !== fee ? '<button class="btn small" type="button" id="ng-use-fee" data-action="ng-use-fee">Use current fee</button>' : "") + "</div></div></div></div>" +
+      ngResultHTML(d) + "</div>";
+  }
+
+  /* share card: rounded, no brand, no exact amount, no dates */
+  function sig2(v) { v = num(v); if (v <= 0) return 0; var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10) - 1); return Math.round(Math.round(v / p) * p * 100) / 100; }
+  function ngViews(v) { var r = sig2(v); return r >= 1e6 ? (Math.round(r / 1e5) / 10) + "M" : r >= 1e3 ? (Math.round(r / 100) / 10) + "k" : String(Math.round(r)); }
+  function shareFacts(d) {
+    var C = d.currency, fee = num(d.fee), lines = d.deliverables.filter(function (x) { return num(x.qty) > 0; });
+    if (!fee || !lines.length) return null;
+    var fmt = lines.map(function (x) { var def = DMAP[x.type], l = def ? def.label.replace(/\s*\(.*\)\s*$/, "") : x.type; return (num(x.qty) > 1 ? num(x.qty) + "× " : "") + l; }).join(" + ");
+    var plats = []; lines.forEach(function (x) { var p = DMAP[x.type] ? DMAP[x.type].platform : ""; if (p && plats.indexOf(p) < 0) plats.push(p); });
+    var allViews = lines.every(function (x) { return num((x.res || {}).views) > 0; }), views = allViews ? sum(lines, function (x) { return num(x.res.views); }) : 0;
+    var cpm = views ? sig2(fee / views * 1000) : 0;
+    var pub = d.tasks.filter(function (k) { return k.kind === "publish" && k.done; }).map(function (k) { return k.done; }).sort()[0];
+    var when = lineDate(d, lines[0]) || d.publishBy || pub || d.created || todayISO();
+    var paidUse = !!USAGE_DAYS[(d.contract || {}).usage] || (d.contract || {}).usage === "perp";
+    var types = {}; lines.forEach(function (x) { types[x.type] = 1; });
+    return { format: fmt, platform: plats.join(" + "), price: money(sig2(fee), C), views: views ? ngViews(views) + " views" : "", cpm: cpm ? (cpm < 10 ? money2(cpm, C) : money(cpm, C)) + " CPM" : "",
+      year: String(when).slice(0, 4), paidUse: paidUse, fmtKey: Object.keys(types).length === 1 ? lines[0].type : "mixed" };
+  }
+  function shareText(f) {
+    return [f.format, f.platform, f.price, f.views, f.cpm, f.paidUse ? "includes paid usage" : "", f.year].filter(Boolean).join(" · ") + "\nCreator-reported · Made with Creator Dealflow";
+  }
+  function shareCardHTML(f) {
+    return '<figure class="share-card" id="sc-card" aria-label="Share card"><div class="sc-top"><span class="sc-format">' + esc(f.format) + '</span><span class="sc-platform">' + esc(f.platform) + " · " + esc(f.year) + "</span></div>" +
+      '<div class="sc-price">' + esc(f.price) + "</div>" +
+      ((f.views || f.cpm || f.paidUse) ? '<div class="sc-stats">' + [f.views, f.cpm, f.paidUse ? "Includes paid usage" : ""].filter(Boolean).map(function (s) { return "<span>" + esc(s) + "</span>"; }).join("") + "</div>" : "") +
+      '<figcaption class="sc-foot">Creator-reported · Made with Creator Dealflow</figcaption></figure>';
+  }
+  function shareHTML(d) {
+    if (["posted", "invoiced", "paid"].indexOf(d.stage) < 0) return "";
+    var h = '<div class="stack" id="sc" style="gap:10px"><h3 class="section-title">Share your rate</h3>' +
+      '<p class="fine">Creators who talk openly about pay help everyone charge more. A share card shows the format, a rounded price and rounded results. It never shows the brand, the exact amount or any dates.</p>';
+    if (NG.share !== d.id) return h + '<div><button class="btn small" type="button" id="sc-make" data-action="sc-make">Make a share card</button></div></div>';
+    var f = shareFacts(d);
+    if (!f) return h + '<p class="fine">Add the fee and the placements above first.</p><div><button class="btn small quiet" type="button" id="sc-close" data-action="sc-close">Close</button></div></div>';
+    h += '<label class="check sc-check" for="sc-ok"><input type="checkbox" id="sc-ok"' + (NG.shareOk ? " checked" : "") + "><span>I have the right to share these terms (check your contract's confidentiality clause)</span></label>";
+    if (!NG.shareOk) return h + '<div><button class="btn small quiet" type="button" id="sc-close" data-action="sc-close">Close</button></div></div>';
+    h += shareCardHTML(f) + '<div class="toolbar"><button class="btn small primary" type="button" id="sc-copy" data-action="sc-copy">Copy as text</button><button class="btn small quiet" type="button" id="sc-close" data-action="sc-close">Close</button><span class="fine">Or take a screenshot of the card.</span></div>';
+    if (NG.copyText) h += '<textarea class="letter sc-text" id="sc-text" readonly aria-label="Share card text">' + esc(NG.copyText) + "</textarea>";
+    return h + "</div>";
+  }
+
+  function dealExtras(d) { return negoHTML(d) + shareHTML(d); }
+
+  /* Worth it? tab: counter nudge, your negotiation history, and the compare demand test */
+  function ngNudge(d) {
+    if (OPEN.indexOf(d.stage) < 0) return null;
+    var r = ngRef(d), o = ngOfferNow(d); if (!r || !o) return null;
+    var gap = -ngPct(o, r.total); if (gap < 5) return null;
+    return { amount: Math.ceil(r.total / 50) * 50, offer: o, ref: r, gap: gap };
+  }
+  function nudgeHTML(d) {
+    var n = negoOf(d), C = d.currency;
+    if (OPEN.indexOf(d.stage) > -1 && num(n.counter)) return '<p class="fine" id="ng-nudge">You countered at ' + money(n.counter, C) + (n.counterOn ? " on " + esc(fmtDate(n.counterOn)) : "") + ". Record the final fee under Details once it's agreed.</p>";
+    var u = ngNudge(d); if (!u) return "";
+    return '<div class="callout warn" id="ng-nudge"><strong>Counter at ' + money(u.amount, C) + "</strong><p>The " + (num(n.offer) ? "first offer" : "fee") + " of " + money(u.offer, C) + " is " + u.gap + "% below " + u.ref.basis + " for these placements (" + money(u.ref.total, C) + "). The counter is that total, rounded up to the nearest 50.</p>" +
+      '<div class="toolbar"><button class="btn small primary" type="button" id="ng-nudge-use" data-action="ng-nudge">Use this counter</button></div></div>';
+  }
+  function ngHistory(d) {
+    var rows = state.deals.filter(function (x) { var n = x.nego; return n && !n.auto && !!x.example === !!d.example && x.stage !== "declined" && num(n.offer) && num(n.final); });
+    var h = '<div class="stack" id="ng-history" style="gap:8px"><h3 class="section-title">How your negotiations go</h3>';
+    if (!rows.length) return h + '<p class="fine">Record the first offer, your counter and the final fee under Details. After a few deals, this shows what countering gets you.</p></div>';
+    var up = function (x) { return (num(x.nego.final) - num(x.nego.offer)) / num(x.nego.offer) * 100; };
+    var sorted = function (a) { return a.map(up).sort(function (p, q) { return p - q; }); };
+    var c = rows.filter(function (x) { return num(x.nego.counter); }), nc = rows.filter(function (x) { return !num(x.nego.counter); });
+    var held = c.filter(function (x) { return num(x.nego.final) >= num(x.nego.counter); }).length;
+    var fmtUp = function (a) { if (!a.length) return "—"; var m = Math.round(median(sorted(a))); return (m > 0 ? "+" : "") + m + "%"; };
+    return h + '<div class="ng-stats"><div><span class="label">You countered</span><span class="num">' + c.length + "<small> of " + rows.length + "</small></span></div>" +
+      '<div><span class="label">When you countered</span><span class="num">' + fmtUp(c) + '</span><span class="fine">median final vs. first offer' + (c.length ? " · full counter held " + held + " of " + c.length : "") + "</span></div>" +
+      '<div><span class="label">When you didn\'t</span><span class="num">' + fmtUp(nc) + '</span><span class="fine">median final vs. first offer</span></div></div>' +
+      '<p class="fine">From the ' + rows.length + " deal" + (rows.length === 1 ? "" : "s") + " where you recorded both the first offer and the final fee" + (d.example ? ", in the examples" : "") + ".</p></div>";
+  }
+  var FD_ANSWERS = [["yes", "Yes"], ["maybe", "Maybe"], ["no", "No"]];
+  function compareHTML(d) {
+    var a = state.profile.compareAnswer, open = NG.fd === d.id;
+    var h = '<div class="stack" id="fd" style="gap:8px"><div class="toolbar"><button class="btn small" type="button" id="fd-compare" data-action="fd-compare" aria-expanded="' + open + '" aria-controls="fd-note">Compare with other creators</button></div>';
+    if (!open) return h + "</div>";
+    if (a) { var lbl = FD_ANSWERS.filter(function (o) { return o[0] === a; })[0]; return h + '<div class="callout" id="fd-note" role="status"><p>This isn\'t built yet. It would show anonymised, rounded rates other creators chose to share.</p><p class="fine">You already told us whether you\'d contribute yours: ' + esc(lbl ? lbl[1] : a) + ". Thanks, that helps decide what gets built.</p></div></div>"; }
+    h += '<div class="callout" id="fd-note" role="status"><p>We\'re testing whether to build this. It would show anonymised, rounded rates other creators chose to share. Would you contribute yours to see theirs?</p>';
+    return h + '<div class="toolbar">' + FD_ANSWERS.map(function (o) { return '<button class="btn small" type="button" id="fd-' + o[0] + '" data-action="fd-answer" data-answer="' + o[0] + '">' + o[1] + "</button>"; }).join("") + "</div></div></div>";
+  }
+  function worthExtras(d) { return nudgeHTML(d) + ngHistory(d) + compareHTML(d); }
+
+  /* logging, deduplicated per value within a session */
+  function ngLogCounter(d, extra) {
+    var n = negoOf(d), k = d.id + ":c"; if (!num(n.counter) || !num(n.offer || d.fee) || NG.logged[k] === num(n.counter)) return;
+    NG.logged[k] = num(n.counter);
+    logEvent("counter-recorded", Object.assign({ gapBucket: ngBucket(n.gapAtCounter), counterAboveOfferBucket: ngBucket(ngPct(num(n.counter), num(n.offer) || num(d.fee))) }, extra || {}));
+  }
+  function ngLogFinal(d) {
+    var n = negoOf(d), k = d.id + ":f"; if (!num(n.final) || !num(n.offer) || NG.logged[k] === num(n.final)) return;
+    NG.logged[k] = num(n.final);
+    logEvent("negotiation-closed", { upliftBucket: ngBucket(ngPct(num(n.final), num(n.offer))), countered: !!num(n.counter) });
+  }
+
+  EXT.input.push(function (t, d) {
+    if (!t.dataset || !t.dataset.nego) return false;
+    if (!d || t.type === "date") return true;
+    var n = ngGet(d), k = t.dataset.nego;
+    n[k] = num(t.value); n.auto = false;
+    if (k === "counter" || k === "offer") ngSetGap(d);
+    save(); ngSwapResult(d);
+    return true;
+  });
+  EXT.change.push(function (t, d) {
+    if (t.id === "sc-ok") { NG.shareOk = t.checked; NG.copyText = ""; if (t.checked && d) { var f = shareFacts(d); if (f) logEvent("share-card-made", { format: f.fmtKey }); } renderAll(); return true; }
+    if (!t.dataset || !t.dataset.nego) return false;
+    if (!d) return true;
+    var n = ngGet(d), k = t.dataset.nego, setDate = function (key, v) { n[key] = v; var el = document.getElementById("ng-" + key); if (el) el.value = v; };
+    n.auto = false;
+    if (t.type === "date") n[k] = t.value;
+    else {
+      n[k] = num(t.value);
+      if (k === "offer" && n.offer && !n.offerOn) setDate("offerOn", d.created || todayISO());
+      if (k === "counter" && n.counter && !n.counterOn) setDate("counterOn", todayISO());
+      if (k === "counter" || k === "offer") ngSetGap(d);
+      if (k === "counter") ngLogCounter(d);
+      if (k === "final" || (k === "offer" && n.final)) ngLogFinal(d);
+    }
+    save(); ngSwapResult(d);
+    return true;
+  });
+
+  EXT.actions["ng-use-fee"] = function (el, d) {
+    if (!d || !num(d.fee)) return;
+    var undo = snap(d), n = ngGet(d); n.final = num(d.fee); n.auto = false;
+    if (!num(n.offer)) { n.offer = num(d.fee); n.offerOn = n.offerOn || d.created || todayISO(); }
+    ngLogFinal(d); save(); renderAll(); toast("Final agreed set to " + money(d.fee, d.currency), undo);
+  };
+  EXT.actions["ng-nudge"] = function (el, d) {
+    var u = d && ngNudge(d); if (!u) return;
+    var undo = snap(d), n = ngGet(d);
+    if (!num(n.offer)) { n.offer = u.offer; n.offerOn = n.offerOn || d.created || todayISO(); }
+    n.counter = u.amount; n.counterOn = todayISO(); n.auto = false; n.fromNudge = true; ngSetGap(d);
+    logEvent("counter-nudge-used", { gapBucket: ngBucket(n.gapAtCounter) }); ngLogCounter(d, { nudge: true });
+    save(); ui.tab = "deal"; renderAll();
+    var sec = document.getElementById("ng"), inp = document.getElementById("ng-counter");
+    if (sec && sec.scrollIntoView) sec.scrollIntoView({ block: "start" });
+    if (inp) inp.focus({ preventScroll: true });
+    toast("Counter set to " + money(u.amount, d.currency) + ". Send it to the brand, then record the final fee here", undo);
+  };
+  EXT.actions["sc-make"] = function () { var d = cur(); if (!d) return; NG.share = d.id; NG.shareOk = false; NG.copyText = ""; renderAll(); var c = document.getElementById("sc-ok"); if (c) c.focus(); };
+  EXT.actions["sc-close"] = function () { NG.share = ""; NG.shareOk = false; NG.copyText = ""; renderAll(); var b = document.getElementById("sc-make"); if (b) b.focus(); };
+  EXT.actions["sc-copy"] = function (el, d) {
+    var f = d && NG.shareOk && shareFacts(d); if (!f) return;
+    var txt = shareText(f);
+    var fallback = function () { NG.copyText = txt; renderAll(); var ta = document.getElementById("sc-text"); if (ta) { ta.focus(); ta.select(); } toast("Select the text and copy it"); };
+    try { navigator.clipboard.writeText(txt).then(function () { toast("Copied the share card"); }, fallback); } catch (x) { fallback(); }
+  };
+  EXT.actions["fd-compare"] = function (el, d) {
+    if (!d) return;
+    var opening = NG.fd !== d.id; NG.fd = opening ? d.id : "";
+    if (opening) logEvent("fakedoor-compare", { answered: !!state.profile.compareAnswer });
+    save(); renderAll();
+    var first = document.getElementById(state.profile.compareAnswer || !opening ? "fd-compare" : "fd-yes"); if (first) first.focus();
+  };
+  EXT.actions["fd-answer"] = function (el) {
+    var a = el.dataset.answer; if (!a) return;
+    state.profile.compareAnswer = a; state.profile.compareAnsweredOn = todayISO();
+    logEvent("fakedoor-compare-answer", { answer: a }); save(); renderAll();
+    var b = document.getElementById("fd-compare"); if (b) b.focus();
+    toast("Thanks. Your answer is saved on this device");
+  };
+
+  /* example negotiation history */
+  function negoSeed(list, t) {
+    var plan = [
+      // [brand, stage, first offer, counter (0 = none), final, gapAtCounter, gapBasis]
+      ["Brightside Bikes", "posted", 6000, 8000, 7500, 22, "your past median"],
+      ["Loomstack", "invoiced", 2500, 3000, 3000, 17, "your past median"],
+      ["Mintmark", "paid", 4000, 5500, 5200, 26, "your past median"],
+      ["Tallow & Ash", "paid", 2200, 0, 2200, null, ""],
+      ["Kettle Camp", "paid", 1600, 0, 1600, null, ""]
+    ];
+    plan.forEach(function (p) {
+      var d = list.filter(function (x) { return x.example && x.brand === p[0] && x.stage === p[1] && !x.nego; })[0]; if (!d) return;
+      var c0 = d.created || t;
+      d.nego = { offer: p[2], offerOn: addDays(c0, 1), counter: p[3], counterOn: p[3] ? addDays(c0, 3) : "", final: p[4], gapAtCounter: p[5], gapBasis: p[6] };
+    });
+    var fn = list.filter(function (x) { return x.example && x.brand === "Tallow & Ash" && x.stage === "inbound" && !x.nego; })[0];
+    if (fn) fn.nego = { offer: num(fn.fee), offerOn: fn.created || t, counter: 0, counterOn: "", final: 0, gapAtCounter: null, gapBasis: "" };
+  }
+  EXT.seed.push(negoSeed);
+  // The core builds the first-visit examples before feature regions load, so EXT.seed hasn't run for them yet.
+  // Fill this session's example deals once, only when none of them has a negotiation record.
+  if (state && !state.deals.some(function (x) { return x.example && x.nego; })) negoSeed(state.deals, todayISO());
+  /* ===== END FEATURE D ===== */
+
+
   /* ---------- actions ---------- */
   function completeTask(d, k) {
     var m = /^pay:(.+)$/.exec(k.key || ""), msg = (k.owner === "brand" ? doneLabel(k) + ": " : "Done: ") + k.title;
     if (m) {
       var r = ledger(d).rows.filter(function (x) { return x.inv.id === m[1]; })[0];
       if (r && r.open > 0) {
-        d.payments.push({ id: uid(), amount: r.open, date: todayISO(), note: "Invoice" + (r.inv.ref ? " #" + r.inv.ref : "") + " paid" });
+        d.payments.push({ id: uid(), amount: r.open, date: todayISO(), note: "Invoice" + (r.inv.ref ? " #" + r.inv.ref : "") + " paid" }); logEvent("payment-recorded", { from: "attention", daysLate: r.late });
         msg = "Recorded " + money(r.open, d.currency) + " received from " + (d.brand || "the brand");
       }
     }
-    if (!k.done) { k.done = todayISO(); logT(k, k.owner === "brand" ? doneLabel(k) : "Done"); }
+    if (!k.done) { k.done = todayISO(); logT(k, k.owner === "brand" ? doneLabel(k) : "Done"); logEvent("step-done", { kind: k.kind, owner: k.owner }); }
     if (k.kind === "publish" && (d.stage === "contracted" || d.stage === "production") && d.tasks.filter(function (x) { return x.kind === "publish" && !x.done; }).length === 0) { d.stage = "posted"; msg += ". Deal moved to Posted"; }
     var extra = syncMoney(d); if (extra.length) msg += ". Deal " + extra.join(", ");
     return msg;
@@ -1805,7 +3288,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var d = blankDeal({ brand: brand, stage: stage, fee: num(g("qi-fee")), feeMode: num(g("qi-fee")) ? "package" : "lines", currency: g("qi-cur") || state.profile.currency });
     var k = task({ title: step, owner: owner, due: owner === "me" ? date : "", chase: owner === "brand" ? date : "" });
     logT(k, "Logged"); d.tasks.push(k);
-    state.deals.push(d); ui.intake = false; save();
+    state.deals.push(d); ui.intake = false; logEvent("deal-logged", { stage: stage, owner: owner, hasDate: !!date, hasFee: !!num(g("qi-fee")) }); save();
     if (openAfter) openDeal(d.id, "deal"); else renderAll();
     toast("Logged " + brand + (hadReal || state.ui.showExamples || !state.deals.some(function (x) { return x.example; }) ? "" : ". The examples are hidden now"));
   }
@@ -1818,7 +3301,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       else ui.restore = r;
     } catch (e) { ui.restoreErr = "That doesn't look like a Creator Dealflow backup. Check that you copied all of it, from the first { or [ to the last } or ]."; }
   }
-  function markBackedUp() { state.backupAt = new Date().toISOString(); ui.hideBackupNag = false; save(); }
+  function markBackedUp() { logEvent("backup-copied", { withPilot: !!(state.pilot && state.pilot.share) }); state.backupAt = new Date().toISOString(); ui.hideBackupNag = false; save(); }
 
   function openRecapFull(d, fallbackText) {
     var el = document.getElementById("recap-full");
@@ -1860,7 +3343,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         k.done = ""; logT(k, "Reopened"); save(); renderAll(); toast("Reopened: " + k.title); break;
       case "chased":
         k = findTask(rowDeal, act.dataset.task); if (!k) break;
-        snapFn = snap(rowDeal); k.chase = addDays(todayISO(), 3); logT(k, "Followed up"); save(); renderAll();
+        snapFn = snap(rowDeal); k.chase = addDays(todayISO(), 3); logT(k, "Followed up"); logEvent("followed-up", { kind: k.kind }); save(); renderAll();
         toast("Next chase on " + fmtDate(k.chase), snapFn); break;
       case "advance": var i = FLOW.indexOf(d.stage); if (i > -1 && i < FLOW.length - 1) moveStage(d, FLOW[i + 1]); renderAll(); break;
       case "decline": moveStage(d, "declined"); ui.tab = "deal"; renderAll(); var fd = document.getElementById("f-decline"); if (fd) fd.focus(); break;
@@ -1871,12 +3354,12 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       case "del-add": d.deliverables.push(normLine({ type: "yt_integration", qty: 1, rate: priced(d) ? cardRate(d, "yt_integration") : 0 })); syncFee(d); save(); renderAll(); var ns = document.getElementById("del-" + (d.deliverables.length - 1) + "-type"); if (ns) ns.focus(); break;
       case "del-remove": d.deliverables.splice(+act.dataset.i, 1); syncFee(d); save(); renderAll(); break;
       case "split-hours": splitByHours(d); save(); renderAll(); toast("Split " + money(d.fee, d.currency) + " across the placements by the hours they take"); break;
-      case "apply-terms": var n = applyTerms(d); save(); renderAll(); toast(n ? "Added " + n + " step" + (n === 1 ? "" : "s") + " from the terms" : "All the steps from the terms are already here"); break;
+      case "apply-terms": var n = applyTerms(d); logEvent("terms-applied", { steps: n }); save(); renderAll(); toast(n ? "Added " + n + " step" + (n === 1 ? "" : "s") + " from the terms" : "All the steps from the terms are already here"); break;
       case "log-revision":
         d.revisionsUsed = num(d.revisionsUsed) + 1;
         var cap = revCap(d), rn = d.revisionsUsed, over = cap && cap !== Infinity && rn > cap;
         k = task({ kind: "revision", title: "Send revised version (round " + rn + ")" + (over ? ": beyond the " + cap + " included, bill it" : ""), due: addDays(todayISO(), 2) });
-        logT(k, "Revision requested"); d.tasks.push(k); save(); renderAll();
+        logT(k, "Revision requested"); d.tasks.push(k); logEvent("revision-logged", { round: rn, over: !!over }); save(); renderAll();
         toast(over ? "Round " + rn + " is beyond the " + cap + " the contract includes" : "Logged revision round " + rn); break;
       case "add-task":
         k = task({ title: "", owner: "me" }); logT(k, "Added"); d.tasks.push(k); save(); renderAll();
@@ -1888,7 +3371,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         if (amt <= 0) { toast("Enter the invoice amount"); document.getElementById("inv-amount").focus(); break; }
         snapFn = snap(d);
         addInvoice(d, amt, document.getElementById("inv-issued").value, document.getElementById("inv-net").value, document.getElementById("inv-ref").value.trim());
-        syncMoney(d); save(); renderAll(); toast("Added an invoice for " + money(amt, d.currency) + ". Its payment is now on your list", snapFn); break;
+        syncMoney(d); logEvent("invoice-added", { net: num(document.getElementById("inv-net").value) }); save(); renderAll(); toast("Added an invoice for " + money(amt, d.currency) + ". Its payment is now on your list", snapFn); break;
       case "del-inv":
         snapFn = snap(d);
         d.invoices = d.invoices.filter(function (x) { return x.id !== act.dataset.inv; });
@@ -1899,12 +3382,12 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         if (pa <= 0) { toast("Enter the amount you received"); document.getElementById("pay-amount").focus(); break; }
         snapFn = snap(d);
         d.payments.push({ id: uid(), amount: pa, date: document.getElementById("pay-date").value, note: document.getElementById("pay-note").value.trim() });
-        msg = syncMoney(d); save(); renderAll(); toast("Recorded " + money(pa, d.currency) + " received" + (msg.length ? ". Deal " + msg.join(", ") : ""), snapFn); break;
+        msg = syncMoney(d); logEvent("payment-recorded", { from: "money-tab" }); save(); renderAll(); toast("Recorded " + money(pa, d.currency) + " received" + (msg.length ? ". Deal " + msg.join(", ") : ""), snapFn); break;
       case "del-pay":
         snapFn = snap(d); d.payments = d.payments.filter(function (x) { return x.id !== act.dataset.pay; }); syncMoney(d); save(); renderAll(); toast("Removed the payment", snapFn); break;
       case "money-cur": ui.moneyCur = act.dataset.cur; renderAll(); break;
       case "add-makegood":
-        k = task({ kind: "makegood", title: "Agree and deliver the make-good", due: addDays(todayISO(), 7) }); logT(k, "Placement under the promise"); d.tasks.push(k); save(); renderAll(); toast("Added a make-good step"); break;
+        k = task({ kind: "makegood", title: "Agree and deliver the make-good", due: addDays(todayISO(), 7) }); logT(k, "Placement under the promise"); d.tasks.push(k); logEvent("makegood-added", {}); save(); renderAll(); toast("Added a make-good step"); break;
       case "renew":
         var nd = blankDeal({ brand: d.brand, category: d.category, contact: d.contact, email: d.email, source: d.source, stage: "negotiating", currency: d.currency, feeMode: d.feeMode,
           contract: clone(d.contract), legit: clone(d.legit), take: clone(d.take), example: d.example, notes: "Renewal of the " + fmtMonth(d.created) + " campaign." });
@@ -1912,10 +3395,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         nd.deliverables = d.deliverables.map(function (x) { return normLine({ type: x.type, qty: x.qty, rate: Math.round(num(x.rate) * scale / 50) * 50, specs: x.specs }); });
         nd.fee = num(d.recap.renewal) || num(d.fee); syncFee(nd);
         k = task({ kind: "reply", title: "Send the renewal proposal", due: addDays(todayISO(), 2) }); logT(k, "Renewal started from the recap"); nd.tasks.push(k);
-        state.deals.push(nd); save(); openDeal(nd.id, "deal"); toast("Started a renewal with " + (d.brand || "the brand")); break;
+        state.deals.push(nd); logEvent("renewal-started", { scaled: scale !== 1 }); save(); openDeal(nd.id, "deal"); toast("Started a renewal with " + (d.brand || "the brand")); break;
       case "copy-recap":
         var rt = recapText(d);
-        var markSent = function () { d.recap.sentOn = todayISO(); var rk = d.tasks.filter(function (x) { return x.key === "recap" && !x.done; })[0]; if (rk) { rk.done = todayISO(); logT(rk, "Recap sent"); } save(); renderAll(); };
+        var markSent = function () { d.recap.sentOn = todayISO(); logEvent("recap-sent", { placements: d.deliverables.length }); var rk = d.tasks.filter(function (x) { return x.key === "recap" && !x.done; })[0]; if (rk) { rk.done = todayISO(); logT(rk, "Recap sent"); } save(); renderAll(); };
         try { navigator.clipboard.writeText(rt).then(function () { markSent(); toast("Recap copied and marked sent"); }, function () { ui.recapFull = true; markSent(); openRecapFull(d, rt); }); } catch (x) { markSent(); openRecapFull(d, rt); }
         break;
       case "recap-full": openRecapFull(d); break;
@@ -1925,7 +3408,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         var oc = owedAll()[0]; if (oc) ui.moneyCur = oc.cur;
         setView("money"); var op2 = document.getElementById("owed"); if (op2) op2.scrollIntoView(); break;
       case "usage-running":
-        snapFn = snap(rowDeal); rowDeal.usageRunning = todayISO();
+        snapFn = snap(rowDeal); rowDeal.usageRunning = todayISO(); logEvent("usage-running", {});
         k = rowDeal.tasks.filter(function (x) { return x.key === "usage"; })[0]; if (k) logT(k, "Ads still running");
         save(); renderAll(); toast("Logged. The overage is now in what " + (rowDeal.brand || "the brand") + " owes you", snapFn); break;
       case "usage-stopped":
@@ -1937,7 +3420,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         var lta = document.getElementById("letter-text"), txt2 = lta ? lta.value : "";
         var it2 = owedFor(d).items[+act.dataset.i];
         var logIt = function () {
-          if (it2 && it2.kind === "late") { var pk = d.tasks.filter(function (x) { return x.key === "pay:" + it2.row.inv.id; })[0]; if (pk) { logT(pk, "Follow-up sent (" + (ui.letter ? ui.letter.tone : "") + ")"); pk.chase = addDays(todayISO(), 7); } }
+          logEvent("followup-copied", { tone: ui.letter ? ui.letter.tone : "", kind: it2 ? it2.kind : "", basis: lateBasis(d), daysLate: it2 && it2.days ? it2.days : 0 });
+          if (it2 && it2.kind === "late") { var pk = d.tasks.filter(function (x) { return x.key === "pay:" + it2.row.inv.id; })[0]; if (pk) { logT(pk, "Follow-up sent (" + (ui.letter ? ui.letter.tone : "") + ")"); pk.chase = addDays(todayISO(), 7); } recordFollowup(d, it2.row.inv.id, ui.letter ? ui.letter.tone : ""); }
           save(); renderAll();
         };
         try { navigator.clipboard.writeText(txt2).then(function () { logIt(); toast("Copied. Next chase in a week"); }, function () { if (lta) { lta.focus(); lta.select(); } logIt(); toast("Select the text and copy it"); }); }
@@ -1975,9 +3459,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
         var here = {}; state.deals.forEach(function (x) { here[x.id] = 1; });
         var add = ui.restore.deals.filter(function (x) { return !here[x.id]; });
         state.deals = state.deals.concat(add); ui.restore = null; save(); renderAll(); toast("Added " + add.length + " deal" + (add.length === 1 ? "" : "s") + " from the backup"); break;
+      case "pilot-reset": state.metrics = { counts: {}, log: [] }; save(); renderAll(); toast("Reset the pilot counts"); break;
+      default: if (EXT.actions[a]) EXT.actions[a](act, d, e, rowDeal); break;
       case "restore-replace":
         state.deals = ui.restore.deals; if (ui.restore.profile) state.profile = mergeProfile(ui.restore.profile);
-        var cnt = state.deals.length; ui.restore = null; ui.confirm = null; save(); renderAll(); toast("Restored " + cnt + " deals from the backup"); break;
+        logEvent("restore", { mode: "replace" }); var cnt = state.deals.length; ui.restore = null; ui.confirm = null; save(); renderAll(); toast("Restored " + cnt + " deals from the backup"); break;
     }
   });
 
@@ -1985,6 +3471,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   var NUMERIC = { fee: 1, productValue: 1, lateFeePct: 1 };
   document.addEventListener("input", function (e) {
     var t = e.target, d = cur();
+    for (var xi = 0; xi < EXT.input.length; xi++) if (EXT.input[xi](t, d)) return;
+    if (t.dataset.pilot === "code") { state.pilot = Object.assign({}, state.pilot, { code: t.value.trim().slice(0, 24) }); save(); return; }
     if (t.id === "search") { ui.q = t.value; withFocus(renderView); return; }
     if (t.dataset.profile) { state.profile[t.dataset.profile] = num(t.value); save(); return; }
     if (t.dataset.hours) { state.profile.hours[t.dataset.hours] = num(t.value); save(); return; }
@@ -2009,6 +3497,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   });
   document.addEventListener("change", function (e) {
     var t = e.target, d = cur();
+    for (var xc = 0; xc < EXT.change.length; xc++) if (EXT.change[xc](t, d)) return;
+    if (t.dataset.pilot === "share") { state.pilot = Object.assign({}, state.pilot, { share: t.checked }); save(); toast(t.checked ? "Backups will include the pilot counts" : "Backups won't include the pilot counts"); return; }
     if (t.id === "hide-brands") { ui.hideBrands = t.checked; renderAll(); return; }
     if (t.id === "show-declined") { state.ui.showDeclined = t.checked; save(); renderAll(); return; }
     if (t.id === "r-currency") { state.profile.currency = t.value; save(); renderAll(); toast("New deals and your target rate now use " + t.value + ". Existing deals keep their currency"); return; }
