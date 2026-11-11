@@ -271,6 +271,31 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 .hint.warn { color: var(--warn); font-weight: 600; }
 .price-sum { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 12px; border-radius: 8px; background: var(--surface-2); }
 .price-sum strong { font-family: var(--font-mono); font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.owed { border-radius: var(--radius); padding: 16px 18px; background: var(--bad-soft); display: flex; flex-direction: column; gap: 6px; }
+.owed .eyebrow { font-size: 0.82rem; font-weight: 700; color: var(--bad); }
+.owed .big { font-family: var(--font-mono); font-weight: 500; font-size: 2.2rem; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; color: var(--fg); }
+.owed .big .plus { color: var(--bad); }
+.owed p { margin: 0; }
+.owed .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.owed-curs { display: flex; flex-wrap: wrap; gap: 18px 36px; }
+.letter { width: 100%; min-height: 200px; font-size: 0.88rem; line-height: 1.5; }
+.tick { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.recap-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; background: var(--surface); display: flex; flex-direction: column; gap: 14px; }
+.rc-head h3 { margin: 2px 0 0; font-size: 1.35rem; letter-spacing: -0.01em; }
+.rc-line { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.rc-top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.rc-mets { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr)); gap: 10px; }
+.rc-mets div { display: flex; flex-direction: column; }
+.rc-mets .num { font-family: var(--font-mono); font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.rc-totals { padding: 12px; border-radius: 8px; background: var(--surface-2); }
+.rc-hit { margin: 0; font-size: 0.86rem; font-weight: 600; }
+.rc-hit.good { color: var(--good); }
+.rc-hit.warn { color: var(--warn); }
+.rc-note, .rc-renew { margin: 0; }
+.rc-foot a { color: inherit; }
+.recap-full { position: fixed; inset: 0; z-index: 30; background: var(--bg); overflow-y: auto; padding: calc(24px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.recap-full .inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+@media print { .app, .sheet, .scrim, .toast, .recap-full .toolbar { display: none !important; } .recap-full { position: static; padding: 0; } }
 .history { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .history li { font-size: 0.88rem; padding: 8px 10px; border-radius: 6px; background: var(--surface-2); }
 
@@ -352,6 +377,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   <div class="sheet-body" id="db"></div>
   <div class="sheet-foot" id="df"></div>
 </aside>
+<div class="recap-full" id="recap-full" role="dialog" aria-modal="true" aria-label="Campaign recap" hidden></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
@@ -599,12 +625,13 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   var KEY2 = "creator-dealflow-v2", KEY1 = "creator-dealflow-v1";
   function defaultProfile() {
     var h = {}; DELIVERABLES.forEach(function (d) { h[d.key] = d.hours; });
-    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h, rateCard: {} };
+    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h, rateCard: {}, law: { ukRef: 3.75, euRef: 2.40 }, name: "" };
   }
   function mergeProfile(p) {
     var out = Object.assign(defaultProfile(), p || {});
     out.hours = Object.assign(defaultProfile().hours, (p && p.hours) || {});
     out.rateCard = Object.assign({}, (p && p.rateCard) || {});
+    out.law = Object.assign({ ukRef: 3.75, euRef: 2.40 }, (p && p.law) || {});
     return out;
   }
   function blankDeal(o) {
@@ -612,7 +639,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       id: uid(), brand: "", category: "Other", contact: "", email: "", source: "Inbound email", stage: "inbound",
       currency: (state && state.profile && state.profile.currency) || "USD", fee: 0, feeMode: "lines", productValue: 0, deliverables: [],
       publishBy: "", created: todayISO(), notes: "", declineReason: "", legit: {}, take: { revisions: 1, extra: 0, buy: "", fit: "" },
-      contract: {}, tasks: [], invoices: [], payments: [], termsApplied: false, revisionsUsed: 0
+      contract: {}, tasks: [], invoices: [], payments: [], termsApplied: false, revisionsUsed: 0, lateBasis: "auto", lateFeePct: 0, usageRunning: "", recap: { highlights: "", renewal: 0, sentOn: "" }
     };
     if (o) Object.keys(o).forEach(function (k) { d[k] = o[k]; });
     return d;
@@ -624,10 +651,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     d.legit = d.legit || {}; d.contract = d.contract || {};
     d.tasks = d.tasks.map(function (t) { return task(t); });
     d.deliverables = d.deliverables.map(normLine);
+    d.recap = Object.assign({ highlights: "", renewal: 0, sentOn: "" }, x.recap || {});
     if (x.feeMode !== "lines" && x.feeMode !== "package") d.feeMode = d.deliverables.some(function (l) { return num(l.rate) > 0; }) || !num(d.fee) ? "lines" : "package";
     return d;
   }
-  function normLine(x) { return { type: x.type || "yt_integration", qty: x.qty == null ? 1 : x.qty, rate: num(x.rate), publishBy: x.publishBy || "", specs: x.specs || "" }; }
+  function normLine(x) { return { type: x.type || "yt_integration", qty: x.qty == null ? 1 : x.qty, rate: num(x.rate), publishBy: x.publishBy || "", specs: x.specs || "", res: Object.assign({ link: "", views: 0, clicks: 0, actions: 0, engagement: 0, target: 0, targetOn: "views", source: "", asOf: "" }, x.res || {}) }; }
 
   /* ---------- placements and pricing ---------- */
   function lineTotal(x) { return num(x.qty) * num(x.rate); }
@@ -696,6 +724,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     });
     P = last || P;
     out.push({ key: "invoice", kind: "invoice", owner: "me", title: "Send invoice (Net " + netOf(d) + ")", due: addD(P, 2) });
+    out.push({ key: "recap", kind: "recap", owner: "me", title: "Send the campaign recap", due: addD(P, 30) });
     if (USAGE_DAYS[c.usage]) out.push({ key: "usage", kind: "rights", owner: "brand", title: "Paid usage ends: check the ads have stopped", due: addD(P, USAGE_DAYS[c.usage]), chase: addD(P, USAGE_DAYS[c.usage] + 1) });
     if (WL_DAYS[c.whitelist]) out.push({ key: "whitelist", kind: "rights", owner: "me", title: "Remove the brand's ad access to your account", due: addD(P, WL_DAYS[c.whitelist]) });
     if (EX_DAYS[c.exclusivity]) out.push({ key: "excl", kind: "rights", owner: "me", title: "Exclusivity ends: competitors are open again", due: addD(P, EX_DAYS[c.exclusivity]) });
@@ -757,6 +786,160 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (inv) { inv.done = issued || todayISO(); logT(inv, "Invoice recorded"); }
     if (["contracted", "production", "posted"].indexOf(d.stage) > -1) d.stage = "invoiced";
     return iv;
+  }
+
+  /* ---------- what they owe you ---------- */
+  // UK: Late Payment of Commercial Debts (Interest) Act 1998. 8% over the Bank of England base rate in force on
+  // 30 June (for July–December) or 31 December (for January–June), plus fixed compensation per invoice.
+  // EU: Late Payment Directive 2011/7/EU. At least 8 points over the ECB reference rate, plus at least €40 per invoice.
+  // A late-fee clause in the contract replaces the statutory rate.
+  var LAW = {
+    uk: { label: "UK late-payment law", short: "UK law", cite: "the Late Payment of Commercial Debts (Interest) Act 1998" },
+    eu: { label: "EU late-payment rules", short: "EU rules", cite: "the EU Late Payment Directive (2011/7/EU), as implemented in national law" },
+    contract: { label: "Late fee in your contract", short: "Contract late fee", cite: "the late-payment clause in our agreement" },
+    none: { label: "No late charge", short: "None", cite: "" }
+  };
+  function ukComp(amount) { return amount < 1000 ? 40 : amount < 10000 ? 70 : 100; }
+  function lateBasis(d) {
+    var b = d.lateBasis || "auto";
+    if (b !== "auto") return b;
+    if (num(d.lateFeePct)) return "contract";
+    return d.currency === "GBP" ? "uk" : d.currency === "EUR" ? "eu" : "none";
+  }
+  function lateRate(d, basis) {
+    var law = state.profile.law || {};
+    return basis === "uk" ? 8 + num(law.ukRef) : basis === "eu" ? 8 + num(law.euRef) : basis === "contract" ? num(d.lateFeePct) * 12 : 0;
+  }
+  function usageOpt(d) { var v = (d.contract || {}).usage; return CLAUSES[0].opts.filter(function (o) { return o[0] === v; })[0]; }
+  function owedFor(d) {
+    var L = ledger(d), basis = lateBasis(d), rate = lateRate(d, basis), items = [], t = todayISO();
+    L.rows.forEach(function (r) {
+      if (!(r.open > 0 && r.late > 0)) return;
+      var daily = r.open * rate / 100 / 365, interest = daily * r.late;
+      var comp = basis === "uk" && d.currency === "GBP" ? ukComp(r.open) : basis === "eu" && d.currency === "EUR" ? 40 : 0;
+      items.push({ kind: "late", row: r, days: r.late, base: r.open, interest: interest, comp: comp, daily: daily, extra: interest + comp });
+    });
+    if (d.usageRunning && USAGE_DAYS[(d.contract || {}).usage]) {
+      var o = usageOpt(d), span = USAGE_DAYS[d.contract.usage], per30 = num(d.fee) * (o ? o[2] : 0) / 100 / (span / 30);
+      var ut = d.tasks.filter(function (k) { return k.key === "usage"; })[0], end = (ut && ut.due) || d.usageRunning;
+      var blocks = Math.max(1, Math.ceil(diffDays(end, t) / 30));
+      items.push({ kind: "usage", end: end, blocks: blocks, per30: per30, extra: blocks * per30, daily: 0 });
+    }
+    var cap = revCap(d), over = cap && cap !== Infinity ? num(d.revisionsUsed) - cap : 0;
+    if (over > 0 && d.currency === state.profile.currency) {
+      var each = num(state.profile.revisionHours) * num(state.profile.rate);
+      items.push({ kind: "revisions", rounds: over, each: each, extra: over * each, daily: 0 });
+    }
+    return { d: d, basis: basis, rate: rate, items: items, overdue: L.overdue,
+      extra: sum(items, function (i) { return i.extra; }), daily: sum(items, function (i) { return i.daily; }) };
+  }
+  function owedAll() {
+    var by = {};
+    live().forEach(function (d) {
+      if (d.stage === "declined") return;
+      var o = owedFor(d); if (!o.overdue && !o.extra) return;
+      var c = by[d.currency] = by[d.currency] || { cur: d.currency, overdue: 0, extra: 0, daily: 0, deals: [] };
+      c.overdue += o.overdue; c.extra += o.extra; c.daily += o.daily; c.deals.push(o);
+    });
+    return Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return (b.overdue + b.extra) - (a.overdue + a.extra); });
+  }
+  function money2(n, c) {
+    try { return new Intl.NumberFormat("en-US", { style: "currency", currency: c, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n || 0); }
+    catch (e) { return c + " " + (n || 0).toFixed(2); }
+  }
+  function adLibraryUrl(brand) { return "https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&search_type=keyword_unordered&q=" + encodeURIComponent(brand || ""); }
+  function firstName(d) { var n = (d.contact || "").replace(/\(.*\)/, "").trim().split(/\s+/)[0]; return n && !/^["“]/.test(n) ? n : "there"; }
+  function letterText(d, it, tone) {
+    var C = d.currency, me = "[your name]", hi = "Hi " + firstName(d) + ",", by = fmtDate(addDays(todayISO(), 7));
+    if (it.kind === "usage") {
+      return hi + "\n\nThe paid usage period for our " + (d.brand || "") + " campaign ended on " + fmtDate(it.end) + ", but the ads are still running. Under our agreement, paid usage beyond that date is billed separately.\n\n" +
+        "I'll invoice " + money(it.per30, C) + " for each additional 30 days (" + it.blocks + " so far, " + money(it.extra, C) + "). If you'd like to keep running them, happy to agree a licence extension. Otherwise, please pause them today.\n\nThanks,\n" + me;
+    }
+    if (it.kind === "revisions") {
+      return hi + "\n\nOur agreement includes " + revCap(d) + " revision rounds, and we're now at " + num(d.revisionsUsed) + ". I'll add the " + it.rounds + " extra round" + (it.rounds === 1 ? "" : "s") + " to the invoice at " + money(it.each, C) + " each (" + money(it.extra, C) + ").\n\nThanks,\n" + me;
+    }
+    var r = it.row, ref = r.inv.ref ? "invoice #" + r.inv.ref : "my invoice", law = LAW[lateBasis(d)];
+    if (tone === "friendly") return hi + "\n\nA quick nudge on " + ref + " for " + money(r.open, C) + ", which was due on " + fmtDate(r.due) + ". Could you let me know when it's scheduled for payment?\n\nThanks so much,\n" + me;
+    if (tone === "firm") return hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue. Please confirm the payment date by " + by + "." +
+      (it.interest ? " Late-payment interest under " + law.cite + " has been accruing since the due date." : "") + "\n\nThanks,\n" + me;
+    var lines = hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue.\n\n";
+    if (it.interest || it.comp) lines += "Under " + law.cite + ", I'm entitled to interest at " + (Math.round(lateRate(d, lateBasis(d)) * 100) / 100) + "% a year (" + money2(it.daily, C) + " a day)" + (it.comp ? " plus fixed compensation of " + money(it.comp, C) : "") + ". As of today that comes to " + money2(it.interest, C) + " in interest" + (it.comp ? " and " + money(it.comp, C) + " compensation" : "") + ", a total of " + money2(r.open + it.extra, C) + ".\n\n";
+    return lines + "Please pay the outstanding amount by " + by + ". I'd much rather keep working together than escalate this, so do let me know if something is holding it up.\n\nThanks,\n" + me;
+  }
+
+  /* ---------- campaign recap ---------- */
+  var SOURCES_RES = ["YouTube Studio", "Instagram Insights", "TikTok Analytics", "Podcast host stats", "Newsletter platform", "Link tracker", "Brand-reported", "Other"];
+  var METRICS = [["views", "Views"], ["clicks", "Link clicks"], ["actions", "Code uses or sign-ups"], ["engagement", "Engagements"]];
+  function metricLabel(k) { for (var i = 0; i < METRICS.length; i++) if (METRICS[i][0] === k) return METRICS[i][1]; return k; }
+  function lineCost(d, x) { return num(x.rate) ? lineTotal(x) : d.deliverables.length === 1 ? num(d.fee) : 0; }
+  function lineStats(d, x) {
+    var r = x.res || {}, cost = lineCost(d, x), v = num(r.views), c = num(r.clicks), a = num(r.actions);
+    var hit = num(r.target) ? num(r[r.targetOn || "views"]) / num(r.target) : null;
+    return { cost: cost, ctr: v && c ? c / v : 0, cpm: v && cost ? cost / v * 1000 : 0, cpc: c && cost ? cost / c : 0, cpa: a && cost ? cost / a : 0, hit: hit, has: !!(v || c || a || num(r.engagement)) };
+  }
+  function pubLink(d, i) { var k = d.tasks.filter(function (t) { return t.key === "pub:" + i; })[0]; return (k && k.link) || ""; }
+  function pct1(x) { return (Math.round(x * 1000) / 10) + "%"; }
+  function fmtN(n) { return Math.round(num(n)).toLocaleString("en-US"); }
+  function recapTab(d) {
+    var C = d.currency;
+    if (!d.deliverables.length) return '<p class="fine">Add the placements under Details first. Then record each one\'s results here and send the brand a recap.</p>';
+    var h = '<p class="fine">Record what each placement delivered, then send the brand a recap. Numbers you enter here are labelled as creator-reported, with where and when you measured them.</p>';
+    var short = [];
+    d.deliverables.forEach(function (x, i) {
+      var r = x.res, st = lineStats(d, x), def = DMAP[x.type], link = r.link || pubLink(d, i), id = function (k) { return 'id="res-' + i + "-" + k + '" data-res="' + i + '" data-rk="' + k + '"'; };
+      if (st.hit !== null && st.hit < 1) short.push({ i: i, x: x, st: st });
+      h += '<div class="line"><div class="task-foot"><strong>' + esc(delLabel(x)) + "</strong><span class=\"fine\">" + (lineDate(d, x) ? "Live " + esc(fmtDate(lineDate(d, x))) : "No go-live date") + (st.cost ? " · " + money(st.cost, C) : "") + "</span></div>" +
+        '<div class="field"><label for="res-' + i + '-link">Link to the post</label><input type="url" ' + id("link") + ' value="' + esc(link) + '" placeholder="https://"></div>' +
+        '<div class="grid3">' + METRICS.map(function (m) { return '<div class="field"><label for="res-' + i + "-" + m[0] + '">' + m[1] + '</label><input type="number" min="0" step="1" inputmode="numeric" ' + id(m[0]) + ' value="' + esc(r[m[0]] || "") + '"></div>'; }).join("") + "</div>" +
+        '<div class="grid3"><div class="field"><label for="res-' + i + '-source">Where the numbers come from</label><select ' + id("source") + "><option value=\"\">Choose</option>" + opts(SOURCES_RES, r.source) + "</select></div>" +
+        '<div class="field"><label for="res-' + i + '-asOf">Measured on</label><input type="date" ' + id("asOf") + ' value="' + esc(r.asOf) + '"></div>' +
+        '<div class="field"><label for="res-' + i + '-target">Promised (optional)</label><div class="del-row" style="grid-template-columns:1fr 1fr"><input type="number" min="0" step="1" inputmode="numeric" ' + id("target") + ' value="' + esc(r.target || "") + '" aria-label="Promised amount"><select ' + id("targetOn") + ' aria-label="Promised metric">' + opts(METRICS, r.targetOn || "views") + "</select></div></div></div>" +
+        (st.has ? '<p class="hint">' + [st.hit !== null ? metricLabel(r.targetOn) + " " + pct1(st.hit) + " of the promise" : "", st.ctr ? "click-through " + pct1(st.ctr) : "", st.cpm ? "effective CPM " + money2(st.cpm, C) : "", st.cpc ? money2(st.cpc, C) + " per click" : "", st.cpa ? money2(st.cpa, C) + " per code use or sign-up" : ""].filter(Boolean).join(" · ") + "</p>" : "") + "</div>";
+    });
+    if (short.length) h += '<div class="callout warn"><strong>' + short.length + " placement" + (short.length === 1 ? "" : "s") + " under the promise</strong><p>" + short.map(function (s2) { return esc(delLabel(s2.x)) + " reached " + pct1(s2.st.hit); }).join(", ") + ". If the contract calls for a make-good, add it to your steps so it doesn't slip.</p>" +
+      '<div class="toolbar"><button class="btn small" type="button" data-action="add-makegood">Add a make-good step</button></div></div>';
+    var card = sum(d.deliverables, function (x) { return num(x.qty) * cardRate(d, x.type); });
+    h += '<h3 class="section-title">Next time</h3><div class="grid2"><div class="field"><label for="f-hl">Highlights for the brand</label><textarea id="f-hl" data-recap="highlights" style="min-height:72px" placeholder="What landed: comments, questions, what you\'d change next time">' + esc(d.recap.highlights) + '</textarea></div>' +
+      '<div class="field"><label for="f-renew">Renewal offer (' + esc(C) + ')</label><input id="f-renew" type="number" min="0" step="50" inputmode="decimal" data-recap="renewal" value="' + esc(d.recap.renewal || "") + '"><p class="help">This deal was ' + money(d.fee, C) + (card ? ". Your rate card prices the same placements at " + money(card, C) : "") + '.</p><div><button class="btn small" type="button" data-action="renew">Start the renewal as a new deal</button></div></div></div>';
+    h += '<div class="panel-head"><h3 class="section-title">Recap for ' + esc(d.brand || "the brand") + '</h3><span class="fine">' + (d.recap.sentOn ? "Sent " + esc(fmtDate(d.recap.sentOn)) : "Not sent yet") + "</span></div>" +
+      '<div class="recap-card" id="recap-card">' + recapHTML(d) + "</div>" +
+      '<div class="toolbar"><button class="btn primary" type="button" data-action="copy-recap">Copy as text and mark sent</button><button class="btn" type="button" data-action="recap-full">Open full screen</button><span class="fine">Paste it into an email, or screenshot the full-screen view.</span></div>';
+    return h;
+  }
+  function recapHTML(d) {
+    var C = d.currency, me = state.profile.name || "Your name", srcs = {}, dates = [];
+    var rows = d.deliverables.map(function (x, i) {
+      var r = x.res, st = lineStats(d, x), link = r.link || pubLink(d, i);
+      if (r.source) srcs[r.source] = 1; if (r.asOf) dates.push(r.asOf);
+      var mets = METRICS.filter(function (m) { return num(r[m[0]]); }).map(function (m) { return '<div><span class="label">' + m[1] + '</span><span class="num">' + fmtN(r[m[0]]) + "</span></div>"; }).join("");
+      return '<div class="rc-line"><div class="rc-top"><strong>' + esc(delLabel(x)) + "</strong>" + (lineDate(d, x) ? '<span class="fine">Live ' + esc(fmtDate(lineDate(d, x))) + "</span>" : "") + (link ? ' <a href="' + esc(link) + '" target="_blank" rel="noopener">View post</a>' : "") + "</div>" +
+        (mets ? '<div class="rc-mets">' + mets + (st.ctr ? '<div><span class="label">Click-through</span><span class="num">' + pct1(st.ctr) + "</span></div>" : "") + "</div>" : '<p class="fine">Results to come.</p>') +
+        (st.hit !== null && st.has ? '<p class="rc-hit ' + (st.hit >= 1 ? "good" : "warn") + '">' + (st.hit >= 1 ? "Beat" : "Reached " + pct1(st.hit) + " of") + " the promised " + fmtN(r.target) + " " + metricLabel(r.targetOn).toLowerCase() + (st.hit >= 1 ? " by " + pct1(st.hit - 1) : "") + "</p>" : "") + "</div>";
+    }).join("");
+    var tc = sum(d.deliverables, function (x) { return num(x.res.clicks); }), ta = sum(d.deliverables, function (x) { return num(x.res.actions); });
+    dates.sort();
+    return '<div class="rc-head"><span class="label">Campaign recap</span><h3>' + esc(d.brand || "Brand") + " × " + esc(me) + "</h3>" + (num(d.fee) ? '<span class="fine">' + esc(summaryText(d)) + "</span>" : "") + "</div>" +
+      (d.deliverables.length > 1 && (tc || ta) ? '<div class="rc-mets rc-totals">' + (tc ? '<div><span class="label">Link clicks, all placements</span><span class="num">' + fmtN(tc) + "</span></div>" : "") + (ta ? '<div><span class="label">Code uses or sign-ups</span><span class="num">' + fmtN(ta) + "</span></div>" : "") + "</div>" : "") +
+      rows + (d.recap.highlights ? '<p class="rc-note">' + esc(d.recap.highlights) + "</p>" : "") +
+      (num(d.recap.renewal) ? '<p class="rc-renew"><strong>Next campaign:</strong> the same placements for ' + money(d.recap.renewal, C) + ".</p>" : "") +
+      '<p class="fine rc-foot">Figures are creator-reported' + (Object.keys(srcs).length ? " from " + esc(Object.keys(srcs).join(", ")) : "") + (dates.length ? ", measured " + esc(fmtDate(dates[0])) + (dates.length > 1 && dates[dates.length - 1] !== dates[0] ? "–" + esc(fmtDate(dates[dates.length - 1])) : "") : "") + '. Views on different platforms are counted differently, so they aren\'t added together. Made with <a href="https://jasonnellis.com/dealflow" target="_blank" rel="noopener">Creator Dealflow</a>.</p>';
+  }
+  function recapText(d) {
+    var C = d.currency, me = state.profile.name || "[your name]", L = [];
+    L.push("Campaign recap: " + (d.brand || "") + " × " + me, "");
+    d.deliverables.forEach(function (x, i) {
+      var r = x.res, st = lineStats(d, x), link = r.link || pubLink(d, i);
+      L.push(delLabel(x) + (lineDate(d, x) ? " (live " + fmtDate(lineDate(d, x)) + ")" : "") + (link ? ": " + link : ""));
+      METRICS.forEach(function (m) { if (num(r[m[0]])) L.push("  " + m[1] + ": " + fmtN(r[m[0]])); });
+      if (st.ctr) L.push("  Click-through: " + pct1(st.ctr));
+      if (st.hit !== null && st.has) L.push("  " + (st.hit >= 1 ? "Beat the promised " : "Reached " + pct1(st.hit) + " of the promised ") + fmtN(r.target) + " " + metricLabel(r.targetOn).toLowerCase());
+      if (r.source || r.asOf) L.push("  Source: " + (r.source || "creator-reported") + (r.asOf ? ", measured " + fmtDate(r.asOf) : ""));
+      L.push("");
+    });
+    if (d.recap.highlights) L.push(d.recap.highlights, "");
+    if (num(d.recap.renewal)) L.push("Next campaign: the same placements for " + money(d.recap.renewal, C) + ".", "");
+    L.push("Thanks,", me);
+    return L.join("\n");
   }
 
   /* ---------- which deals count ---------- */
@@ -848,7 +1031,24 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     d.tasks.forEach(function (k) { logT(k, "Example"); });
     return d;
   }
-  function seeds() { return [juniper()].concat(seedV0().map(function (o) { return migrateV0(o, "USD"); })); }
+  function seeds() {
+    var t = todayISO(), list = [juniper()].concat(seedV0().map(function (o) { return migrateV0(o, "USD"); }));
+    list.forEach(function (d) {
+      if (d.brand === "Loomstack" && d.stage === "invoiced") {
+        d.lateFeePct = 1.5; d.notes = "Contract says 1.5% a month on late invoices.";
+        Object.assign(d.deliverables[0].res, { link: "https://www.youtube.com/watch?v=example", views: 182400, clicks: 2310, actions: 118, engagement: 6400, target: 150000, targetOn: "views", source: "YouTube Studio", asOf: addDays(t, -15) });
+        d.recap.highlights = "Viewers asked about the team plan in the comments, and the code was used 118 times. Next time a pinned comment with the trial link would help.";
+        d.recap.renewal = 3400;
+      }
+      if (d.brand === "Kettle Camp") Object.assign(d.deliverables[0].res, { views: 38200, clicks: 410, actions: 0, engagement: 2900, target: 50000, targetOn: "views", source: "Instagram Insights", asOf: addDays(t, -20) });
+      if (d.brand === "Mintmark") {
+        d.contract.usage = "paid90";
+        var k = task({ key: "usage", kind: "rights", owner: "brand", title: "Paid usage ends: check the ads have stopped", due: addDays(t, -34), chase: addDays(t, -34) });
+        logT(k, "Example"); d.tasks.push(k);
+      }
+    });
+    return list;
+  }
 
   /* ---------- storage ---------- */
   var storageOK = true, loadNote = "";
@@ -1012,11 +1212,14 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function doneLabel(k) { return k.owner !== "brand" ? "Done" : k.kind === "approval" ? "Approved" : k.kind === "payment" ? "Paid" : "Received"; }
   function rowHTML(it) {
     var d = it.d, k = it.k, ids = ' data-deal="' + d.id + '" data-task="' + k.id + '"';
-    var btns = (k.owner === "brand" && it.g === "act" ? '<button class="btn small" type="button" data-action="chased"' + ids + '>Followed up</button>' : "") +
+    var btns = (k.key === "usage" ? '<a class="btn small" href="' + adLibraryUrl(d.brand) + '" target="_blank" rel="noopener">Check the ad library</a><button class="btn small" type="button" data-action="usage-running" data-deal="' + d.id + '">Still running</button>' : "") +
+      (k.owner === "brand" && it.g === "act" && k.key !== "usage" ? '<button class="btn small" type="button" data-action="chased"' + ids + '>Followed up</button>' : "") +
       '<button class="btn small" type="button" data-action="task-done"' + ids + ">" + doneLabel(k) + "</button>";
     var sub = [d.brand || "Untitled deal"];
     if (k.owner === "brand" && k.due && it.g === "act") sub.push("they owed it by " + fmtDate(k.due));
     if (d.example) sub.push("example");
+    var dn = k.key === "usage" ? "Ads stopped" : doneLabel(k);
+    btns = btns.replace(">" + doneLabel(k) + "</button>", ">" + dn + "</button>");
     return '<li class="item"><div class="item-main"><span class="when ' + it.level + '">' + esc(it.when) + " · " + (k.owner === "brand" ? "Brand" : "You") + "</span>" +
       '<button class="item-title linkish" type="button" data-open="' + d.id + '" data-opentab="steps">' + esc(it.lead) + "</button>" +
       '<span class="item-sub">' + esc(sub.join(" · ")) + "</span></div>" +
@@ -1034,6 +1237,13 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<p class="err" id="qi-err" role="alert" hidden></p>' +
       '<div class="toolbar"><button class="btn primary" type="submit">Add deal</button><button class="btn" type="button" data-action="intake-open">Add and fill in details</button><button class="btn quiet" type="button" data-action="intake-cancel">Cancel</button><span class="hint">Only the brand is required. Add the rest as it firms up.</span></div></form>';
   }
+  function owedCard() {
+    var all = owedAll(); if (!all.length) return "";
+    var anyExtra = all.some(function (c) { return c.extra > 0; });
+    return '<section class="owed" aria-label="What brands owe you"><span class="eyebrow">What brands owe you</span><div class="owed-curs">' + all.map(function (c) {
+      return '<div><div class="big tick">' + money2(c.overdue + c.extra, c.cur) + "</div><p>" + (c.overdue ? money(c.overdue, c.cur) + " overdue" : "") + (c.extra ? (c.overdue ? " + " : "") + '<strong class="plus">' + money2(c.extra, c.cur) + "</strong> in late interest, fees and overage" : "") + (c.daily ? ' · <span class="tick">+' + money2(c.daily, c.cur) + "</span> a day" : "") + "</p></div>";
+    }).join("") + '</div><div class="row"><button class="btn small" type="button" data-action="owed-view">See the breakdown and follow-ups</button>' + (anyExtra ? '<span class="fine">Estimates, not legal advice.</span>' : "") + "</div></section>";
+  }
   function renderToday() {
     var items = attention(), t = todayISO();
     var by = {}; items.forEach(function (it) { (by[it.g] = by[it.g] || []).push(it); });
@@ -1044,6 +1254,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var h = '<div class="today"><div class="view-head"><div><h2 class="view-title">Needs attention</h2><p>' + esc(long) + " · " + (acts ? acts + " to act on" : "nothing urgent") + " · " + waits + " waiting on brands" + (od ? " · " + esc(od) + " overdue" : "") + "</p></div>" +
       (ui.intake ? "" : '<button class="btn primary" type="button" data-action="intake">+ Log a deal</button>') + "</div>";
     if (ui.intake) h += intakeHTML();
+    h += owedCard();
     if (!items.length) h += '<p class="empty">Nothing needs you right now. Log a deal and its next step to start.</p>';
     GROUPS.forEach(function (g) {
       var list = by[g[0]]; if (!list) return;
@@ -1125,6 +1336,22 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       return '<div class="bar-row"><span class="name" title="' + esc(r[0]) + '">' + esc(r[0]) + '</span><div class="track" role="img" aria-label="' + esc(r[0]) + " " + pct(s) + '"><div class="fill" style="width:' + (s * 100).toFixed(1) + '%"></div></div><span class="val">' + money(r[1]) + " <span>" + pct(s) + "</span></span></div>";
     }).join("") + "</div>";
   }
+  function owedPanel(C) {
+    var c = owedAll().filter(function (x) { return x.cur === C; })[0];
+    if (!c) return "";
+    var nm = function (d) { return ui.hideBrands ? "A brand" : (d.brand || "Untitled deal"); }, rows = [];
+    c.deals.forEach(function (o) {
+      if (!o.items.length && o.overdue) rows.push("<tr><td>" + esc(nm(o.d)) + "</td><td>Overdue · " + esc(LAW[o.basis].short) + '</td><td class="num">' + money(o.overdue, C) + '</td><td class="num">—</td><td class="num">—</td></tr>');
+      o.items.forEach(function (it) {
+        var what = it.kind === "late" ? (it.row.inv.ref ? "#" + it.row.inv.ref + ", " : "") + days(it.days) + " late · " + LAW[o.basis].short : it.kind === "usage" ? "Ads still running after usage ended" : it.rounds + " revision round" + (it.rounds === 1 ? "" : "s") + " over the contract";
+        rows.push('<tr><td><button class="linkish" type="button" data-open="' + o.d.id + '" data-opentab="money">' + esc(nm(o.d)) + "</button></td><td>" + esc(what) + '</td><td class="num">' + (it.kind === "late" ? money(it.base, C) : "—") + '</td><td class="num tick">' + money2(it.extra, C) + '</td><td class="num tick">' + (it.daily ? "+" + money2(it.daily, C) : "—") + "</td></tr>");
+      });
+    });
+    return '<section class="panel wide" id="owed"><div class="panel-head"><h2>What they owe you</h2><label class="check"><input type="checkbox" id="hide-brands"' + (ui.hideBrands ? " checked" : "") + "> Hide brand names for a screenshot</label></div>" +
+      '<div class="owed"><span class="eyebrow">Owed to you in ' + esc(C) + '</span><div class="big tick">' + money2(c.overdue + c.extra, C) + "</div><p>" + money(c.overdue, C) + " overdue" + (c.extra ? ' + <strong class="plus">' + money2(c.extra, C) + "</strong> on top" : "") + (c.daily ? ' · <span class="tick">+' + money2(c.daily, C) + "</span> a day" : "") + "</p></div>" +
+      '<div class="table-wrap"><table><thead><tr><th>Brand</th><th>What</th><th class="num">Unpaid</th><th class="num">Owed on top</th><th class="num">Per day</th></tr></thead><tbody>' + rows.join("") + "</tbody></table></div>" +
+      '<p class="fine">Interest and fixed compensation follow ' + "UK late-payment law for GBP deals and EU rules for EUR deals unless a deal says otherwise, or the late fee in your contract where you've entered one. These are estimates, not legal advice. Statutory interest applies between businesses, and a late-fee clause in the contract replaces it. Open a deal's Money tab for ready-to-send follow-ups.</p></section>";
+  }
   function currencies(deals) {
     var c = {}; deals.forEach(function (d) { c[d.currency] = (c[d.currency] || 0) + 1; });
     return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; });
@@ -1151,7 +1378,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="fig' + (late.length ? " bad" : "") + '"><span class="label">Overdue invoices</span><span class="num">' + money(sum(late, function (x) { return x.L.overdue; })) + '</span><span class="sub">' + (late.length ? late.map(function (x) { return esc(x.d.brand || "Untitled deal"); }).join(", ") : "Nothing overdue") + "</span></div>" +
       '<div class="fig"><span class="label">Received in ' + year + '</span><span class="num">' + money(sum(thisYear, function (x) { return num(x.p.amount); })) + '</span><span class="sub">' + thisYear.length + " payment" + (thisYear.length === 1 ? "" : "s") + " with a date this year</span></div></section>";
 
-    out += '<div class="panels">';
+    out += '<div class="panels">' + owedPanel(C);
     var total = sum(booked, function (d) { return num(d.fee); });
     if (!total) {
       out += '<section class="panel wide"><h2>Nothing booked yet</h2><p class="lede">Once a deal is agreed, it counts toward your income here. You\'ll see how much depends on each brand, category and platform.</p></section>';
@@ -1205,7 +1432,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var p = state.profile; ctxCur = p.currency;
     var out = '<div class="panels">';
     out += '<section class="panel"><h2>Your rate</h2><p class="lede">Every deal\'s worth-it check compares its effective hourly rate against this target. Use what an hour of your time earns elsewhere.</p>' +
-      '<div class="grid2"><div class="field"><label for="r-rate">Target hourly rate</label><input id="r-rate" type="number" min="0" step="5" inputmode="decimal" data-profile="rate" value="' + esc(p.rate) + '"></div>' +
+      '<div class="grid2"><div class="field"><label for="r-name">Your name or channel</label><input id="r-name" data-profile-text="name" value="' + esc(p.name || "") + '" autocomplete="off"><p class="help">Shown on recaps you send to brands.</p></div><div class="field"><label for="r-rate">Target hourly rate</label><input id="r-rate" type="number" min="0" step="5" inputmode="decimal" data-profile="rate" value="' + esc(p.rate) + '"></div>' +
       '<div class="field"><label for="r-currency">Your main currency</label><select id="r-currency">' + opts(CURRENCIES, p.currency) + '</select><p class="help">Used for your target rate and new deals. Existing deals keep their own currency.</p></div>' +
       '<div class="field"><label for="r-admin">Admin hours per deal</label><input id="r-admin" type="number" min="0" step="0.25" inputmode="decimal" data-profile="admin" value="' + esc(p.admin) + '"><p class="help">Calls, emails, reading the brief, invoicing.</p></div>' +
       '<div class="field"><label for="r-rev">Hours per revision round</label><input id="r-rev" type="number" min="0" step="0.25" inputmode="decimal" data-profile="revisionHours" value="' + esc(p.revisionHours) + '"></div></div></section>';
@@ -1217,6 +1444,11 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="table-wrap"><table><thead><tr><th>Clause</th><th>Term</th><th class="num">Adds</th></tr></thead><tbody>' +
       CLAUSES.map(function (c) { return c.opts.filter(function (o) { return o[2] > 0; }).map(function (o, i) { return "<tr><td>" + (i === 0 ? esc(c.label) : "") + "</td><td>" + esc(o[1]) + '</td><td class="num">+' + o[2] + "%</td></tr>"; }).join(""); }).join("") +
       "</tbody></table></div></section>";
+    var law = p.law || {};
+    out += '<section class="panel"><h2>Late-payment law</h2><p class="lede">Used to work out what a brand owes you when an invoice is late. Each rate is fixed for six months. Update them in January and July.</p>' +
+      '<div class="grid2"><div class="field"><label for="law-uk">UK reference rate (%)</label><input id="law-uk" type="number" min="0" step="0.05" inputmode="decimal" data-law="ukRef" value="' + esc(law.ukRef) + '"><p class="help">Bank of England base rate on 30 June for July–December, or on 31 December for January–June. Interest is this plus 8%. Set to 3.75% for July–December 2026.</p></div>' +
+      '<div class="field"><label for="law-eu">EU reference rate (%)</label><input id="law-eu" type="number" min="0" step="0.05" inputmode="decimal" data-law="euRef" value="' + esc(law.euRef) + '"><p class="help">ECB main refinancing rate before 1 July or 1 January. Interest is at least this plus 8%. Some countries add more.</p></div></div>' +
+      '<p class="fine"><a href="https://www.gov.uk/late-commercial-payments-interest-debt-recovery" target="_blank" rel="noopener">UK guidance</a> · <a href="https://www.bankofengland.co.uk/boeapps/database/Bank-Rate.asp" target="_blank" rel="noopener">Bank Rate history</a> · <a href="https://eur-lex.europa.eu/eli/dir/2011/7/oj" target="_blank" rel="noopener">EU directive</a>. Not legal advice.</p></section>';
     out += renderData();
     return out + "</div>";
   }
@@ -1256,7 +1488,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     return '<div class="top"><h2 id="sheet-title">' + esc(d.brand || "New deal") + '</h2><button class="icon-btn" type="button" data-action="close" aria-label="Close deal"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></button></div>' +
       '<div class="meta">' + stageSel + '<span class="fine" id="sheet-meta">' + meta + "</span></div>";
   }
-  var TABS = [["steps", "Next steps"], ["deal", "Details"], ["money", "Money"], ["legit", "Legit check"], ["worth", "Worth it?"], ["contract", "Contract"]];
+  var TABS = [["steps", "Next steps"], ["deal", "Details"], ["money", "Money"], ["recap", "Recap"], ["legit", "Legit check"], ["worth", "Worth it?"], ["contract", "Contract"]];
   function tabsHTML(d) {
     var openN = d.tasks.filter(function (k) { return !k.done; }).length, L = ledger(d);
     var lv = { legit: legitResult(d).level, worth: worthResult(d).verdict.level, contract: contractResult(d).level, money: L.overdue ? "bad" : "" };
@@ -1424,7 +1656,31 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="field"><label for="pay-date">Received on</label><input id="pay-date" type="date" value="' + t + '"></div>' +
       '<div class="field"><label for="pay-note">Note</label><input id="pay-note" autocomplete="off" placeholder="Deposit, balance…"></div>' +
       '<button class="btn" type="button" data-action="add-pay">Record payment</button></div>';
-    return h;
+    return h + lateBlock(d);
+  }
+  function lateBlock(d) {
+    var o = owedFor(d), C = d.currency, auto = lateBasis(Object.assign({}, d, { lateBasis: "auto" }));
+    var h = '<h3 class="section-title">Late payment and extras</h3><div class="grid2"><div class="field"><label for="f-latebasis">How late payment is charged</label><select id="f-latebasis" data-field="lateBasis">' +
+      opts([["auto", "Automatic (" + LAW[auto].short + ")"], ["uk", LAW.uk.label], ["eu", LAW.eu.label], ["contract", LAW.contract.label], ["none", "Don't charge it"]], d.lateBasis || "auto") + "</select>" +
+      '<p class="help">' + (o.basis === "none" ? "Nothing accrues. Add the late fee from your contract to charge it." : esc(LAW[o.basis].label) + ": " + (Math.round(o.rate * 100) / 100) + "% a year" + (o.basis === "uk" ? ", plus £40, £70 or £100 per invoice" : o.basis === "eu" ? ", plus at least €40 per invoice" : "") + ".") + "</p></div>" +
+      '<div class="field"><label for="f-latefee">Late fee in the contract (% a month)</label><input id="f-latefee" type="number" min="0" step="0.25" inputmode="decimal" data-field="lateFeePct" value="' + esc(d.lateFeePct || "") + '"><p class="help">A contract rate replaces the statutory one.</p></div></div>';
+    if (USAGE_DAYS[(d.contract || {}).usage]) {
+      var ut = d.tasks.filter(function (k) { return k.key === "usage"; })[0];
+      h += '<div class="callout' + (d.usageRunning ? " bad" : "") + '"><strong>Paid usage' + (ut && ut.due ? " ends " + esc(fmtDate(ut.due)) : "") + "</strong><p>" + (d.usageRunning ? "You found the ads still running. Each extra 30 days is billed at your paid-usage price." : "Check whether the brand is still running your content as ads after the usage period ends.") + '</p><div class="toolbar"><a class="btn small" href="' + adLibraryUrl(d.brand) + '" target="_blank" rel="noopener">Check the Meta ad library</a>' +
+        (d.usageRunning ? '<button class="btn small" type="button" data-action="usage-stopped" data-deal="' + d.id + '">They\'ve stopped</button>' : '<button class="btn small" type="button" data-action="usage-running" data-deal="' + d.id + '">Still running</button>') + "</div></div>";
+    }
+    if (!o.items.length) return h + '<p class="fine">Nothing extra is owed on this deal right now.</p>';
+    h += '<div class="owed"><span class="eyebrow">Owed on top of the fee</span><div class="big tick">' + money2(o.extra, C) + "</div>" + (o.daily ? '<p><span class="tick">+' + money2(o.daily, C) + "</span> a day while it stays unpaid</p>" : "") + "</div>";
+    o.items.forEach(function (it, i) {
+      var title = it.kind === "late" ? (it.row.inv.ref ? "Invoice #" + it.row.inv.ref : "Invoice") + ": " + days(it.days) + " late on " + money(it.base, C) : it.kind === "usage" ? "Ads still running: " + it.blocks + " extra 30-day block" + (it.blocks === 1 ? "" : "s") : it.rounds + " extra revision round" + (it.rounds === 1 ? "" : "s");
+      var detail = it.kind === "late" ? money2(it.interest, C) + " interest" + (it.comp ? " + " + money(it.comp, C) + " compensation" : "") : it.kind === "usage" ? money(it.per30, C) + " per 30 days, from your paid-usage price" : money(it.each, C) + " each, from your hours and target rate";
+      var tones = it.kind === "late" ? [["friendly", "Friendly nudge"], ["firm", "Firm reminder"], ["formal", "Cite the law"]] : [["formal", "Draft the note"]];
+      var open = ui.letter && ui.letter.deal === d.id && ui.letter.i === i;
+      h += '<div class="task"><div class="task-foot"><strong>' + esc(title) + '</strong><span class="tick">' + money2(it.extra, C) + '</span></div><p class="fine">' + esc(detail) + '</p><div class="toolbar">' +
+        tones.map(function (tn) { return '<button class="btn small' + (open && ui.letter.tone === tn[0] ? " primary" : "") + '" type="button" data-action="letter" data-i="' + i + '" data-tone="' + tn[0] + '">' + tn[1] + "</button>"; }).join("") + "</div>" +
+        (open ? '<textarea class="letter" id="letter-text" aria-label="Follow-up draft">' + esc(letterText(d, it, ui.letter.tone)) + '</textarea><div class="toolbar"><button class="btn small primary" type="button" data-action="copy-letter" data-i="' + i + '">Copy and log as sent</button><span class="fine">Edit it first if you like. Copying logs a follow-up and moves the next chase a week out.</span></div>' : "") + "</div>";
+    });
+    return h + '<p class="fine">Estimates, not legal advice. Statutory interest applies to business-to-business contracts, from the day after the due date. If the contract sets its own late fee, that applies instead.</p>';
   }
 
   function footHTML(d) {
@@ -1441,6 +1697,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       case "worth": return (d.currency !== state.profile.currency ? '<p class="advice warn">Your target rate is in ' + esc(state.profile.currency) + " and this deal is in " + esc(d.currency) + ". The comparison treats them as equal.</p>" : "") + rateCardBlock(d) + worthTab(d) + pastBlock(d);
       case "contract": return contractTab(d);
       case "money": return moneyTab(d);
+      case "recap": return recapTab(d);
       case "deal": return dealTab(d);
       default: return stepsTab(d);
     }
@@ -1497,7 +1754,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function renderBehind() { renderBanner(); renderView(); }
 
   function openDeal(id, tab) {
-    ui.openId = id; ui.tab = tab || "steps"; ui.confirm = null;
+    ui.openId = id; ui.tab = tab || "steps"; ui.confirm = null; ui.letter = null;
     renderAll();
     var b = document.querySelector("#dh .icon-btn"); if (b) b.focus();
   }
@@ -1559,6 +1816,16 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   }
   function markBackedUp() { state.backupAt = new Date().toISOString(); ui.hideBackupNag = false; save(); }
 
+  function openRecapFull(d, fallbackText) {
+    var el = document.getElementById("recap-full");
+    el.innerHTML = '<div class="inner"><div class="toolbar"><button class="btn" type="button" data-action="recap-close">Close</button>' + (framed ? "" : '<button class="btn" type="button" data-action="recap-print">Print or save as PDF</button>') + "</div>" +
+      (fallbackText ? '<textarea class="letter" id="recap-text" readonly aria-label="Recap text">' + esc(fallbackText) + "</textarea>" : "") +
+      '<div class="recap-card">' + recapHTML(d) + "</div></div>";
+    el.hidden = false;
+    var ta = document.getElementById("recap-text"); if (ta) { ta.focus(); ta.select(); toast("Select the text and copy it"); }
+    else { var b = el.querySelector("button"); if (b) b.focus(); }
+  }
+  function closeRecapFull() { var el = document.getElementById("recap-full"); el.hidden = true; el.innerHTML = ""; }
   document.addEventListener("submit", function (e) { if (e.target.id === "intake") { e.preventDefault(); submitIntake(false); } });
 
   document.addEventListener("click", function (e) {
@@ -1632,6 +1899,46 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       case "del-pay":
         snapFn = snap(d); d.payments = d.payments.filter(function (x) { return x.id !== act.dataset.pay; }); syncMoney(d); save(); renderAll(); toast("Removed the payment", snapFn); break;
       case "money-cur": ui.moneyCur = act.dataset.cur; renderAll(); break;
+      case "add-makegood":
+        k = task({ kind: "makegood", title: "Agree and deliver the make-good", due: addDays(todayISO(), 7) }); logT(k, "Placement under the promise"); d.tasks.push(k); save(); renderAll(); toast("Added a make-good step"); break;
+      case "renew":
+        var nd = blankDeal({ brand: d.brand, category: d.category, contact: d.contact, email: d.email, source: d.source, stage: "negotiating", currency: d.currency, feeMode: d.feeMode,
+          contract: clone(d.contract), legit: clone(d.legit), take: clone(d.take), example: d.example, notes: "Renewal of the " + fmtMonth(d.created) + " campaign." });
+        var scale = num(d.recap.renewal) && num(d.fee) ? num(d.recap.renewal) / num(d.fee) : 1;
+        nd.deliverables = d.deliverables.map(function (x) { return normLine({ type: x.type, qty: x.qty, rate: Math.round(num(x.rate) * scale / 50) * 50, specs: x.specs }); });
+        nd.fee = num(d.recap.renewal) || num(d.fee); syncFee(nd);
+        k = task({ kind: "reply", title: "Send the renewal proposal", due: addDays(todayISO(), 2) }); logT(k, "Renewal started from the recap"); nd.tasks.push(k);
+        state.deals.push(nd); save(); openDeal(nd.id, "deal"); toast("Started a renewal with " + (d.brand || "the brand")); break;
+      case "copy-recap":
+        var rt = recapText(d);
+        var markSent = function () { d.recap.sentOn = todayISO(); var rk = d.tasks.filter(function (x) { return x.key === "recap" && !x.done; })[0]; if (rk) { rk.done = todayISO(); logT(rk, "Recap sent"); } save(); renderAll(); };
+        try { navigator.clipboard.writeText(rt).then(function () { markSent(); toast("Recap copied and marked sent"); }, function () { ui.recapFull = true; markSent(); openRecapFull(d, rt); }); } catch (x) { markSent(); openRecapFull(d, rt); }
+        break;
+      case "recap-full": openRecapFull(d); break;
+      case "recap-close": closeRecapFull(); break;
+      case "recap-print": try { window.print(); } catch (x) { /* blocked */ } break;
+      case "owed-view":
+        var oc = owedAll()[0]; if (oc) ui.moneyCur = oc.cur;
+        setView("money"); var op2 = document.getElementById("owed"); if (op2) op2.scrollIntoView(); break;
+      case "usage-running":
+        snapFn = snap(rowDeal); rowDeal.usageRunning = todayISO();
+        k = rowDeal.tasks.filter(function (x) { return x.key === "usage"; })[0]; if (k) logT(k, "Ads still running");
+        save(); renderAll(); toast("Logged. The overage is now in what " + (rowDeal.brand || "the brand") + " owes you", snapFn); break;
+      case "usage-stopped":
+        snapFn = snap(rowDeal); rowDeal.usageRunning = "";
+        k = rowDeal.tasks.filter(function (x) { return x.key === "usage"; })[0]; if (k && !k.done) { k.done = todayISO(); logT(k, "Ads stopped"); }
+        save(); renderAll(); toast("Marked the ads as stopped", snapFn); break;
+      case "letter": ui.letter = { deal: d.id, i: +act.dataset.i, tone: act.dataset.tone }; renderAll(); var lt = document.getElementById("letter-text"); if (lt) lt.focus(); break;
+      case "copy-letter":
+        var lta = document.getElementById("letter-text"), txt2 = lta ? lta.value : "";
+        var it2 = owedFor(d).items[+act.dataset.i];
+        var logIt = function () {
+          if (it2 && it2.kind === "late") { var pk = d.tasks.filter(function (x) { return x.key === "pay:" + it2.row.inv.id; })[0]; if (pk) { logT(pk, "Follow-up sent (" + (ui.letter ? ui.letter.tone : "") + ")"); pk.chase = addDays(todayISO(), 7); } }
+          save(); renderAll();
+        };
+        try { navigator.clipboard.writeText(txt2).then(function () { logIt(); toast("Copied. Next chase in a week"); }, function () { if (lta) { lta.focus(); lta.select(); } logIt(); toast("Select the text and copy it"); }); }
+        catch (x) { if (lta) { lta.focus(); lta.select(); } logIt(); }
+        break;
       case "dismiss-banner": state.ui.banner = false; save(); renderAll(); break;
       case "dismiss-note": loadNote = ""; renderAll(); break;
       case "hide-nag": ui.hideBackupNag = true; renderAll(); break;
@@ -1669,14 +1976,23 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   });
 
   function inSheet(el) { return !!el.closest("#sheet"); }
-  var NUMERIC = { fee: 1, productValue: 1 };
+  var NUMERIC = { fee: 1, productValue: 1, lateFeePct: 1 };
   document.addEventListener("input", function (e) {
     var t = e.target, d = cur();
     if (t.id === "search") { ui.q = t.value; withFocus(renderView); return; }
     if (t.dataset.profile) { state.profile[t.dataset.profile] = num(t.value); save(); return; }
     if (t.dataset.hours) { state.profile.hours[t.dataset.hours] = num(t.value); save(); return; }
     if (t.dataset.ratecard) { state.profile.rateCard[t.dataset.ratecard] = num(t.value); save(); return; }
+    if (t.dataset.profileText) { state.profile[t.dataset.profileText] = t.value; save(); return; }
+    if (t.dataset.law) { state.profile.law[t.dataset.law] = num(t.value); save(); renderBanner(); return; }
     if (!d || !inSheet(t) || t.tagName === "SELECT" || t.type === "radio" || t.type === "checkbox" || t.type === "date") return;
+    if (t.dataset.res) {
+      var rl = d.deliverables[+t.dataset.res]; if (!rl) return;
+      rl.res[t.dataset.rk] = t.type === "number" ? num(t.value) : t.value; save();
+      var rc = document.getElementById("recap-card"); if (rc) rc.innerHTML = recapHTML(d);
+      return;
+    }
+    if (t.dataset.recap) { d.recap[t.dataset.recap] = t.type === "number" ? num(t.value) : t.value; save(); var rc2 = document.getElementById("recap-card"); if (rc2) rc2.innerHTML = recapHTML(d); return; }
     if (t.dataset.tf) { var k = findTask(d, t.dataset.task); if (k && (t.dataset.tf === "title" || t.dataset.tf === "link")) { k[t.dataset.tf] = t.value; save(); renderBehind(); } return; }
     if (t.dataset.field) d[t.dataset.field] = NUMERIC[t.dataset.field] ? num(t.value) : t.value;
     else if (t.dataset.del && (t.dataset.dk === "qty" || t.dataset.dk === "rate")) { d.deliverables[+t.dataset.del][t.dataset.dk] = num(t.value); syncFee(d); save(); renderBehind(); refreshComputed(); refreshPricing(d); return; }
@@ -1687,6 +2003,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   });
   document.addEventListener("change", function (e) {
     var t = e.target, d = cur();
+    if (t.id === "hide-brands") { ui.hideBrands = t.checked; renderAll(); return; }
     if (t.id === "show-declined") { state.ui.showDeclined = t.checked; save(); renderAll(); return; }
     if (t.id === "r-currency") { state.profile.currency = t.value; save(); renderAll(); toast("New deals and your target rate now use " + t.value + ". Existing deals keep their currency"); return; }
     if (t.id === "rs-cur" && ui.restore) { readRestore(ui.restore.text, t.value); renderAll(); return; }
@@ -1699,6 +2016,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       rd.readAsText(f); return;
     }
     if (!d || !inSheet(t)) return;
+    if (t.dataset.res) { var rl2 = d.deliverables[+t.dataset.res]; if (rl2) { rl2.res[t.dataset.rk] = t.type === "number" ? num(t.value) : t.value; save(); renderAll(); } return; }
+    if (t.dataset.recap) { save(); renderAll(); return; }
     if (t.dataset.field === "stage") { moveStage(d, t.value); renderAll(); return; }
     if (t.dataset.tf) {
       var k = findTask(d, t.dataset.task); if (!k) return;
@@ -1726,6 +2045,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   });
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
+    var rf = document.getElementById("recap-full"); if (rf && !rf.hidden) { e.preventDefault(); closeRecapFull(); return; }
     if (ui.openId) { e.preventDefault(); closeDeal(); }
     else if (ui.intake) { ui.intake = false; renderAll(); }
   });
