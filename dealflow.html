@@ -432,6 +432,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 .fu-stats p { margin: 0; overflow-wrap: anywhere; }
 .callout.rights { background: var(--accent-soft); }
 .callout.rights strong { color: var(--fg); }
+.callout.rights .rights-next { margin-top: 8px; }
 .callout .fine a, .fu-stats a { overflow-wrap: anywhere; }
 .fakedoor { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md); border: 1px dashed var(--input-line); background: var(--surface-2); }
 .fakedoor p { margin: 0; font-size: var(--text-sm); }
@@ -887,7 +888,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   var KEY2 = "creator-dealflow-v2", KEY1 = "creator-dealflow-v1";
   function defaultProfile() {
     var h = {}; DELIVERABLES.forEach(function (d) { h[d.key] = d.hours; });
-    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h, rateCard: {}, law: { ukRef: 3.75, euRef: 2.40 }, name: "" };
+    return { rate: 150, currency: "USD", admin: 1.5, revisionHours: 1, hours: h, rateCard: {}, law: { ukRef: 3.75, euRef: 2.40 }, name: "", base: "" };
   }
   function mergeProfile(p) {
     var out = Object.assign(defaultProfile(), p || {});
@@ -1129,8 +1130,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (tone === "firm") return hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue. Please confirm the payment date by " + by + "." +
       (it.interest ? " Late-payment interest under " + law.cite + " has been accruing since the due date." : "") + "\n\nThanks,\n" + me;
     var lines = hi + "\n\n" + ref.charAt(0).toUpperCase() + ref.slice(1) + " for " + money(r.open, C) + " was due on " + fmtDate(r.due) + " and is now " + days(it.days) + " overdue.\n\n";
-    var usLaw = { us_ny: "New York's Freelance Isn't Free Act (General Business Law, Article 44-A)", us_ca: "California's Freelance Worker Protection Act (Business and Professions Code, section 18100 onward)", us_il: "Illinois' Freelance Worker Protection Act (820 ILCS 193)" }[d.governingLaw || ""];
-    if (usLaw) lines += "I'd also note that " + usLaw + " requires freelancers to be paid by the date agreed in the contract.\n\n";
+    var usLaws = usMatches(d).map(function (x) { return US_CITE[x.key]; });
+    if (usLaws.length) lines += "I'd also note that " + andList(usLaws) + (usLaws.length > 1 ? " require" : " requires") + " freelancers to be paid by the date agreed in the contract.\n\n";
     if (it.interest || it.comp) lines += "Under " + law.cite + ", I'm entitled to interest at " + (Math.round(lateRate(d, lateBasis(d)) * 100) / 100) + "% a year (" + money2(it.daily, C) + " a day)" + (it.comp ? " plus fixed compensation of " + money(it.comp, C) : "") + ". As of today that comes to " + money2(it.interest, C) + " in interest" + (it.comp ? " and " + money(it.comp, C) + " compensation" : "") + ", a total of " + money2(r.open + it.extra, C) + ".\n\n";
     return lines + "Please pay the outstanding amount by " + by + ". I'd much rather keep working together than escalate this, so do let me know if something is holding it up.\n\nThanks,\n" + me;
   }
@@ -1795,7 +1796,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var law = p.law || {};
     out += '<section class="panel"><h2>Late-payment law</h2><p class="lede">Used to work out what a brand owes you when an invoice is late. Each rate is fixed for six months. Update them in January and July.</p>' +
       '<div class="grid2"><div class="field"><label for="law-uk">UK reference rate (%)</label><input id="law-uk" type="number" min="0" step="0.05" inputmode="decimal" data-law="ukRef" value="' + esc(law.ukRef) + '"><p class="help">Bank of England base rate on 30 June for July–December, or on 31 December for January–June. Interest is this plus 8%. Set to 3.75% for July–December 2026.</p></div>' +
-      '<div class="field"><label for="law-eu">EU reference rate (%)</label><input id="law-eu" type="number" min="0" step="0.05" inputmode="decimal" data-law="euRef" value="' + esc(law.euRef) + '"><p class="help">ECB main refinancing rate before 1 July or 1 January. Interest is at least this plus 8%. Some countries add more.</p></div></div>' +
+      '<div class="field"><label for="law-eu">EU reference rate (%)</label><input id="law-eu" type="number" min="0" step="0.05" inputmode="decimal" data-law="euRef" value="' + esc(law.euRef) + '"><p class="help">ECB main refinancing rate before 1 July or 1 January. Interest is at least this plus 8%. Some countries add more.</p></div>' +
+      '<div class="field"><label for="r-base">Where you\'re based</label><select id="r-base">' + opts(BASES, baseOf(p.base)) + '</select><p class="help">US freelancer payment laws cover you by where you work, so this decides which ones your deals show.</p></div></div>' +
       '<p class="fine"><a href="https://www.gov.uk/late-commercial-payments-interest-debt-recovery" target="_blank" rel="noopener">UK guidance</a> · <a href="https://www.bankofengland.co.uk/boeapps/database/Bank-Rate.asp" target="_blank" rel="noopener">Bank Rate history</a> · <a href="https://eur-lex.europa.eu/eli/dir/2011/7/oj" target="_blank" rel="noopener">EU directive</a>. Not legal advice.</p></section>';
     out += renderData();
     out += renderPilot();
@@ -2025,8 +2027,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var autoWhy = auto === "contract" ? "" : g ? ", from the governing law" : auto !== "none" ? ", guessed from the currency" : "";
     var h = '<h3 class="section-title">Late payment and extras</h3><div class="grid2">' + govBlock(d, o) + '<div class="field"><label for="f-latebasis">How late payment is charged</label><select id="f-latebasis" data-field="lateBasis">' +
       opts([["auto", "Automatic (" + (auto === "none" ? "no late charge" : LAW[auto].short) + autoWhy + ")"], ["uk", LAW.uk.label], ["eu", LAW.eu.label], ["contract", LAW.contract.label], ["none", "Don't charge it"]], d.lateBasis || "auto") + "</select>" +
-      '<p class="help">' + (o.basis === "none" ? (US_RIGHTS[g] ? "No statutory interest to calculate. Add the late fee from your contract to charge it." : "Nothing accrues. Add the late fee from your contract to charge it.") : esc(LAW[o.basis].label) + ": " + (Math.round(o.rate * 100) / 100) + "% a year" + (o.basis === "uk" ? ", plus £40, £70 or £100 per invoice" : o.basis === "eu" ? ", plus at least €40 per invoice" : "") + ".") + "</p></div>" +
+      '<p class="help">' + (o.basis === "none" ? (usMatches(d).length || /^us_/.test(g) ? "No statutory interest to calculate. Add the late fee from your contract to charge it." : "Nothing accrues. Add the late fee from your contract to charge it.") : esc(LAW[o.basis].label) + ": " + (Math.round(o.rate * 100) / 100) + "% a year" + (o.basis === "uk" ? ", plus £40, £70 or £100 per invoice" : o.basis === "eu" ? ", plus at least €40 per invoice" : "") + ".") + "</p></div>" +
       '<div class="field"><label for="f-latefee">Late fee in the contract (% a month)</label><input id="f-latefee" type="number" min="0" step="0.25" inputmode="decimal" data-field="lateFeePct" value="' + esc(d.lateFeePct || "") + '"><p class="help">A contract rate replaces the statutory one.</p></div></div>';
+    if (usDeal(d)) h += '<div class="grid2"><div class="field"><label for="f-base">Where you\'re based</label><select id="f-base">' + opts(BASES, baseOf(state.profile.base)) + '</select><p class="help">One setting for all your deals.</p></div>' +
+      '<div class="field"><label for="f-brandbase">Where the brand is based</label><select id="f-brandbase">' + opts(BASES, baseOf(d.brandBase)) + '</select><p class="help">The address on the contract or the brand\'s invoice details.</p></div></div>';
     h += rightsNote(d) + termsFlag(d);
     if (USAGE_DAYS[(d.contract || {}).usage]) {
       var ut = d.tasks.filter(function (k) { return k.key === "usage"; })[0];
@@ -2152,11 +2156,14 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   // and the copy-letter handler are also A's to change.
   // Deal fields (all optional, read with defaults):
   //   d.governingLaw  "" (not sure) | uk | eu | us_ny | us_ca | us_il | us_other | other
+  //   d.brandBase     "" (not set) | us_ny | us_ca | us_il | us_other | non_us   where the brand is based
+  //   state.profile.base  same values, where the creator is based (one setting for every deal)
   //   d.followups     [{ id, at, tone, invId, outcome: "" | "paid" | "paid-before" | "followed-again", answeredAt, paidOn, snoozeUntil, notYet }]
   //   d.chaseAnswer   "" | yes | maybe | no   (the "Have Dealflow chase this" demand test, asked once per deal)
   //   d.termsFlagSeen true once the long-terms flag has been counted for this deal
   EVENT_LABELS["followup-outcome"] = "Answered \"Did they pay?\"";
   EVENT_LABELS["governing-law-set"] = "Set the law that governs a contract";
+  EVENT_LABELS["base-set"] = "Set where you or a brand is based";
   EVENT_LABELS["terms-flag"] = "Saw a payment-terms warning";
   EVENT_LABELS["fakedoor-chase"] = "Tapped \"Have Dealflow chase this\"";
   EVENT_LABELS["fakedoor-chase-answer"] = "Said whether they'd use a chase service";
@@ -2176,9 +2183,31 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     us_il: { title: "Illinois: Freelance Worker Protection Act",
       body: "Since July 2024 this covers individuals paid $500 or more by the same client within 120 days, for work done in Illinois or for a client based there. You're owed a written contract, and pay by the date in it, or within 30 days of finishing the work. Late payment can mean double the unpaid amount plus legal fees.",
       src: "https://www.ilga.gov/legislation/ilcs/ilcs3.asp?ActID=4513&ChapterID=68", srcLabel: "820 ILCS 193 on the Illinois General Assembly's site" },
-    us_other: { title: "Other US states",
-      body: "There's no federal late-payment law for freelancers. New York, California and Illinois have state laws, and a few cities have their own, so check where you and the brand are based. Otherwise, the late fee in your contract is what you can rely on." }
+    us_other: { title: "US freelancer payment laws",
+      body: "There's no federal late-payment law for freelancers. New York, California and Illinois have state laws, and a few cities have their own. They cover freelancers by where the freelancer works or where the client is based, not where the contract was signed. If none of those fits, the late fee in your contract is what you can rely on." }
   };
+  // Where the creator and the brand are based. The US freelancer laws reach by these, whatever law the contract names.
+  var BASES = [["", "Not set"], ["us_ny", "New York"], ["us_ca", "California"], ["us_il", "Illinois"], ["us_other", "Another US state"], ["non_us", "Outside the US"]];
+  var US_STATE = { us_ny: "New York", us_ca: "California", us_il: "Illinois" };
+  var US_CITE = { us_ny: "New York's Freelance Isn't Free Act (General Business Law, Article 44-A)", us_ca: "California's Freelance Worker Protection Act (Business and Professions Code, section 18100 onward)", us_il: "Illinois' Freelance Worker Protection Act (820 ILCS 193)" };
+  function baseOf(v) { return { us_ny: 1, us_ca: 1, us_il: 1, us_other: 1, non_us: 1 }[v] ? v : ""; }
+  // The state freelancer laws that may reach this deal, each with why: where you're based, where the brand is based,
+  // or a contract that names that state's law.
+  function usMatches(d) {
+    var why = {}, order = [];
+    [[baseOf(state.profile.base), "you're based in ", ""], [baseOf(d.brandBase), "the brand is based in ", ""], [govLaw(d), "the contract names ", " law"]].forEach(function (s) {
+      if (!US_STATE[s[0]]) return;
+      if (!why[s[0]]) { why[s[0]] = []; order.push(s[0]); }
+      why[s[0]].push(s[1] + US_STATE[s[0]] + s[2]);
+    });
+    return order.map(function (k) { return { key: k, why: why[k] }; });
+  }
+  // Whether to ask where everyone is based and show the US notes at all.
+  function usDeal(d) {
+    var me = baseOf(state.profile.base), b = baseOf(d.brandBase), g = govLaw(d);
+    return /^us_/.test(me) || /^us_/.test(b) || /^us_/.test(g) || (d.currency === "USD" && !(me === "non_us" && b === "non_us"));
+  }
+  function andList(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
 
   function govLaw(d) { var g = d.governingLaw || ""; return { uk: 1, eu: 1, us_ny: 1, us_ca: 1, us_il: 1, us_other: 1, other: 1 }[g] ? g : ""; }
   function govLabel(g) { for (var i = 0; i < GOV_LAWS.length; i++) if (GOV_LAWS[i][0] === g) return GOV_LAWS[i][1]; return "Not sure"; }
@@ -2316,18 +2345,36 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (t.id !== "f-govlaw" || !d) return false;
     d.governingLaw = t.value; logEvent("governing-law-set", { law: t.value || "unsure" }); save(); renderAll(); return true;
   });
+  EXT.change.push(function (t, d) {
+    if (t.id === "f-base" || t.id === "r-base") { state.profile.base = baseOf(t.value); logEvent("base-set", { who: "you", base: state.profile.base || "unset" }); save(); renderAll(); return true; }
+    if (t.id === "f-brandbase" && d) { d.brandBase = baseOf(t.value); logEvent("base-set", { who: "brand", base: d.brandBase || "unset" }); save(); renderAll(); return true; }
+    return false;
+  });
   function govBlock(d, o) {
     var g = govLaw(d), note = "";
     if (!g) note = '<p class="help">Look for a "governing law" clause near the end of the contract. Until you set it, the late-payment rules are a guess from the currency.</p>';
     else if (g === "other") note = '<p class="help">Dealflow doesn\'t have rules for this law yet. Enter the late fee from your contract, if there is one.</p>';
+    else if (/^us_/.test(g)) note = '<p class="help">US freelancer laws also depend on where you and the brand are based.</p>';
     var h = '<div class="field"><label for="f-govlaw">Which law governs the contract</label><select id="f-govlaw">' + opts(GOV_LAWS, g) + "</select>" + note + "</div>";
     return h;
   }
   function rightsNote(d) {
-    var n = US_RIGHTS[govLaw(d)]; if (!n) return "";
-    return '<div class="callout rights" id="rights-note"><strong>' + esc(n.title) + "</strong><p>" + esc(n.body) + "</p>" +
-      (govLaw(d) !== "us_other" ? "<p>Whether a creator selling a sponsorship counts as a freelancer hasn't been tested in court, and these laws can apply because of where you or the brand are, whatever law the contract names. Treat it as leverage to mention, not a sure claim.</p>" : "") +
-      '<p class="fine">' + (n.src ? '<a href="' + n.src + '" target="_blank" rel="noopener">' + esc(n.srcLabel) + "</a> · " : "") + "Checked November 2026. Not legal advice.</p></div>";
+    if (!usDeal(d)) return "";
+    var m = usMatches(d), me = baseOf(state.profile.base), b = baseOf(d.brandBase);
+    var who = !me && !b ? "you and the brand are" : !me ? "you're" : !b ? "the brand is" : "";
+    var ask = who ? "Set where " + who + " based to see whether any other state law may apply." : "";
+    if (!m.length) {
+      ask = who ? "Set where " + who + " based, and Dealflow will show any of these laws that may apply." : "";
+      var n = US_RIGHTS.us_other;
+      return '<div class="callout rights" id="rights-note"><strong>' + esc(n.title) + "</strong><p>" + esc(n.body) + "</p>" + (ask ? "<p>" + esc(ask) + "</p>" : "") + '<p class="fine">Checked November 2026. Not legal advice.</p></div>';
+    }
+    var h = '<div class="callout rights" id="rights-note">';
+    m.forEach(function (x, i) {
+      var n = US_RIGHTS[x.key];
+      h += (i ? '<strong class="rights-next">' : "<strong>") + esc(n.title) + "</strong><p>" + esc(n.body) + "</p><p><em>May apply because " + esc(andList(x.why)) + ".</em></p>";
+    });
+    return h + "<p>Whether a creator selling a sponsorship counts as a freelancer hasn't been tested in court. These laws reach by where you work and where the brand is based, whatever law the contract names. Treat them as leverage to mention, not a sure claim." + (ask ? " " + esc(ask) : "") + "</p>" +
+      '<p class="fine">' + m.map(function (x) { var n = US_RIGHTS[x.key]; return '<a href="' + n.src + '" target="_blank" rel="noopener">' + esc(n.srcLabel) + "</a>"; }).join(" · ") + " · Checked November 2026. Not legal advice.</p></div>";
   }
   // Payment terms over 60 days, for EU- and UK-governed deals.
   function longTerms(d) {
@@ -2367,13 +2414,14 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   };
 
   // Example data: a firm follow-up on the overdue Loomstack invoice, 5 days ago, so a check-in shows. Juniper is under UK law,
-  // the Loomstack invoice under New York law. Idempotent, and touches example deals only.
+  // the Loomstack invoice under New York law, from a New York brand. Idempotent, and touches example deals only.
   function seedA(list, t) {
     list.forEach(function (d) {
       if (!d.example) return;
       if (d.brand === "Loomstack" && d.stage === "invoiced" && d.invoices.length && !(d.followups || []).length) {
         var iv = d.invoices[0]; if (!iv.ref) iv.ref = "0117";
         d.governingLaw = d.governingLaw || "us_ny";
+        d.brandBase = d.brandBase || "us_ny";
         d.followups = [{ id: uid(), at: addDays(t, -5), tone: "firm", invId: iv.id, outcome: "", answeredAt: "", paidOn: "", snoozeUntil: "", notYet: 0 }];
         var pk = d.tasks.filter(function (k) { return k.key === "pay:" + iv.id; })[0];
         if (pk) { pk.log.push({ at: addDays(t, -5), text: "Follow-up sent (firm)" }); pk.chase = addDays(t, 2); }
