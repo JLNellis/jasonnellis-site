@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>Creator Dealflow</title>
+<title>CreditDue</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -597,7 +597,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Jason Nellis">
 <meta property="og:url" content="https://jasonnellis.com/dealflow">
-<meta property="og:title" content="Creator Dealflow">
+<meta property="og:title" content="CreditDue">
 <meta property="og:description" content="What needs your attention across every sponsor deal, from offer to paid. Free, no login.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -608,7 +608,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 <div class="app" id="app">
   <header class="topbar">
     <div class="mark">
-      <h1>Creator Dealflow</h1>
+      <h1>CreditDue</h1>
       <span class="tag">Your sponsor deals, from offer to paid</span>
     </div>
     <nav class="views" aria-label="Views">
@@ -1191,7 +1191,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       (d.deliverables.length > 1 && (tc || ta) ? '<div class="rc-mets rc-totals">' + (tc ? '<div><span class="label">Link clicks, all placements</span><span class="num">' + fmtN(tc) + "</span></div>" : "") + (ta ? '<div><span class="label">Code uses or sign-ups</span><span class="num">' + fmtN(ta) + "</span></div>" : "") + "</div>" : "") +
       rows + (d.recap.highlights ? '<p class="rc-note">' + esc(d.recap.highlights) + "</p>" : "") +
       (num(d.recap.renewal) ? '<p class="rc-renew"><strong>Next campaign:</strong> the same placements for ' + money(d.recap.renewal, C) + ".</p>" : "") +
-      '<p class="fine rc-foot">Figures are creator-reported' + (Object.keys(srcs).length ? " from " + esc(Object.keys(srcs).join(", ")) : "") + (dates.length ? ", measured " + esc(fmtDate(dates[0])) + (dates.length > 1 && dates[dates.length - 1] !== dates[0] ? "–" + esc(fmtDate(dates[dates.length - 1])) : "") : "") + '. Views on different platforms are counted differently, so they aren\'t added together. Made with <a href="https://jasonnellis.com/dealflow" target="_blank" rel="noopener">Creator Dealflow</a>.</p>';
+      '<p class="fine rc-foot">Figures are creator-reported' + (Object.keys(srcs).length ? " from " + esc(Object.keys(srcs).join(", ")) : "") + (dates.length ? ", measured " + esc(fmtDate(dates[0])) + (dates.length > 1 && dates[dates.length - 1] !== dates[0] ? "–" + esc(fmtDate(dates[dates.length - 1])) : "") : "") + '. Views on different platforms are counted differently, so they aren\'t added together. Made with <a href="https://jasonnellis.com/dealflow" target="_blank" rel="noopener">CreditDue</a>.</p>';
   }
   function recapText(d) {
     var C = d.currency, me = state.profile.name || "[your name]", L = [];
@@ -1335,7 +1335,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     "invoice-added": "Added an invoice", "payment-recorded": "Recorded a payment", "followup-copied": "Copied a payment follow-up",
     "usage-running": "Found ads still running", "recap-sent": "Copied a recap for a brand", "renewal-started": "Started a renewal",
     "makegood-added": "Added a make-good step", "backup-copied": "Copied a backup", "restore": "Restored from a backup",
-    "app-opened": "Opened Dealflow (once a day)"
+    "app-opened": "Opened CreditDue (once a day)"
   };
   function logEvent(name, props) {
     if (!state) return;
@@ -1351,7 +1351,8 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
 
   /* Anonymous site analytics. Only jasonnellis.com loads Umami (scripts/site-copy.py adds the tag), so in the
      artifact this does nothing. A short list of milestones goes out with no deal contents, amounts or brand names,
-     and only an answer word on the "would you use this?" questions (each property counts as an extra Umami event). */
+     and only an answer word on the "would you use this?" questions (each property counts as an extra Umami event).
+     The event names keep the old "Dealflow" prefix on purpose: renaming them would split the counts mid-test. */
   var UMAMI = {
     "deal-logged": "Dealflow deal logged", "step-done": "Dealflow step done", "followup-copied": "Dealflow follow-up copied",
     "payment-recorded": "Dealflow payment recorded", "backup-copied": "Dealflow backup copied", "restore": "Dealflow backup restored",
@@ -1375,7 +1376,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var u = UMAMI[name]; if (!u || (REAL_ONLY[name] && !real)) return;
     umamiSend(u, p.answer ? { answer: p.answer } : undefined);
   }
-  // Counts the days Dealflow was opened on this device, so a pilot backup shows whether a creator came back.
+  // Counts the days CreditDue was opened on this device, so a pilot backup shows whether a creator came back.
   function logOpen() {
     var m = state.metrics = state.metrics || { counts: {}, log: [] }, t = todayISO();
     if (m.lastOpen === t) return;
@@ -1806,7 +1807,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function renderPilot() {
     var m = state.metrics || { counts: {}, log: [] }, pilot = state.pilot || {}, keys = Object.keys(m.counts).sort(function (a, b) { return m.counts[b].n - m.counts[a].n; });
     return '<section class="panel wide" id="pilot"><div class="panel-head"><h2>What this pilot measures</h2><span class="label">' + m.log.length + " recent actions on this device</span></div>" +
-      '<p class="lede">To learn what helps, Dealflow counts which actions you take and when. It never records deal contents, amounts or brand names. These counts stay on this device unless you choose to include them in a backup you send.</p>' +
+      '<p class="lede">To learn what helps, CreditDue counts which actions you take and when. It never records deal contents, amounts or brand names. These counts stay on this device unless you choose to include them in a backup you send.</p>' +
       '<div class="grid2"><div class="field"><label for="pilot-code">Pilot code</label><input id="pilot-code" data-pilot="code" value="' + esc(pilot.code || "") + '" autocomplete="off" placeholder="From your invite"><p class="help">Lets Jason match a backup you send to your pilot conversations.</p></div>' +
       '<div class="field"><span class="flabel">Sharing</span><label class="check"><input type="checkbox" id="pilot-share" data-pilot="share"' + (pilot.share ? " checked" : "") + "> Include these counts in backups</label></div></div>" +
       (keys.length ? '<div class="table-wrap"><table class="metrics-table"><thead><tr><th>Action</th><th class="num">Times</th><th class="num">Last</th></tr></thead><tbody>' + keys.map(function (k) { var c = m.counts[k]; return "<tr><td>" + esc(EVENT_LABELS[k] || k) + '</td><td class="num">' + c.n + '</td><td class="num">' + esc(fmtDate(c.last.slice(0, 10))) + "</td></tr>"; }).join("") + "</tbody></table></div>" : '<p class="fine">Nothing counted yet.</p>') +
@@ -1820,7 +1821,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       '<div class="toolbar"><button class="btn primary" type="button" data-action="copy-backup">Copy backup</button>' + (canSaveFile() ? '<button class="btn" type="button" data-action="save-backup">Save backup file</button>' : "") +
       '<span class="fine">' + real + " deal" + (real === 1 ? "" : "s") + (ex ? " and " + ex + " examples" : "") + "</span></div>" +
       (ui.backupShown ? '<textarea id="backup-out" readonly aria-label="Backup text">' + esc(ui.backupShown) + "</textarea>" : '<textarea id="backup-out" readonly hidden aria-label="Backup text"></textarea>') +
-      '<h3 class="section-title">Restore</h3><p class="fine">Choose a backup file or paste a backup. A list copied from the earlier version of Creator Dealflow ("Copy deals as JSON") works too. Example deals in a backup are skipped.</p>' +
+      '<h3 class="section-title">Restore</h3><p class="fine">Choose a backup file or paste a backup. A list copied from the earlier version of CreditDue ("Copy deals as JSON") works too. Example deals in a backup are skipped.</p>' +
       '<div class="grid2"><div class="field"><label for="restore-file">Backup file</label><input id="restore-file" type="file" accept=".json,.txt,application/json,text/plain"></div>' +
       '<div class="field"><label for="restore-text">Or paste it here</label><textarea id="restore-text" spellcheck="false" style="min-height:64px"></textarea></div></div>' +
       '<div class="toolbar"><button class="btn" type="button" data-action="check-restore">Check backup</button></div>';
@@ -2159,13 +2160,13 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   //   d.brandBase     "" (not set) | us_ny | us_ca | us_il | us_other | non_us   where the brand is based
   //   state.profile.base  same values, where the creator is based (one setting for every deal)
   //   d.followups     [{ id, at, tone, invId, outcome: "" | "paid" | "paid-before" | "followed-again", answeredAt, paidOn, snoozeUntil, notYet }]
-  //   d.chaseAnswer   "" | yes | maybe | no   (the "Have Dealflow chase this" demand test, asked once per deal)
+  //   d.chaseAnswer   "" | yes | maybe | no   (the "Have CreditDue chase this" demand test, asked once per deal)
   //   d.termsFlagSeen true once the long-terms flag has been counted for this deal
   EVENT_LABELS["followup-outcome"] = "Answered \"Did they pay?\"";
   EVENT_LABELS["governing-law-set"] = "Set the law that governs a contract";
   EVENT_LABELS["base-set"] = "Set where you or a brand is based";
   EVENT_LABELS["terms-flag"] = "Saw a payment-terms warning";
-  EVENT_LABELS["fakedoor-chase"] = "Tapped \"Have Dealflow chase this\"";
+  EVENT_LABELS["fakedoor-chase"] = "Tapped \"Have CreditDue chase this\"";
   EVENT_LABELS["fakedoor-chase-answer"] = "Said whether they'd use a chase service";
 
   var GOV_LAWS = [["", "Not sure"], ["uk", "UK"], ["eu", "EU or EEA country"], ["us_ny", "US: New York"], ["us_ca", "US: California"], ["us_il", "US: Illinois"], ["us_other", "US: another state"], ["other", "Other"]];
@@ -2353,7 +2354,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   function govBlock(d, o) {
     var g = govLaw(d), note = "";
     if (!g) note = '<p class="help">Look for a "governing law" clause near the end of the contract. Until you set it, the late-payment rules are a guess from the currency.</p>';
-    else if (g === "other") note = '<p class="help">Dealflow doesn\'t have rules for this law yet. Enter the late fee from your contract, if there is one.</p>';
+    else if (g === "other") note = '<p class="help">CreditDue doesn\'t have rules for this law yet. Enter the late fee from your contract, if there is one.</p>';
     else if (/^us_/.test(g)) note = '<p class="help">US freelancer laws also depend on where you and the brand are based.</p>';
     var h = '<div class="field"><label for="f-govlaw">Which law governs the contract</label><select id="f-govlaw">' + opts(GOV_LAWS, g) + "</select>" + note + "</div>";
     return h;
@@ -2364,7 +2365,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     var who = !me && !b ? "you and the brand are" : !me ? "you're" : !b ? "the brand is" : "";
     var ask = who ? "Set where " + who + " based to see whether any other state law may apply." : "";
     if (!m.length) {
-      ask = who ? "Set where " + who + " based, and Dealflow will show any of these laws that may apply." : "";
+      ask = who ? "Set where " + who + " based, and CreditDue will show any of these laws that may apply." : "";
       var n = US_RIGHTS.us_other;
       return '<div class="callout rights" id="rights-note"><strong>' + esc(n.title) + "</strong><p>" + esc(n.body) + "</p>" + (ask ? "<p>" + esc(ask) + "</p>" : "") + '<p class="fine">Checked November 2026. Not legal advice.</p></div>';
     }
@@ -2392,14 +2393,14 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     return '<div class="callout warn" id="terms-flag"><strong>Payment terms of ' + days(n) + "</strong><p>" + esc(body) + '</p><p class="fine">' + src + " · " + (govLaw(d) ? "" : "Guessed from the currency. ") + "Not legal advice.</p></div>";
   }
 
-  // "Have Dealflow chase this for me": a demand test for a service that doesn't exist yet.
+  // "Have CreditDue chase this for me": a demand test for a service that doesn't exist yet.
   function chaseBit(d, it) {
     if (it.kind !== "late") return "";
     var invId = it.row.inv.id, open = ui.chaseAsk === d.id + ":" + invId;
-    if (d.chaseAnswer) return open ? '<p class="fine fu-thanks" id="chase-thanks-' + invId + '" role="status">Thanks for telling us. Dealflow can\'t chase for you yet, so use the drafts above for now.</p>' : "";
-    var btn = '<button class="btn small quiet" type="button" id="chase-' + invId + '" data-action="chase-fake" data-inv="' + invId + '"' + (open ? ' aria-expanded="true"' : "") + ">Have Dealflow chase this for me</button>";
+    if (d.chaseAnswer) return open ? '<p class="fine fu-thanks" id="chase-thanks-' + invId + '" role="status">Thanks for telling us. CreditDue can\'t chase for you yet, so use the drafts above for now.</p>' : "";
+    var btn = '<button class="btn small quiet" type="button" id="chase-' + invId + '" data-action="chase-fake" data-inv="' + invId + '"' + (open ? ' aria-expanded="true"' : "") + ">Have CreditDue chase this for me</button>";
     if (!open) return '<div class="toolbar">' + btn + "</div>";
-    return '<div class="fakedoor" id="chase-ask-' + invId + '" role="group" aria-label="Would you use a chase service?"><p><strong>We\'re testing whether to build this. Would you use it?</strong> Dealflow would follow up with the brand for you until it pays.</p><div class="toolbar">' +
+    return '<div class="fakedoor" id="chase-ask-' + invId + '" role="group" aria-label="Would you use a chase service?"><p><strong>We\'re testing whether to build this. Would you use it?</strong> CreditDue would follow up with the brand for you until it pays.</p><div class="toolbar">' +
       [["yes", "Yes, I'd pay for it"], ["maybe", "Maybe"], ["no", "No"]].map(function (a) { return '<button class="btn small" type="button" id="chase-' + a[0] + "-" + invId + '" data-action="chase-answer" data-inv="' + invId + '" data-answer="' + a[0] + '">' + a[1] + "</button>"; }).join("") + "</div></div>";
   }
   EXT.actions["chase-fake"] = function (el, d) {
@@ -2711,10 +2712,10 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
   EVENT_LABELS["fakedoor-budget-answer"] = "Said whether they'd use budget alerts";
   function budgetBit() {
     var p = state.profile, open = !!ui.budgetAsk;
-    if (p.budgetAnswer) return open ? '<p class="fine fu-thanks fc-budget-ask" id="budget-thanks" role="status">Thanks for telling us. Dealflow can\'t watch sponsor budgets yet, so use the Brand budgets slider to try a change.</p>' : "";
+    if (p.budgetAnswer) return open ? '<p class="fine fu-thanks fc-budget-ask" id="budget-thanks" role="status">Thanks for telling us. CreditDue can\'t watch sponsor budgets yet, so use the Brand budgets slider to try a change.</p>' : "";
     var btn = '<div class="toolbar fc-budget-ask"><button class="btn small quiet" type="button" id="budget-fake" data-action="budget-fake"' + (open ? ' aria-expanded="true"' : "") + ">Tell me when sponsor budgets in my category shift</button></div>";
     if (!open) return btn;
-    return '<div class="fakedoor fc-budget-ask" id="budget-ask" role="group" aria-label="Would you use budget alerts?"><p><strong>We\'re testing whether to build this. Would you use it?</strong> Dealflow would tell you when brands in your categories start spending more or less on creators.</p><div class="toolbar">' +
+    return '<div class="fakedoor fc-budget-ask" id="budget-ask" role="group" aria-label="Would you use budget alerts?"><p><strong>We\'re testing whether to build this. Would you use it?</strong> CreditDue would tell you when brands in your categories start spending more or less on creators.</p><div class="toolbar">' +
       [["yes", "Yes, I'd pay for it"], ["maybe", "Maybe"], ["no", "No"]].map(function (a) { return '<button class="btn small" type="button" id="budget-' + a[0] + '" data-action="budget-answer" data-answer="' + a[0] + '">' + a[1] + "</button>"; }).join("") + "</div></div>";
   }
   EXT.actions["budget-fake"] = function () {
@@ -3299,13 +3300,13 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       year: String(when).slice(0, 4), paidUse: paidUse, fmtKey: Object.keys(types).length === 1 ? lines[0].type : "mixed" };
   }
   function shareText(f) {
-    return [f.format, f.platform, f.price, f.views, f.cpm, f.paidUse ? "includes paid usage" : "", f.year].filter(Boolean).join(" · ") + "\nCreator-reported · Made with Creator Dealflow";
+    return [f.format, f.platform, f.price, f.views, f.cpm, f.paidUse ? "includes paid usage" : "", f.year].filter(Boolean).join(" · ") + "\nCreator-reported · Made with CreditDue";
   }
   function shareCardHTML(f) {
     return '<figure class="share-card" id="sc-card" aria-label="Share card"><div class="sc-top"><span class="sc-format">' + esc(f.format) + '</span><span class="sc-platform">' + esc(f.platform) + " · " + esc(f.year) + "</span></div>" +
       '<div class="sc-price">' + esc(f.price) + "</div>" +
       ((f.views || f.cpm || f.paidUse) ? '<div class="sc-stats">' + [f.views, f.cpm, f.paidUse ? "Includes paid usage" : ""].filter(Boolean).map(function (s) { return "<span>" + esc(s) + "</span>"; }).join("") + "</div>" : "") +
-      '<figcaption class="sc-foot">Creator-reported · Made with Creator Dealflow</figcaption></figure>';
+      '<figcaption class="sc-foot">Creator-reported · Made with CreditDue</figcaption></figure>';
   }
   function shareHTML(d) {
     if (["posted", "invoiced", "paid"].indexOf(d.stage) < 0) return "";
@@ -3503,7 +3504,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
       var r = parseBackup(text.trim(), curOverride);
       if (!r.deals.length) ui.restoreErr = "That backup has no deals in it. Example deals are skipped.";
       else ui.restore = r;
-    } catch (e) { ui.restoreErr = "That doesn't look like a Creator Dealflow backup. Check that you copied all of it, from the first { or [ to the last } or ]."; }
+    } catch (e) { ui.restoreErr = "That doesn't look like a CreditDue backup. Check that you copied all of it, from the first { or [ to the last } or ]."; }
   }
   function markBackedUp() { logEvent("backup-copied", { withPilot: !!(state.pilot && state.pilot.share) }); state.backupAt = new Date().toISOString(); ui.hideBackupNag = false; save(); }
 
@@ -3720,7 +3721,7 @@ fieldset.q legend { padding: 0; margin-bottom: 7px; color: var(--fg); font-size:
     if (t.id === "rs-cur" && ui.restore) { readRestore(ui.restore.text, t.value); renderAll(); return; }
     if (t.id === "restore-file") {
       var f = t.files && t.files[0]; if (!f) return;
-      if (f.size > 5e6) { ui.restoreErr = "That file is larger than any Creator Dealflow backup should be."; renderAll(); return; }
+      if (f.size > 5e6) { ui.restoreErr = "That file is larger than any CreditDue backup should be."; renderAll(); return; }
       var rd = new FileReader();
       rd.onload = function () { readRestore(String(rd.result)); renderAll(); };
       rd.onerror = function () { ui.restoreErr = "The file couldn't be read. Try pasting the backup instead."; renderAll(); };
